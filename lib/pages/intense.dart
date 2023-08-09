@@ -32,21 +32,22 @@ class _IntenseModeState extends State<IntenseMode> {
     hue = newHue;
   }
 
-  Color get c => HSVColor.fromAHSV(1, hue.toDouble(), 1, 1).toColor();
-  Color get textColor => contrastWith(c);
+  Color get color => hsv(hue, 1, 1);
 
   String get text => (offBy == 0)
-      ? "AMAZING!"
+      ? "SUPER!"
       : (offBy <= 10)
           ? "Great job!"
           : (offBy <= 20)
               ? "Nicely done."
               : "oof…";
 
+  Widget get graphic => PercentGrade(accuracy, color);
+
   submit() async {
     await showDialog(
       context: context,
-      builder: gradeBuilder(text, guess, hue, percentGrade(accuracy, c)),
+      builder: (context) => HueDialog(text, guess, hue, graphic),
     );
     setState(generateHue);
     hueController.clear();
@@ -56,12 +57,10 @@ class _IntenseModeState extends State<IntenseMode> {
   @override
   Widget build(BuildContext context) {
     return GameScreen(
-      color: c,
-      text: textColor,
+      color: color,
       hueField: hueField,
       hueController: hueController,
       submit: submit,
-      textFormatFunction: textFormatFunction,
     );
   }
 }

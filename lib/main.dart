@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:super_hueman/pages/easy.dart';
-import 'package:super_hueman/pages/intense.dart';
-import 'package:super_hueman/pages/master.dart';
 import 'reference.dart';
-import 'pages/main_menu.dart';
 
 void main() {
   runApp(const App());
@@ -23,12 +19,13 @@ class App extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       initialRoute: Pages.mainMenu(),
-      routes: {
-        Pages.mainMenu(): (context) => const MainMenu(),
-        Pages.easy(): (context) => const EasyMode(),
-        Pages.intense(): (context) => const IntenseMode(),
-        Pages.master(): (context) => const MasterMode(),
-      },
+      // routes: {
+      //   Pages.mainMenu(): (context) => const MainMenu(),
+      //   Pages.intro(): (context) => const IntroMode(),
+      //   Pages.intense(): (context) => const IntenseMode(),
+      //   Pages.master(): (context) => const MasterMode(),
+      // },
+      routes: Pages.routes,
     );
   }
 }

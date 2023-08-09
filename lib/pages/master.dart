@@ -35,21 +35,22 @@ class _MasterModeState extends State<MasterMode> {
     saturation = 1 - rng.nextDouble() * 2 / 3;
   }
 
-  Color get c => HSVColor.fromAHSV(1, hue.toDouble(), saturation, value).toColor();
-  Color get textColor => contrastWith(c);
+  Color get color => hsv(hue, saturation, value);
 
   String get text => (offBy == 0)
-      ? "AMAZING!"
+      ? "SUPER!"
       : (offBy <= 10)
           ? "Great job!"
           : (offBy <= 20)
               ? "Nicely done."
               : "oof…";
 
+  Widget get graphic => PercentGrade(accuracy, color);
+
   submit() async {
     await showDialog(
       context: context,
-      builder: gradeBuilder(text, guess, hue, percentGrade(accuracy, c)),
+      builder: (context) => HueDialog(text, guess, hue, graphic),
     );
     setState(generateColor);
     hueController.clear();
@@ -59,12 +60,10 @@ class _MasterModeState extends State<MasterMode> {
   @override
   Widget build(BuildContext context) {
     return GameScreen(
-      color: c,
-      text: textColor,
+      color: color,
       hueField: hueField,
       hueController: hueController,
       submit: submit,
-      textFormatFunction: textFormatFunction,
     );
   }
 }
