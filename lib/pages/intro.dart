@@ -27,15 +27,6 @@ class _IntroModeState extends State<IntroMode> {
 
   Color get color => hsv(hue, 1, 1);
 
-  String colorName(Color c) => {
-        "Color(0xffff0000)": "red",
-        "Color(0xffffff00)": "yellow",
-        "Color(0xff00ff00)": "green",
-        "Color(0xff00ffff)": "cyan",
-        "Color(0xff0000ff)": "blue",
-        "Color(0xffff00ff)": "magenta",
-      }[c.toString()]!;
-
   @override
   void initState() {
     super.initState();
@@ -49,34 +40,29 @@ class _IntroModeState extends State<IntroMode> {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
-            colorName(color),
+            {
+              "0xff0000": "red",
+              "0xffff00": "yellow",
+              "0x00ff00": "green",
+              "0x00ffff": "cyan",
+              "0x0000ff": "blue",
+              "0xff00ff": "magenta",
+            }[color.hexCode]!,
             style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
           ),
         ),
       );
 
+  String get text => (hue == guess) ? "Nice work!" : "Incorrect…";
+
   @override
   Widget build(BuildContext context) {
-    submit() async {
-      await showDialog(
-        context: context,
-        builder: (context) => HueDialog(
-          (hue == guess) ? "Nice work!" : "Incorrect…",
-          guess,
-          hue,
-          graphic,
-        ),
-      );
-      setState(generateHue);
-      hueController.clear();
-      hueField.requestFocus();
-    }
-
     return GameScreen(
       color: color,
       hueField: hueField,
       hueController: hueController,
-      submit: submit,
+      hueDialogBuilder: (context) => HueDialog(text, guess, hue, graphic),
+      generateHue: () => setState(generateHue),
     );
   }
 }

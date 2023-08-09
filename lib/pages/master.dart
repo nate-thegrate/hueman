@@ -26,7 +26,7 @@ class _MasterModeState extends State<MasterMode> {
   }
 
   int get accuracy => ((1 - offBy / 180) * 100).round();
-  void generateColor() {
+  void generateHue() {
     int newHue = rng.nextInt(300);
     if (newHue + 30 >= hue) {
       newHue += 60;
@@ -47,23 +47,14 @@ class _MasterModeState extends State<MasterMode> {
 
   Widget get graphic => PercentGrade(accuracy, color);
 
-  submit() async {
-    await showDialog(
-      context: context,
-      builder: (context) => HueDialog(text, guess, hue, graphic),
-    );
-    setState(generateColor);
-    hueController.clear();
-    hueField.requestFocus();
-  }
-
   @override
   Widget build(BuildContext context) {
     return GameScreen(
       color: color,
       hueField: hueField,
       hueController: hueController,
-      submit: submit,
+      hueDialogBuilder: (context) => HueDialog(text, guess, hue, graphic),
+      generateHue: () => setState(generateHue),
     );
   }
 }

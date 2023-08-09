@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -12,17 +14,29 @@ class GameScreen extends StatelessWidget {
   final Color color;
   final FocusNode hueField;
   final TextEditingController hueController;
-  final void Function() submit;
+  final WidgetBuilder hueDialogBuilder;
+  final void Function() generateHue;
   const GameScreen({
     required this.color,
     required this.hueField,
     required this.hueController,
-    required this.submit,
+    required this.hueDialogBuilder,
+    required this.generateHue,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    void submit() async {
+      await showDialog(
+        context: context,
+        builder: hueDialogBuilder,
+      );
+      generateHue();
+      hueController.clear();
+      hueField.requestFocus();
+    }
+
     final textColor = contrastWith(color);
     final backButton = TextButton(
       style: TextButton.styleFrom(
@@ -142,7 +156,7 @@ class _PercentGradeState extends State<PercentGrade> {
   @override
   Widget build(BuildContext context) {
     final Widget line = Container(
-      color: (widget.perfect) ? contrastWith(c) : c,
+      color: (widget.perfect) ? Colors.black : c,
       width: widget.accuracy * PercentGrade.width / 200,
       height: (1 + widget.accuracy / 20).roundToDouble(),
     );
@@ -171,7 +185,7 @@ class _PercentGradeState extends State<PercentGrade> {
               constraints: BoxConstraints.expand(height: widget.perfect ? 60 : 30),
               alignment: Alignment.center,
               child: Text(
-                "${widget.accuracy}%",
+                widget.perfect ? "100" : "${widget.accuracy}%",
                 style: style,
               ),
             ),
@@ -234,8 +248,10 @@ class _HueDialogState extends State<HueDialog> {
                 color: epicColor)
             : null,
       ),
-      elevation: widget.isSuper ? 25 : null,
+      // elevation: widget.isSuper ? (30 - ((epicIndex % 60) - 30).abs()) / 1.5 : null,
+      elevation: widget.isSuper ? (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 10 : null,
       shadowColor: widget.isSuper ? epicColor : null,
+      surfaceTintColor: widget.isSuper ? epicColor : null,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

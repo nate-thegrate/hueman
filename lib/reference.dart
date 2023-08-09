@@ -29,7 +29,7 @@ enum Pages {
   const Pages(this.widget);
 
   String call() => name;
-  static Map<String, Widget Function(BuildContext)> routes = {
+  static Map<String, WidgetBuilder> routes = {
     for (final page in values) page(): (context) => page.widget
   };
 }
@@ -39,8 +39,8 @@ extension ContextStuff on BuildContext {
   void goto(Pages page) => Navigator.pushReplacementNamed(this, page());
 }
 
-void addListener(void Function(RawKeyEvent) func) => RawKeyboard.instance.addListener(func);
-void yeetListener(void Function(RawKeyEvent) func) => RawKeyboard.instance.removeListener(func);
+void addListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.addListener(func);
+void yeetListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.removeListener(func);
 
 Color hsv(int h, double s, double v) => HSVColor.fromAHSV(1, h.toDouble(), s, v).toColor();
 
@@ -409,18 +409,20 @@ const _epicColors = [
   0xffffa3a5,
 ];
 
-int _epicIndex = 0;
-int _epicPhase = 0;
-Color get epicColor => Color(_epicColors[_epicIndex]);
+const int _epicStepSize = 75;
+int epicHue = 0;
+late int _lastEpicChange;
+Color get epicColor => Color(_epicColors[epicHue]);
 Ticker epicSetup(StateSetter setState) {
   void epicCycle(Duration elapsed) {
-    _epicPhase = (_epicPhase + elapsed.inMilliseconds) % 4;
-    if (_epicPhase == 0) {
-      setState(() => _epicIndex = ++_epicIndex % _epicColors.length);
+    if (elapsed.inMilliseconds >= _lastEpicChange + _epicStepSize) {
+      _lastEpicChange += _epicStepSize;
+      setState(() => epicHue = ++epicHue % 360);
     }
   }
 
-  _epicIndex = rng.nextInt(360);
+  epicHue = rng.nextInt(360);
+  _lastEpicChange = 0;
   final Ticker ticker = Ticker(epicCycle)..start();
 
   return ticker;
@@ -433,6 +435,11 @@ Widget hspace(double w) => SizedBox(width: w);
 
 extension ToInt on TextEditingValue {
   int toInt() => text.isEmpty ? 0 : int.parse(text);
+}
+
+extension HexCode on Color {
+  /// The hexadecimal color code (doesn't include alpha).
+  String get hexCode => "0x${toString().substring(10, 16)}";
 }
 
 final rng = Random();

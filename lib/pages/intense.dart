@@ -36,23 +36,17 @@ class _IntenseModeState extends State<IntenseMode> {
 
   String get text => (offBy == 0)
       ? "SUPER!"
-      : (offBy <= 10)
-          ? "Great job!"
-          : (offBy <= 20)
-              ? "Nicely done."
-              : "oof…";
+      : (offBy <= 1)
+          ? "Just 1 away?!"
+          : (offBy <= 5)
+              ? "Fantastic!"
+              : (offBy <= 10)
+                  ? "Great job!"
+                  : (offBy <= 20)
+                      ? "Nicely done."
+                      : "oof…";
 
   Widget get graphic => PercentGrade(accuracy, color);
-
-  submit() async {
-    await showDialog(
-      context: context,
-      builder: (context) => HueDialog(text, guess, hue, graphic),
-    );
-    setState(generateHue);
-    hueController.clear();
-    hueField.requestFocus();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +54,8 @@ class _IntenseModeState extends State<IntenseMode> {
       color: color,
       hueField: hueField,
       hueController: hueController,
-      submit: submit,
+      hueDialogBuilder: (context) => HueDialog(text, guess, hue, graphic),
+      generateHue: () => setState(generateHue),
     );
   }
 }
