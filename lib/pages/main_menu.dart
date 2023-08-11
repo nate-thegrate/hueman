@@ -11,6 +11,8 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> {
   late final Ticker ticker;
+  List<Widget> children = [];
+  bool introSelect = false;
 
   @override
   void initState() {
@@ -24,64 +26,116 @@ class _MainMenuState extends State<MainMenu> {
     super.dispose();
   }
 
+  menuButton(Pages page) {
+    return ElevatedButton(
+      onPressed: () => context.goto(page),
+      style: ElevatedButton.styleFrom(backgroundColor: epicColor, foregroundColor: Colors.black),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Text(page(), style: const TextStyle(fontSize: 24)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    menuButton(Pages page, [String? text]) {
-      return ElevatedButton(
-        onPressed: () => context.goto(page),
-        style: ElevatedButton.styleFrom(backgroundColor: epicColor, foregroundColor: Colors.black),
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text(text ?? page(), style: const TextStyle(fontSize: 24)),
-        ),
-      );
-    }
+    children = introSelect
+        ? [
+            Text(
+              'intro',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+            vspace(55),
+            menuButton(Pages.intro3),
+            vspace(33),
+            menuButton(Pages.intro6),
+            vspace(33),
+            menuButton(Pages.intro12),
+          ]
+        : [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'super',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
+                  child: Text(
+                    'HUE',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: epicColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  'man',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+              ],
+            ),
+            vspace(67),
+            ElevatedButton(
+              onPressed: () => setState(() => introSelect = true),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: epicColor, foregroundColor: Colors.black),
+              child: const Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: Text("intro", style: TextStyle(fontSize: 24)),
+              ),
+            ),
+            vspace(33),
+            menuButton(Pages.intense),
+            vspace(33),
+            menuButton(Pages.master),
+          ];
 
     return Scaffold(
       body: Center(
-        child: Container(
-          decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
-          padding: const EdgeInsets.all(50),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'super',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineLarge,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Opacity(
+              opacity: introSelect ? 1 : 0,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white70,
+                    backgroundColor: Colors.black12,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
+                  onPressed: () {
+                    if (introSelect) setState(() => introSelect = false);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(8),
                     child: Text(
-                      'HUE',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: epicColor,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      "back",
+                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                     ),
                   ),
-                  Text(
-                    'man',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                ],
+                ),
               ),
-              vspace(67),
-              menuButton(Pages.intro),
-              vspace(33),
-              menuButton(Pages.intense),
-              vspace(33),
-              menuButton(Pages.master),
-            ],
-          ),
+            ),
+            Container(
+              decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
+              width: 300,
+              padding: const EdgeInsets.all(50),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: children,
+              ),
+            ),
+          ],
         ),
       ),
     );

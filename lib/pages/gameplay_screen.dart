@@ -5,36 +5,33 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:super_hueman/reference.dart';
 
-TextEditingValue textFormatFunction(TextEditingValue oldValue, TextEditingValue newValue) =>
-    (newValue.toInt() < 360)
-        ? newValue
-        : const TextEditingValue(text: "359", selection: TextSelection.collapsed(offset: 3));
-
 class GameScreen extends StatelessWidget {
   final Color color;
-  final FocusNode hueField;
+  final FocusNode hueFocusNode;
   final TextEditingController hueController;
   final WidgetBuilder hueDialogBuilder;
   final void Function() generateHue;
   const GameScreen({
     required this.color,
-    required this.hueField,
+    required this.hueFocusNode,
     required this.hueController,
     required this.hueDialogBuilder,
     required this.generateHue,
     super.key,
   });
 
+  TextEditingValue textFormatFunction(TextEditingValue oldValue, TextEditingValue newValue) =>
+      (newValue.toInt() < 360)
+          ? newValue
+          : const TextEditingValue(text: "359", selection: TextSelection.collapsed(offset: 3));
+
   @override
   Widget build(BuildContext context) {
     void submit() async {
-      await showDialog(
-        context: context,
-        builder: hueDialogBuilder,
-      );
+      await showDialog(context: context, builder: hueDialogBuilder);
       generateHue();
       hueController.clear();
-      hueField.requestFocus();
+      hueFocusNode.requestFocus();
     }
 
     final textColor = contrastWith(color);
@@ -52,11 +49,7 @@ class GameScreen extends StatelessWidget {
         ),
       ),
     );
-    final colorBox = Container(
-      width: 300,
-      height: 300,
-      color: color,
-    );
+    final colorBox = Container(width: 300, height: 300, color: color);
     final whatsTheHue = Text(
       'What\'s the hue?',
       textAlign: TextAlign.center,
@@ -65,7 +58,7 @@ class GameScreen extends StatelessWidget {
     final textField = SizedBox(
       width: 100,
       child: TextField(
-        focusNode: hueField,
+        focusNode: hueFocusNode,
         controller: hueController,
         onSubmitted: (_) => submit(),
         textAlign: TextAlign.center,
@@ -108,10 +101,10 @@ class GameScreen extends StatelessWidget {
   }
 }
 
-class AnswerFeedback extends StatelessWidget {
+class _AnswerFeedback extends StatelessWidget {
   final int val;
   final String text;
-  const AnswerFeedback(this.val, {required this.text, super.key});
+  const _AnswerFeedback(this.val, {required this.text}); //, super.key});
   static const TextStyle _style = TextStyle(fontSize: 16);
 
   @override
@@ -124,70 +117,129 @@ class AnswerFeedback extends StatelessWidget {
       ]);
 }
 
-class PercentGrade extends StatefulWidget {
-  final int accuracy;
-  final Color color;
-  final bool perfect;
-  const PercentGrade(this.accuracy, this.color, {super.key}) : perfect = accuracy == 100;
-  static const double width = 200;
+const double _gradeWidth = 200;
 
+class _PercentBar extends StatefulWidget {
+  final Color color;
+  final double width;
+  const _PercentBar([this.width = _gradeWidth, this.color = Colors.black]);
   @override
-  State<PercentGrade> createState() => _PercentGradeState();
+  State<_PercentBar> createState() => _PercentBarState();
 }
 
-class _PercentGradeState extends State<PercentGrade> {
-  late final Ticker? ticker;
-  late Color c;
+class _PercentBarState extends State<_PercentBar> {
+  double width = 0;
 
   @override
   void initState() {
     super.initState();
-    c = widget.color;
-    ticker = (widget.perfect) ? Ticker((_) => setState(() => c = epicColor)) : null;
-    ticker?.start();
+    sleep(.1).then((_) => setState(() => width = widget.width / 2));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeOutCubic,
+      color: widget.color,
+      width: width,
+      height: width / 15,
+    );
+  }
+}
+
+class HundredPercentGrade extends StatefulWidget {
+  const HundredPercentGrade({super.key});
+
+  @override
+  State<HundredPercentGrade> createState() => _HundredPercentGradeState();
+}
+
+class _HundredPercentGradeState extends State<HundredPercentGrade> {
+  late final Ticker ticker;
+  Color c = epicColor;
+  double lineWidth = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    ticker = Ticker((_) => setState(() => c = epicColor));
+    ticker.start();
   }
 
   @override
   void dispose() {
-    ticker?.dispose();
+    ticker.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Widget line = Container(
-      color: (widget.perfect) ? Colors.black : c,
-      width: widget.accuracy * PercentGrade.width / 200,
-      height: (1 + widget.accuracy / 20).roundToDouble(),
+    const Widget line = _PercentBar();
+    const Widget fullLine = Row(children: [line, filler, line]);
+    const TextStyle style = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 24,
+      color: Colors.black,
+      shadows: [Shadow(blurRadius: 4, color: Colors.white)],
     );
-    final Widget fullLine = Row(children: [line, filler, line]);
-    final TextStyle style = widget.perfect
-        ? const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: Colors.black,
-            shadows: [Shadow(blurRadius: 4, color: Colors.white)],
-          )
-        : const TextStyle(
-            fontSize: 18,
-            shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
-          );
+
     return Container(
-      margin: EdgeInsets.all(widget.perfect ? 20 : 10),
-      width: PercentGrade.width,
+      margin: const EdgeInsets.all(20),
+      width: _gradeWidth,
+      alignment: Alignment.center,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           fullLine,
           Container(
-            color: widget.perfect ? c : c.withAlpha(0xff * widget.accuracy ~/ 200),
+            color: c,
             child: Container(
-              constraints: BoxConstraints.expand(height: widget.perfect ? 60 : 30),
+              constraints: const BoxConstraints.expand(height: 60),
               alignment: Alignment.center,
-              child: Text(
-                widget.perfect ? "100" : "${widget.accuracy}%",
-                style: style,
-              ),
+              child: const Text("100", style: style),
+            ),
+          ),
+          fullLine,
+        ],
+      ),
+    );
+  }
+}
+
+class PercentGrade extends StatelessWidget {
+  final int accuracy;
+  final Color color;
+
+  const PercentGrade({
+    required this.accuracy,
+    required this.color,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget line = _PercentBar(accuracy * 2, color);
+    final Widget fullLine = Row(children: [line, filler, line]);
+    const TextStyle style = TextStyle(
+      fontSize: 18,
+      shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
+    );
+    return Container(
+      margin: const EdgeInsets.all(10),
+      width: _gradeWidth,
+      height: 50,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          fullLine,
+          Container(
+            color: color.withAlpha(0xff * accuracy ~/ 200),
+            child: Container(
+              constraints: const BoxConstraints.expand(height: 30),
+              alignment: Alignment.center,
+              child: Text("$accuracy%", style: style),
             ),
           ),
           fullLine,
@@ -257,8 +309,8 @@ class _HueDialogState extends State<HueDialog> {
         children: [
           widget.graphic,
           const SizedBox(height: 20),
-          AnswerFeedback(widget.guess, text: 'Your answer:'),
-          AnswerFeedback(widget.hue, text: 'Correct answer:'),
+          _AnswerFeedback(widget.guess, text: 'Your answer:'),
+          _AnswerFeedback(widget.hue, text: 'Correct answer:'),
         ],
       ),
     );

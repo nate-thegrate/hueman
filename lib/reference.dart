@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:super_hueman/pages/intense.dart';
 import 'package:super_hueman/pages/intro.dart';
 import 'package:super_hueman/pages/main_menu.dart';
-import 'package:super_hueman/pages/master.dart';
 
 /// ```dart
 ///
@@ -20,15 +19,23 @@ Future<void> sleep(double seconds) =>
 
 enum Pages {
   mainMenu(MainMenu()),
-  intro(IntroMode()),
+  intro3(IntroMode(3)),
+  intro6(IntroMode(6)),
+  intro12(IntroMode(12)),
   intense(IntenseMode()),
-  master(MasterMode()),
+  master(IntenseMode("master")),
   ;
 
   final Widget widget;
   const Pages(this.widget);
 
-  String call() => name;
+  String call() {
+    if (name.contains("intro")) {
+      return "${name.substring(5)} colors";
+    }
+    return name;
+  }
+
   static Map<String, WidgetBuilder> routes = {
     for (final page in values) page(): (context) => page.widget
   };
@@ -409,7 +416,7 @@ const _epicColors = [
   0xffffa3a5,
 ];
 
-const int _epicStepSize = 75;
+const int _epicStepSize = 50;
 int epicHue = 0;
 late int _lastEpicChange;
 Color get epicColor => Color(_epicColors[epicHue]);
