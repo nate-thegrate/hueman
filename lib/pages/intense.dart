@@ -6,7 +6,7 @@ import 'package:super_hueman/reference.dart';
 class IntenseMode extends StatefulWidget {
   final bool master;
   const IntenseMode([String? master, Key? key])
-      : master = master == "master",
+      : master = master == 'master',
         super(key: key);
 
   @override
@@ -35,7 +35,6 @@ class _IntenseModeState extends State<IntenseMode> {
       newHue += 60;
     }
     hue = newHue;
-    hue = 0;
     if (widget.master) {
       saturation = 1 - rng.nextDouble() * 2 / 3;
     }
@@ -44,16 +43,16 @@ class _IntenseModeState extends State<IntenseMode> {
   Color get color => hsv(hue, saturation, value);
 
   String get text => (offBy == 0)
-      ? "SUPER!"
+      ? 'SUPER!'
       : (offBy <= 1)
-          ? "Just 1 away?!"
+          ? 'Just 1 away?!'
           : (offBy <= 5)
-              ? "Fantastic!"
+              ? 'Fantastic!'
               : (offBy <= 10)
-                  ? "Great job!"
+                  ? 'Great job!'
                   : (offBy <= 20)
-                      ? "Nicely done."
-                      : "oof…";
+                      ? 'Nicely done.'
+                      : 'oof…';
 
   Widget get graphic =>
       offBy == 0 ? const HundredPercentGrade() : PercentGrade(accuracy: accuracy, color: color);

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:super_hueman/pages/intense.dart';
 import 'package:super_hueman/pages/intro.dart';
 import 'package:super_hueman/pages/main_menu.dart';
+import 'package:super_hueman/pages/sandbox.dart';
 
 /// ```dart
 ///
@@ -23,15 +24,16 @@ enum Pages {
   intro6(IntroMode(6)),
   intro12(IntroMode(12)),
   intense(IntenseMode()),
-  master(IntenseMode("master")),
+  master(IntenseMode('master')),
+  sandbox(Sandbox()),
   ;
 
   final Widget widget;
   const Pages(this.widget);
 
   String call() {
-    if (name.contains("intro")) {
-      return "${name.substring(5)} colors";
+    if (name.contains('intro')) {
+      return '${name.substring(5)} colors';
     }
     return name;
   }
@@ -40,6 +42,28 @@ enum Pages {
     for (final page in values) page(): (context) => page.widget
   };
 }
+
+enum KeepScore {
+  none,
+  accuracy,
+  time;
+
+  bool get active => this != KeepScore.none;
+  String call() => name == 'time' ? 'accuracy + time' : name;
+
+  static List<Widget> radioList({required void Function(KeepScore?) onChanged}) => [
+        for (final value in values)
+          RadioListTile<KeepScore>(
+            title: Text(value()),
+            value: value,
+            groupValue: keepScore,
+            onChanged: onChanged,
+          ),
+      ];
+}
+
+KeepScore keepScore = KeepScore.none;
+bool autoSubmit = false;
 
 extension ContextStuff on BuildContext {
   /// less stuff to type now :)
@@ -53,7 +77,7 @@ Color hsv(int h, double s, double v) => HSVColor.fromAHSV(1, h.toDouble(), s, v)
 
 Color contrastWith(Color c) => (c.computeLuminance() > .2) ? Colors.black : Colors.white;
 
-const _epicColors = [
+const List<int> _epicColors = [
   0xffffa3a3,
   0xffffa3a1,
   0xffffa39f,
@@ -419,7 +443,13 @@ const _epicColors = [
 const int _epicStepSize = 50;
 int epicHue = 0;
 late int _lastEpicChange;
+
+/// a [Color] with [epicHue] as its hue.
+///
+/// The color is retrieved from [_epicColors],
+/// where all colors have the same luminosity.
 Color get epicColor => Color(_epicColors[epicHue]);
+
 Ticker epicSetup(StateSetter setState) {
   void epicCycle(Duration elapsed) {
     if (elapsed.inMilliseconds >= _lastEpicChange + _epicStepSize) {
@@ -446,7 +476,7 @@ extension ToInt on TextEditingValue {
 
 extension HexCode on Color {
   /// The hexadecimal color code (doesn't include alpha).
-  String get hexCode => "0x${toString().substring(10, 16)}";
+  String get hexCode => '0x${toString().substring(10, 16)}';
 }
 
 final rng = Random();

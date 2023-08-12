@@ -20,11 +20,6 @@ class GameScreen extends StatelessWidget {
     super.key,
   });
 
-  TextEditingValue textFormatFunction(TextEditingValue oldValue, TextEditingValue newValue) =>
-      (newValue.toInt() < 360)
-          ? newValue
-          : const TextEditingValue(text: "359", selection: TextSelection.collapsed(offset: 3));
-
   @override
   Widget build(BuildContext context) {
     void submit() async {
@@ -32,6 +27,13 @@ class GameScreen extends StatelessWidget {
       generateHue();
       hueController.clear();
       hueFocusNode.requestFocus();
+    }
+
+    TextEditingValue textFormatFunction(TextEditingValue oldValue, TextEditingValue newValue) {
+      if (newValue.toInt() >= 100 && autoSubmit) submit();
+      return (newValue.toInt() < 360)
+          ? newValue
+          : const TextEditingValue(text: '359', selection: TextSelection.collapsed(offset: 3));
     }
 
     final textColor = contrastWith(color);
@@ -44,7 +46,7 @@ class GameScreen extends StatelessWidget {
       child: const Padding(
         padding: EdgeInsets.all(8),
         child: Text(
-          "back",
+          'back',
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
         ),
       ),
@@ -78,8 +80,9 @@ class GameScreen extends StatelessWidget {
         ),
         child: const Padding(
           padding: EdgeInsets.fromLTRB(0, 8, 0, 10),
-          child: Text("submit", style: TextStyle(fontSize: 16)),
+          child: Text('submit', style: TextStyle(fontSize: 16)),
         ));
+
     return Scaffold(
         body: Center(
       child: Column(
@@ -143,7 +146,7 @@ class _PercentBarState extends State<_PercentBar> {
       curve: Curves.easeOutCubic,
       color: widget.color,
       width: width,
-      height: width / 15,
+      height: width / (widget.color == Colors.black ? 10 : 15),
     );
   }
 }
@@ -179,9 +182,9 @@ class _HundredPercentGradeState extends State<HundredPercentGrade> {
     const Widget fullLine = Row(children: [line, filler, line]);
     const TextStyle style = TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 24,
+      fontSize: 30,
       color: Colors.black,
-      shadows: [Shadow(blurRadius: 4, color: Colors.white)],
+      // shadows: [Shadow(blurRadius: 2, color: Colors.white)],
     );
 
     return Container(
@@ -197,7 +200,7 @@ class _HundredPercentGradeState extends State<HundredPercentGrade> {
             child: Container(
               constraints: const BoxConstraints.expand(height: 60),
               alignment: Alignment.center,
-              child: const Text("100", style: style),
+              child: const Text('100', style: style),
             ),
           ),
           fullLine,
@@ -239,7 +242,7 @@ class PercentGrade extends StatelessWidget {
             child: Container(
               constraints: const BoxConstraints.expand(height: 30),
               alignment: Alignment.center,
-              child: Text("$accuracy%", style: style),
+              child: Text('$accuracy%', style: style),
             ),
           ),
           fullLine,
@@ -255,7 +258,7 @@ class HueDialog extends StatefulWidget {
   final Widget graphic;
   final bool isSuper;
   const HueDialog(this.text, this.guess, this.hue, this.graphic, {super.key})
-      : isSuper = text == "SUPER!";
+      : isSuper = text == 'SUPER!';
 
   @override
   State<HueDialog> createState() => _HueDialogState();
@@ -265,7 +268,7 @@ class _HueDialogState extends State<HueDialog> {
   late final Ticker? ticker;
 
   void _listenForEnter(RawKeyEvent value) {
-    if (value.logicalKey.keyLabel.contains("Enter")) {
+    if (value.logicalKey.keyLabel.contains('Enter')) {
       yeetListener(_listenForEnter);
       Navigator.pop(context);
     }

@@ -43,25 +43,25 @@ class _IntroModeState extends State<IntroMode> {
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
             {
-              "0xff0000": "red",
-              "0xff8000": "orange",
-              "0xffff00": "yellow",
-              "0x80ff00": "lime",
-              "0x00ff00": "green",
-              "0x00ff80": "jade",
-              "0x00ffff": "cyan",
-              "0x0080ff": "azure",
-              "0x0000ff": "blue",
-              "0x8000ff": "violet",
-              "0xff00ff": "magenta",
-              "0xff0080": "rose",
+              '0xff0000': 'red',
+              '0xff8000': 'orange',
+              '0xffff00': 'yellow',
+              '0x80ff00': 'lime',
+              '0x00ff00': 'green',
+              '0x00ff80': 'jade',
+              '0x00ffff': 'cyan',
+              '0x0080ff': 'azure',
+              '0x0000ff': 'blue',
+              '0x8000ff': 'violet',
+              '0xff00ff': 'magenta',
+              '0xff0080': 'rose',
             }[color.hexCode]!,
             style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
           ),
         ),
       );
 
-  String get text => (hue == guess) ? "Nice work!" : "Incorrect…";
+  String get text => (hue == guess) ? 'Nice work!' : 'Incorrect…';
 
   @override
   Widget build(BuildContext context) {

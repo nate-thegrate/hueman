@@ -8,7 +8,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
         theme: ThemeData(
           useMaterial3: true,
-          primaryColor: Colors.white,
+          colorScheme: const ColorScheme.dark(primary: Colors.white70),
           brightness: Brightness.dark,
         ),
         initialRoute: Pages.mainMenu(),
