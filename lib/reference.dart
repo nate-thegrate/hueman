@@ -43,27 +43,9 @@ enum Pages {
   };
 }
 
-enum KeepScore {
-  none,
-  accuracy,
-  time;
-
-  bool get active => this != KeepScore.none;
-  String call() => name == 'time' ? 'accuracy + time' : name;
-
-  static List<Widget> radioList({required void Function(KeepScore?) onChanged}) => [
-        for (final value in values)
-          RadioListTile<KeepScore>(
-            title: Text(value()),
-            value: value,
-            groupValue: keepScore,
-            onChanged: onChanged,
-          ),
-      ];
-}
-
-KeepScore keepScore = KeepScore.none;
+bool casualMode = true;
 bool autoSubmit = false;
+const bool showDonation = false;
 
 extension ContextStuff on BuildContext {
   /// less stuff to type now :)
@@ -73,9 +55,59 @@ extension ContextStuff on BuildContext {
 void addListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.addListener(func);
 void yeetListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.removeListener(func);
 
-Color hsv(int h, double s, double v) => HSVColor.fromAHSV(1, h.toDouble(), s, v).toColor();
+Color hsv(num h, double s, double v) => HSVColor.fromAHSV(1, h.toDouble(), s, v).toColor();
 
-Color contrastWith(Color c) => (c.computeLuminance() > .2) ? Colors.black : Colors.white;
+Color contrastWith(Color c, {double threshold = .2}) =>
+    (c.computeLuminance() > threshold) ? Colors.black : Colors.white;
+
+extension HexCode on Color {
+  /// The hexadecimal color code (doesn't include alpha).
+  String get hexCode => '#${toString().substring(10, 16).toUpperCase()}';
+
+  String get roundedHexCode {
+    int snaptoVals(int i) {
+      const int tolerance = 0x0F;
+      for (final int snappable in [0x00, 0x80, 0xFF]) {
+        if ((i - snappable).abs() <= tolerance) return snappable;
+      }
+      return i;
+    }
+
+    return Color.fromARGB(
+      255,
+      snaptoVals(red),
+      snaptoVals(green),
+      snaptoVals(blue),
+    ).hexCode;
+  }
+}
+
+const Map<String, String> colorNames = {
+  '#FF0000': 'red',
+  '#FF8000': 'orange',
+  '#FFFF00': 'yellow',
+  '#80FF00': 'lime',
+  '#00FF00': 'green',
+  '#00FF80': 'jade',
+  '#00FFFF': 'cyan',
+  '#0080FF': 'azure',
+  '#0000FF': 'blue',
+  '#8000FF': 'violet',
+  '#FF00FF': 'magenta',
+  '#FF0080': 'rose',
+  '#FFFFFF': 'white',
+  '#808080': 'gray',
+  '#000000': 'black',
+};
+
+Color colorFromName(String colorName) {
+  for (final entry in colorNames.entries) {
+    if (entry.value == colorName) {
+      return Color(int.parse(entry.key.substring(1), radix: 16) + 0xFF000000);
+    }
+  }
+  throw ArgumentError('color $colorName not found');
+}
 
 const List<int> _epicColors = [
   0xffffa3a3,
@@ -472,11 +504,6 @@ Widget hspace(double w) => SizedBox(width: w);
 
 extension ToInt on TextEditingValue {
   int toInt() => text.isEmpty ? 0 : int.parse(text);
-}
-
-extension HexCode on Color {
-  /// The hexadecimal color code (doesn't include alpha).
-  String get hexCode => '0x${toString().substring(10, 16)}';
 }
 
 final rng = Random();

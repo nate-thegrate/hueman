@@ -184,7 +184,6 @@ class _HundredPercentGradeState extends State<HundredPercentGrade> {
       fontWeight: FontWeight.bold,
       fontSize: 30,
       color: Colors.black,
-      // shadows: [Shadow(blurRadius: 2, color: Colors.white)],
     );
 
     return Container(

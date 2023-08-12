@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:super_hueman/reference.dart';
 
-class Sandbox extends StatefulWidget {
-  const Sandbox({super.key});
-
-  @override
-  State<Sandbox> createState() => _SandboxState();
-}
-
 int _r = 255, _g = 255, _b = 255;
-int _h = 0;
-double _s = 0, _v = 0;
-String upperHex(int i) => i.toRadixString(16).toUpperCase().padLeft(2, '0');
+double _h = 0, _s = 0, _v = 0;
 
 ColorPicker _colorPicker = ColorPicker.rgb;
 Color get color {
   switch (_colorPicker) {
     case ColorPicker.rgb:
+    case ColorPicker.select:
       return Color.fromARGB(255, _r, _g, _b);
     case ColorPicker.hsv:
       return hsv(_h, _s, _v);
@@ -39,7 +31,7 @@ class RGBSlider extends StatelessWidget {
         RotatedBox(
           quarterTurns: 3,
           child: SizedBox(
-            width: 512,
+            width: 384,
             child: SliderTheme(
               data: const SliderThemeData(
                 trackHeight: 15,
@@ -105,7 +97,7 @@ class HSVSlider extends StatelessWidget {
         SizedBox(
           width: 50,
           child: Text(
-            name == 'hue' ? value.toString() : value.toStringAsFixed(2),
+            name == 'hue' ? value.round().toString() : value.toStringAsFixed(2),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
@@ -117,25 +109,110 @@ class HSVSlider extends StatelessWidget {
 
 enum ColorPicker {
   rgb(icon: Icons.tune, tag: 'sliders'),
-  hsv(icon: Icons.gradient, tag: 'plane');
+  hsv(icon: Icons.gradient, tag: 'plane'),
+  select(icon: Icons.list, tag: 'a color');
 
   final IconData icon;
   // final String desc;
   final String tag;
   const ColorPicker({required this.icon, required this.tag});
-  String get upperName => name.toUpperCase();
+  String get upperName => name == 'select' ? 'Select' : name.toUpperCase();
 
   static List<BottomNavigationBarItem> get navBarItems => [
         for (final value in values)
           BottomNavigationBarItem(
-            icon: Icon(value.icon, size: 50),
+            icon: RotatedBox(quarterTurns: value == hsv ? 2 : 0, child: Icon(value.icon, size: 50)),
             label: value.upperName,
             tooltip: value.desc,
-            backgroundColor: color.computeLuminance() > 0.05 ? Colors.black26 : Colors.white24,
+            backgroundColor: contrastWith(color, threshold: 0.01).withAlpha(64),
           )
       ];
 
   String get desc => '$upperName $tag';
+}
+
+class ColorSelection extends StatelessWidget {
+  final List<String> colorNames;
+  final void Function(Color, HSVColor) updateColor;
+  const ColorSelection(this.colorNames, {required this.updateColor, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
+      padding: const EdgeInsets.symmetric(vertical: 50),
+      child: Column(
+        children: [
+          for (final colorName in colorNames)
+            SizedBox(
+              width: 500,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                    shape: const BeveledRectangleBorder(),
+                    backgroundColor: color.roundedHexCode == colorFromName(colorName).hexCode
+                        ? Colors.black45
+                        : null),
+                onPressed: () {
+                  final Color rgb = colorFromName(colorName);
+                  final HSVColor hsv = HSVColor.fromColor(rgb);
+
+                  updateColor(rgb, hsv);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        width: 150,
+                        child: Text(colorName, style: Theme.of(context).textTheme.headlineSmall)),
+                    Container(
+                      width: 150,
+                      height: 40,
+                      margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
+                      color: colorFromName(colorName),
+                    ),
+                  ],
+                ),
+              ),
+            )
+        ],
+      ),
+    );
+  }
+}
+
+class ColorLabel extends StatelessWidget {
+  final String property, value;
+  final TextStyle? textStyle;
+  const ColorLabel(this.property, this.value, {this.textStyle, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle? defaultStyle = Theme.of(context).textTheme.bodyLarge;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+              width: 200,
+              child: Text(
+                '$property:',
+                style: defaultStyle,
+                textAlign: TextAlign.right,
+              )),
+          hspace(10),
+          SizedBox(width: 200, child: Text(value, style: textStyle ?? defaultStyle)),
+        ],
+      ),
+    );
+  }
+}
+
+class Sandbox extends StatefulWidget {
+  const Sandbox({super.key});
+
+  @override
+  State<Sandbox> createState() => _SandboxState();
 }
 
 class _SandboxState extends State<Sandbox> {
@@ -144,7 +221,7 @@ class _SandboxState extends State<Sandbox> {
       switch (_colorPicker) {
         case ColorPicker.rgb:
           HSVColor hsvColor = HSVColor.fromColor(color);
-          _h = hsvColor.hue.toInt();
+          _h = hsvColor.hue;
           _s = hsvColor.saturation;
           _v = hsvColor.value;
         case ColorPicker.hsv:
@@ -172,140 +249,178 @@ class _SandboxState extends State<Sandbox> {
         ),
       );
 
+  Widget get title => Text(_colorPicker.desc, style: Theme.of(context).textTheme.headlineMedium);
+  Widget get colorName => ColorLabel(
+        'color name',
+        colorNames[color.roundedHexCode] ?? '[none]',
+        textStyle: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.bold, shadows: [
+          Shadow(color: contrastWith(color, threshold: 0.01).withAlpha(64), blurRadius: 3)
+        ]),
+      );
+  Widget get hue => ColorLabel('hue', HSLColor.fromColor(color).hue.round().toString());
+  Widget get colorCode => ColorLabel('color code', color.hexCode);
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: {
-          ColorPicker.rgb: Column(
+    final Widget colorPicker = {
+      ColorPicker.rgb: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(width: 300, height: 300, color: color),
+          vspace(30),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              filler,
-              backButton,
-              filler,
-              Text(ColorPicker.rgb.desc, style: Theme.of(context).textTheme.headlineMedium),
-              filler,
-              filler,
-              Container(width: 300, height: 300, color: color),
-              filler,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  RGBSlider(
-                    'red',
-                    _r,
-                    multiplier: 0x010000,
-                    onChanged: (value) => setState(() => _r = value.round()),
-                  ),
-                  RGBSlider(
-                    'green',
-                    _g,
-                    multiplier: 0x000100,
-                    onChanged: (value) => setState(() => _g = value.round()),
-                  ),
-                  RGBSlider(
-                    'blue',
-                    _b,
-                    multiplier: 0x000001,
-                    onChanged: (value) => setState(() => _b = value.round()),
-                  ),
-                ],
+              RGBSlider(
+                'red',
+                _r,
+                multiplier: 0x010000,
+                onChanged: (value) => setState(() => _r = value.round()),
               ),
-              filler,
-              filler,
-              Text('hue:  ${HSVColor.fromColor(color).hue.round()}',
-                  style: Theme.of(context).textTheme.bodyLarge),
-              vspace(25),
-              Text('hexadecimal color code:  #${upperHex(_r)}${upperHex(_g)}${upperHex(_b)}',
-                  style: Theme.of(context).textTheme.bodyLarge),
-              filler,
-              filler,
+              RGBSlider(
+                'green',
+                _g,
+                multiplier: 0x000100,
+                onChanged: (value) => setState(() => _g = value.round()),
+              ),
+              RGBSlider(
+                'blue',
+                _b,
+                multiplier: 0x000001,
+                onChanged: (value) => setState(() => _b = value.round()),
+              ),
             ],
           ),
-          ColorPicker.hsv: Center(
-            child: Column(
+        ],
+      ),
+      ColorPicker.hsv: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 400,
+            height: 400,
+            alignment: Alignment.center,
+            child: Stack(
               children: [
-                filler,
-                backButton,
-                filler,
-                Text(ColorPicker.hsv.desc, style: Theme.of(context).textTheme.headlineMedium),
-                filler,
-                Container(
-                  width: 540,
-                  height: 540,
-                  alignment: Alignment.center,
+                Padding(
+                  // color: Colors.amber,
+                  padding: const EdgeInsets.all(20),
                   child: Stack(
                     children: [
-                      Padding(
-                        // color: Colors.amber,
-                        padding: const EdgeInsets.all(20),
-                        child: Stack(
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.all(0.5),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: [Colors.white, hsv(_h, 1, 1)],
-                                ),
-                              ),
-                            ),
-                            Container(
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [Colors.transparent, Colors.black],
-                                ),
-                              ),
-                            ),
-                          ],
+                      Container(
+                        margin: const EdgeInsets.all(0.5),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [Colors.white, hsv(_h, 1, 1)],
+                          ),
                         ),
                       ),
-                      Align(
-                        alignment: Alignment(2 * _s - 1, 1 - 2 * _v),
-                        child: Icon(
-                          Icons.add,
-                          color: contrastWith(color),
-                          size: 40,
+                      Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.transparent, Colors.black],
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                filler,
-                HSVSlider(
-                  'hue',
-                  _h,
-                  color: hsv(_h, 1, 1),
-                  onChanged: (value) => setState(() => _h = value.toInt()),
+                Align(
+                  alignment: Alignment(2 * _s - 1, 1 - 2 * _v),
+                  child: Icon(
+                    Icons.add,
+                    color: contrastWith(color),
+                    size: 40,
+                  ),
                 ),
-                HSVSlider(
-                  'saturation',
-                  _s,
-                  color: hsv(_h, _s, 1),
-                  onChanged: (value) => setState(() => _s = value),
-                ),
-                HSVSlider(
-                  'value',
-                  _v,
-                  color: hsv(_h, _s, _v),
-                  onChanged: (value) => setState(() => _v = value),
-                ),
-                filler,
-                Container(width: 500, height: 50, color: color),
-                filler,
-                Text(
-                    'hexadecimal color code:  '
-                    '#${upperHex(color.red)}${upperHex(color.green)}${upperHex(color.blue)}',
-                    style: Theme.of(context).textTheme.bodyLarge),
-                filler,
-                filler,
-                filler,
               ],
             ),
           ),
-        }[_colorPicker],
+          HSVSlider(
+            'hue',
+            _h,
+            color: hsv(_h, 1, 1),
+            onChanged: (value) => setState(() => _h = value),
+          ),
+          HSVSlider(
+            'saturation',
+            _s,
+            color: hsv(_h, _s, 1),
+            onChanged: (value) => setState(() => _s = value),
+          ),
+          HSVSlider(
+            'value',
+            _v,
+            color: hsv(_h, _s, _v),
+            onChanged: (value) => setState(() => _v = value),
+          ),
+          vspace(25),
+          Container(width: 500, height: 100, color: color),
+        ],
+      ),
+      ColorPicker.select: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ColorSelection(
+            const [
+              'red',
+              'orange',
+              'yellow',
+              'lime',
+              'green',
+              'jade',
+              'cyan',
+              'azure',
+              'blue',
+              'violet',
+              'magenta',
+              'rose',
+              'white',
+              'gray',
+              'black',
+            ],
+            updateColor: (rgb, hsv) => setState(() {
+              _r = rgb.red;
+              _g = rgb.green;
+              _b = rgb.blue;
+
+              _h = hsv.hue;
+              _s = hsv.saturation;
+              _v = hsv.value;
+            }),
+          ),
+        ],
+      ),
+    }[_colorPicker]!;
+
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            filler,
+            backButton,
+            filler,
+            title,
+            filler,
+            AnimatedSize(
+              duration: const Duration(milliseconds: 100),
+              curve: Curves.easeInOutCubic,
+              child: colorPicker,
+            ),
+            filler,
+            filler,
+            hue,
+            colorName,
+            colorCode,
+            filler,
+            filler,
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0,

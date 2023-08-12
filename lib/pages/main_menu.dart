@@ -9,10 +9,13 @@ class MainMenu extends StatefulWidget {
   State<MainMenu> createState() => _MainMenuState();
 }
 
+enum MenuPage { main, settings, introSelect }
+
 class _MainMenuState extends State<MainMenu> {
   late final Ticker ticker;
   List<Widget> children = [];
-  bool introSelect = false;
+  MenuPage menuPage = MenuPage.main;
+  bool get mainMenu => menuPage == MenuPage.main;
 
   @override
   void initState() {
@@ -39,123 +42,176 @@ class _MainMenuState extends State<MainMenu> {
 
   @override
   Widget build(BuildContext context) {
-    children = introSelect
-        ? [
+    children = <MenuPage, List<Widget>>{
+      MenuPage.main: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
             Text(
-              'intro',
+              'super',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineLarge,
             ),
-            vspace(55),
-            menuButton(Pages.intro3),
-            vspace(33),
-            menuButton(Pages.intro6),
-            vspace(33),
-            menuButton(Pages.intro12),
-          ]
-        : [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'super',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineLarge,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
+              child: Text(
+                'HUE',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 24,
+                  color: epicColor,
+                  fontWeight: FontWeight.bold,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
-                  child: Text(
-                    'HUE',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: epicColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Text(
-                  'man',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-              ],
-            ),
-            vspace(67),
-            ElevatedButton(
-              onPressed: () => setState(() => introSelect = true),
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: epicColor, foregroundColor: Colors.black),
-              child: const Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Text('intro', style: TextStyle(fontSize: 24)),
               ),
             ),
-            vspace(33),
-            menuButton(Pages.intense),
-            vspace(33),
-            menuButton(Pages.master),
-            vspace(67),
-            menuButton(Pages.sandbox),
-          ];
-
-    scoreKeeping() => showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('keep score?'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ...KeepScore.radioList(
-                  onChanged: (value) {
-                    setState(() => keepScore = value!);
-                    Navigator.pop(context);
-                  },
-                ),
+            Text(
+              'man',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+          ],
+        ),
+        vspace(67),
+        ElevatedButton(
+          onPressed: () => setState(() => menuPage = MenuPage.introSelect),
+          style:
+              ElevatedButton.styleFrom(backgroundColor: epicColor, foregroundColor: Colors.black),
+          child: const Padding(
+            padding: EdgeInsets.only(bottom: 4),
+            child: Text('intro', style: TextStyle(fontSize: 24)),
+          ),
+        ),
+        vspace(33),
+        menuButton(Pages.intense),
+        vspace(33),
+        menuButton(Pages.master),
+        vspace(67),
+        menuButton(Pages.sandbox),
+      ],
+      MenuPage.settings: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Checkbox(
+              value: casualMode,
+              onChanged: (value) {
+                setState(() => casualMode = value!);
+              },
+            ),
+            hspace(10),
+            const Text(
+              'casual mode',
+              style: TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
+        Text(
+          casualMode ? 'play without keeping score' : 'keep score when you play',
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+        vspace(50),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Checkbox(
+                value: autoSubmit,
+                onChanged: (value) {
+                  setState(() => autoSubmit = value!);
+                }),
+            hspace(10),
+            const Text(
+              'auto-submit',
+              style: TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
+        Text(
+          autoSubmit ? "'submit' when 3 digits are entered" : "submit with the 'submit' button",
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+        ...showDonation
+            ? [
                 vspace(50),
                 Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('auto-submit\nwhen 3 digits are entered'),
-                    hspace(20),
-                    Checkbox(
-                        value: autoSubmit,
-                        onChanged: (value) {
-                          setState(() => autoSubmit = value!);
-                          Navigator.pop(context);
-                        }),
+                    ElevatedButton(
+                      onPressed: () => {},
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: epicColor, foregroundColor: Colors.black),
+                      child: const Padding(
+                        padding: EdgeInsets.only(bottom: 4),
+                        child: Text('ads', style: TextStyle(fontSize: 24)),
+                      ),
+                    ),
                   ],
                 ),
-              ],
-            ),
+              ]
+            : [],
+        vspace(50),
+        const SizedBox(
+          width: double.infinity,
+          child: Text(
+            '(Tip: long-press a button\nto replay the tutorial!)',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white60),
           ),
-        );
+        ),
+      ],
+      MenuPage.introSelect: [
+        Text(
+          'intro',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headlineLarge,
+        ),
+        vspace(55),
+        menuButton(Pages.intro3),
+        vspace(33),
+        menuButton(Pages.intro6),
+        vspace(33),
+        menuButton(Pages.intro12),
+      ],
+    }[menuPage]!;
 
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Opacity(
-              opacity: introSelect ? 1 : 0,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 30),
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white70,
-                    backgroundColor: Colors.black12,
-                  ),
-                  onPressed: () {
-                    if (introSelect) setState(() => introSelect = false);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Text(
-                      'back',
-                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-                    ),
-                  ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: TextButton(
+                style: mainMenu
+                    ? TextButton.styleFrom(
+                        foregroundColor: epicColor,
+                        backgroundColor: Colors.black,
+                      )
+                    : TextButton.styleFrom(
+                        foregroundColor: Colors.white70,
+                        backgroundColor: Colors.black26,
+                      ),
+                onPressed: () {
+                  if (mainMenu) {
+                    setState(() => menuPage = MenuPage.settings);
+                  } else {
+                    setState(() => menuPage = MenuPage.main);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: mainMenu
+                      ? const Padding(
+                          padding: EdgeInsets.only(bottom: 2),
+                          child: Text(
+                            'settings',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        )
+                      : const Text(
+                          'back',
+                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                        ),
                 ),
               ),
             ),
@@ -163,32 +219,20 @@ class _MainMenuState extends State<MainMenu> {
               decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
               width: 300,
               padding: const EdgeInsets.all(50),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: children,
+              child: AnimatedSize(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: menuPage == MenuPage.settings
+                      ? CrossAxisAlignment.start
+                      : CrossAxisAlignment.center,
+                  children: children,
+                ),
               ),
             ),
           ],
-        ),
-      ),
-      bottomSheet: GestureDetector(
-        onTap: scoreKeeping,
-        child: Container(
-          alignment: Alignment.center,
-          height: 50,
-          width: 200,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text('keep score', style: Theme.of(context).textTheme.bodyLarge),
-              ),
-              hspace(4),
-              Checkbox(value: keepScore.active, onChanged: (_) => scoreKeeping()),
-            ],
-          ),
         ),
       ),
     );
