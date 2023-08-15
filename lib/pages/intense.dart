@@ -1,7 +1,8 @@
 import 'dart:math';
-import 'gameplay_screen.dart';
+import 'package:super_hueman/structs.dart';
+import 'package:super_hueman/widgets.dart';
+
 import 'package:flutter/material.dart';
-import 'package:super_hueman/reference.dart';
 
 class IntenseMode extends StatefulWidget {
   final bool master;
@@ -30,6 +31,7 @@ class _IntenseModeState extends State<IntenseMode> {
 
   int get accuracy => (pow(1 - offBy / 180, 2) * 100).round();
   void generateHue() {
+    if (!mastery && offBy == 0) mastery = true;
     int newHue = rng.nextInt(300);
     if (newHue + 30 >= hue) {
       newHue += 60;
@@ -65,6 +67,7 @@ class _IntenseModeState extends State<IntenseMode> {
       hueController: hueController,
       hueDialogBuilder: (context) => HueDialog(text, guess, hue, graphic),
       generateHue: () => setState(generateHue),
+      scoreKeeper: null,
     );
   }
 }

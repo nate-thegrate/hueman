@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:super_hueman/pages/ads.dart';
 import 'package:super_hueman/pages/intense.dart';
 import 'package:super_hueman/pages/intro.dart';
+import 'package:super_hueman/inverse_pages/inverse_menu.dart';
 import 'package:super_hueman/pages/main_menu.dart';
 import 'package:super_hueman/pages/sandbox.dart';
 
@@ -20,18 +22,23 @@ Future<void> sleep(double seconds) =>
 
 enum Pages {
   mainMenu(MainMenu()),
+  inverseMenu(InverseMenu()),
   intro3(IntroMode(3)),
   intro6(IntroMode(6)),
   intro12(IntroMode(12)),
   intense(IntenseMode()),
   master(IntenseMode('master')),
   sandbox(Sandbox()),
+  ads(Ads()),
   ;
 
   final Widget widget;
   const Pages(this.widget);
 
   String call() {
+    if (name == 'inverseMenu') {
+      return 'invert!';
+    }
     if (name.contains('intro')) {
       return '${name.substring(5)} colors';
     }
@@ -41,11 +48,38 @@ enum Pages {
   static Map<String, WidgetBuilder> routes = {
     for (final page in values) page(): (context) => page.widget
   };
+
+  String get gameMode {
+    switch (this) {
+      case intro3:
+        return 'intro  (3 colors)';
+      case intro6:
+        return 'intro  (6 colors)';
+      case intro12:
+        return 'intro  (12 colors)';
+      case intense:
+        return 'Intense';
+      case master:
+        return 'Master';
+      default:
+        return "lol this shouldn't pop up";
+    }
+  }
 }
 
+bool mastery = true;
+bool inverted = false;
 bool casualMode = true;
 bool autoSubmit = false;
-const bool showDonation = false;
+
+abstract class ScoreKeeper {
+  Pages get page;
+  Widget get midRoundDisplay;
+  Widget get finalDetails;
+  Widget get finalScore;
+  void scoreTheRound();
+  void roundCheck(BuildContext context);
+}
 
 extension ContextStuff on BuildContext {
   /// less stuff to type now :)
@@ -471,9 +505,371 @@ const List<int> _epicColors = [
   0xffffa3a6,
   0xffffa3a5,
 ];
+const List<int> _inverseColors = [
+  0xff9e0000,
+  0xff9d0300,
+  0xff9c0500,
+  0xff9c0800,
+  0xff9b0a00,
+  0xff9b0d00,
+  0xff9a0f00,
+  0xff991200,
+  0xff981400,
+  0xff971700,
+  0xff961900,
+  0xff951b00,
+  0xff941e00,
+  0xff932000,
+  0xff922200,
+  0xff902400,
+  0xff8f2600,
+  0xff8d2800,
+  0xff8c2a00,
+  0xff8a2c00,
+  0xff892e00,
+  0xff872f00,
+  0xff863100,
+  0xff843300,
+  0xff823400,
+  0xff803600,
+  0xff7f3700,
+  0xff7d3800,
+  0xff7b3a00,
+  0xff7a3b00,
+  0xff783c00,
+  0xff763d00,
+  0xff753e00,
+  0xff733f00,
+  0xff714000,
+  0xff704100,
+  0xff6e4200,
+  0xff6c4300,
+  0xff6b4400,
+  0xff694400,
+  0xff684500,
+  0xff664600,
+  0xff654700,
+  0xff634700,
+  0xff624800,
+  0xff614800,
+  0xff5f4900,
+  0xff5e4a00,
+  0xff5d4a00,
+  0xff5b4b00,
+  0xff5a4b00,
+  0xff594c00,
+  0xff584c00,
+  0xff564c00,
+  0xff554d00,
+  0xff544d00,
+  0xff534e00,
+  0xff524e00,
+  0xff514e00,
+  0xff504f00,
+  0xff4f4f00,
+  0xff4e4f00,
+  0xff4d4f00,
+  0xff4c5000,
+  0xff4b5000,
+  0xff4a5000,
+  0xff495100,
+  0xff475100,
+  0xff465100,
+  0xff455100,
+  0xff445200,
+  0xff435200,
+  0xff425200,
+  0xff415200,
+  0xff3f5300,
+  0xff3e5300,
+  0xff3d5300,
+  0xff3c5400,
+  0xff3b5400,
+  0xff395400,
+  0xff385400,
+  0xff375400,
+  0xff365500,
+  0xff345500,
+  0xff335500,
+  0xff325500,
+  0xff305600,
+  0xff2f5600,
+  0xff2e5600,
+  0xff2c5600,
+  0xff2b5600,
+  0xff2a5600,
+  0xff285700,
+  0xff275700,
+  0xff265700,
+  0xff245700,
+  0xff235700,
+  0xff225700,
+  0xff205800,
+  0xff1f5800,
+  0xff1d5800,
+  0xff1c5800,
+  0xff1a5800,
+  0xff195800,
+  0xff185800,
+  0xff165800,
+  0xff155900,
+  0xff135900,
+  0xff125900,
+  0xff105900,
+  0xff0f5900,
+  0xff0d5900,
+  0xff0c5900,
+  0xff0a5900,
+  0xff095900,
+  0xff075900,
+  0xff065900,
+  0xff045900,
+  0xff035900,
+  0xff015900,
+  0xff005900,
+  0xff005901,
+  0xff005903,
+  0xff005904,
+  0xff005906,
+  0xff005907,
+  0xff005909,
+  0xff00590a,
+  0xff00590c,
+  0xff00590d,
+  0xff00590f,
+  0xff005910,
+  0xff005912,
+  0xff005913,
+  0xff005915,
+  0xff005916,
+  0xff005918,
+  0xff005919,
+  0xff00591b,
+  0xff00591c,
+  0xff00591e,
+  0xff00591f,
+  0xff005921,
+  0xff005922,
+  0xff005923,
+  0xff005925,
+  0xff005926,
+  0xff005928,
+  0xff005829,
+  0xff00582b,
+  0xff00582c,
+  0xff00582e,
+  0xff00582f,
+  0xff005830,
+  0xff005832,
+  0xff005833,
+  0xff005835,
+  0xff005836,
+  0xff005838,
+  0xff005839,
+  0xff00583a,
+  0xff00573c,
+  0xff00573d,
+  0xff00573f,
+  0xff005740,
+  0xff005741,
+  0xff005743,
+  0xff005744,
+  0xff005745,
+  0xff005747,
+  0xff005748,
+  0xff00564a,
+  0xff00564b,
+  0xff00564c,
+  0xff00564e,
+  0xff00564f,
+  0xff005650,
+  0xff005651,
+  0xff005653,
+  0xff005654,
+  0xff005555,
+  0xff005557,
+  0xff005558,
+  0xff005559,
+  0xff00555b,
+  0xff00555c,
+  0xff00545e,
+  0xff00545f,
+  0xff005461,
+  0xff005463,
+  0xff005464,
+  0xff005366,
+  0xff005368,
+  0xff00536a,
+  0xff00536c,
+  0xff00526e,
+  0xff005270,
+  0xff005272,
+  0xff005174,
+  0xff005177,
+  0xff005179,
+  0xff00507b,
+  0xff00507e,
+  0xff004f81,
+  0xff004f83,
+  0xff004e86,
+  0xff004e89,
+  0xff004d8c,
+  0xff004c8f,
+  0xff004c93,
+  0xff004b96,
+  0xff004a99,
+  0xff00499d,
+  0xff0048a1,
+  0xff0047a4,
+  0xff0046a8,
+  0xff0045ac,
+  0xff0044b0,
+  0xff0042b4,
+  0xff0041b9,
+  0xff003fbd,
+  0xff003dc1,
+  0xff003bc6,
+  0xff0039ca,
+  0xff0037cf,
+  0xff0035d3,
+  0xff0032d7,
+  0xff0030dc,
+  0xff002de0,
+  0xff002ae4,
+  0xff0027e7,
+  0xff0023eb,
+  0xff0020ee,
+  0xff001cf2,
+  0xff0018f4,
+  0xff0015f7,
+  0xff0011f9,
+  0xff000dfb,
+  0xff0008fc,
+  0xff0004fe,
+  0xff0000ff,
+  0xff0400ff,
+  0xff0800fe,
+  0xff0d00fe,
+  0xff1100fd,
+  0xff1500fd,
+  0xff1900fc,
+  0xff1d00fb,
+  0xff2100fa,
+  0xff2500f9,
+  0xff2900f7,
+  0xff2d00f6,
+  0xff3100f5,
+  0xff3500f3,
+  0xff3800f1,
+  0xff3c00f0,
+  0xff3f00ee,
+  0xff4300ec,
+  0xff4600ea,
+  0xff4900e7,
+  0xff4c00e5,
+  0xff4f00e3,
+  0xff5200e1,
+  0xff5500de,
+  0xff5800dc,
+  0xff5b00d9,
+  0xff5d00d7,
+  0xff5f00d4,
+  0xff6200d2,
+  0xff6400cf,
+  0xff6600cc,
+  0xff6800ca,
+  0xff6a00c7,
+  0xff6c00c5,
+  0xff6e00c2,
+  0xff7000c0,
+  0xff7100bd,
+  0xff7300bb,
+  0xff7500b8,
+  0xff7600b6,
+  0xff7700b3,
+  0xff7900b1,
+  0xff7a00ae,
+  0xff7b00ac,
+  0xff7d00aa,
+  0xff7e00a8,
+  0xff7f00a5,
+  0xff8000a3,
+  0xff8100a1,
+  0xff82009f,
+  0xff83009d,
+  0xff83009b,
+  0xff840099,
+  0xff850097,
+  0xff860095,
+  0xff870093,
+  0xff870091,
+  0xff88008f,
+  0xff89008d,
+  0xff89008c,
+  0xff8a008a,
+  0xff8a0088,
+  0xff8b0086,
+  0xff8c0085,
+  0xff8c0083,
+  0xff8d0081,
+  0xff8d007f,
+  0xff8e007d,
+  0xff8e007b,
+  0xff8f0079,
+  0xff8f0078,
+  0xff900076,
+  0xff900074,
+  0xff910072,
+  0xff910070,
+  0xff92006d,
+  0xff92006b,
+  0xff930069,
+  0xff930067,
+  0xff940065,
+  0xff940063,
+  0xff950061,
+  0xff95005e,
+  0xff96005c,
+  0xff96005a,
+  0xff960058,
+  0xff970055,
+  0xff970053,
+  0xff980051,
+  0xff98004e,
+  0xff98004c,
+  0xff99004a,
+  0xff990047,
+  0xff990045,
+  0xff990043,
+  0xff9a0040,
+  0xff9a003e,
+  0xff9a003b,
+  0xff9b0039,
+  0xff9b0036,
+  0xff9b0034,
+  0xff9b0031,
+  0xff9b002f,
+  0xff9c002c,
+  0xff9c002a,
+  0xff9c0027,
+  0xff9c0024,
+  0xff9c0022,
+  0xff9d001f,
+  0xff9d001d,
+  0xff9d001a,
+  0xff9d0018,
+  0xff9d0015,
+  0xff9d0012,
+  0xff9d0010,
+  0xff9d000d,
+  0xff9d000a,
+  0xff9d0008,
+  0xff9d0005,
+  0xff9d0003
+];
 
-const int _epicStepSize = 50;
-int epicHue = 0;
+const int _epicStepSize = 60;
+int epicHue = 0, inverseHue = 0;
 late int _lastEpicChange;
 
 /// a [Color] with [epicHue] as its hue.
@@ -482,6 +878,10 @@ late int _lastEpicChange;
 /// where all colors have the same luminosity.
 Color get epicColor => Color(_epicColors[epicHue]);
 
+/// similar to [epicColor], but the color is darker.
+///
+/// It also cycles the reverse way through the hues.
+Color get inverseColor => Color(_inverseColors[inverseHue]);
 Ticker epicSetup(StateSetter setState) {
   void epicCycle(Duration elapsed) {
     if (elapsed.inMilliseconds >= _lastEpicChange + _epicStepSize) {
@@ -497,10 +897,16 @@ Ticker epicSetup(StateSetter setState) {
   return ticker;
 }
 
-const Widget empty = SizedBox.shrink();
-const Widget filler = Expanded(child: empty);
-Widget vspace(double h) => SizedBox(height: h);
-Widget hspace(double w) => SizedBox(width: w);
+Ticker inverseSetup(StateSetter setState) {
+  void inverseCycle(Duration elapsed) {
+    setState(() => inverseHue = --inverseHue % 360);
+  }
+
+  inverseHue = rng.nextInt(360);
+  final Ticker ticker = Ticker(inverseCycle)..start();
+
+  return ticker;
+}
 
 extension ToInt on TextEditingValue {
   int toInt() => text.isEmpty ? 0 : int.parse(text);

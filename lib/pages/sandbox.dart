@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:super_hueman/reference.dart';
+import 'package:super_hueman/structs.dart';
+import 'package:super_hueman/widgets.dart';
 
 int _r = 255, _g = 255, _b = 255;
 double _h = 0, _s = 0, _v = 0;
 
-ColorPicker _colorPicker = ColorPicker.rgb;
-Color get color {
+_ColorPicker _colorPicker = _ColorPicker.rgb;
+Color get _color {
   switch (_colorPicker) {
-    case ColorPicker.rgb:
-    case ColorPicker.select:
+    case _ColorPicker.rgb:
+    case _ColorPicker.select:
       return Color.fromARGB(255, _r, _g, _b);
-    case ColorPicker.hsv:
+    case _ColorPicker.hsv:
       return hsv(_h, _s, _v);
     default:
       return Colors.black;
   }
 }
 
-class RGBSlider extends StatelessWidget {
+class _RGBSlider extends StatelessWidget {
   final String name;
   final int value, multiplier;
   final ValueChanged<double> onChanged;
-  const RGBSlider(this.name, this.value,
-      {required this.multiplier, required this.onChanged, super.key});
+  const _RGBSlider(this.name, this.value, {required this.multiplier, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -58,12 +58,12 @@ class RGBSlider extends StatelessWidget {
   }
 }
 
-class HSVSlider extends StatelessWidget {
+class _HSVSlider extends StatelessWidget {
   final String name;
   final num value;
   final Color color;
   final ValueChanged<double> onChanged;
-  const HSVSlider(this.name, this.value, {required this.color, required this.onChanged, super.key});
+  const _HSVSlider(this.name, this.value, {required this.color, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +107,7 @@ class HSVSlider extends StatelessWidget {
   }
 }
 
-enum ColorPicker {
+enum _ColorPicker {
   rgb(icon: Icons.tune, tag: 'sliders'),
   hsv(icon: Icons.gradient, tag: 'plane'),
   select(icon: Icons.list, tag: 'a color');
@@ -115,7 +115,7 @@ enum ColorPicker {
   final IconData icon;
   // final String desc;
   final String tag;
-  const ColorPicker({required this.icon, required this.tag});
+  const _ColorPicker({required this.icon, required this.tag});
   String get upperName => name == 'select' ? 'Select' : name.toUpperCase();
 
   static List<BottomNavigationBarItem> get navBarItems => [
@@ -124,22 +124,22 @@ enum ColorPicker {
             icon: RotatedBox(quarterTurns: value == hsv ? 2 : 0, child: Icon(value.icon, size: 50)),
             label: value.upperName,
             tooltip: value.desc,
-            backgroundColor: contrastWith(color, threshold: 0.01).withAlpha(64),
+            backgroundColor: contrastWith(_color, threshold: 0.01).withAlpha(64),
           )
       ];
 
   String get desc => '$upperName $tag';
 }
 
-class ColorSelection extends StatelessWidget {
+class _ColorSelection extends StatelessWidget {
   final List<String> colorNames;
   final void Function(Color, HSVColor) updateColor;
-  const ColorSelection(this.colorNames, {required this.updateColor, super.key});
+  const _ColorSelection(this.colorNames, {required this.updateColor});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
+      decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
       padding: const EdgeInsets.symmetric(vertical: 50),
       child: Column(
         children: [
@@ -149,7 +149,7 @@ class ColorSelection extends StatelessWidget {
               child: TextButton(
                 style: TextButton.styleFrom(
                     shape: const BeveledRectangleBorder(),
-                    backgroundColor: color.roundedHexCode == colorFromName(colorName).hexCode
+                    backgroundColor: _color.roundedHexCode == colorFromName(colorName).hexCode
                         ? Colors.black45
                         : null),
                 onPressed: () {
@@ -180,10 +180,10 @@ class ColorSelection extends StatelessWidget {
   }
 }
 
-class ColorLabel extends StatelessWidget {
+class _ColorLabel extends StatelessWidget {
   final String property, value;
   final TextStyle? textStyle;
-  const ColorLabel(this.property, this.value, {this.textStyle, super.key});
+  const _ColorLabel(this.property, this.value, {this.textStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +200,7 @@ class ColorLabel extends StatelessWidget {
                 style: defaultStyle,
                 textAlign: TextAlign.right,
               )),
-          hspace(10),
+          const FixedSpacer.horizontal(10),
           SizedBox(width: 200, child: Text(value, style: textStyle ?? defaultStyle)),
         ],
       ),
@@ -219,18 +219,18 @@ class _SandboxState extends State<Sandbox> {
   void colorPickerPicker(int index) {
     setState(() {
       switch (_colorPicker) {
-        case ColorPicker.rgb:
-          HSVColor hsvColor = HSVColor.fromColor(color);
+        case _ColorPicker.rgb:
+          HSVColor hsvColor = HSVColor.fromColor(_color);
           _h = hsvColor.hue;
           _s = hsvColor.saturation;
           _v = hsvColor.value;
-        case ColorPicker.hsv:
-          _r = color.red;
-          _g = color.green;
-          _b = color.blue;
+        case _ColorPicker.hsv:
+          _r = _color.red;
+          _g = _color.green;
+          _b = _color.blue;
         default:
       }
-      _colorPicker = ColorPicker.values[index];
+      _colorPicker = _ColorPicker.values[index];
     });
   }
 
@@ -250,40 +250,44 @@ class _SandboxState extends State<Sandbox> {
       );
 
   Widget get title => Text(_colorPicker.desc, style: Theme.of(context).textTheme.headlineMedium);
-  Widget get colorName => ColorLabel(
+  Widget get colorName => _ColorLabel(
         'color name',
-        colorNames[color.roundedHexCode] ?? '[none]',
-        textStyle: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.bold, shadows: [
-          Shadow(color: contrastWith(color, threshold: 0.01).withAlpha(64), blurRadius: 3)
+        colorNames[_color.roundedHexCode] ?? '[none]',
+        textStyle: TextStyle(color: _color, fontSize: 20, fontWeight: FontWeight.bold, shadows: [
+          Shadow(color: contrastWith(_color, threshold: 0.01).withAlpha(64), blurRadius: 3)
         ]),
       );
-  Widget get hue => ColorLabel('hue', HSLColor.fromColor(color).hue.round().toString());
-  Widget get colorCode => ColorLabel('color code', color.hexCode);
+  Widget get hue => _ColorLabel('hue', HSLColor.fromColor(_color).hue.round().toString());
+  Widget get colorCode => _ColorLabel(
+        'color code',
+        _color.hexCode,
+        textStyle: const TextStyle(fontFamily: 'Consolas', fontSize: 18),
+      );
 
   @override
   Widget build(BuildContext context) {
     final Widget colorPicker = {
-      ColorPicker.rgb: Column(
+      _ColorPicker.rgb: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(width: 300, height: 300, color: color),
-          vspace(30),
+          Container(width: 300, height: 300, color: _color),
+          const FixedSpacer(30),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RGBSlider(
+              _RGBSlider(
                 'red',
                 _r,
                 multiplier: 0x010000,
                 onChanged: (value) => setState(() => _r = value.round()),
               ),
-              RGBSlider(
+              _RGBSlider(
                 'green',
                 _g,
                 multiplier: 0x000100,
                 onChanged: (value) => setState(() => _g = value.round()),
               ),
-              RGBSlider(
+              _RGBSlider(
                 'blue',
                 _b,
                 multiplier: 0x000001,
@@ -293,7 +297,7 @@ class _SandboxState extends State<Sandbox> {
           ),
         ],
       ),
-      ColorPicker.hsv: Column(
+      _ColorPicker.hsv: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
@@ -333,39 +337,39 @@ class _SandboxState extends State<Sandbox> {
                   alignment: Alignment(2 * _s - 1, 1 - 2 * _v),
                   child: Icon(
                     Icons.add,
-                    color: contrastWith(color),
+                    color: contrastWith(_color),
                     size: 40,
                   ),
                 ),
               ],
             ),
           ),
-          HSVSlider(
+          _HSVSlider(
             'hue',
             _h,
             color: hsv(_h, 1, 1),
             onChanged: (value) => setState(() => _h = value),
           ),
-          HSVSlider(
+          _HSVSlider(
             'saturation',
             _s,
             color: hsv(_h, _s, 1),
             onChanged: (value) => setState(() => _s = value),
           ),
-          HSVSlider(
+          _HSVSlider(
             'value',
             _v,
             color: hsv(_h, _s, _v),
             onChanged: (value) => setState(() => _v = value),
           ),
-          vspace(25),
-          Container(width: 500, height: 100, color: color),
+          const FixedSpacer(25),
+          Container(width: 500, height: 100, color: _color),
         ],
       ),
-      ColorPicker.select: Column(
+      _ColorPicker.select: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ColorSelection(
+          _ColorSelection(
             const [
               'red',
               'orange',
@@ -402,33 +406,31 @@ class _SandboxState extends State<Sandbox> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            filler,
+            const Spacer(),
             backButton,
-            filler,
+            const Spacer(),
             title,
-            filler,
+            const Spacer(),
             AnimatedSize(
               duration: const Duration(milliseconds: 100),
               curve: Curves.easeInOutCubic,
               child: colorPicker,
             ),
-            filler,
-            filler,
+            const Spacer(flex: 2),
             hue,
             colorName,
             colorCode,
-            filler,
-            filler,
+            const Spacer(flex: 2),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0,
         type: BottomNavigationBarType.shifting,
-        items: ColorPicker.navBarItems,
+        items: _ColorPicker.navBarItems,
         currentIndex: _colorPicker.index,
-        selectedItemColor: color,
-        unselectedItemColor: color.withAlpha(128),
+        selectedItemColor: _color,
+        unselectedItemColor: _color.withAlpha(128),
         onTap: colorPickerPicker,
       ),
     );

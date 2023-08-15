@@ -1,32 +1,80 @@
+import 'package:flutter/material.dart';
+import 'package:super_hueman/structs.dart';
 import 'dart:math';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:super_hueman/reference.dart';
+
+const Widget empty = SizedBox.shrink();
+
+class FixedSpacer extends StatelessWidget {
+  final double size;
+  final bool horizontal;
+  const FixedSpacer(this.size, {super.key}) : horizontal = false;
+  const FixedSpacer.horizontal(this.size, {super.key}) : horizontal = true;
+
+  @override
+  Widget build(BuildContext context) => horizontal ? SizedBox(width: size) : SizedBox(height: size);
+}
+
+class MenuButton extends StatelessWidget {
+  final String label;
+  final void Function() onPressed;
+  final Color color;
+  const MenuButton(this.label, {required this.color, required this.onPressed, super.key});
+
+  @override
+  Widget build(BuildContext context) => ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+            backgroundColor: color, foregroundColor: inverted ? Colors.white : Colors.black),
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text(label, style: const TextStyle(fontSize: 24)),
+        ),
+      );
+}
+
+class NavigateButton extends StatelessWidget {
+  final Pages page;
+  final Color color;
+  const NavigateButton(this.page, {required this.color, super.key});
+
+  @override
+  Widget build(BuildContext context) => MenuButton(
+        page(),
+        color: color,
+        onPressed: () => context.goto(page),
+      );
+}
 
 class GameScreen extends StatelessWidget {
   final Color color;
   final FocusNode hueFocusNode;
   final TextEditingController hueController;
   final WidgetBuilder hueDialogBuilder;
+  final ScoreKeeper? scoreKeeper;
   final void Function() generateHue;
   const GameScreen({
     required this.color,
     required this.hueFocusNode,
     required this.hueController,
     required this.hueDialogBuilder,
+    required this.scoreKeeper,
     required this.generateHue,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    void submit() async {
-      await showDialog(context: context, builder: hueDialogBuilder);
-      generateHue();
-      hueController.clear();
-      hueFocusNode.requestFocus();
+    void submit() {
+      showDialog(context: context, builder: hueDialogBuilder).then((_) {
+        scoreKeeper?.scoreTheRound();
+        scoreKeeper?.roundCheck(context);
+        generateHue();
+        hueController.clear();
+        hueFocusNode.requestFocus();
+      });
     }
 
     TextEditingValue textFormatFunction(TextEditingValue oldValue, TextEditingValue newValue) {
@@ -40,7 +88,7 @@ class GameScreen extends StatelessWidget {
     final backButton = TextButton(
       style: TextButton.styleFrom(
         foregroundColor: Colors.white70,
-        backgroundColor: Colors.black12,
+        backgroundColor: Colors.black26,
       ),
       onPressed: () => context.goto(Pages.mainMenu),
       child: const Padding(
@@ -86,18 +134,20 @@ class GameScreen extends StatelessWidget {
     return Scaffold(
         body: Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          const Spacer(flex: 2),
           backButton,
-          vspace(50),
+          const FixedSpacer(50),
           colorBox,
-          vspace(100),
+          const Spacer(),
           whatsTheHue,
-          vspace(50),
+          const FixedSpacer(50),
           textField,
-          vspace(25),
+          const FixedSpacer(25),
           submitButton,
-          vspace(100),
+          const Spacer(flex: 2),
+          scoreKeeper?.midRoundDisplay ?? empty,
+          const Spacer(),
         ],
       ),
     ));
@@ -112,7 +162,7 @@ class _AnswerFeedback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(children: [
-        filler,
+        const Spacer(),
         SizedBox(width: 130, child: Text(text, textAlign: TextAlign.end, style: _style)),
         const SizedBox(width: 10),
         Text(val.toString(), style: _style),
@@ -179,7 +229,7 @@ class _HundredPercentGradeState extends State<HundredPercentGrade> {
   @override
   Widget build(BuildContext context) {
     const Widget line = _PercentBar();
-    const Widget fullLine = Row(children: [line, filler, line]);
+    const Widget fullLine = Row(children: [line, Spacer(), line]);
     const TextStyle style = TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 30,
@@ -222,7 +272,7 @@ class PercentGrade extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget line = _PercentBar(accuracy * 2, color);
-    final Widget fullLine = Row(children: [line, filler, line]);
+    final Widget fullLine = Row(children: [line, const Spacer(), line]);
     const TextStyle style = TextStyle(
       fontSize: 18,
       shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
@@ -277,7 +327,7 @@ class _HueDialogState extends State<HueDialog> {
   void initState() {
     super.initState();
     ticker = widget.isSuper ? epicSetup(setState) : null;
-    sleep(0.2).then((_) => addListener(_listenForEnter));
+    sleep(widget.isSuper ? 1 : 0.2).then((_) => addListener(_listenForEnter));
   }
 
   @override
@@ -302,7 +352,6 @@ class _HueDialogState extends State<HueDialog> {
                 color: epicColor)
             : null,
       ),
-      // elevation: widget.isSuper ? (30 - ((epicIndex % 60) - 30).abs()) / 1.5 : null,
       elevation: widget.isSuper ? (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 10 : null,
       shadowColor: widget.isSuper ? epicColor : null,
       surfaceTintColor: widget.isSuper ? epicColor : null,
@@ -310,9 +359,24 @@ class _HueDialogState extends State<HueDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           widget.graphic,
-          const SizedBox(height: 20),
+          const FixedSpacer(20),
           _AnswerFeedback(widget.guess, text: 'Your answer:'),
           _AnswerFeedback(widget.hue, text: 'Correct answer:'),
+          ...(mastery || !widget.isSuper)
+              ? []
+              : [
+                  const FixedSpacer(20),
+                  Text(
+                    'all game modes\nunlocked!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: epicColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                      shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
+                    ),
+                  ),
+                ]
         ],
       ),
     );

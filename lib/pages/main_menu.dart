@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:super_hueman/reference.dart';
+import 'package:super_hueman/structs.dart';
+import 'package:super_hueman/widgets.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -29,15 +32,24 @@ class _MainMenuState extends State<MainMenu> {
     super.dispose();
   }
 
-  menuButton(Pages page) {
-    return ElevatedButton(
-      onPressed: () => context.goto(page),
-      style: ElevatedButton.styleFrom(backgroundColor: epicColor, foregroundColor: Colors.black),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Text(page(), style: const TextStyle(fontSize: 24)),
-      ),
-    );
+  bool done = false;
+  List<String> calculateColors(double targetLuminance) {
+    List<String> colors = [];
+    for (double hue = 0; hue < 360; hue++) {
+      double max = 1, min = 0;
+      double mid() => (max + min) / 2;
+      Color color() => HSLColor.fromAHSL(1, hue, 1, mid()).toColor();
+      for (int i = 0; i < 15; i++) {
+        double luminance = color().computeLuminance();
+        if (luminance > targetLuminance) {
+          max = mid();
+        } else {
+          min = mid();
+        }
+      }
+      colors.add(color().hexCode);
+    }
+    return colors;
   }
 
   @override
@@ -72,7 +84,7 @@ class _MainMenuState extends State<MainMenu> {
             ),
           ],
         ),
-        vspace(67),
+        const FixedSpacer(67),
         ElevatedButton(
           onPressed: () => setState(() => menuPage = MenuPage.introSelect),
           style:
@@ -82,35 +94,18 @@ class _MainMenuState extends State<MainMenu> {
             child: Text('intro', style: TextStyle(fontSize: 24)),
           ),
         ),
-        vspace(33),
-        menuButton(Pages.intense),
-        vspace(33),
-        menuButton(Pages.master),
-        vspace(67),
-        menuButton(Pages.sandbox),
+        const FixedSpacer(33),
+        NavigateButton(Pages.intense, color: epicColor),
+        ...mastery
+            ? [
+                const FixedSpacer(33),
+                NavigateButton(Pages.master, color: epicColor),
+              ]
+            : [],
+        const FixedSpacer(67),
+        NavigateButton(Pages.sandbox, color: epicColor),
       ],
       MenuPage.settings: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-              value: casualMode,
-              onChanged: (value) {
-                setState(() => casualMode = value!);
-              },
-            ),
-            hspace(10),
-            const Text(
-              'casual mode',
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
-        ),
-        Text(
-          casualMode ? 'play without keeping score' : 'keep score when you play',
-          style: Theme.of(context).textTheme.labelSmall,
-        ),
-        vspace(50),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -119,7 +114,7 @@ class _MainMenuState extends State<MainMenu> {
                 onChanged: (value) {
                   setState(() => autoSubmit = value!);
                 }),
-            hspace(10),
+            const FixedSpacer.horizontal(10),
             const Text(
               'auto-submit',
               style: TextStyle(fontSize: 18),
@@ -130,34 +125,101 @@ class _MainMenuState extends State<MainMenu> {
           autoSubmit ? "'submit' when 3 digits are entered" : "submit with the 'submit' button",
           style: Theme.of(context).textTheme.labelSmall,
         ),
-        ...showDonation
+        const FixedSpacer(50),
+        ...mastery
             ? [
-                vspace(50),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    ElevatedButton(
-                      onPressed: () => {},
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: epicColor, foregroundColor: Colors.black),
-                      child: const Padding(
-                        padding: EdgeInsets.only(bottom: 4),
-                        child: Text('ads', style: TextStyle(fontSize: 24)),
-                      ),
+                    Checkbox(
+                      value: casualMode,
+                      onChanged: (value) {
+                        setState(() => casualMode = value!);
+                      },
+                    ),
+                    const FixedSpacer.horizontal(10),
+                    const Text(
+                      'casual mode',
+                      style: TextStyle(fontSize: 18),
                     ),
                   ],
                 ),
+                Text(
+                  casualMode ? 'play without keeping score' : 'keep score when you play',
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                const FixedSpacer(67),
+                Center(
+                    child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: epicColor, width: 2),
+                    foregroundColor: epicColor,
+                    backgroundColor: const Color(0xff121212),
+                    shadowColor: epicColor,
+                  ),
+                  onPressed: () => context.goto(Pages.ads),
+                  child: const Padding(
+                    padding: EdgeInsets.only(top: 5, bottom: 10),
+                    child: Text('ads', style: TextStyle(fontSize: 24)),
+                  ),
+                )),
+                const FixedSpacer(33),
+                Center(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      setState(() => inverted = true);
+                      context.goto(Pages.inverseMenu);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: epicColor, width: 2),
+                      foregroundColor: epicColor,
+                      backgroundColor: const Color(0xff121212),
+                      shadowColor: epicColor,
+                      elevation: (sin(epicHue / 360 * 2 * pi * 6) + 1) * 6,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 14),
+                      child: Text(Pages.inverseMenu(), style: const TextStyle(fontSize: 24)),
+                    ),
+                  ),
+                ),
               ]
-            : [],
-        vspace(50),
-        const SizedBox(
-          width: double.infinity,
-          child: Text(
-            '(Tip: long-press a button\nto replay the tutorial!)',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white60),
-          ),
-        ),
+            : [
+                Center(
+                    child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: epicColor, width: 2),
+                    foregroundColor: epicColor,
+                    backgroundColor: const Color(0xff121212),
+                    shadowColor: epicColor,
+                  ),
+                  onPressed: () => {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const AlertDialog(
+                        content: Text(
+                          'unlock more options\nby playing "intense" mode!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 18, color: Colors.white70),
+                        ),
+                      ),
+                    ),
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.only(top: 5, bottom: 10),
+                    child: Text('more options', style: TextStyle(fontSize: 18)),
+                  ),
+                )),
+              ],
+
+        // child: MenuButton(
+        //   Pages.inverseMenu(),
+        //   color: epicColor,
+        //   onPressed: () {
+        //     setState(() => inverted = true);
+        //     context.goto(Pages.inverseMenu);
+        //   },
+        // )),
       ],
       MenuPage.introSelect: [
         Text(
@@ -165,12 +227,22 @@ class _MainMenuState extends State<MainMenu> {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
-        vspace(55),
-        menuButton(Pages.intro3),
-        vspace(33),
-        menuButton(Pages.intro6),
-        vspace(33),
-        menuButton(Pages.intro12),
+        const FixedSpacer(55),
+        NavigateButton(Pages.intro3, color: epicColor),
+        const FixedSpacer(33),
+        NavigateButton(Pages.intro6, color: epicColor),
+        const FixedSpacer(33),
+        NavigateButton(Pages.intro12, color: epicColor),
+        ...casualMode
+            ? []
+            : [
+                const FixedSpacer(33),
+                const Text(
+                  "during 'intro' games,\nquick answers score higher!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white60),
+                )
+              ]
       ],
     }[menuPage]!;
 
