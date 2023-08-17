@@ -3,8 +3,10 @@
         "source.fixAll": true
     },
     "editor.formatOnSave": true,
-    "dart.lineLength": 100,
+    "dart.lineLength": 98,
     "[dart]": {
-        "editor.rulers": [100]
+        "editor.rulers": [
+            100
+        ]
     }
 }

@@ -70,7 +70,7 @@ enum Pages {
 bool mastery = true;
 bool inverted = false;
 bool casualMode = true;
-bool autoSubmit = false;
+bool autoSubmit = true;
 
 abstract class ScoreKeeper {
   Pages get page;
@@ -88,6 +88,10 @@ extension ContextStuff on BuildContext {
 
 void addListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.addListener(func);
 void yeetListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.removeListener(func);
+
+extension Average on List<int> {
+  double get average => reduce((a, b) => a + b) / length;
+}
 
 Color hsv(num h, double s, double v) => HSVColor.fromAHSV(1, h.toDouble(), s, v).toColor();
 
@@ -122,7 +126,7 @@ const Map<String, String> colorNames = {
   '#FFFF00': 'yellow',
   '#80FF00': 'lime',
   '#00FF00': 'green',
-  '#00FF80': 'jade',
+  '#00FF80': 'spring',
   '#00FFFF': 'cyan',
   '#0080FF': 'azure',
   '#0000FF': 'blue',
@@ -143,7 +147,7 @@ Color colorFromName(String colorName) {
   throw ArgumentError('color $colorName not found');
 }
 
-const List<int> _epicColors = [
+const List<int> epicColors = [
   0xffffa3a3,
   0xffffa3a1,
   0xffffa39f,
@@ -874,9 +878,9 @@ late int _lastEpicChange;
 
 /// a [Color] with [epicHue] as its hue.
 ///
-/// The color is retrieved from [_epicColors],
+/// The color is retrieved from [epicColors],
 /// where all colors have the same luminosity.
-Color get epicColor => Color(_epicColors[epicHue]);
+Color get epicColor => Color(epicColors[epicHue]);
 
 /// similar to [epicColor], but the color is darker.
 ///

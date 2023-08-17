@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:super_hueman/pages/intense.dart';
 import 'package:super_hueman/structs.dart';
 import 'dart:math';
 
@@ -14,7 +15,8 @@ class FixedSpacer extends StatelessWidget {
   const FixedSpacer.horizontal(this.size, {super.key}) : horizontal = true;
 
   @override
-  Widget build(BuildContext context) => horizontal ? SizedBox(width: size) : SizedBox(height: size);
+  Widget build(BuildContext context) =>
+      horizontal ? SizedBox(width: size) : SizedBox(height: size);
 }
 
 class MenuButton extends StatelessWidget {
@@ -55,6 +57,7 @@ class GameScreen extends StatelessWidget {
   final WidgetBuilder hueDialogBuilder;
   final ScoreKeeper? scoreKeeper;
   final void Function() generateHue;
+  final Widget? image;
   const GameScreen({
     required this.color,
     required this.hueFocusNode,
@@ -62,8 +65,18 @@ class GameScreen extends StatelessWidget {
     required this.hueDialogBuilder,
     required this.scoreKeeper,
     required this.generateHue,
+    this.image,
     super.key,
   });
+
+  Color? get backgroundColor {
+    final ScoreKeeper? sk = scoreKeeper;
+    if (sk is MasterScoreKeeper) {
+      final int colorVal = ((100 - sk.rank + (sk.rank % 25)) * 0.18).round();
+      return Color.fromARGB(255, colorVal, colorVal, colorVal);
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +112,13 @@ class GameScreen extends StatelessWidget {
         ),
       ),
     );
-    final colorBox = Container(width: 300, height: 300, color: color);
+    final colorBox = image == null
+        ? [Container(width: 400, height: 400, color: color)]
+        : [
+            image!,
+            const Spacer(),
+            Container(width: 500, height: 150, color: color),
+          ];
     final whatsTheHue = Text(
       'What\'s the hue?',
       textAlign: TextAlign.center,
@@ -131,14 +150,13 @@ class GameScreen extends StatelessWidget {
           child: Text('submit', style: TextStyle(fontSize: 16)),
         ));
 
-    return Scaffold(
-        body: Center(
+    Widget mainContent = Center(
       child: Column(
         children: <Widget>[
           const Spacer(flex: 2),
           backButton,
           const FixedSpacer(50),
-          colorBox,
+          ...colorBox,
           const Spacer(),
           whatsTheHue,
           const FixedSpacer(50),
@@ -150,7 +168,72 @@ class GameScreen extends StatelessWidget {
           const Spacer(),
         ],
       ),
-    ));
+    );
+
+    final sk = scoreKeeper;
+    if (sk is MasterScoreKeeper) {
+      mainContent = RankBars(sk.rank, color: color, child: mainContent);
+    }
+
+    return Scaffold(body: mainContent, backgroundColor: backgroundColor);
+  }
+}
+
+class RankBars extends StatelessWidget {
+  final int rank;
+  final Color color;
+  final Widget child;
+  const RankBars(this.rank, {required this.color, required this.child, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final int activeIndex = rank ~/ 25 + 1;
+    final List<Color> rankBarColors = [
+      Colors.black12,
+      Colors.white12,
+      Colors.white24,
+      Colors.white38,
+      color,
+    ];
+
+    final List<(Color, double)> rankBarData = [
+      for (int i = 0; i < rankBarColors.length; i++)
+        (
+          rankBarColors[i],
+          i < activeIndex
+              ? screenHeight
+              : i == activeIndex
+                  ? screenHeight * (rank % 25) / 25
+                  : 0
+        )
+    ];
+
+    final Widget rankBar = SizedBox(
+      width: 25,
+      child: Stack(
+        children: [
+          for (final (color, height) in rankBarData)
+            Column(
+              children: [
+                const Spacer(),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 750),
+                  curve: Curves.easeOutCubic,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 750),
+                    curve: Curves.easeOutCubic,
+                    color: color,
+                    height: height,
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+
+    return Row(children: [rankBar, Expanded(child: child), rankBar]);
   }
 }
 
@@ -190,15 +273,13 @@ class _PercentBarState extends State<_PercentBar> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 600),
-      curve: Curves.easeOutCubic,
-      color: widget.color,
-      width: width,
-      height: width / (widget.color == Colors.black ? 10 : 15),
-    );
-  }
+  Widget build(BuildContext context) => AnimatedContainer(
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeOutCubic,
+        color: widget.color,
+        width: width,
+        height: width / (widget.color == Colors.black ? 10 : 15),
+      );
 }
 
 class HundredPercentGrade extends StatefulWidget {
@@ -301,6 +382,25 @@ class PercentGrade extends StatelessWidget {
   }
 }
 
+class ColorNameBox extends StatelessWidget {
+  final Color color;
+  const ColorNameBox(this.color, {super.key});
+
+  @override
+  Widget build(BuildContext context) => Container(
+        decoration:
+            BoxDecoration(border: Border.all(color: color, width: 4), color: Colors.black38),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text(
+            colorNames[color.hexCode]!,
+            style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+        ),
+      );
+}
+
 class HueDialog extends StatefulWidget {
   final String text;
   final int guess, hue;
@@ -338,47 +438,45 @@ class _HueDialogState extends State<HueDialog> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(
-        widget.text,
-        textAlign: TextAlign.center,
-        style: widget.isSuper
-            ? TextStyle(
-                shadows: const [Shadow(blurRadius: 8)],
-                fontSize: 42,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.bold,
-                color: epicColor)
-            : null,
-      ),
-      elevation: widget.isSuper ? (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 10 : null,
-      shadowColor: widget.isSuper ? epicColor : null,
-      surfaceTintColor: widget.isSuper ? epicColor : null,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          widget.graphic,
-          const FixedSpacer(20),
-          _AnswerFeedback(widget.guess, text: 'Your answer:'),
-          _AnswerFeedback(widget.hue, text: 'Correct answer:'),
-          ...(mastery || !widget.isSuper)
-              ? []
-              : [
-                  const FixedSpacer(20),
-                  Text(
-                    'all game modes\nunlocked!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: epicColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                      shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
+  Widget build(BuildContext context) => AlertDialog(
+        title: Text(
+          widget.text,
+          textAlign: TextAlign.center,
+          style: widget.isSuper
+              ? TextStyle(
+                  shadows: const [Shadow(blurRadius: 8)],
+                  fontSize: 42,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold,
+                  color: epicColor)
+              : null,
+        ),
+        elevation: widget.isSuper ? (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 10 : null,
+        shadowColor: widget.isSuper ? epicColor : null,
+        surfaceTintColor: widget.isSuper ? epicColor : null,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            widget.graphic,
+            const FixedSpacer(20),
+            _AnswerFeedback(widget.guess, text: 'Your answer:'),
+            _AnswerFeedback(widget.hue, text: 'Correct answer:'),
+            ...(mastery || !widget.isSuper)
+                ? []
+                : [
+                    const FixedSpacer(20),
+                    Text(
+                      'all game modes\nunlocked!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: epicColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
+                      ),
                     ),
-                  ),
-                ]
-        ],
-      ),
-    );
-  }
+                  ]
+          ],
+        ),
+      );
 }

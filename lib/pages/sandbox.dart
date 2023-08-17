@@ -25,37 +25,35 @@ class _RGBSlider extends StatelessWidget {
   const _RGBSlider(this.name, this.value, {required this.multiplier, required this.onChanged});
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        RotatedBox(
-          quarterTurns: 3,
-          child: SizedBox(
-            width: 384,
-            child: SliderTheme(
-              data: const SliderThemeData(
-                trackHeight: 15,
-                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
-              ),
-              child: Slider(
-                thumbColor: Color(0xFF000000 + value * multiplier),
-                activeColor: Color(0x80000000 + value * multiplier),
-                inactiveColor: Colors.white24,
-                max: 255,
-                value: value.toDouble(),
-                onChanged: onChanged,
+  Widget build(BuildContext context) => Column(
+        children: [
+          RotatedBox(
+            quarterTurns: 3,
+            child: SizedBox(
+              width: 384,
+              child: SliderTheme(
+                data: const SliderThemeData(
+                  trackHeight: 15,
+                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
+                ),
+                child: Slider(
+                  thumbColor: Color(0xFF000000 + value * multiplier),
+                  activeColor: Color(0x80000000 + value * multiplier),
+                  inactiveColor: Colors.white24,
+                  max: 255,
+                  value: value.toDouble(),
+                  onChanged: onChanged,
+                ),
               ),
             ),
           ),
-        ),
-        Container(
-          width: 125,
-          alignment: Alignment.center,
-          child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
-        ),
-      ],
-    );
-  }
+          Container(
+            width: 125,
+            alignment: Alignment.center,
+            child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
+          ),
+        ],
+      );
 }
 
 class _HSVSlider extends StatelessWidget {
@@ -66,45 +64,43 @@ class _HSVSlider extends StatelessWidget {
   const _HSVSlider(this.name, this.value, {required this.color, required this.onChanged});
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-            width: 80,
+  Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+              width: 80,
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge,
+              )),
+          SizedBox(
+            width: 370,
+            child: SliderTheme(
+              data: const SliderThemeData(
+                trackHeight: 10,
+                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12),
+              ),
+              child: Slider(
+                thumbColor: color,
+                activeColor: color.withAlpha(128),
+                inactiveColor: Colors.white24,
+                max: name == 'hue' ? 359 : 1,
+                value: value.toDouble(),
+                onChanged: onChanged,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 50,
             child: Text(
-              name,
+              name == 'hue' ? value.round().toString() : value.toStringAsFixed(2),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyLarge,
-            )),
-        SizedBox(
-          width: 370,
-          child: SliderTheme(
-            data: const SliderThemeData(
-              trackHeight: 10,
-              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12),
-            ),
-            child: Slider(
-              thumbColor: color,
-              activeColor: color.withAlpha(128),
-              inactiveColor: Colors.white24,
-              max: name == 'hue' ? 359 : 1,
-              value: value.toDouble(),
-              onChanged: onChanged,
             ),
           ),
-        ),
-        SizedBox(
-          width: 50,
-          child: Text(
-            name == 'hue' ? value.round().toString() : value.toStringAsFixed(2),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
 }
 
 enum _ColorPicker {
@@ -137,47 +133,45 @@ class _ColorSelection extends StatelessWidget {
   const _ColorSelection(this.colorNames, {required this.updateColor});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
-      padding: const EdgeInsets.symmetric(vertical: 50),
-      child: Column(
-        children: [
-          for (final colorName in colorNames)
-            SizedBox(
-              width: 500,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                    shape: const BeveledRectangleBorder(),
-                    backgroundColor: _color.roundedHexCode == colorFromName(colorName).hexCode
-                        ? Colors.black45
-                        : null),
-                onPressed: () {
-                  final Color rgb = colorFromName(colorName);
-                  final HSVColor hsv = HSVColor.fromColor(rgb);
+  Widget build(BuildContext context) => Container(
+        decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
+        padding: const EdgeInsets.symmetric(vertical: 50),
+        child: Column(
+          children: [
+            for (final colorName in colorNames)
+              SizedBox(
+                width: 500,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                      shape: const BeveledRectangleBorder(),
+                      backgroundColor: _color.roundedHexCode == colorFromName(colorName).hexCode
+                          ? Colors.black45
+                          : null),
+                  onPressed: () {
+                    final Color rgb = colorFromName(colorName);
+                    final HSVColor hsv = HSVColor.fromColor(rgb);
 
-                  updateColor(rgb, hsv);
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
+                    updateColor(rgb, hsv);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                          width: 150,
+                          child: Text(colorName, style: Theme.of(context).textTheme.headlineSmall)),
+                      Container(
                         width: 150,
-                        child: Text(colorName, style: Theme.of(context).textTheme.headlineSmall)),
-                    Container(
-                      width: 150,
-                      height: 40,
-                      margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
-                      color: colorFromName(colorName),
-                    ),
-                  ],
+                        height: 40,
+                        margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
+                        color: colorFromName(colorName),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            )
-        ],
-      ),
-    );
-  }
+              )
+          ],
+        ),
+      );
 }
 
 class _ColorLabel extends StatelessWidget {
@@ -376,7 +370,7 @@ class _SandboxState extends State<Sandbox> {
               'yellow',
               'lime',
               'green',
-              'jade',
+              'spring',
               'cyan',
               'azure',
               'blue',

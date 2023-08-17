@@ -108,30 +108,20 @@ class _IntroModeState extends State<IntroMode> {
     super.dispose();
   }
 
-  Widget get graphic => Container(
-        decoration:
-            BoxDecoration(border: Border.all(color: color, width: 4), color: Colors.black38),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text(
-            colorNames[color.hexCode]!,
-            style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-        ),
+  Widget hueDialogBuilder(context) => HueDialog(
+        (hue == guess) ? 'Nice work!' : 'Incorrect…',
+        guess,
+        hue,
+        ColorNameBox(color),
       );
 
-  String get text => (hue == guess) ? 'Nice work!' : 'Incorrect…';
-
   @override
-  Widget build(BuildContext context) {
-    return GameScreen(
-      color: color,
-      hueFocusNode: hueFocusNode,
-      hueController: hueController,
-      hueDialogBuilder: (context) => HueDialog(text, guess, hue, graphic),
-      generateHue: () => setState(generateHue),
-      scoreKeeper: scoreKeeper,
-    );
-  }
+  Widget build(BuildContext context) => GameScreen(
+        color: color,
+        hueFocusNode: hueFocusNode,
+        hueController: hueController,
+        hueDialogBuilder: hueDialogBuilder,
+        generateHue: () => setState(generateHue),
+        scoreKeeper: scoreKeeper,
+      );
 }

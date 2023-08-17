@@ -9,12 +9,10 @@ class Snippet extends StatelessWidget {
   const Snippet(this.text, {super.key});
 
   @override
-  Widget build(BuildContext context) => Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
+  Widget build(BuildContext context) => Text(
+        text,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.headlineSmall,
       );
 }
 
@@ -25,8 +23,24 @@ class Ads extends StatefulWidget {
   State<Ads> createState() => _AdsState();
 }
 
+class AdsAnimation {
+  final double delay;
+  final Widget Function(Color) widget;
+  final bool replacePrevious;
+  AdsAnimation(this.delay, this.widget, {this.replacePrevious = false});
+
+  double opacity = 0;
+}
+
+class SnippetAnimation extends AdsAnimation {
+  final String text;
+  SnippetAnimation(double delay, this.text, {bool replacePrevious = false})
+      : super(delay, (_) => Snippet(text), replacePrevious: replacePrevious);
+}
+
 class _AdsState extends State<Ads> {
   late final Ticker ticker;
+  static const duration = Duration(milliseconds: 300);
 
   @override
   void initState() {
@@ -43,77 +57,125 @@ class _AdsState extends State<Ads> {
 
   void goBack() => context.goto(Pages.mainMenu);
 
-  List<(double, Widget)> get items => [
-        (0, const Spacer()),
-        (
-          5,
-          const Snippet('This game uses cookies\n' 'to share data with third-party advertisers.')
-        ),
-        (3, const Snippet('Just kidding.  :)')),
-        (5, const Snippet('This is an open-source game\n' 'with zero ads or paywalls.')),
-        (5, const Snippet('Lots of open-source projects run on donations\n' 'from the community…')),
-        (5, const Snippet("…but to be honest, I don't need money.")),
-        (
-          5,
-          const Snippet("I'm actually working on another mobile game right now.\n"
-              "It's a much bigger project than this one.")
-        ),
-        (5, const Snippet('If you want me to send you an email when it comes out,')),
-        (
-          5,
-          MenuButton(
+  List<AdsAnimation> get allItems => [
+        AdsAnimation(1, (_) => empty),
+        SnippetAnimation(
+            5.5, 'This game uses cookies\n' 'to share data with third-party advertisers.'),
+        SnippetAnimation(3.5, 'Just kidding.  :)', replacePrevious: true),
+        SnippetAnimation(4, "This game is open-source: it doesn't have any ads or paywalls.",
+            replacePrevious: true),
+        SnippetAnimation(
+            7.5,
+            'Most open-source projects rely on donations from the community\n'
+            'to cover the cost of servers and ongoing development.'),
+        SnippetAnimation(
+            5,
+            'Even if you just make a small contribution,\n'
+            'it would make a huge difference.'),
+        SnippetAnimation(3, 'Just kidding again   :)\n', replacePrevious: true),
+        SnippetAnimation(4, 'asking people for money is super cringe lol\n', replacePrevious: true),
+        SnippetAnimation(5, "There's something else I'd like to ask, if that's all right."),
+        SnippetAnimation(4, "I'm actually working on another mobile game right now."),
+        AdsAnimation(
+            7,
+            (c) => RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(
+                        fontFamily: 'Segoe UI', fontSize: 24, fontWeight: FontWeight.w400),
+                    children: [
+                      const TextSpan(text: "You're gonna love it just as much as super"),
+                      TextSpan(
+                        text: 'ʜ\u1d1cᴇ',
+                        style: TextStyle(color: c, fontWeight: FontWeight.w600),
+                      ),
+                      const TextSpan(text: 'man,\nif not even more :D'),
+                    ],
+                  ),
+                )),
+        SnippetAnimation(4, "It's a much bigger project than this one though."),
+        SnippetAnimation(4, 'If you want me to send you an email when it comes out,'),
+        AdsAnimation(
+          4,
+          (c) => MenuButton(
             'click here!',
-            color: epicColor,
-            onPressed: () => visibleIndex >= 8 ? launchUrl(Uri.parse('https://google.com/')) : null,
-          )
+            color: c,
+            onPressed: () => launchUrl(Uri.parse('https://google.com/')),
+          ),
         ),
-        (0, const Spacer()),
-        (
-          5,
-          const Snippet('Hopefully a bunch of people join that email list,\n'
-              'and my ADHD brain will feel super motivated to work on it.')
-        ),
-        (5, const Snippet('Thanks for your time.')),
-        (
-          5,
-          OutlinedButton(
-              onPressed: visibleIndex >= 12 ? goBack : null,
-              child: const Padding(
-                padding: EdgeInsets.only(top: 5, bottom: 8),
-                child: Text('go back', style: TextStyle(fontSize: 18)),
-              ))
-        ),
-        (5, const Spacer()),
+        AdsAnimation(0, (_) => empty),
+        SnippetAnimation(
+            5,
+            'Hopefully a bunch of people join that email list,\n'
+            "and it'll really motivate my ADHD brain to work on it."),
+        SnippetAnimation(1.5, 'Thanks for your time.'),
+        AdsAnimation(
+            0,
+            (_) => TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white70,
+                    backgroundColor: Colors.black26,
+                  ),
+                  onPressed: goBack,
+                  child: const Padding(
+                    padding: EdgeInsets.fromLTRB(5, 10, 5, 13),
+                    child: Text(
+                      'go back',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                )),
+        AdsAnimation(0, (_) => empty),
       ];
 
-  int visibleIndex = 0;
+  int get permanentItems {
+    int total = 0;
+    for (final item in allItems) {
+      if (!item.replacePrevious) total++;
+    }
+    return total;
+  }
+
+  late final List<AdsAnimation?> items;
 
   void animateThisPage() async {
-    for (final (delay, _) in items) {
-      await sleep(delay);
-      visibleIndex += 1;
+    items = List.filled(permanentItems, null);
+    int childrenIndex = -1;
+
+    for (final animation in allItems) {
+      if (animation.replacePrevious) {
+        setState(() => items[childrenIndex]!.opacity = 0);
+        await Future.delayed(duration);
+      } else {
+        childrenIndex++;
+      }
+      setState(() => items[childrenIndex] = animation);
+      await sleep(duration.inMilliseconds * 0.0005);
+      setState(() => items[childrenIndex]!.opacity = 1);
+      await sleep(animation.delay);
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 0; i < items.length; i++)
-              Expanded(
-                child: Center(
+  Widget build(BuildContext context) => Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (final child in items) ...[
+                AnimatedSize(
+                  duration: duration,
+                  curve: Curves.easeOutCubic,
                   child: AnimatedOpacity(
-                      opacity: i <= visibleIndex ? 1 : 0,
-                      duration: const Duration(milliseconds: 250),
-                      child: items[i].$2),
+                    duration: duration,
+                    opacity: child?.opacity ?? 0,
+                    child: Center(child: child?.widget(epicColor)),
+                  ),
                 ),
-              )
-          ],
+                const Spacer(),
+              ]
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

@@ -22,6 +22,10 @@ class _InverseMenuState extends State<InverseMenu> {
   void initState() {
     super.initState();
     ticker = inverseSetup(setState);
+    sleep(0.5)
+        .then((value) => setState(() => opacity = 0))
+        .then((value) => sleep(1))
+        .then((value) => setState(() => maskExists = false));
   }
 
   @override
@@ -46,6 +50,10 @@ class _InverseMenuState extends State<InverseMenu> {
         color: inverseColor,
         fontWeight: FontWeight.bold,
       );
+
+  double opacity = 1;
+  bool maskExists = true;
+
   @override
   Widget build(BuildContext context) {
     children = <MenuPage, List<Widget>>{
@@ -180,67 +188,82 @@ class _InverseMenuState extends State<InverseMenu> {
         checkboxTheme: CheckboxThemeData(fillColor: MaterialStatePropertyAll(inverseColor)),
       ),
       child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 30),
-                child: TextButton(
-                  style: mainMenu
-                      ? TextButton.styleFrom(
-                          foregroundColor: inverseColor,
-                          backgroundColor: Colors.white,
-                        )
-                      : TextButton.styleFrom(
-                          foregroundColor: inverseColor,
-                          backgroundColor: Colors.white54,
-                        ),
-                  onPressed: () {
-                    if (mainMenu) {
-                      setState(() => menuPage = MenuPage.settings);
-                    } else {
-                      setState(() => menuPage = MenuPage.main);
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: mainMenu
-                        ? const Padding(
-                            padding: EdgeInsets.only(bottom: 2),
-                            child: Text(
-                              'settings',
-                              style: TextStyle(fontSize: 16),
+        body: Stack(
+          children: [
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: TextButton(
+                      style: mainMenu
+                          ? TextButton.styleFrom(
+                              foregroundColor: inverseColor,
+                              backgroundColor: Colors.white,
+                            )
+                          : TextButton.styleFrom(
+                              foregroundColor: inverseColor,
+                              backgroundColor: Colors.white54,
                             ),
-                          )
-                        : const Text(
-                            'back',
-                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-                          ),
+                      onPressed: () {
+                        if (mainMenu) {
+                          setState(() => menuPage = MenuPage.settings);
+                        } else {
+                          setState(() => menuPage = MenuPage.main);
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: mainMenu
+                            ? const Padding(
+                                padding: EdgeInsets.only(bottom: 2),
+                                child: Text(
+                                  'settings',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              )
+                            : const Text(
+                                'back',
+                                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                              ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: inverseColor, width: 2),
-                ),
-                width: 300,
-                padding: const EdgeInsets.all(50),
-                child: AnimatedSize(
-                  duration: const Duration(milliseconds: 250),
-                  curve: Curves.easeOutCubic,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: menuPage == MenuPage.settings
-                        ? CrossAxisAlignment.start
-                        : CrossAxisAlignment.center,
-                    children: children,
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: inverseColor, width: 2),
+                    ),
+                    width: 300,
+                    padding: const EdgeInsets.all(50),
+                    child: AnimatedSize(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOutCubic,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: menuPage == MenuPage.settings
+                            ? CrossAxisAlignment.start
+                            : CrossAxisAlignment.center,
+                        children: children,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+            maskExists
+                ? AnimatedOpacity(
+                    duration: const Duration(seconds: 1),
+                    opacity: opacity,
+                    curve: Curves.easeOutCubic,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints.expand(),
+                      child: const ColoredBox(color: Color(0xff121212)),
+                    ),
+                  )
+                : empty,
+          ],
         ),
         backgroundColor: const Color(0xffeef3f8),
         // backgroundColor: const Color(0xffe1e8ee),
