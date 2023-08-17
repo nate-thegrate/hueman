@@ -6,7 +6,6 @@ import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class IntenseMode extends StatefulWidget {
   final String? master;
@@ -204,8 +203,7 @@ class _IntenseModeState extends State<IntenseMode> {
 
   int get accuracy => (pow(1 - offBy / 180, 2) * 100).round();
 
-  GestureRecognizer hyperlink(String url) =>
-      TapGestureRecognizer()..onTap = () => launchUrl(Uri.parse(url));
+  GestureRecognizer hyperlink(String url) => TapGestureRecognizer()..onTap = gotoWebsite(url);
 
   Widget sawEveryPic(context) => AlertDialog(
         title: const Text('Congrats!'),

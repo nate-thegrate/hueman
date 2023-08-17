@@ -37,6 +37,51 @@ class MenuButton extends StatelessWidget {
       );
 }
 
+class MenuCheckbox extends StatelessWidget {
+  final ValueChanged<bool> toggle;
+  final bool value;
+  final String label;
+  final (String, String) description;
+  const MenuCheckbox(
+    this.label, {
+    required this.description,
+    required this.value,
+    required this.toggle,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () => toggle(!value),
+        child: Container(
+          color: Colors.transparent,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Checkbox(
+                    value: value,
+                    onChanged: (_) => toggle(!value),
+                  ),
+                  const FixedSpacer.horizontal(10),
+                  Text(
+                    label,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+              Text(
+                value ? description.$1 : description.$2,
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+            ],
+          ),
+        ),
+      );
+}
+
 class NavigateButton extends StatelessWidget {
   final Pages page;
   final Color color;
@@ -108,7 +153,7 @@ class GameScreen extends StatelessWidget {
         padding: EdgeInsets.all(8),
         child: Text(
           'back',
-          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, letterSpacing: 0.5),
         ),
       ),
     );
@@ -187,50 +232,43 @@ class RankBars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    const duration = Duration(milliseconds: 750);
     final int activeIndex = rank ~/ 25 + 1;
-    final List<Color> rankBarColors = [
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    final List<Color> barColors = [
       Colors.black12,
       Colors.white12,
       Colors.white24,
       Colors.white38,
       color,
     ];
+    double barHeight(int i) {
+      return (i < activeIndex)
+          ? screenHeight
+          : (i == activeIndex)
+              ? screenHeight * (rank % 25) / 25
+              : 0;
+    }
 
-    final List<(Color, double)> rankBarData = [
-      for (int i = 0; i < rankBarColors.length; i++)
-        (
-          rankBarColors[i],
-          i < activeIndex
-              ? screenHeight
-              : i == activeIndex
-                  ? screenHeight * (rank % 25) / 25
-                  : 0
-        )
-    ];
-
-    final Widget rankBar = SizedBox(
-      width: 25,
-      child: Stack(
-        children: [
-          for (final (color, height) in rankBarData)
-            Column(
-              children: [
-                const Spacer(),
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 750),
-                  curve: Curves.easeOutCubic,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 750),
-                    curve: Curves.easeOutCubic,
-                    color: color,
-                    height: height,
-                  ),
-                ),
-              ],
+    final Widget rankBar = Stack(
+      children: [
+        for (int i = 0; i < 5; i++)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: AnimatedSize(
+              duration: duration,
+              curve: curve,
+              child: AnimatedContainer(
+                width: 25,
+                duration: duration,
+                curve: curve,
+                color: barColors[i],
+                height: barHeight(i),
+              ),
             ),
-        ],
-      ),
+          ),
+      ],
     );
 
     return Row(children: [rankBar, Expanded(child: child), rankBar]);
@@ -275,7 +313,7 @@ class _PercentBarState extends State<_PercentBar> {
   @override
   Widget build(BuildContext context) => AnimatedContainer(
         duration: const Duration(milliseconds: 600),
-        curve: Curves.easeOutCubic,
+        curve: curve,
         color: widget.color,
         width: width,
         height: width / (widget.color == Colors.black ? 10 : 15),
@@ -394,7 +432,7 @@ class ColorNameBox extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
-            colorNames[color.hexCode]!,
+            colorNameLookup[color.hexCode]!,
             style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
           ),
         ),

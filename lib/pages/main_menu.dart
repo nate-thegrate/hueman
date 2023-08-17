@@ -106,63 +106,38 @@ class _MainMenuState extends State<MainMenu> {
         NavigateButton(Pages.sandbox, color: epicColor),
       ],
       MenuPage.settings: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-                value: autoSubmit,
-                onChanged: (value) {
-                  setState(() => autoSubmit = value!);
-                }),
-            const FixedSpacer.horizontal(10),
-            const Text(
-              'auto-submit',
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
+        MenuCheckbox(
+          'auto-submit',
+          value: autoSubmit,
+          description: ("'submit' when 3 digits are entered", "submit with the 'submit' button"),
+          toggle: (value) => setState(() => autoSubmit = value),
         ),
-        Text(
-          autoSubmit ? "'submit' when 3 digits are entered" : "submit with the 'submit' button",
-          style: Theme.of(context).textTheme.labelSmall,
-        ),
-        const FixedSpacer(50),
+        const FixedSpacer(33),
         ...mastery
             ? [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Checkbox(
-                      value: casualMode,
-                      onChanged: (value) {
-                        setState(() => casualMode = value!);
-                      },
-                    ),
-                    const FixedSpacer.horizontal(10),
-                    const Text(
-                      'casual mode',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ],
+                MenuCheckbox(
+                  'casual mode',
+                  value: casualMode,
+                  description: ('play without keeping score', 'keep score when you play'),
+                  toggle: (value) => setState(() => casualMode = value),
                 ),
-                Text(
-                  casualMode ? 'play without keeping score' : 'keep score when you play',
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-                const FixedSpacer(67),
+                const FixedSpacer(50),
                 Center(
-                    child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: epicColor, width: 2),
-                    foregroundColor: epicColor,
-                    backgroundColor: const Color(0xff121212),
-                    shadowColor: epicColor,
+                  child: OutlinedButton(
+                    onPressed: gotoWebsite('https://google.com/'),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: epicColor, width: 2),
+                      foregroundColor: epicColor,
+                      backgroundColor: const Color(0xff121212),
+                      shadowColor: epicColor,
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.only(top: 4, bottom: 10),
+                      child: Text('report a bug',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+                    ),
                   ),
-                  onPressed: () => context.goto(Pages.ads),
-                  child: const Padding(
-                    padding: EdgeInsets.only(top: 5, bottom: 10),
-                    child: Text('ads', style: TextStyle(fontSize: 24)),
-                  ),
-                )),
+                ),
                 const FixedSpacer(33),
                 Center(
                   child: OutlinedButton(
@@ -178,7 +153,7 @@ class _MainMenuState extends State<MainMenu> {
                       elevation: (sin(epicHue / 360 * 2 * pi * 6) + 1) * 6,
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 14),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 14),
                       child: Text(Pages.inverseMenu(), style: const TextStyle(fontSize: 24)),
                     ),
                   ),
@@ -211,15 +186,6 @@ class _MainMenuState extends State<MainMenu> {
                   ),
                 )),
               ],
-
-        // child: MenuButton(
-        //   Pages.inverseMenu(),
-        //   color: epicColor,
-        //   onPressed: () {
-        //     setState(() => inverted = true);
-        //     context.goto(Pages.inverseMenu);
-        //   },
-        // )),
       ],
       MenuPage.introSelect: [
         Text(
@@ -293,7 +259,7 @@ class _MainMenuState extends State<MainMenu> {
               padding: const EdgeInsets.all(50),
               child: AnimatedSize(
                 duration: const Duration(milliseconds: 250),
-                curve: Curves.easeOutCubic,
+                curve: curve,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,

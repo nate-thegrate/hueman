@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Snippet extends StatelessWidget {
   final String text;
@@ -45,7 +44,8 @@ class _AdsState extends State<Ads> {
   @override
   void initState() {
     super.initState();
-    ticker = epicSetup(setState);
+    clickedOnAds = true;
+    ticker = inverseSetup(setState);
     animateThisPage();
   }
 
@@ -55,10 +55,12 @@ class _AdsState extends State<Ads> {
     super.dispose();
   }
 
-  void goBack() => context.goto(Pages.mainMenu);
+  void goBack() => context.goto(Pages.inverseMenu);
+
+  Widget none(_) => empty;
 
   List<AdsAnimation> get allItems => [
-        AdsAnimation(1, (_) => empty),
+        AdsAnimation(1, none),
         SnippetAnimation(
             5.5, 'This game uses cookies\n' 'to share data with third-party advertisers.'),
         SnippetAnimation(3.5, 'Just kidding.  :)', replacePrevious: true),
@@ -66,23 +68,42 @@ class _AdsState extends State<Ads> {
             replacePrevious: true),
         SnippetAnimation(
             7.5,
-            'Most open-source projects rely on donations from the community\n'
+            'Most open-source projects rely on community support\n'
             'to cover the cost of servers and ongoing development.'),
-        SnippetAnimation(
+        AdsAnimation(
             5,
-            'Even if you just make a small contribution,\n'
-            'it would make a huge difference.'),
-        SnippetAnimation(3, 'Just kidding again   :)\n', replacePrevious: true),
-        SnippetAnimation(4, 'asking people for money is super cringe lol\n', replacePrevious: true),
-        SnippetAnimation(5, "There's something else I'd like to ask, if that's all right."),
-        SnippetAnimation(4, "I'm actually working on another mobile game right now."),
+            (_) => RichText(
+                  textAlign: TextAlign.center,
+                  text: const TextSpan(
+                    style: TextStyle(
+                      fontFamily: 'Segoe UI',
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black,
+                    ),
+                    children: [
+                      TextSpan(text: 'If you make a small donation,\nit would make a '),
+                      TextSpan(text: 'huge', style: TextStyle(fontStyle: FontStyle.italic)),
+                      TextSpan(text: ' difference to me.'),
+                    ],
+                  ),
+                )),
+        SnippetAnimation(3, 'Just kidding again  :)\n', replacePrevious: true),
+        SnippetAnimation(4, 'asking people for money is super cringe lol\n',
+            replacePrevious: true),
+        SnippetAnimation(5, "But there's something else I'd like to ask, if it's all right."),
+        SnippetAnimation(4, "I'm actually working on another game right now."),
         AdsAnimation(
             7,
             (c) => RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
                     style: const TextStyle(
-                        fontFamily: 'Segoe UI', fontSize: 24, fontWeight: FontWeight.w400),
+                      fontFamily: 'Segoe UI',
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black,
+                    ),
                     children: [
                       const TextSpan(text: "You're gonna love it just as much as super"),
                       TextSpan(
@@ -93,17 +114,21 @@ class _AdsState extends State<Ads> {
                     ],
                   ),
                 )),
-        SnippetAnimation(4, "It's a much bigger project than this one though."),
+        SnippetAnimation(
+            5.5,
+            "It's a much bigger project than this one though,\n"
+            "so it's gonna be a while before I'm ready to release it."),
         SnippetAnimation(4, 'If you want me to send you an email when it comes out,'),
         AdsAnimation(
           4,
           (c) => MenuButton(
             'click here!',
             color: c,
-            onPressed: () => launchUrl(Uri.parse('https://google.com/')),
+            onPressed: gotoWebsite('https://google.com/'),
           ),
         ),
-        AdsAnimation(0, (_) => empty),
+        AdsAnimation(0, none),
+        AdsAnimation(0, none),
         SnippetAnimation(
             5,
             'Hopefully a bunch of people join that email list,\n'
@@ -113,8 +138,8 @@ class _AdsState extends State<Ads> {
             0,
             (_) => TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.white70,
-                    backgroundColor: Colors.black26,
+                    foregroundColor: Colors.black54,
+                    backgroundColor: Colors.white30,
                   ),
                   onPressed: goBack,
                   child: const Padding(
@@ -125,7 +150,6 @@ class _AdsState extends State<Ads> {
                     ),
                   ),
                 )),
-        AdsAnimation(0, (_) => empty),
       ];
 
   int get permanentItems {
@@ -157,25 +181,29 @@ class _AdsState extends State<Ads> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (final child in items) ...[
-                AnimatedSize(
-                  duration: duration,
-                  curve: Curves.easeOutCubic,
-                  child: AnimatedOpacity(
+  Widget build(BuildContext context) => Theme(
+        data: ThemeData(useMaterial3: true),
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                for (final child in items) ...[
+                  AnimatedSize(
                     duration: duration,
-                    opacity: child?.opacity ?? 0,
-                    child: Center(child: child?.widget(epicColor)),
+                    curve: curve,
+                    child: AnimatedOpacity(
+                      duration: duration,
+                      opacity: child?.opacity ?? 0,
+                      child: Center(child: child?.widget(inverseColor)),
+                    ),
                   ),
-                ),
-                const Spacer(),
-              ]
-            ],
+                  const Spacer(),
+                ]
+              ],
+            ),
           ),
+          backgroundColor: const Color(0xffeef3f8),
         ),
       );
 }

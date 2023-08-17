@@ -117,7 +117,8 @@ enum _ColorPicker {
   static List<BottomNavigationBarItem> get navBarItems => [
         for (final value in values)
           BottomNavigationBarItem(
-            icon: RotatedBox(quarterTurns: value == hsv ? 2 : 0, child: Icon(value.icon, size: 50)),
+            icon:
+                RotatedBox(quarterTurns: value == hsv ? 2 : 0, child: Icon(value.icon, size: 50)),
             label: value.upperName,
             tooltip: value.desc,
             backgroundColor: contrastWith(_color, threshold: 0.01).withAlpha(64),
@@ -158,7 +159,8 @@ class _ColorSelection extends StatelessWidget {
                     children: [
                       SizedBox(
                           width: 150,
-                          child: Text(colorName, style: Theme.of(context).textTheme.headlineSmall)),
+                          child:
+                              Text(colorName, style: Theme.of(context).textTheme.headlineSmall)),
                       Container(
                         width: 150,
                         height: 40,
@@ -246,7 +248,7 @@ class _SandboxState extends State<Sandbox> {
   Widget get title => Text(_colorPicker.desc, style: Theme.of(context).textTheme.headlineMedium);
   Widget get colorName => _ColorLabel(
         'color name',
-        colorNames[_color.roundedHexCode] ?? '[none]',
+        colorNameLookup[_color.roundedHexCode] ?? '[none]',
         textStyle: TextStyle(color: _color, fontSize: 20, fontWeight: FontWeight.bold, shadows: [
           Shadow(color: contrastWith(_color, threshold: 0.01).withAlpha(64), blurRadius: 3)
         ]),
@@ -364,23 +366,7 @@ class _SandboxState extends State<Sandbox> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _ColorSelection(
-            const [
-              'red',
-              'orange',
-              'yellow',
-              'lime',
-              'green',
-              'spring',
-              'cyan',
-              'azure',
-              'blue',
-              'violet',
-              'magenta',
-              'rose',
-              'white',
-              'gray',
-              'black',
-            ],
+            BestColors.names,
             updateColor: (rgb, hsv) => setState(() {
               _r = rgb.red;
               _g = rgb.green;

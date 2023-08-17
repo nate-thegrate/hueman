@@ -3,7 +3,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/pages/main_menu.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class InverseMenu extends StatefulWidget {
   const InverseMenu({super.key});
@@ -22,10 +21,12 @@ class _InverseMenuState extends State<InverseMenu> {
   void initState() {
     super.initState();
     ticker = inverseSetup(setState);
-    sleep(0.5)
-        .then((value) => setState(() => opacity = 0))
-        .then((value) => sleep(1))
-        .then((value) => setState(() => maskExists = false));
+    if (!sawTheInversion) {
+      sleep(0.5)
+          .then((_) => setState(() => opacity = 0))
+          .then((_) => sleep(1))
+          .then((_) => setState(() => sawTheInversion = true));
+    }
   }
 
   @override
@@ -52,7 +53,6 @@ class _InverseMenuState extends State<InverseMenu> {
       );
 
   double opacity = 1;
-  bool maskExists = true;
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +70,7 @@ class _InverseMenuState extends State<InverseMenu> {
           ],
         ),
         const FixedSpacer(67),
-        MenuButton('intro',
-            color: inverseColor, onPressed: () => setState(() => menuPage = MenuPage.introSelect)),
+        NavigateButton(Pages.trivial, color: inverseColor),
         const FixedSpacer(33),
         NavigateButton(Pages.intense, color: inverseColor),
         const FixedSpacer(33),
@@ -80,63 +79,63 @@ class _InverseMenuState extends State<InverseMenu> {
         NavigateButton(Pages.sandbox, color: inverseColor),
       ],
       MenuPage.settings: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-                value: autoSubmit,
-                onChanged: (value) {
-                  setState(() => autoSubmit = value!);
-                }),
-            const FixedSpacer.horizontal(10),
-            const Text(
-              'auto-submit',
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
-        ),
-        Text(
-          autoSubmit ? "'submit' when 3 digits are entered" : "submit with the 'submit' button",
-          style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.black45),
+        MenuCheckbox(
+          'auto-submit',
+          value: autoSubmit,
+          description: ("'submit' when 3 digits are entered", "submit with the 'submit' button"),
+          toggle: (value) => setState(() => autoSubmit = value),
         ),
         const FixedSpacer(50),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-              value: casualMode,
-              onChanged: (value) {
-                setState(() => casualMode = value!);
-              },
-            ),
-            const FixedSpacer.horizontal(10),
-            const Text(
-              'casual mode',
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
+        MenuCheckbox(
+          'casual mode',
+          value: casualMode,
+          description: ('play without keeping score', 'keep score when you play'),
+          toggle: (value) => setState(() => casualMode = value),
         ),
-        Text(
-          casualMode ? 'play without keeping score' : 'keep score when you play',
-          style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.black45),
-        ),
-        const FixedSpacer(50),
-        Center(
-          child: OutlinedButton(
-            onPressed: () => launchUrl(Uri.parse('https://google.com/')),
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: inverseColor, width: 2),
-              foregroundColor: inverseColor,
-              backgroundColor: const Color(0xffeef3f8),
-              shadowColor: inverseColor,
-            ),
-            child: const Padding(
-              padding: EdgeInsets.only(top: 4, bottom: 10),
-              child: Text('report a bug',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
-            ),
-          ),
-        ),
+        const FixedSpacer(67),
+        ...clickedOnAds
+            ? [
+                Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    'get notified when\nthe next game comes out!',
+                    textAlign: TextAlign.center,
+                    style:
+                        Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.black87),
+                  ),
+                ),
+                Center(
+                    child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: inverseColor, width: 2),
+                    foregroundColor: inverseColor,
+                    // backgroundColor: const Color(0xff121212),
+                    shadowColor: inverseColor,
+                  ),
+                  onPressed: gotoWebsite('https://google.com/'),
+                  child: const Padding(
+                    padding: EdgeInsets.fromLTRB(2.5, 5, 2.5, 10),
+                    child: Text('sign up', style: TextStyle(fontSize: 24)),
+                  ),
+                )),
+              ]
+            : [
+                Center(
+                    child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: inverseColor, width: 2),
+                    foregroundColor: inverseColor,
+                    // backgroundColor: const Color(0xff121212),
+                    shadowColor: inverseColor,
+                  ),
+                  onPressed: () => context.goto(Pages.ads),
+                  child: const Padding(
+                    padding: EdgeInsets.fromLTRB(24, 5, 24, 10),
+                    child: Text('ads', style: TextStyle(fontSize: 24)),
+                  ),
+                ))
+              ],
         const FixedSpacer(25),
         Center(
           child: OutlinedButton(
@@ -151,7 +150,7 @@ class _InverseMenuState extends State<InverseMenu> {
               shadowColor: inverseColor,
             ),
             child: const Padding(
-              padding: EdgeInsets.fromLTRB(23, 10, 23, 16),
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 16),
               child: Text('revert', style: TextStyle(fontSize: 24)),
             ),
           ),
@@ -238,7 +237,7 @@ class _InverseMenuState extends State<InverseMenu> {
                     padding: const EdgeInsets.all(50),
                     child: AnimatedSize(
                       duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeOutCubic,
+                      curve: curve,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
@@ -252,22 +251,20 @@ class _InverseMenuState extends State<InverseMenu> {
                 ],
               ),
             ),
-            maskExists
-                ? AnimatedOpacity(
+            sawTheInversion
+                ? empty
+                : AnimatedOpacity(
                     duration: const Duration(seconds: 1),
                     opacity: opacity,
-                    curve: Curves.easeOutCubic,
+                    curve: curve,
                     child: ConstrainedBox(
                       constraints: const BoxConstraints.expand(),
                       child: const ColoredBox(color: Color(0xff121212)),
                     ),
-                  )
-                : empty,
+                  ),
           ],
         ),
         backgroundColor: const Color(0xffeef3f8),
-        // backgroundColor: const Color(0xffe1e8ee),
-        // backgroundColor: const Color(0xfff0f8ff),
       ),
     );
   }

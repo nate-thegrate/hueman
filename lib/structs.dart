@@ -3,26 +3,28 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:super_hueman/pages/ads.dart';
+import 'package:super_hueman/inverse_pages/trivial.dart';
+import 'package:super_hueman/inverse_pages/ads.dart';
 import 'package:super_hueman/pages/intense.dart';
 import 'package:super_hueman/pages/intro.dart';
-import 'package:super_hueman/inverse_pages/inverse_menu.dart';
+import 'package:super_hueman/inverse_pages/menu.dart';
 import 'package:super_hueman/pages/main_menu.dart';
 import 'package:super_hueman/pages/sandbox.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// ```dart
 ///
-/// await sleep(3);
+/// await sleep(3); // in an async function
+/// sleep(3).then((_) => do_something()); // use anywhere
 /// ```
-/// is just like `time.sleep(3)` in Python.
-///
-/// Must be called in an `async` function.
+/// Just like `time.sleep(3)` in Python.
 Future<void> sleep(double seconds) =>
     Future.delayed(Duration(milliseconds: (seconds * 1000).toInt()));
 
+const Curve curve = Curves.easeOutCubic;
+
 enum Pages {
   mainMenu(MainMenu()),
-  inverseMenu(InverseMenu()),
   intro3(IntroMode(3)),
   intro6(IntroMode(6)),
   intro12(IntroMode(12)),
@@ -30,6 +32,9 @@ enum Pages {
   master(IntenseMode('master')),
   sandbox(Sandbox()),
   ads(Ads()),
+
+  inverseMenu(InverseMenu()),
+  trivial(TriviaMode()),
   ;
 
   final Widget widget;
@@ -71,6 +76,8 @@ bool mastery = true;
 bool inverted = false;
 bool casualMode = true;
 bool autoSubmit = true;
+bool clickedOnAds = false;
+bool sawTheInversion = false;
 
 abstract class ScoreKeeper {
   Pages get page;
@@ -85,6 +92,8 @@ extension ContextStuff on BuildContext {
   /// less stuff to type now :)
   void goto(Pages page) => Navigator.pushReplacementNamed(this, page());
 }
+
+void Function() gotoWebsite(String url) => () => launchUrl(Uri.parse(url));
 
 void addListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.addListener(func);
 void yeetListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.removeListener(func);
@@ -120,7 +129,7 @@ extension HexCode on Color {
   }
 }
 
-const Map<String, String> colorNames = {
+const Map<String, String> colorNameLookup = {
   '#FF0000': 'red',
   '#FF8000': 'orange',
   '#FFFF00': 'yellow',
@@ -138,8 +147,28 @@ const Map<String, String> colorNames = {
   '#000000': 'black',
 };
 
+enum BestColors {
+  red,
+  orange,
+  yellow,
+  lime,
+  green,
+  spring,
+  cyan,
+  azure,
+  blue,
+  violet,
+  magenta,
+  rose,
+  white,
+  gray,
+  black;
+
+  static List<String> get names => [for (final value in values) value.name];
+}
+
 Color colorFromName(String colorName) {
-  for (final entry in colorNames.entries) {
+  for (final entry in colorNameLookup.entries) {
     if (entry.value == colorName) {
       return Color(int.parse(entry.key.substring(1), radix: 16) + 0xFF000000);
     }
