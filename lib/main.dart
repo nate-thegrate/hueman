@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 
 class App extends StatelessWidget {
@@ -10,7 +11,7 @@ class App extends StatelessWidget {
           useMaterial3: true,
           colorScheme: const ColorScheme.dark(primary: Colors.white),
         ),
-        initialRoute: Pages.mainMenu(),
+        initialRoute: inverted ? Pages.inverseMenu.name : Pages.mainMenu.name,
         routes: Pages.routes,
       );
 }

@@ -1,4 +1,5 @@
 import 'package:super_hueman/pages/game_end.dart';
+import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
@@ -89,7 +90,7 @@ class _IntroModeState extends State<IntroMode> {
     recentChoices.add(hue);
   }
 
-  Color get color => hsv(hue, 1, 1);
+  SuperColor get color => SuperColor.hsv(hue, 1, 1);
 
   @override
   void initState() {

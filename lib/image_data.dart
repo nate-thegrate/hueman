@@ -6,8 +6,8 @@ class ImageHues {
   final List<int> colors;
   const ImageHues(this.filename, this.colors);
 
-  (Color, Color) get randomColors {
-    Color imageColor(int i) => Color(colors[i] + 0xff000000);
+  (SuperColor, SuperColor) get randomColors {
+    SuperColor imageColor(int i) => SuperColor.noName(colors[i]);
     int index1 = rng.nextInt(colors.length);
     int index2 = rng.nextInt(colors.length - 1);
     if (index1 == index2) index2++;

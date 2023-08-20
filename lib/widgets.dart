@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_hueman/pages/intense.dart';
+import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'dart:math';
 
@@ -114,13 +115,12 @@ class GameScreen extends StatelessWidget {
     super.key,
   });
 
-  Color? get backgroundColor {
+  Color get backgroundColor {
     final ScoreKeeper? sk = scoreKeeper;
     if (sk is MasterScoreKeeper) {
-      final int colorVal = ((100 - sk.rank + (sk.rank % 25)) * 0.18).round();
-      return Color.fromARGB(255, colorVal, colorVal, colorVal);
+      return Color.lerp(SuperColors.darkBackground, Colors.black, (sk.rank ~/ 25) / 4)!;
     }
-    return null;
+    return SuperColors.darkBackground;
   }
 
   @override
@@ -136,7 +136,8 @@ class GameScreen extends StatelessWidget {
     }
 
     TextEditingValue textFormatFunction(TextEditingValue oldValue, TextEditingValue newValue) {
-      if (newValue.toInt() >= 100 && autoSubmit) submit();
+      if (newValue.text.length == 3 && autoSubmit) submit();
+      if (newValue.text.length > 3) return oldValue;
       return (newValue.toInt() < 360)
           ? newValue
           : const TextEditingValue(text: '359', selection: TextSelection.collapsed(offset: 3));
@@ -421,18 +422,21 @@ class PercentGrade extends StatelessWidget {
 }
 
 class ColorNameBox extends StatelessWidget {
-  final Color color;
-  const ColorNameBox(this.color, {super.key});
+  final SuperColor color;
+  final Color backgroundColor;
+  const ColorNameBox(this.color, {super.key}) : backgroundColor = Colors.black38;
+  const ColorNameBox.trivial(this.color, {super.key})
+      : backgroundColor = SuperColors.darkBackground;
 
   @override
   Widget build(BuildContext context) => Container(
         decoration:
-            BoxDecoration(border: Border.all(color: color, width: 4), color: Colors.black38),
+            BoxDecoration(border: Border.all(color: color, width: 4), color: backgroundColor),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
-            colorNameLookup[color.hexCode]!,
+            color.name,
             style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
           ),
         ),

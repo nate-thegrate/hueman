@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
@@ -44,7 +45,7 @@ class _AdsState extends State<Ads> {
   @override
   void initState() {
     super.initState();
-    clickedOnAds = true;
+    sleep(1).then((_) => clickedOnAds = true);
     ticker = inverseSetup(setState);
     animateThisPage();
   }
@@ -62,7 +63,9 @@ class _AdsState extends State<Ads> {
   List<AdsAnimation> get allItems => [
         AdsAnimation(1, none),
         SnippetAnimation(
-            5.5, 'This game uses cookies\n' 'to share data with third-party advertisers.'),
+            6,
+            'This game is free to play. It also uses cookies\n'
+            'to communicate with third-party advertisers.'),
         SnippetAnimation(3.5, 'Just kidding.  :)', replacePrevious: true),
         SnippetAnimation(4, "This game is open-source: it doesn't have any ads or paywalls.",
             replacePrevious: true),
@@ -82,9 +85,9 @@ class _AdsState extends State<Ads> {
                       color: Colors.black,
                     ),
                     children: [
-                      TextSpan(text: 'If you make a small donation,\nit would make a '),
+                      TextSpan(text: 'You can make a '),
                       TextSpan(text: 'huge', style: TextStyle(fontStyle: FontStyle.italic)),
-                      TextSpan(text: ' difference to me.'),
+                      TextSpan(text: ' difference\nby making a small donation.'),
                     ],
                   ),
                 )),
@@ -92,7 +95,7 @@ class _AdsState extends State<Ads> {
         SnippetAnimation(4, 'asking people for money is super cringe lol\n',
             replacePrevious: true),
         SnippetAnimation(5, "But there's something else I'd like to ask, if it's all right."),
-        SnippetAnimation(4, "I'm actually working on another game right now."),
+        SnippetAnimation(4, "I'm working on another game right now."),
         AdsAnimation(
             7,
             (c) => RichText(
@@ -121,10 +124,13 @@ class _AdsState extends State<Ads> {
         SnippetAnimation(4, 'If you want me to send you an email when it comes out,'),
         AdsAnimation(
           4,
-          (c) => MenuButton(
-            'click here!',
-            color: c,
-            onPressed: gotoWebsite('https://google.com/'),
+          (c) => SizedBox(
+            height: 50,
+            child: MenuButton(
+              'click here!',
+              color: c,
+              onPressed: gotoWebsite('https://google.com/'),
+            ),
           ),
         ),
         AdsAnimation(0, none),
@@ -203,7 +209,7 @@ class _AdsState extends State<Ads> {
               ],
             ),
           ),
-          backgroundColor: const Color(0xffeef3f8),
+          backgroundColor: SuperColors.lightBackground,
         ),
       );
 }

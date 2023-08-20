@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
@@ -38,7 +39,7 @@ class _MainMenuState extends State<MainMenu> {
     for (double hue = 0; hue < 360; hue++) {
       double max = 1, min = 0;
       double mid() => (max + min) / 2;
-      Color color() => HSLColor.fromAHSL(1, hue, 1, mid()).toColor();
+      SuperColor color() => SuperColor.hsl(hue, 1, mid());
       for (int i = 0; i < 15; i++) {
         double luminance = color().computeLuminance();
         if (luminance > targetLuminance) {
@@ -128,7 +129,7 @@ class _MainMenuState extends State<MainMenu> {
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: epicColor, width: 2),
                       foregroundColor: epicColor,
-                      backgroundColor: const Color(0xff121212),
+                      backgroundColor: SuperColors.darkBackground,
                       shadowColor: epicColor,
                     ),
                     child: const Padding(
@@ -148,7 +149,7 @@ class _MainMenuState extends State<MainMenu> {
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: epicColor, width: 2),
                       foregroundColor: epicColor,
-                      backgroundColor: const Color(0xff121212),
+                      backgroundColor: SuperColors.darkBackground,
                       shadowColor: epicColor,
                       elevation: (sin(epicHue / 360 * 2 * pi * 6) + 1) * 6,
                     ),
@@ -165,7 +166,7 @@ class _MainMenuState extends State<MainMenu> {
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: epicColor, width: 2),
                     foregroundColor: epicColor,
-                    backgroundColor: const Color(0xff121212),
+                    backgroundColor: SuperColors.darkBackground,
                     shadowColor: epicColor,
                   ),
                   onPressed: () => {

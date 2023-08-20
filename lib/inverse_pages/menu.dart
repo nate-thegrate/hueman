@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/pages/main_menu.dart';
+import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
@@ -72,11 +73,11 @@ class _InverseMenuState extends State<InverseMenu> {
         const FixedSpacer(67),
         NavigateButton(Pages.trivial, color: inverseColor),
         const FixedSpacer(33),
-        NavigateButton(Pages.intense, color: inverseColor),
+        NavigateButton(Pages.tense, color: inverseColor),
         const FixedSpacer(33),
         NavigateButton(Pages.master, color: inverseColor),
         const FixedSpacer(67),
-        NavigateButton(Pages.sandbox, color: inverseColor),
+        NavigateButton(Pages.inverseSandbox, color: inverseColor),
       ],
       MenuPage.settings: [
         MenuCheckbox(
@@ -110,7 +111,6 @@ class _InverseMenuState extends State<InverseMenu> {
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: inverseColor, width: 2),
                     foregroundColor: inverseColor,
-                    // backgroundColor: const Color(0xff121212),
                     shadowColor: inverseColor,
                   ),
                   onPressed: gotoWebsite('https://google.com/'),
@@ -126,7 +126,6 @@ class _InverseMenuState extends State<InverseMenu> {
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: inverseColor, width: 2),
                     foregroundColor: inverseColor,
-                    // backgroundColor: const Color(0xff121212),
                     shadowColor: inverseColor,
                   ),
                   onPressed: () => context.goto(Pages.ads),
@@ -146,7 +145,7 @@ class _InverseMenuState extends State<InverseMenu> {
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: inverseColor, width: 2),
               foregroundColor: inverseColor,
-              backgroundColor: const Color(0xffeef3f8),
+              backgroundColor: SuperColors.lightBackground,
               shadowColor: inverseColor,
             ),
             child: const Padding(
@@ -264,7 +263,7 @@ class _InverseMenuState extends State<InverseMenu> {
                   ),
           ],
         ),
-        backgroundColor: const Color(0xffeef3f8),
+        backgroundColor: SuperColors.lightBackground,
       ),
     );
   }

@@ -2,18 +2,14 @@ import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:super_hueman/image_data.dart';
 import 'package:super_hueman/pages/game_end.dart';
+import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
 import 'package:flutter/material.dart';
 
-class IntenseMode extends StatefulWidget {
-  final String? master;
-  const IntenseMode([this.master, Key? key]) : super(key: key);
-
-  @override
-  State<IntenseMode> createState() => _IntenseModeState();
-}
+int hue = rng.nextInt(360);
+SuperColor c = SuperColors.darkBackground;
 
 class IntenseScoreKeeper implements ScoreKeeper {
   int round = 0;
@@ -56,8 +52,7 @@ class IntenseScoreKeeper implements ScoreKeeper {
           children: [
             TextSpan(
                 text: 's\u1d1cᴘᴇʀ',
-                style:
-                    style.copyWith(color: Color(epicColors[hue]), fontWeight: FontWeight.w600)),
+                style: style.copyWith(color: epicColors[hue], fontWeight: FontWeight.w600)),
             const TextSpan(text: 'score ', style: style),
             TextSpan(
                 text: 'count:   $superCount',
@@ -168,14 +163,76 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
   final Pages page = Pages.master;
 }
 
-int hue = rng.nextInt(360);
-Color c = Colors.transparent;
+class SawEveryPic extends StatelessWidget {
+  const SawEveryPic({super.key});
+
+  GestureRecognizer hyperlink(String url) => TapGestureRecognizer()..onTap = gotoWebsite(url);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Congrats!'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const Text(
+            "You've made it through every image!",
+            style: TextStyle(fontSize: 16),
+          ),
+          const FixedSpacer(16),
+          RichText(
+            text: TextSpan(children: [
+              const TextSpan(text: '(shoutout to'),
+              TextSpan(
+                text: '  Wikipedia  ',
+                style: const TextStyle(color: SuperColors.azure, height: 3),
+                recognizer: hyperlink('https://commons.wikimedia.org/w/index.php'
+                    '?title=Special:MediaSearch&type=image&haslicense=unrestricted'),
+              ),
+              const TextSpan(text: 'and'),
+              TextSpan(
+                text: '  rawpixel  ',
+                style: const TextStyle(color: SuperColors.azure, height: 3),
+                recognizer: hyperlink('https://www.rawpixel.com/public-domain'),
+              ),
+              const TextSpan(text: '\nfor hosting all those public domain images)'),
+            ]),
+          ),
+        ],
+      ),
+      actions: [
+        Center(
+          child: TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.black38),
+            onPressed: () => context.goto(Pages.mainMenu),
+            child: const Padding(
+              padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
+              child: Text(
+                'back to menu',
+                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class IntenseMode extends StatefulWidget {
+  final String? master;
+  const IntenseMode([this.master, Key? key]) : super(key: key);
+
+  @override
+  State<IntenseMode> createState() => _IntenseModeState();
+}
 
 class _IntenseModeState extends State<IntenseMode> {
   bool get masterMode => widget.master == 'master';
   bool get showPics => masterMode && casualMode;
 
-  final List<(Widget, Color)> pics = [];
+  final List<(Widget, SuperColor)> pics = [];
 
   var hueFocusNode = FocusNode();
   var hueController = TextEditingController();
@@ -203,59 +260,13 @@ class _IntenseModeState extends State<IntenseMode> {
 
   int get accuracy => (pow(1 - offBy / 180, 2) * 100).round();
 
-  GestureRecognizer hyperlink(String url) => TapGestureRecognizer()..onTap = gotoWebsite(url);
-
-  Widget sawEveryPic(context) => AlertDialog(
-        title: const Text('Congrats!'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const Text(
-              "You've made it through every image!",
-              style: TextStyle(fontSize: 16),
-            ),
-            const FixedSpacer(16),
-            RichText(
-              text: TextSpan(children: [
-                const TextSpan(text: '(shoutout to'),
-                TextSpan(
-                  text: '  Wikipedia  ',
-                  style: TextStyle(color: colorFromName('azure'), height: 3),
-                  recognizer: hyperlink('https://commons.wikimedia.org/w/index.php'
-                      '?title=Special:MediaSearch&type=image&haslicense=unrestricted'),
-                ),
-                const TextSpan(text: 'and'),
-                TextSpan(
-                  text: '  rawpixel  ',
-                  style: TextStyle(color: colorFromName('azure'), height: 3),
-                  recognizer: hyperlink('https://www.rawpixel.com/public-domain'),
-                ),
-                const TextSpan(text: '\nfor hosting all those public domain images)'),
-              ]),
-            ),
-          ],
-        ),
-        actions: [
-          Center(
-            child: TextButton(
-              style: TextButton.styleFrom(backgroundColor: Colors.black38),
-              onPressed: () => context.goto(Pages.mainMenu),
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
-                child: Text(
-                  'back to menu',
-                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
-
   void generatePic() {
     if (pics.length == 1) {
-      showDialog(context: context, builder: sawEveryPic, barrierDismissible: false);
+      showDialog(
+        context: context,
+        builder: (context) => const SawEveryPic(),
+        barrierDismissible: false,
+      );
       return;
     }
     pics.removeAt(0);
@@ -273,10 +284,10 @@ class _IntenseModeState extends State<IntenseMode> {
     });
   }
 
-  Color get color {
+  SuperColor get color {
     if (showPics) return pics.first.$2;
 
-    c = hsv(hue, saturation, value);
+    c = SuperColor.hsv(hue, saturation, value);
     return c;
   }
 
@@ -354,7 +365,7 @@ class _IntenseModeState extends State<IntenseMode> {
           (hue == guess) ? 'Nice work!' : 'Incorrect…',
           guess,
           hue,
-          ColorNameBox(colorFromName('orange')),
+          const ColorNameBox(SuperColors.orange),
         )
       : HueDialog(
           text,
