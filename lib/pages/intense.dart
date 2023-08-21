@@ -5,6 +5,7 @@ import 'package:super_hueman/pages/game_end.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
+import 'package:collection/collection.dart';
 
 import 'package:flutter/material.dart';
 

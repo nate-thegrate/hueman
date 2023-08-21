@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:super_hueman/inverse_pages/tense.dart';
 import 'package:super_hueman/inverse_pages/trivial.dart';
 import 'package:super_hueman/inverse_pages/ads.dart';
+import 'package:super_hueman/inverse_pages/true_mastery.dart';
 import 'package:super_hueman/pages/intense.dart';
 import 'package:super_hueman/pages/intro.dart';
 import 'package:super_hueman/inverse_pages/menu.dart';
@@ -37,7 +38,9 @@ enum Pages {
 
   inverseMenu(InverseMenu()),
   trivial(TriviaMode()),
-  tense(TenseMode()),
+  tenseVibrant(TenseMode('vibrant')),
+  tenseMixed(TenseMode('mixed')),
+  trueMastery(TrueMastery()),
   inverseSandbox(HslSandbox()),
   ;
 
@@ -46,10 +49,12 @@ enum Pages {
 
   String call() {
     if (name.contains('intro')) return '${name.substring(5)} colors';
+    if (name.startsWith('tense')) return name.substring(5).toLowerCase();
 
     return {
           'inverseMenu': 'invert!',
           'inverseSandbox': 'sandbox',
+          'trueMastery': 'true\nmastery',
         }[name] ??
         name;
   }
@@ -70,6 +75,10 @@ enum Pages {
         return 'Intense';
       case master:
         return 'Master';
+      case tenseVibrant:
+        return 'Tense (vibrant)';
+      case tenseMixed:
+        return 'Tense (mixed!)';
       default:
         return "lol this shouldn't pop up";
     }
@@ -94,10 +103,6 @@ void Function() gotoWebsite(String url) => () => launchUrl(Uri.parse(url));
 
 void addListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.addListener(func);
 void yeetListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.removeListener(func);
-
-extension Average on List<int> {
-  double get average => reduce((a, b) => a + b) / length;
-}
 
 Color contrastWith(Color c, {double threshold = .2}) =>
     (c.computeLuminance() > threshold) ? Colors.black : Colors.white;
@@ -148,7 +153,7 @@ class SuperColor extends Color {
   double get hue => HSLColor.fromColor(this).hue;
 
   /// The hexadecimal color code (doesn't include alpha).
-  String get hexCode => '#${colorCode.toRadixString(16).toUpperCase()}';
+  String get hexCode => '#${colorCode.toRadixString(16).padLeft(6, "0").toUpperCase()}';
 
   SuperColor get rounded {
     int snapToVals(int rgbVal) {
@@ -184,6 +189,7 @@ abstract class SuperColors {
   static const darkBackground = SuperColor.noName(0x121212);
   static const lightBackground = SuperColor.noName(0xffeef3f8);
   static const black80 = Color(0xCC000000);
+  static const white80 = Color(0xCCFFFFFF);
 
   static const primaries = [red, green, blue];
   static const allPrimaries = [red, yellow, green, cyan, blue, magenta];
@@ -582,7 +588,7 @@ const List<SuperColor> epicColors = [
   SuperColor.noName(0xffa3a6),
   SuperColor.noName(0xffa3a5),
 ];
-const List<SuperColor> _inverseColors = [
+const List<SuperColor> inverseColors = [
   SuperColor.noName(0x9e0000),
   SuperColor.noName(0x9d0300),
   SuperColor.noName(0x9c0500),
@@ -958,7 +964,7 @@ Color get epicColor => epicColors[epicHue];
 /// similar to [epicColor], but the color is darker.
 ///
 /// It also cycles the reverse way through the hues.
-Color get inverseColor => _inverseColors[inverseHue];
+Color get inverseColor => inverseColors[inverseHue];
 Ticker epicSetup(StateSetter setState) {
   void epicCycle(Duration elapsed) {
     if (elapsed.inMilliseconds >= _lastEpicChange + _epicStepSize) {

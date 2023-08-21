@@ -38,6 +38,8 @@ class SnippetAnimation extends AdsAnimation {
       : super(delay, (_) => Snippet(text), replacePrevious: replacePrevious);
 }
 
+Widget none(_) => empty;
+
 class _AdsState extends State<Ads> {
   late final Ticker ticker;
   static const duration = Duration(milliseconds: 300);
@@ -56,107 +58,74 @@ class _AdsState extends State<Ads> {
     super.dispose();
   }
 
-  void goBack() => context.goto(Pages.inverseMenu);
-
-  Widget none(_) => empty;
-
-  List<AdsAnimation> get allItems => [
-        AdsAnimation(1, none),
-        SnippetAnimation(
-            6,
-            'This game is free to play. It also uses cookies\n'
-            'to communicate with third-party advertisers.'),
-        SnippetAnimation(3.5, 'Just kidding.  :)', replacePrevious: true),
-        SnippetAnimation(4, "This game is open-source: it doesn't have any ads or paywalls.",
-            replacePrevious: true),
-        SnippetAnimation(
-            7.5,
-            'Most open-source projects rely on community support\n'
-            'to cover the cost of servers and ongoing development.'),
-        AdsAnimation(
-            5,
-            (_) => RichText(
-                  textAlign: TextAlign.center,
-                  text: const TextSpan(
-                    style: TextStyle(
-                      fontFamily: 'Segoe UI',
-                      fontSize: 24,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
-                    ),
-                    children: [
-                      TextSpan(text: 'You can make a '),
-                      TextSpan(text: 'huge', style: TextStyle(fontStyle: FontStyle.italic)),
-                      TextSpan(text: ' difference\nby making a small donation.'),
-                    ],
+  final List<AdsAnimation> allItems = [
+    AdsAnimation(1, none),
+    SnippetAnimation(
+        6,
+        'This game is free to play. It also uses cookies\n'
+        'to communicate with third-party advertisers.'),
+    SnippetAnimation(3.5, 'Just kidding.  :)', replacePrevious: true),
+    SnippetAnimation(4, "This game is open-source: it doesn't have any ads or paywalls.",
+        replacePrevious: true),
+    SnippetAnimation(
+        7.5,
+        'Most open-source projects rely on community support\n'
+        'to cover the cost of servers and ongoing development.'),
+    SnippetAnimation(5, 'You can make a huge difference\n' 'by making a small donation.',
+        replacePrevious: true),
+    SnippetAnimation(3, 'Just kidding again  :)\n', replacePrevious: true),
+    SnippetAnimation(4, 'asking people for money is super cringe lol\n', replacePrevious: true),
+    SnippetAnimation(5, "But there's something else I'd like to ask, if it's all right."),
+    SnippetAnimation(3.5, "I'm working on another game right now."),
+    AdsAnimation(
+        7,
+        (c) => RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: const TextStyle(
+                  fontFamily: 'Segoe UI',
+                  fontSize: 24,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                ),
+                children: [
+                  const TextSpan(text: "You're gonna love it just as much as super"),
+                  TextSpan(
+                    text: 'ʜ\u1d1cᴇ',
+                    style: TextStyle(color: c, fontWeight: FontWeight.w600),
                   ),
-                )),
-        SnippetAnimation(3, 'Just kidding again  :)\n', replacePrevious: true),
-        SnippetAnimation(4, 'asking people for money is super cringe lol\n',
-            replacePrevious: true),
-        SnippetAnimation(5, "But there's something else I'd like to ask, if it's all right."),
-        SnippetAnimation(4, "I'm working on another game right now."),
-        AdsAnimation(
-            7,
-            (c) => RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: const TextStyle(
-                      fontFamily: 'Segoe UI',
-                      fontSize: 24,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
-                    ),
-                    children: [
-                      const TextSpan(text: "You're gonna love it just as much as super"),
-                      TextSpan(
-                        text: 'ʜ\u1d1cᴇ',
-                        style: TextStyle(color: c, fontWeight: FontWeight.w600),
-                      ),
-                      const TextSpan(text: 'man,\nif not even more :D'),
-                    ],
-                  ),
-                )),
-        SnippetAnimation(
-            5.5,
-            "It's a much bigger project than this one though,\n"
-            "so it's gonna be a while before I'm ready to release it."),
-        SnippetAnimation(4, 'If you want me to send you an email when it comes out,'),
-        AdsAnimation(
-          4,
-          (c) => SizedBox(
-            height: 50,
-            child: MenuButton(
-              'click here!',
-              color: c,
-              onPressed: gotoWebsite('https://google.com/'),
-            ),
-          ),
+                  const TextSpan(text: 'man,\nif not even more :D'),
+                ],
+              ),
+            )),
+    SnippetAnimation(
+        5.5,
+        "It's a much bigger project than this one though,\n"
+        "so it's gonna be a while before I'm ready to release it."),
+    SnippetAnimation(4, 'If you want me to send you an email when it comes out,'),
+    AdsAnimation(
+      4,
+      (c) => SizedBox(
+        height: 50,
+        child: MenuButton(
+          'click here!',
+          color: c,
+          onPressed: gotoWebsite('https://google.com/'),
         ),
-        AdsAnimation(0, none),
-        AdsAnimation(0, none),
-        SnippetAnimation(
-            5,
-            'Hopefully a bunch of people join that email list,\n'
-            "and it'll really motivate my ADHD brain to work on it."),
-        SnippetAnimation(1.5, 'Thanks for your time.'),
-        AdsAnimation(
-            0,
-            (_) => TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.black54,
-                    backgroundColor: Colors.white30,
-                  ),
-                  onPressed: goBack,
-                  child: const Padding(
-                    padding: EdgeInsets.fromLTRB(5, 10, 5, 13),
-                    child: Text(
-                      'go back',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-                    ),
-                  ),
-                )),
-      ];
+      ),
+    ),
+    AdsAnimation(0, none),
+    AdsAnimation(0, none),
+    SnippetAnimation(
+        5,
+        'Hopefully a bunch of people join that email list,\n'
+        "and it'll really motivate my ADHD brain to work on it."),
+    SnippetAnimation(1.5, 'Thanks for your time.'),
+    AdsAnimation(
+      0,
+      (_) => const GoBack(text: 'go back'),
+    ),
+  ];
 
   int get permanentItems {
     int total = 0;

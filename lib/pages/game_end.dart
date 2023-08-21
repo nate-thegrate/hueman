@@ -18,7 +18,7 @@ class _GameEndState extends State<GameEnd> {
   @override
   void initState() {
     super.initState();
-    ticker = epicSetup(setState);
+    ticker = inverted ? inverseSetup(setState) : epicSetup(setState);
   }
 
   @override
@@ -29,74 +29,89 @@ class _GameEndState extends State<GameEnd> {
 
   ScoreKeeper get sk => widget.scoreKeeper;
   Pages get page => sk.page;
+  Color get color => inverted ? inverseColor : epicColor;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Center(
-          child: Column(
-            children: [
-              const Expanded(flex: 4, child: empty),
-              Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: epicColor, width: 2),
-                    borderRadius: BorderRadius.circular(25)),
-                padding: const EdgeInsets.all(50),
-                child: Text('Finished!', style: TextStyle(fontSize: 54, color: epicColor)),
+  Widget build(BuildContext context) => Theme(
+        data: inverted
+            ? ThemeData(useMaterial3: true)
+            : ThemeData(
+                useMaterial3: true,
+                colorScheme: const ColorScheme.dark(primary: Colors.white),
               ),
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Game mode:  ', style: TextStyle(fontSize: 24, color: epicColor)),
-                  Text(page.gameMode, style: const TextStyle(fontSize: 24)),
-                ],
-              ),
-              const Spacer(flex: 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Score:  ', style: TextStyle(fontSize: 32, color: epicColor)),
-                  sk.finalScore,
-                ],
-              ),
-              const FixedSpacer(10),
-              sk.finalDetails,
-              const Spacer(flex: 3),
-              ElevatedButton(
-                onPressed: () => context.goto(page),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: epicColor, foregroundColor: Colors.black),
-                child: const Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Text('play again', style: TextStyle(fontSize: 24)),
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              children: [
+                const Expanded(flex: 4, child: empty),
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: color, width: 2),
+                      borderRadius: BorderRadius.circular(25)),
+                  padding: const EdgeInsets.all(50),
+                  child: Text('Finished!', style: TextStyle(fontSize: 54, color: color)),
                 ),
-              ),
-              const FixedSpacer(33),
-              ElevatedButton(
-                onPressed: () {
-                  casualMode = true;
-                  context.goto(page);
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: epicColor, foregroundColor: Colors.black),
-                child: const Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Text('play in casual mode', style: TextStyle(fontSize: 24)),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Game mode:  ', style: TextStyle(fontSize: 24, color: color)),
+                    Text(page.gameMode, style: const TextStyle(fontSize: 24)),
+                  ],
                 ),
-              ),
-              const FixedSpacer(33),
-              ElevatedButton(
-                onPressed: () => context.goto(Pages.mainMenu),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: epicColor, foregroundColor: Colors.black),
-                child: const Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Text('back to menu', style: TextStyle(fontSize: 24)),
+                const Spacer(flex: 2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Score:  ', style: TextStyle(fontSize: 32, color: color)),
+                    sk.finalScore,
+                  ],
                 ),
-              ),
-              const Expanded(flex: 4, child: empty),
-            ],
+                const FixedSpacer(10),
+                sk.finalDetails,
+                const Spacer(flex: 3),
+                ElevatedButton(
+                  onPressed: () => context.goto(page),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: color,
+                      foregroundColor: inverted ? Colors.white : Colors.black),
+                  child: const Padding(
+                    padding: EdgeInsets.only(bottom: 4),
+                    child: Text('play again', style: TextStyle(fontSize: 24)),
+                  ),
+                ),
+                const FixedSpacer(33),
+                ElevatedButton(
+                  onPressed: () {
+                    casualMode = true;
+                    context.goto(page);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: color,
+                    foregroundColor: inverted ? Colors.white : Colors.black,
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.only(bottom: 4),
+                    child: Text('play in casual mode', style: TextStyle(fontSize: 24)),
+                  ),
+                ),
+                const FixedSpacer(33),
+                ElevatedButton(
+                  onPressed: () => context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: color,
+                    foregroundColor: inverted ? Colors.white : Colors.black,
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.only(bottom: 4),
+                    child: Text('back to menu', style: TextStyle(fontSize: 24)),
+                  ),
+                ),
+                const Expanded(flex: 4, child: empty),
+              ],
+            ),
           ),
+          backgroundColor: inverted ? SuperColors.lightBackground : null,
         ),
       );
 }

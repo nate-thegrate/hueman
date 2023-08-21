@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:super_hueman/pages/main_menu.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
+
+enum MenuPage { main, settings, tenseSelect }
 
 class InverseMenu extends StatefulWidget {
   const InverseMenu({super.key});
@@ -73,9 +74,27 @@ class _InverseMenuState extends State<InverseMenu> {
         const FixedSpacer(67),
         NavigateButton(Pages.trivial, color: inverseColor),
         const FixedSpacer(33),
-        NavigateButton(Pages.tense, color: inverseColor),
+        ElevatedButton(
+          onPressed: () => setState(() => menuPage = MenuPage.tenseSelect),
+          style: ElevatedButton.styleFrom(
+              backgroundColor: inverseColor, foregroundColor: Colors.white),
+          child: const Padding(
+            padding: EdgeInsets.only(bottom: 4),
+            child: Text('tense', style: TextStyle(fontSize: 24)),
+          ),
+        ),
         const FixedSpacer(33),
-        NavigateButton(Pages.master, color: inverseColor),
+        ElevatedButton(
+          onPressed: () => context.goto(Pages.trueMastery),
+          style: ElevatedButton.styleFrom(
+              backgroundColor: inverseColor,
+              foregroundColor: inverted ? Colors.white : Colors.black),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 15),
+            child: Text(Pages.trueMastery(),
+                textAlign: TextAlign.center, style: const TextStyle(fontSize: 24, height: 0.95)),
+          ),
+        ),
         const FixedSpacer(67),
         NavigateButton(Pages.inverseSandbox, color: inverseColor),
       ],
@@ -155,28 +174,27 @@ class _InverseMenuState extends State<InverseMenu> {
           ),
         ),
       ],
-      MenuPage.introSelect: [
+      MenuPage.tenseSelect: [
         const Text(
-          'intro',
+          'tense',
           textAlign: TextAlign.center,
           style: superStyle,
         ),
-        const FixedSpacer(55),
-        NavigateButton(Pages.intro3, color: inverseColor),
+        const FixedSpacer(50),
+        NavigateButton(Pages.tenseVibrant, color: inverseColor),
         const FixedSpacer(33),
-        NavigateButton(Pages.intro6, color: inverseColor),
-        const FixedSpacer(33),
-        NavigateButton(Pages.intro12, color: inverseColor),
+        NavigateButton(Pages.tenseMixed, color: inverseColor),
+        const FixedSpacer(20),
         ...casualMode
             ? []
             : [
-                const FixedSpacer(33),
+                const FixedSpacer(20),
                 const Text(
-                  "during 'intro' games,\nquick answers score higher!",
+                  'you get a bonus when\nanswering correctly with\na full health bar!',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white60),
-                )
-              ]
+                  style: TextStyle(color: Colors.black54),
+                ),
+              ],
       ],
     }[menuPage]!;
 
@@ -218,12 +236,15 @@ class _InverseMenuState extends State<InverseMenu> {
                                 padding: EdgeInsets.only(bottom: 2),
                                 child: Text(
                                   'settings',
-                                  style: TextStyle(fontSize: 16),
+                                  style: TextStyle(fontSize: 16, letterSpacing: 0.5),
                                 ),
                               )
                             : const Text(
                                 'back',
-                                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 16,
+                                    letterSpacing: 0.5),
                               ),
                       ),
                     ),

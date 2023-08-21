@@ -96,6 +96,34 @@ class NavigateButton extends StatelessWidget {
       );
 }
 
+class GoBack extends StatelessWidget {
+  final String text;
+  const GoBack({this.text = 'back', super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget button = TextButton(
+      style: TextButton.styleFrom(
+        foregroundColor: inverted ? SuperColors.black80 : Colors.white60,
+        backgroundColor: inverted ? Colors.white54 : Colors.black26,
+      ),
+      onPressed: () => context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 6, 8, 9),
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontWeight: FontWeight.normal,
+            fontSize: 16,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+    );
+    return button;
+  }
+}
+
 class GameScreen extends StatelessWidget {
   final Color color;
   final FocusNode hueFocusNode;
@@ -144,20 +172,6 @@ class GameScreen extends StatelessWidget {
     }
 
     final textColor = contrastWith(color);
-    final backButton = TextButton(
-      style: TextButton.styleFrom(
-        foregroundColor: Colors.white70,
-        backgroundColor: Colors.black26,
-      ),
-      onPressed: () => context.goto(Pages.mainMenu),
-      child: const Padding(
-        padding: EdgeInsets.all(8),
-        child: Text(
-          'back',
-          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, letterSpacing: 0.5),
-        ),
-      ),
-    );
     final colorBox = image == null
         ? [Container(width: 400, height: 400, color: color)]
         : [
@@ -200,7 +214,7 @@ class GameScreen extends StatelessWidget {
       child: Column(
         children: <Widget>[
           const Spacer(flex: 2),
-          backButton,
+          const GoBack(),
           const FixedSpacer(50),
           ...colorBox,
           const Spacer(),

@@ -214,22 +214,7 @@ class AnsweredEveryQuestion extends StatelessWidget {
                     ],
             ],
           ),
-          actions: [
-            Center(
-              child: TextButton(
-                style: TextButton.styleFrom(
-                    backgroundColor: Colors.white54, foregroundColor: Colors.black87),
-                onPressed: () => context.goto(Pages.inverseMenu),
-                child: const Padding(
-                  padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
-                  child: Text(
-                    'back to menu',
-                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-                  ),
-                ),
-              ),
-            ),
-          ],
+          actions: const [Center(child: GoBack(text: 'back to menu'))],
         ),
       );
 }

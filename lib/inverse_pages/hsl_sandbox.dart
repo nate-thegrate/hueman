@@ -5,8 +5,6 @@ import 'package:super_hueman/widgets.dart';
 int _r = 0, _g = 0, _b = 0;
 double _h = 0, _s = 0, _l = 0;
 
-Color hsl(num h, double s, double l) => HSLColor.fromAHSL(1, h.toDouble(), s, l).toColor();
-
 _ColorPicker _colorPicker = _ColorPicker.rgb;
 SuperColor get _color {
   switch (_colorPicker) {
@@ -226,21 +224,6 @@ class _HslSandboxState extends State<HslSandbox> {
     });
   }
 
-  Widget get backButton => TextButton(
-        style: TextButton.styleFrom(
-          foregroundColor: SuperColors.black80,
-          backgroundColor: Colors.white54,
-        ),
-        onPressed: () => context.goto(Pages.inverseMenu),
-        child: const Padding(
-          padding: EdgeInsets.all(8),
-          child: Text(
-            'back',
-            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-          ),
-        ),
-      );
-
   Widget get title => Text(_colorPicker.desc,
       style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black));
   Widget get colorName => _ColorLabel(
@@ -320,7 +303,7 @@ class _HslSandboxState extends State<HslSandbox> {
                           gradient: LinearGradient(
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
-                            colors: [SuperColors.gray, hsl(_h, 1, 0.5)],
+                            colors: [SuperColors.gray, SuperColor.hsl(_h, 1, 0.5)],
                           ),
                         ),
                       ),
@@ -350,19 +333,19 @@ class _HslSandboxState extends State<HslSandbox> {
           _HSLSlider(
             'hue',
             _h,
-            color: hsl(_h, 1, 0.5),
+            color: SuperColor.hsl(_h, 1, 0.5),
             onChanged: (value) => setState(() => _h = value),
           ),
           _HSLSlider(
             'saturation',
             _s,
-            color: hsl(_h, _s, 0.5),
+            color: SuperColor.hsl(_h, _s, 0.5),
             onChanged: (value) => setState(() => _s = value),
           ),
           _HSLSlider(
             'lightness',
             _l,
-            color: hsl(_h, _s, _l),
+            color: SuperColor.hsl(_h, _s, _l),
             onChanged: (value) => setState(() => _l = value),
           ),
           const FixedSpacer(25),
@@ -385,7 +368,7 @@ class _HslSandboxState extends State<HslSandbox> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Spacer(),
-              backButton,
+              const GoBack(),
               const Spacer(),
               title,
               const Spacer(),
