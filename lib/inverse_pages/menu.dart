@@ -22,6 +22,7 @@ class _InverseMenuState extends State<InverseMenu> {
   @override
   void initState() {
     super.initState();
+    inverted = true;
     ticker = inverseSetup(setState);
     if (!sawTheInversion) {
       sleep(0.5)

@@ -24,6 +24,7 @@ class _MainMenuState extends State<MainMenu> {
   @override
   void initState() {
     super.initState();
+    inverted = false;
     ticker = epicSetup(setState);
   }
 

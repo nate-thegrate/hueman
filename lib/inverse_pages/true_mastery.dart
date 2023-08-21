@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
@@ -50,10 +51,16 @@ class RGBSlider extends StatelessWidget {
 }
 
 class _TrueMasteryState extends State<TrueMastery> {
-  int r = 0, g = 0, b = 0;
+  late int r, g, b;
   late int colorCode;
   SuperColor get color => SuperColor.noName(colorCode);
-  void nextColor() => colorCode = rng.nextInt(0xFFFFFF + 1);
+  void nextColor() => setState(() {
+        colorCode = rng.nextInt(0xFFFFFF + 1);
+        r = 0;
+        g = 0;
+        b = 0;
+      });
+
   String get userColorCode => SuperColor.rgb(r, g, b).hexCode;
   String get matchPercent {
     double singleColorMatch(int a, int b) => (256 - (a - b).abs()) / 256;
@@ -69,6 +76,7 @@ class _TrueMasteryState extends State<TrueMastery> {
   @override
   void initState() {
     super.initState();
+    inverted = true;
     nextColor();
   }
 
@@ -82,51 +90,62 @@ class _TrueMasteryState extends State<TrueMastery> {
             children: [
               const Spacer(),
               const GoBack(),
-              const Spacer(),
-              Expanded(flex: 5, child: Container(width: double.infinity, color: color)),
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  RGBSlider(
-                    'red',
-                    r,
-                    multiplier: 0x010000,
-                    onChanged: (value) => setState(() => r = value.toInt()),
-                  ),
-                  RGBSlider(
-                    'green',
-                    g,
-                    multiplier: 0x000100,
-                    onChanged: (value) => setState(() => g = value.toInt()),
-                  ),
-                  RGBSlider(
-                    'blue',
-                    b,
-                    multiplier: 1,
-                    onChanged: (value) => setState(() => b = value.toInt()),
-                  ),
-                ],
+              const Spacer(flex: 3),
+              Container(
+                decoration: const BoxDecoration(
+                    color: SuperColors.lightBackground,
+                    borderRadius: BorderRadiusDirectional.only(
+                        topStart: Radius.circular(50), topEnd: Radius.circular(50))),
+                padding: const EdgeInsets.fromLTRB(30, 60, 30, 40),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        RGBSlider(
+                          'red',
+                          r,
+                          multiplier: 0x010000,
+                          onChanged: (value) => setState(() => r = value.toInt()),
+                        ),
+                        RGBSlider(
+                          'green',
+                          g,
+                          multiplier: 0x000100,
+                          onChanged: (value) => setState(() => g = value.toInt()),
+                        ),
+                        RGBSlider(
+                          'blue',
+                          b,
+                          multiplier: 1,
+                          onChanged: (value) => setState(() => b = value.toInt()),
+                        ),
+                      ],
+                    ),
+                    const FixedSpacer(50),
+                    Text(
+                      'color code: $userColorCode',
+                      style: const TextStyle(fontFamily: 'Consolas', fontSize: 20),
+                    ),
+                    const FixedSpacer(30),
+                    MenuButton('submit', color: color, onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(matchPercent),
+                        ),
+                      ).then((_) => setState(nextColor));
+                    }),
+                    // const FixedSpacer(20),
+                  ],
+                ),
               ),
-              const Spacer(),
-              Text(
-                'color code: $userColorCode',
-                style: const TextStyle(fontFamily: 'Consolas', fontSize: 20),
-              ),
-              const Spacer(),
-              MenuButton('submit', color: color, onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text(matchPercent),
-                  ),
-                ).then((_) => setState(nextColor));
-              }),
-              const Spacer(),
             ],
           ),
         ),
-        backgroundColor: SuperColors.lightBackground,
+        backgroundColor: color,
       ),
     );
   }

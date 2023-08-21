@@ -95,6 +95,7 @@ class _IntroModeState extends State<IntroMode> {
   @override
   void initState() {
     super.initState();
+    inverted = false;
     scoreKeeper =
         casualMode ? null : IntroScoreKeeper(scoring: giveScore, numColors: widget.numColors);
     scoreKeeper?.stopwatch.start();

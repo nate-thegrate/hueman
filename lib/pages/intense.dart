@@ -336,6 +336,7 @@ class _IntenseModeState extends State<IntenseMode> {
   @override
   void initState() {
     super.initState();
+    inverted = false;
     scoreKeeper = casualMode
         ? null
         : masterMode

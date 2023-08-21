@@ -237,6 +237,7 @@ class _TriviaModeState extends State<TriviaMode> {
   @override
   void initState() {
     super.initState();
+    inverted = true;
     resetButtons();
     triviaQuestions.shuffle();
   }

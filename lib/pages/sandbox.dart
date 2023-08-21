@@ -144,8 +144,10 @@ class _ColorSelection extends StatelessWidget {
                 width: 500,
                 child: TextButton(
                   style: TextButton.styleFrom(
-                      shape: const BeveledRectangleBorder(),
-                      backgroundColor: _color == color ? Colors.black45 : null),
+                    shape: const BeveledRectangleBorder(),
+                    foregroundColor: color,
+                    backgroundColor: _color == color ? Colors.black45 : null,
+                  ),
                   onPressed: () => updateColor(color, HSVColor.fromColor(color)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -205,25 +207,23 @@ class Sandbox extends StatefulWidget {
 }
 
 class _SandboxState extends State<Sandbox> {
-  void colorPickerPicker(int index) {
-    setState(() {
-      switch (_colorPicker) {
-        case _ColorPicker.rgb:
-          HSVColor hsvColor = HSVColor.fromColor(_color);
-          _h = hsvColor.hue;
-          _s = hsvColor.saturation;
-          _v = hsvColor.value;
-          break;
-        case _ColorPicker.hsv:
-          _r = _color.red;
-          _g = _color.green;
-          _b = _color.blue;
-          break;
-        default:
-      }
-      _colorPicker = _ColorPicker.values[index];
-    });
-  }
+  void colorPickerPicker(int index) => setState(() {
+        switch (_colorPicker) {
+          case _ColorPicker.rgb:
+            HSVColor hsvColor = HSVColor.fromColor(_color);
+            _h = hsvColor.hue;
+            _s = hsvColor.saturation;
+            _v = hsvColor.value;
+            break;
+          case _ColorPicker.hsv:
+            _r = _color.red;
+            _g = _color.green;
+            _b = _color.blue;
+            break;
+          default:
+        }
+        _colorPicker = _ColorPicker.values[index];
+      });
 
   Widget get backButton => TextButton(
         style: TextButton.styleFrom(
@@ -243,7 +243,7 @@ class _SandboxState extends State<Sandbox> {
   Widget get title => Text(_colorPicker.desc, style: Theme.of(context).textTheme.headlineMedium);
   Widget get colorName => _ColorLabel(
         'color name',
-        _color.name,
+        _color.rounded.name,
         textStyle: TextStyle(color: _color, fontSize: 20, fontWeight: FontWeight.bold, shadows: [
           Shadow(color: contrastWith(_color, threshold: 0.01).withAlpha(64), blurRadius: 3)
         ]),

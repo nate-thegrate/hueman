@@ -142,9 +142,11 @@ class _ColorSelection extends StatelessWidget {
                 width: 500,
                 child: TextButton(
                   style: TextButton.styleFrom(
-                      shape: const BeveledRectangleBorder(),
-                      backgroundColor:
-                          _color.rounded.hexCode == color.hexCode ? Colors.black45 : null),
+                    shape: const BeveledRectangleBorder(),
+                    foregroundColor: color,
+                    backgroundColor:
+                        _color.rounded.hexCode == color.hexCode ? SuperColors.white80 : null,
+                  ),
                   onPressed: () => updateColor(color, HSLColor.fromColor(color)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -210,8 +212,8 @@ class _HslSandboxState extends State<HslSandbox> {
         case _ColorPicker.rgb:
           HSLColor hslColor = HSLColor.fromColor(_color);
           _h = hslColor.hue;
-          _s = hslColor.saturation;
           _l = hslColor.lightness;
+          _s = (_l == 0) ? 0 : hslColor.saturation;
           break;
         case _ColorPicker.hsl:
           _r = _color.red;
@@ -228,7 +230,7 @@ class _HslSandboxState extends State<HslSandbox> {
       style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black));
   Widget get colorName => _ColorLabel(
         'color name',
-        _color.name,
+        _color.rounded.name,
         textStyle: TextStyle(color: _color, fontSize: 20, fontWeight: FontWeight.bold, shadows: [
           Shadow(color: contrastWith(_color, threshold: 0.8).withAlpha(64), blurRadius: 3)
         ]),

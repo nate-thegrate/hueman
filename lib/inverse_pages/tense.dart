@@ -9,39 +9,42 @@ import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
 class TenseScoreKeeper implements ScoreKeeper {
-  int round = 1, health = 13, overfills = 0;
-  dynamic scoring;
-  late String rank;
-  static const maxHealth = 25;
-  bool healthBarFlash = false;
-
-  void updateHealth(bool gotItRight) {
-    if (gotItRight && health == maxHealth) {
-      overfills++;
-      healthBarFlash = true;
-      sleep(1 / 3).then((_) => healthBarFlash = false);
-    } else {
-      health = max(min(gotItRight ? health + 3 : health - 5, maxHealth), 0);
-    }
-  }
-
-  TenseScoreKeeper({this.scoring, required this.page});
-
   @override
   final Pages page;
-  @override
-  void roundCheck(BuildContext context) {
-    if (health == 0) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute<void>(builder: (context) => GameEnd(this)));
+
+  TenseScoreKeeper({required this.page});
+
+  static const maxHealth = 25;
+  bool healthBarFlash = false;
+  int round = 1, health = 13, overfills = 0;
+  late String rank;
+
+  void updateHealth(bool gotItRight) {
+    if (gotItRight) {
+      if (health == maxHealth) {
+        overfills++;
+        healthBarFlash = true;
+        sleep(1 / 3).then((_) => healthBarFlash = false);
+      } else {
+        health = min(health + 3, maxHealth);
+      }
     } else {
-      round++;
+      health = max(health - 5, 0);
     }
   }
+
+  @override
+  void roundCheck(BuildContext context) => (health > 0)
+      ? round++
+      : Navigator.pushReplacement(
+          context,
+          MaterialPageRoute<void>(builder: (context) => GameEnd(this)),
+        );
 
   @override
   void scoreTheRound() {}
 
+  /// health bar
   @override
   Widget get midRoundDisplay => Container(
         width: 500,
@@ -176,7 +179,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
+    inverted = true;
     scoreKeeper = casualMode
         ? null
         : TenseScoreKeeper(
