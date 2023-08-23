@@ -41,20 +41,20 @@ class SnippetAnimation extends AdsAnimation {
 Widget none(_) => empty;
 
 class _AdsState extends State<Ads> {
-  late final Ticker ticker;
+  late final Ticker inverseHues;
   static const duration = Duration(milliseconds: 300);
 
   @override
   void initState() {
     super.initState();
     sleep(1).then((_) => clickedOnAds = true);
-    ticker = inverseSetup(setState);
+    inverseHues = inverseSetup(setState);
     animateThisPage();
   }
 
   @override
   void dispose() {
-    ticker.dispose();
+    inverseHues.dispose();
     super.dispose();
   }
 
@@ -107,7 +107,7 @@ class _AdsState extends State<Ads> {
       4,
       (c) => SizedBox(
         height: 50,
-        child: MenuButton(
+        child: SuperButton(
           'click here!',
           color: c,
           onPressed: gotoWebsite('https://google.com/'),

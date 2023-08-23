@@ -24,7 +24,7 @@ class RGBSlider extends StatelessWidget {
           RotatedBox(
             quarterTurns: 3,
             child: SizedBox(
-              width: 256 * 2,
+              width: MediaQuery.of(context).size.height - 600,
               child: SliderTheme(
                 data: const SliderThemeData(
                   trackHeight: 15,
@@ -130,7 +130,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                       style: const TextStyle(fontFamily: 'Consolas', fontSize: 20),
                     ),
                     const FixedSpacer(30),
-                    MenuButton('submit', color: color, onPressed: () {
+                    SuperButton('submit', color: color, onPressed: () {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(

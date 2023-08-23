@@ -1,4 +1,5 @@
 import 'package:super_hueman/pages/game_end.dart';
+import 'package:super_hueman/pages/game_screen.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
@@ -49,7 +50,8 @@ class IntroScoreKeeper implements ScoreKeeper {
 
   @override
   Widget get finalDetails => Text(
-        '(${colorsPerMinute.toStringAsFixed(1)} colors per minute) \u00d7 (${accuracy.round()}% accuracy)',
+        '(${colorsPerMinute.toStringAsFixed(1)} colors per minute) '
+        '\u00d7 (${accuracy.round()}% accuracy)',
         style: const TextStyle(fontSize: 18, color: Colors.white54),
       );
 
@@ -68,11 +70,14 @@ class IntroScoreKeeper implements ScoreKeeper {
 }
 
 class _IntroModeState extends State<IntroMode> {
-  final hueFocusNode = FocusNode();
-  final hueController = TextEditingController();
-
+  late final FocusNode? hueFocusNode;
+  late final TextEditingController? hueController;
+  late final NumPadController? numPadController;
+  String get val => numPadController!.displayValue;
   late int hue;
-  int get guess => hueController.value.toInt();
+  int get guess =>
+      externalKeyboard ? hueController!.value.toInt() : int.parse(numPadController!.displayValue);
+
   final List<int> hueChoices = [];
   final List<int> recentChoices = [];
 
@@ -83,6 +88,7 @@ class _IntroModeState extends State<IntroMode> {
   }
 
   void generateHue() {
+    numPadController?.clear();
     hue = hueChoices.removeAt(rng.nextInt(hueChoices.length));
     if (recentChoices.length >= widget.numColors ~/ 2) {
       hueChoices.add(recentChoices.removeAt(0));
@@ -96,12 +102,21 @@ class _IntroModeState extends State<IntroMode> {
   void initState() {
     super.initState();
     inverted = false;
+    if (externalKeyboard) {
+      hueFocusNode = FocusNode();
+      hueController = TextEditingController();
+      numPadController = null;
+    } else {
+      hueFocusNode = null;
+      hueController = null;
+      numPadController = NumPadController(setState);
+    }
     scoreKeeper =
         casualMode ? null : IntroScoreKeeper(scoring: giveScore, numColors: widget.numColors);
     scoreKeeper?.stopwatch.start();
     hueChoices.addAll([for (int i = 0; i < 360; i += 360 ~/ widget.numColors) i]);
     generateHue();
-    hueFocusNode.requestFocus();
+    hueFocusNode?.requestFocus();
   }
 
   @override
@@ -118,12 +133,21 @@ class _IntroModeState extends State<IntroMode> {
       );
 
   @override
-  Widget build(BuildContext context) => GameScreen(
-        color: color,
-        hueFocusNode: hueFocusNode,
-        hueController: hueController,
-        hueDialogBuilder: hueDialogBuilder,
-        generateHue: () => setState(generateHue),
-        scoreKeeper: scoreKeeper,
-      );
+  Widget build(BuildContext context) => externalKeyboard
+      ? KeyboardGame(
+          color: color,
+          hueFocusNode: hueFocusNode!,
+          hueController: hueController!,
+          hueDialogBuilder: hueDialogBuilder,
+          generateHue: () => setState(generateHue),
+          scoreKeeper: scoreKeeper,
+        )
+      : NumPadGame(
+          color: color,
+          numPad: (void Function() submit) => NumPad(numPadController!, submit: submit),
+          numPadVal: numPadController!.displayValue,
+          hueDialogBuilder: hueDialogBuilder,
+          scoreKeeper: scoreKeeper,
+          generateHue: () => setState(generateHue),
+        );
 }

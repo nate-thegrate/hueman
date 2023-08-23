@@ -14,7 +14,7 @@ class InverseMenu extends StatefulWidget {
 }
 
 class _InverseMenuState extends State<InverseMenu> {
-  late final Ticker ticker;
+  late final Ticker inverseHues;
   List<Widget> children = [];
   MenuPage menuPage = MenuPage.main;
   bool get mainMenu => menuPage == MenuPage.main;
@@ -22,19 +22,20 @@ class _InverseMenuState extends State<InverseMenu> {
   @override
   void initState() {
     super.initState();
-    inverted = true;
-    ticker = inverseSetup(setState);
-    if (!sawTheInversion) {
-      sleep(0.5)
-          .then((_) => setState(() => opacity = 0))
-          .then((_) => sleep(1))
-          .then((_) => setState(() => sawTheInversion = true));
+    inverseHues = inverseSetup(setState);
+    if (inverted) {
+      opacity = 0;
+      exists = false;
+    } else {
+      inverted = true;
+      sleep(0.01).then((_) => setState(() => opacity = 0));
+      sleep(1).then((_) => setState(() => exists = false));
     }
   }
 
   @override
   void dispose() {
-    ticker.dispose();
+    inverseHues.dispose();
     super.dispose();
   }
 
@@ -56,6 +57,7 @@ class _InverseMenuState extends State<InverseMenu> {
       );
 
   double opacity = 1;
+  bool exists = true;
 
   @override
   Widget build(BuildContext context) {
@@ -75,14 +77,10 @@ class _InverseMenuState extends State<InverseMenu> {
         const FixedSpacer(67),
         NavigateButton(Pages.trivial, color: inverseColor),
         const FixedSpacer(33),
-        ElevatedButton(
+        SuperButton(
+          'tense',
+          color: inverseColor,
           onPressed: () => setState(() => menuPage = MenuPage.tenseSelect),
-          style: ElevatedButton.styleFrom(
-              backgroundColor: inverseColor, foregroundColor: Colors.white),
-          child: const Padding(
-            padding: EdgeInsets.only(bottom: 4),
-            child: Text('tense', style: TextStyle(fontSize: 24)),
-          ),
         ),
         const FixedSpacer(33),
         ElevatedButton(
@@ -100,13 +98,6 @@ class _InverseMenuState extends State<InverseMenu> {
         NavigateButton(Pages.inverseSandbox, color: inverseColor),
       ],
       MenuPage.settings: [
-        MenuCheckbox(
-          'auto-submit',
-          value: autoSubmit,
-          description: ("'submit' when 3 digits are entered", "submit with the 'submit' button"),
-          toggle: (value) => setState(() => autoSubmit = value),
-        ),
-        const FixedSpacer(50),
         MenuCheckbox(
           'casual mode',
           value: casualMode,
@@ -214,15 +205,10 @@ class _InverseMenuState extends State<InverseMenu> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 30),
                     child: TextButton(
-                      style: mainMenu
-                          ? TextButton.styleFrom(
-                              foregroundColor: inverseColor,
-                              backgroundColor: Colors.white,
-                            )
-                          : TextButton.styleFrom(
-                              foregroundColor: inverseColor,
-                              backgroundColor: Colors.white54,
-                            ),
+                      style: TextButton.styleFrom(
+                        foregroundColor: inverseColor,
+                        backgroundColor: mainMenu ? Colors.white : Colors.white54,
+                      ),
                       onPressed: () {
                         if (mainMenu) {
                           setState(() => menuPage = MenuPage.settings);
@@ -272,17 +258,17 @@ class _InverseMenuState extends State<InverseMenu> {
                 ],
               ),
             ),
-            sawTheInversion
-                ? empty
-                : AnimatedOpacity(
+            exists
+                ? AnimatedOpacity(
                     duration: const Duration(seconds: 1),
                     opacity: opacity,
                     curve: curve,
                     child: ConstrainedBox(
                       constraints: const BoxConstraints.expand(),
-                      child: const ColoredBox(color: Color(0xff121212)),
+                      child: const ColoredBox(color: SuperColors.lightBackground),
                     ),
-                  ),
+                  )
+                : empty,
           ],
         ),
         backgroundColor: SuperColors.lightBackground,

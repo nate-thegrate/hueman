@@ -328,21 +328,6 @@ class _TriviaModeState extends State<TriviaMode> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget backButton = TextButton(
-      style: TextButton.styleFrom(
-        foregroundColor: SuperColors.black80,
-        backgroundColor: Colors.white54,
-      ),
-      onPressed: () => context.goto(Pages.inverseMenu),
-      child: const Padding(
-        padding: EdgeInsets.all(8),
-        child: Text(
-          'back',
-          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-        ),
-      ),
-    );
-
     final Widget questionText = Container(
       height: 200,
       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -377,7 +362,7 @@ class _TriviaModeState extends State<TriviaMode> {
           child: Column(
             children: [
               const Spacer(),
-              backButton,
+              const GoBack(),
               const Spacer(),
               questionText,
               const Spacer(),

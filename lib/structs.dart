@@ -94,9 +94,13 @@ abstract class ScoreKeeper {
   void roundCheck(BuildContext context);
 }
 
+/// less stuff to type now :)
 extension ContextStuff on BuildContext {
-  /// less stuff to type now :)
   void goto(Pages page) => Navigator.pushReplacementNamed(this, page.name);
+
+  Size get _size => MediaQuery.of(this).size;
+  double get screenWidth => _size.width;
+  double get screenHeight => _size.height;
 }
 
 void Function() gotoWebsite(String url) => () => launchUrl(Uri.parse(url));
@@ -975,9 +979,9 @@ Ticker epicSetup(StateSetter setState) {
 
   epicHue = rng.nextInt(360);
   _lastEpicChange = 0;
-  final Ticker ticker = Ticker(epicCycle)..start();
+  final Ticker epicHues = Ticker(epicCycle)..start();
 
-  return ticker;
+  return epicHues;
 }
 
 Ticker inverseSetup(StateSetter setState) {
@@ -986,9 +990,9 @@ Ticker inverseSetup(StateSetter setState) {
   }
 
   inverseHue = rng.nextInt(360);
-  final Ticker ticker = Ticker(inverseCycle)..start();
+  final Ticker inverseHues = Ticker(inverseCycle)..start();
 
-  return ticker;
+  return inverseHues;
 }
 
 extension ToInt on TextEditingValue {

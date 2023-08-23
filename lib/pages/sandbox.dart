@@ -6,6 +6,7 @@ int _r = 255, _g = 255, _b = 255;
 double _h = 0, _s = 0, _v = 0;
 
 _ColorPicker _colorPicker = _ColorPicker.rgb;
+
 SuperColor get _color {
   switch (_colorPicker) {
     case _ColorPicker.rgb:

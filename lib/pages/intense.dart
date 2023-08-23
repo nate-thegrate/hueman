@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:super_hueman/image_data.dart';
 import 'package:super_hueman/pages/game_end.dart';
+import 'package:super_hueman/pages/game_screen.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
@@ -235,8 +236,9 @@ class _IntenseModeState extends State<IntenseMode> {
 
   final List<(Widget, SuperColor)> pics = [];
 
-  var hueFocusNode = FocusNode();
-  var hueController = TextEditingController();
+  late final FocusNode? hueFocusNode;
+  late final TextEditingController? hueController;
+  late final NumPadController? numPadController;
 
   late final IntenseScoreKeeper? scoreKeeper;
 
@@ -251,7 +253,8 @@ class _IntenseModeState extends State<IntenseMode> {
   double get saturation => pow(1 + difficulty / 1000 * (masterRNG - 1), 20).toDouble();
   double get value => pow(1 - difficulty / 700 * masterRNG, 20).toDouble();
 
-  int get guess => hueController.value.toInt();
+  int get guess =>
+      externalKeyboard ? hueController!.value.toInt() : int.parse(numPadController!.displayValue);
 
   int get offBy {
     int diff(int a, int b) => (a - b).abs();
@@ -275,6 +278,7 @@ class _IntenseModeState extends State<IntenseMode> {
   }
 
   void generateHue() {
+    numPadController?.clear();
     if (!mastery && offBy == 0) mastery = true;
     int newHue = rng.nextInt(300);
     if (newHue + 30 >= hue) newHue += 60;
@@ -342,6 +346,15 @@ class _IntenseModeState extends State<IntenseMode> {
         : masterMode
             ? MasterScoreKeeper(scoring: masterScore)
             : IntenseScoreKeeper(scoring: intenseScore);
+    if (externalKeyboard) {
+      hueFocusNode = FocusNode();
+      hueController = TextEditingController();
+      numPadController = null;
+    } else {
+      hueFocusNode = null;
+      hueController = null;
+      numPadController = externalKeyboard ? null : NumPadController(setState);
+    }
     if (showPics) {
       final ogPics = allImages.toList();
       ogPics.shuffle();
@@ -352,7 +365,7 @@ class _IntenseModeState extends State<IntenseMode> {
       }
       hue = HSVColor.fromColor(pics.first.$2).hue.round();
     }
-    hueFocusNode.requestFocus();
+    hueFocusNode?.requestFocus();
   }
 
   static const List<Color> oranges = [
@@ -379,13 +392,22 @@ class _IntenseModeState extends State<IntenseMode> {
         );
 
   @override
-  Widget build(BuildContext context) => GameScreen(
-        color: color,
-        hueFocusNode: hueFocusNode,
-        hueController: hueController,
-        hueDialogBuilder: hueDialogBuilder,
-        generateHue: showPics ? generatePic : generateHue,
-        scoreKeeper: scoreKeeper,
-        image: image,
-      );
+  Widget build(BuildContext context) => externalKeyboard
+      ? KeyboardGame(
+          color: color,
+          hueFocusNode: hueFocusNode!,
+          hueController: hueController!,
+          hueDialogBuilder: hueDialogBuilder,
+          generateHue: showPics ? generatePic : generateHue,
+          scoreKeeper: scoreKeeper,
+          image: image,
+        )
+      : NumPadGame(
+          color: color,
+          numPad: (submit) => NumPad(numPadController!, submit: submit),
+          numPadVal: numPadController!.displayValue,
+          hueDialogBuilder: hueDialogBuilder,
+          scoreKeeper: scoreKeeper,
+          generateHue: showPics ? generatePic : generateHue,
+        );
 }

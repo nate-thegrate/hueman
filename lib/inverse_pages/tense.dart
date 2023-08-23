@@ -139,7 +139,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   int? selectedHue;
 
   late final List<AnimationController> controllers;
-  late final Ticker ticker;
+  late final Ticker inverseHues;
   static const animationTime = 25;
   static const duration = Duration(milliseconds: animationTime);
 
@@ -187,7 +187,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
             'vibrant': Pages.tenseVibrant,
             'mixed': Pages.tenseMixed,
           }[widget.mode]!);
-    ticker = inverseSetup(setState);
+    inverseHues = inverseSetup(setState);
     controllers = [
       for (int i = 0; i < 4; i++) AnimationController(duration: duration, vsync: this)
     ];
@@ -199,7 +199,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     for (final controller in controllers) {
       controller.dispose();
     }
-    ticker.dispose();
+    inverseHues.dispose();
     super.dispose();
   }
 
@@ -250,7 +250,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
           alignment: Alignment.topCenter,
           child: Column(children: [
             Target('hue', '$hue°'),
-            Target('color', name),
+            Target(widget.mode == 'vibrant' ? 'color' : 'color [mixed]', name),
             Target('color_code', SuperColor.noName(color.value - SuperColor.opaque).hexCode),
             Target('tension', tension[name]),
             casualMode ? empty : Target('round', scoreKeeper!.round),

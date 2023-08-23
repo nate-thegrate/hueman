@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/inverse_pages/menu.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
@@ -16,7 +17,7 @@ class MainMenu extends StatefulWidget {
 enum MenuPage { main, settings, introSelect }
 
 class _MainMenuState extends State<MainMenu> {
-  late final Ticker ticker;
+  late final Ticker epicHues;
   List<Widget> children = [];
   MenuPage menuPage = MenuPage.main;
   bool get mainMenu => menuPage == MenuPage.main;
@@ -25,12 +26,12 @@ class _MainMenuState extends State<MainMenu> {
   void initState() {
     super.initState();
     inverted = false;
-    ticker = epicSetup(setState);
+    epicHues = epicSetup(setState);
   }
 
   @override
   void dispose() {
-    ticker.dispose();
+    epicHues.dispose();
     super.dispose();
   }
 
@@ -53,6 +54,12 @@ class _MainMenuState extends State<MainMenu> {
     }
     return colors;
   }
+
+  bool showMasteryText = false;
+  bool inverting = false;
+  bool inverting2 = false;
+  static const invertingDuration = Duration(milliseconds: 1200);
+  static const inverting2Duration = Duration(milliseconds: 1000);
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +122,13 @@ class _MainMenuState extends State<MainMenu> {
           toggle: (value) => setState(() => autoSubmit = value),
         ),
         const FixedSpacer(33),
+        MenuCheckbox(
+          'external keyboard',
+          value: externalKeyboard,
+          description: ('type on a keyboard', 'tap buttons on the screen'),
+          toggle: (value) => setState(() => externalKeyboard = value),
+        ),
+        const FixedSpacer(33),
         ...mastery
             ? [
                 MenuCheckbox(
@@ -130,8 +144,6 @@ class _MainMenuState extends State<MainMenu> {
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: epicColor, width: 2),
                       foregroundColor: epicColor,
-                      backgroundColor: SuperColors.darkBackground,
-                      shadowColor: epicColor,
                     ),
                     child: const Padding(
                       padding: EdgeInsets.only(top: 4, bottom: 10),
@@ -144,8 +156,22 @@ class _MainMenuState extends State<MainMenu> {
                 Center(
                   child: OutlinedButton(
                     onPressed: () {
-                      setState(() => inverted = true);
-                      context.goto(Pages.inverseMenu);
+                      Future animate() async {
+                        setState(() => inverting = true);
+                        await sleep(0.75);
+                        setState(() => inverting2 = true);
+                        await sleep(1);
+                      }
+
+                      animate().then((_) => Navigator.pushReplacement(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation1, animation2) =>
+                                  const InverseMenu(),
+                              transitionDuration: Duration.zero,
+                              reverseTransitionDuration: Duration.zero,
+                            ),
+                          ));
                     },
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: epicColor, width: 2),
@@ -170,23 +196,32 @@ class _MainMenuState extends State<MainMenu> {
                     backgroundColor: SuperColors.darkBackground,
                     shadowColor: epicColor,
                   ),
-                  onPressed: () => {
-                    showDialog(
-                      context: context,
-                      builder: (context) => const AlertDialog(
-                        content: Text(
-                          'unlock more options\nby playing "intense" mode!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 18, color: Colors.white70),
-                        ),
-                      ),
-                    ),
+                  onPressed: () {
+                    if (!showMasteryText) {
+                      setState(() => showMasteryText = true);
+                      sleep(4).then((_) => setState(() => showMasteryText = false));
+                    }
                   },
                   child: const Padding(
                     padding: EdgeInsets.only(top: 5, bottom: 10),
                     child: Text('more options', style: TextStyle(fontSize: 18)),
                   ),
                 )),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 250),
+                  curve: curve,
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 2),
+                    width: double.infinity,
+                    child: showMasteryText
+                        ? const Text(
+                            'unlock more options\nby playing "intense" mode!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white70),
+                          )
+                        : null,
+                  ),
+                ),
               ],
       ],
       MenuPage.introSelect: [
@@ -215,65 +250,90 @@ class _MainMenuState extends State<MainMenu> {
     }[menuPage]!;
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 30),
-              child: TextButton(
-                style: mainMenu
-                    ? TextButton.styleFrom(
-                        foregroundColor: epicColor,
-                        backgroundColor: Colors.black,
-                      )
-                    : TextButton.styleFrom(
-                        foregroundColor: Colors.white70,
-                        backgroundColor: Colors.black26,
-                      ),
-                onPressed: () {
-                  if (mainMenu) {
-                    setState(() => menuPage = MenuPage.settings);
-                  } else {
-                    setState(() => menuPage = MenuPage.main);
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: mainMenu
-                      ? const Padding(
-                          padding: EdgeInsets.only(bottom: 2),
-                          child: Text(
-                            'settings',
-                            style: TextStyle(fontSize: 16),
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: TextButton(
+                    style: mainMenu
+                        ? TextButton.styleFrom(
+                            foregroundColor: epicColor,
+                            backgroundColor: Colors.black,
+                          )
+                        : TextButton.styleFrom(
+                            foregroundColor: Colors.white70,
+                            backgroundColor: Colors.black26,
                           ),
-                        )
-                      : const Text(
-                          'back',
-                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-                        ),
+                    onPressed: () {
+                      if (mainMenu) {
+                        setState(() => menuPage = MenuPage.settings);
+                      } else {
+                        setState(() => menuPage = MenuPage.main);
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: mainMenu
+                          ? const Padding(
+                              padding: EdgeInsets.only(bottom: 2),
+                              child: Text(
+                                'settings',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            )
+                          : const Text(
+                              'back',
+                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                            ),
+                    ),
+                  ),
                 ),
+                Container(
+                  decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
+                  width: 300,
+                  padding: const EdgeInsets.all(50),
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 250),
+                    curve: curve,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: menuPage == MenuPage.settings
+                          ? CrossAxisAlignment.start
+                          : CrossAxisAlignment.center,
+                      children: children,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          AnimatedSize(
+            duration: invertingDuration,
+            curve: Curves.easeOutQuad,
+            child: Container(
+              width: double.infinity,
+              height: inverting ? context.screenHeight : 0,
+              decoration: BoxDecoration(
+                backgroundBlendMode: BlendMode.difference,
+                color: SuperColor.hsl(0, 0, 1),
+              ),
+              child: AnimatedOpacity(
+                opacity: inverting2 ? 1 : 0,
+                duration: inverting2Duration,
+                child: inverting2
+                    ? Container(
+                        color: SuperColors.lightBackground,
+                      )
+                    : empty,
               ),
             ),
-            Container(
-              decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
-              width: 300,
-              padding: const EdgeInsets.all(50),
-              child: AnimatedSize(
-                duration: const Duration(milliseconds: 250),
-                curve: curve,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: menuPage == MenuPage.settings
-                      ? CrossAxisAlignment.start
-                      : CrossAxisAlignment.center,
-                  children: children,
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
