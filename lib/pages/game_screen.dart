@@ -329,7 +329,10 @@ class _HueDialogState extends State<HueDialog> {
   void initState() {
     super.initState();
     epicHues = widget.isSuper ? epicSetup(setState) : null;
-    sleep(widget.isSuper ? 1 : 0.2).then((_) => addListener(_listenForEnter));
+    sleep(widget.isSuper ? 2 : 0.2).then((_) {
+      addListener(_listenForEnter);
+      setState(() => unclickable = false);
+    });
   }
 
   @override
@@ -339,47 +342,59 @@ class _HueDialogState extends State<HueDialog> {
     super.dispose();
   }
 
+  late bool unclickable = widget.isSuper;
+
   @override
-  Widget build(BuildContext context) => AlertDialog(
-        title: Text(
-          widget.text,
-          textAlign: TextAlign.center,
-          style: widget.isSuper
-              ? TextStyle(
-                  shadows: const [Shadow(blurRadius: 8)],
-                  fontSize: 42,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.bold,
-                  color: epicColor)
-              : null,
-        ),
-        elevation: widget.isSuper ? (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 10 : null,
-        shadowColor: widget.isSuper ? epicColor : null,
-        surfaceTintColor: widget.isSuper ? epicColor : null,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            widget.graphic,
-            const FixedSpacer(20),
-            _AnswerFeedback(widget.guess, text: 'Your answer:'),
-            _AnswerFeedback(widget.hue, text: 'Correct answer:'),
-            ...(mastery || !widget.isSuper)
-                ? []
-                : [
-                    const FixedSpacer(20),
-                    Text(
-                      'all game modes\nunlocked!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: epicColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
-                        shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
-                      ),
-                    ),
-                  ]
-          ],
-        ),
+  Widget build(BuildContext context) => Stack(
+        children: [
+          AlertDialog(
+            title: Text(
+              widget.text,
+              textAlign: TextAlign.center,
+              style: widget.isSuper
+                  ? TextStyle(
+                      shadows: const [Shadow(blurRadius: 8)],
+                      fontSize: 42,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      color: epicColor)
+                  : null,
+            ),
+            elevation: widget.isSuper ? (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 10 : null,
+            shadowColor: widget.isSuper ? epicColor : null,
+            surfaceTintColor: widget.isSuper ? epicColor : null,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                widget.graphic,
+                const FixedSpacer(20),
+                _AnswerFeedback(widget.guess, text: 'Your answer:'),
+                _AnswerFeedback(widget.hue, text: 'Correct answer:'),
+                ...(mastery || !widget.isSuper)
+                    ? []
+                    : [
+                        const FixedSpacer(20),
+                        Text(
+                          'all game modes\nunlocked!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: epicColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                            shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
+                          ),
+                        ),
+                      ]
+              ],
+            ),
+          ),
+          unclickable
+              ? Container(
+                  constraints: const BoxConstraints.expand(),
+                  color: Colors.transparent,
+                )
+              : empty,
+        ],
       );
 }
 

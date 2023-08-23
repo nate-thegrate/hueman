@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:super_hueman/inverse_pages/menu.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
@@ -25,8 +24,15 @@ class _MainMenuState extends State<MainMenu> {
   @override
   void initState() {
     super.initState();
-    inverted = false;
     epicHues = epicSetup(setState);
+    if (inverted) {
+      inverted = false;
+      sleep(0.01).then((_) => setState(() => opacity = 0));
+      sleep(0.5).then((_) => setState(() => exists = false));
+    } else {
+      opacity = 0;
+      exists = false;
+    }
   }
 
   @override
@@ -60,6 +66,8 @@ class _MainMenuState extends State<MainMenu> {
   bool inverting2 = false;
   static const invertingDuration = Duration(milliseconds: 1200);
   static const inverting2Duration = Duration(milliseconds: 1000);
+  double opacity = 1;
+  bool exists = true;
 
   @override
   Widget build(BuildContext context) {
@@ -156,6 +164,7 @@ class _MainMenuState extends State<MainMenu> {
                 Center(
                   child: OutlinedButton(
                     onPressed: () {
+                      // TODO: should be circle that collapses
                       Future animate() async {
                         setState(() => inverting = true);
                         await sleep(0.75);
@@ -163,15 +172,7 @@ class _MainMenuState extends State<MainMenu> {
                         await sleep(1);
                       }
 
-                      animate().then((_) => Navigator.pushReplacement(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder: (context, animation1, animation2) =>
-                                  const InverseMenu(),
-                              transitionDuration: Duration.zero,
-                              reverseTransitionDuration: Duration.zero,
-                            ),
-                          ));
+                      animate().then((_) => context.invert());
                     },
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: epicColor, width: 2),
@@ -318,9 +319,9 @@ class _MainMenuState extends State<MainMenu> {
             child: Container(
               width: double.infinity,
               height: inverting ? context.screenHeight : 0,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 backgroundBlendMode: BlendMode.difference,
-                color: SuperColor.hsl(0, 0, 1),
+                color: SuperColors.inverting,
               ),
               child: AnimatedOpacity(
                 opacity: inverting2 ? 1 : 0,
@@ -333,6 +334,17 @@ class _MainMenuState extends State<MainMenu> {
               ),
             ),
           ),
+          exists
+              ? AnimatedOpacity(
+                  duration: const Duration(milliseconds: 500),
+                  opacity: opacity,
+                  curve: Curves.easeInOutQuad,
+                  child: Container(
+                    constraints: const BoxConstraints.expand(),
+                    color: SuperColors.darkBackground,
+                  ),
+                )
+              : empty,
         ],
       ),
     );

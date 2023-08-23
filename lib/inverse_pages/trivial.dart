@@ -106,8 +106,7 @@ const List<TriviaQuestion> allTriviaQuestions = [
   TriviaQuestion(
     'Which color is also the name of a cloud computing platform?',
     [SuperColors.azure],
-    explanation:
-        'Microsoft Azure is a tool you can use to create websites and virtual machines.\n\n'
+    explanation: 'You can use Microsoft Azure to make websites\nand virtual machines.\n\n'
         'And as you would expect, it has an azure logo.',
   ),
   TriviaQuestion(

@@ -13,6 +13,7 @@ import 'package:super_hueman/inverse_pages/menu.dart';
 import 'package:super_hueman/inverse_pages/hsl_sandbox.dart';
 import 'package:super_hueman/pages/main_menu.dart';
 import 'package:super_hueman/pages/sandbox.dart';
+import 'package:super_hueman/save_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// ```dart
@@ -97,6 +98,16 @@ abstract class ScoreKeeper {
 /// less stuff to type now :)
 extension ContextStuff on BuildContext {
   void goto(Pages page) => Navigator.pushReplacementNamed(this, page.name);
+
+  void invert() => Navigator.pushReplacement(
+        this,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) =>
+              inverted ? const MainMenu() : const InverseMenu(),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+        ),
+      );
 
   Size get _size => MediaQuery.of(this).size;
   double get screenWidth => _size.width;
@@ -192,6 +203,8 @@ abstract class SuperColors {
 
   static const darkBackground = SuperColor.noName(0x121212);
   static const lightBackground = SuperColor.noName(0xffeef3f8);
+  static const inverting = SuperColor.noName(0xf5faff);
+
   static const black80 = Color(0xCC000000);
   static const white80 = Color(0xCCFFFFFF);
 

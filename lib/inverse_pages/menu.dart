@@ -13,8 +13,10 @@ class InverseMenu extends StatefulWidget {
   State<InverseMenu> createState() => _InverseMenuState();
 }
 
-class _InverseMenuState extends State<InverseMenu> {
+class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStateMixin {
   late final Ticker inverseHues;
+  late final AnimationController controller;
+  bool inverting = false;
   List<Widget> children = [];
   MenuPage menuPage = MenuPage.main;
   bool get mainMenu => menuPage == MenuPage.main;
@@ -23,13 +25,14 @@ class _InverseMenuState extends State<InverseMenu> {
   void initState() {
     super.initState();
     inverseHues = inverseSetup(setState);
+    controller = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
     if (inverted) {
       opacity = 0;
       exists = false;
     } else {
       inverted = true;
       sleep(0.01).then((_) => setState(() => opacity = 0));
-      sleep(1).then((_) => setState(() => exists = false));
+      sleep(0.6).then((_) => setState(() => exists = false));
     }
   }
 
@@ -150,8 +153,14 @@ class _InverseMenuState extends State<InverseMenu> {
         Center(
           child: OutlinedButton(
             onPressed: () {
-              setState(() => inverted = false);
-              context.goto(Pages.mainMenu);
+              Future animate() async {
+                controller.forward();
+                await sleep(0.5);
+                setState(() => inverting = true);
+                await sleep(0.6);
+              }
+
+              animate().then((value) => context.invert());
             },
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: inverseColor, width: 2),
@@ -195,10 +204,10 @@ class _InverseMenuState extends State<InverseMenu> {
         useMaterial3: true,
         checkboxTheme: CheckboxThemeData(fillColor: MaterialStatePropertyAll(inverseColor)),
       ),
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Center(
+      child: Stack(
+        children: [
+          Scaffold(
+            body: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -258,20 +267,42 @@ class _InverseMenuState extends State<InverseMenu> {
                 ],
               ),
             ),
-            exists
-                ? AnimatedOpacity(
-                    duration: const Duration(seconds: 1),
-                    opacity: opacity,
-                    curve: curve,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints.expand(),
-                      child: const ColoredBox(color: SuperColors.lightBackground),
-                    ),
-                  )
-                : empty,
-          ],
-        ),
-        backgroundColor: SuperColors.lightBackground,
+            backgroundColor: SuperColors.lightBackground,
+          ),
+          Align(
+            alignment: const Alignment(0, 0.43),
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0, end: 3).animate(controller),
+              child: ClipOval(
+                child: Container(
+                  width: context.screenWidth,
+                  height: context.screenWidth,
+                  decoration: const BoxDecoration(
+                    color: SuperColors.inverting,
+                    backgroundBlendMode: BlendMode.difference,
+                  ),
+                  alignment: Alignment.center,
+                  child: AnimatedOpacity(
+                    opacity: inverting ? 1 : 0,
+                    duration: const Duration(milliseconds: 300),
+                    child: Container(color: SuperColors.darkBackground),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          exists
+              ? AnimatedOpacity(
+                  duration: const Duration(milliseconds: 600),
+                  opacity: opacity,
+                  curve: Curves.easeInOutQuad,
+                  child: Container(
+                    constraints: const BoxConstraints.expand(),
+                    color: SuperColors.lightBackground,
+                  ),
+                )
+              : empty,
+        ],
       ),
     );
   }
