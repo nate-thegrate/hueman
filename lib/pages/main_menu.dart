@@ -15,7 +15,8 @@ class MainMenu extends StatefulWidget {
 
 enum MenuPage { main, settings, introSelect }
 
-class _MainMenuState extends State<MainMenu> {
+class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin {
+  late final AnimationController controller;
   late final Ticker epicHues;
   List<Widget> children = [];
   MenuPage menuPage = MenuPage.main;
@@ -24,14 +25,15 @@ class _MainMenuState extends State<MainMenu> {
   @override
   void initState() {
     super.initState();
+    controller = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
     epicHues = epicSetup(setState);
     if (inverted) {
       inverted = false;
       sleep(0.01).then((_) => setState(() => opacity = 0));
-      sleep(0.5).then((_) => setState(() => exists = false));
+      sleep(0.5).then((_) => setState(() => darkBackground = null));
     } else {
       opacity = 0;
-      exists = false;
+      darkBackground = null;
     }
   }
 
@@ -63,11 +65,8 @@ class _MainMenuState extends State<MainMenu> {
 
   bool showMasteryText = false;
   bool inverting = false;
-  bool inverting2 = false;
-  static const invertingDuration = Duration(milliseconds: 1200);
-  static const inverting2Duration = Duration(milliseconds: 1000);
   double opacity = 1;
-  bool exists = true;
+  bool? darkBackground = true;
 
   @override
   Widget build(BuildContext context) {
@@ -164,12 +163,16 @@ class _MainMenuState extends State<MainMenu> {
                 Center(
                   child: OutlinedButton(
                     onPressed: () {
-                      // TODO: should be circle that collapses
                       Future animate() async {
                         setState(() => inverting = true);
-                        await sleep(0.75);
-                        setState(() => inverting2 = true);
-                        await sleep(1);
+                        controller.forward();
+                        await sleep(0.7);
+                        setState(() {
+                          darkBackground = false;
+                        });
+                        await sleep(0.1);
+                        setState(() => opacity = 1);
+                        await sleep(0.5);
                       }
 
                       animate().then((_) => context.invert());
@@ -179,7 +182,7 @@ class _MainMenuState extends State<MainMenu> {
                       foregroundColor: epicColor,
                       backgroundColor: SuperColors.darkBackground,
                       shadowColor: epicColor,
-                      elevation: (sin(epicHue / 360 * 2 * pi * 6) + 1) * 6,
+                      elevation: (sin(epicHue / 360 * 2 * pi * 6) + 1) * 5,
                     ),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 14),
@@ -313,38 +316,44 @@ class _MainMenuState extends State<MainMenu> {
               ],
             ),
           ),
-          AnimatedSize(
-            duration: invertingDuration,
-            curve: Curves.easeOutQuad,
-            child: Container(
-              width: double.infinity,
-              height: inverting ? context.screenHeight : 0,
-              decoration: const BoxDecoration(
-                backgroundBlendMode: BlendMode.difference,
-                color: SuperColors.inverting,
-              ),
-              child: AnimatedOpacity(
-                opacity: inverting2 ? 1 : 0,
-                duration: inverting2Duration,
-                child: inverting2
-                    ? Container(
-                        color: SuperColors.lightBackground,
-                      )
-                    : empty,
-              ),
-            ),
-          ),
-          exists
-              ? AnimatedOpacity(
+          ...inverting
+              ? [
+                  Container(
+                    constraints: const BoxConstraints.expand(),
+                    decoration: const BoxDecoration(
+                      backgroundBlendMode: BlendMode.difference,
+                      color: SuperColors.inverting,
+                    ),
+                  ),
+                  Align(
+                    alignment: const Alignment(0, 0.69),
+                    child: ScaleTransition(
+                      scale: Tween<double>(begin: 3, end: 0).animate(controller),
+                      child: Container(
+                        height: context.screenWidth,
+                        decoration: const BoxDecoration(
+                          backgroundBlendMode: BlendMode.difference,
+                          color: SuperColors.inverting,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ]
+              : [],
+          darkBackground == null
+              ? empty
+              : AnimatedOpacity(
                   duration: const Duration(milliseconds: 500),
                   opacity: opacity,
                   curve: Curves.easeInOutQuad,
                   child: Container(
                     constraints: const BoxConstraints.expand(),
-                    color: SuperColors.darkBackground,
+                    color: darkBackground!
+                        ? SuperColors.darkBackground
+                        : SuperColors.lightBackground,
                   ),
-                )
-              : empty,
+                ),
         ],
       ),
     );

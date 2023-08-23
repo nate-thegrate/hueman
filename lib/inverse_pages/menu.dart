@@ -160,7 +160,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
                 await sleep(0.6);
               }
 
-              animate().then((value) => context.invert());
+              animate().then((_) => context.invert());
             },
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: inverseColor, width: 2),
@@ -273,20 +273,19 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
             alignment: const Alignment(0, 0.43),
             child: ScaleTransition(
               scale: Tween<double>(begin: 0, end: 3).animate(controller),
-              child: ClipOval(
-                child: Container(
-                  width: context.screenWidth,
-                  height: context.screenWidth,
-                  decoration: const BoxDecoration(
-                    color: SuperColors.inverting,
-                    backgroundBlendMode: BlendMode.difference,
-                  ),
-                  alignment: Alignment.center,
-                  child: AnimatedOpacity(
-                    opacity: inverting ? 1 : 0,
-                    duration: const Duration(milliseconds: 300),
-                    child: Container(color: SuperColors.darkBackground),
-                  ),
+              child: Container(
+                width: context.screenWidth,
+                height: context.screenWidth,
+                decoration: const BoxDecoration(
+                  color: SuperColors.inverting,
+                  backgroundBlendMode: BlendMode.difference,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: AnimatedOpacity(
+                  opacity: inverting ? 1 : 0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(color: SuperColors.darkBackground),
                 ),
               ),
             ),

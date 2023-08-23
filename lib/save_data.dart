@@ -1,6 +1,6 @@
 bool casualMode = true;
 bool autoSubmit = true;
-bool externalKeyboard = false;
+bool externalKeyboard = true;
 
 bool mastery = true;
 bool inverted = false;
