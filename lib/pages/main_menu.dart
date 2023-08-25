@@ -167,9 +167,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
                         setState(() => inverting = true);
                         controller.forward();
                         await sleep(0.7);
-                        setState(() {
-                          darkBackground = false;
-                        });
+                        setState(() => darkBackground = false);
                         await sleep(0.1);
                         setState(() => opacity = 1);
                         await sleep(0.5);

@@ -111,7 +111,6 @@ enum _ColorPicker {
   select(icon: Icons.list, tag: 'a color');
 
   final IconData icon;
-  // final String desc;
   final String tag;
   const _ColorPicker({required this.icon, required this.tag});
   String get upperName => name == 'select' ? 'Select' : name.toUpperCase();
@@ -299,7 +298,6 @@ class _SandboxState extends State<Sandbox> {
             child: Stack(
               children: [
                 Padding(
-                  // color: Colors.amber,
                   padding: const EdgeInsets.all(20),
                   child: Stack(
                     children: [
@@ -309,7 +307,7 @@ class _SandboxState extends State<Sandbox> {
                           gradient: LinearGradient(
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
-                            colors: [Colors.white, SuperColor.hsv(_h, 1, 1)],
+                            colors: [Colors.white, SuperColor.hue(_h)],
                           ),
                         ),
                       ),
@@ -339,7 +337,7 @@ class _SandboxState extends State<Sandbox> {
           _HSVSlider(
             'hue',
             _h,
-            color: SuperColor.hsv(_h, 1, 1),
+            color: SuperColor.hue(_h),
             onChanged: (value) => setState(() => _h = value),
           ),
           _HSVSlider(

@@ -5,10 +5,10 @@ import 'package:super_hueman/widgets.dart';
 int _r = 0, _g = 0, _b = 0;
 double _h = 0, _s = 0, _l = 0;
 
-_ColorPicker _colorPicker = _ColorPicker.rgb;
+_ColorPicker _colorPicker = _ColorPicker.cmy;
 SuperColor get _color {
   switch (_colorPicker) {
-    case _ColorPicker.rgb:
+    case _ColorPicker.cmy:
     case _ColorPicker.select:
       return SuperColor.rgb(_r, _g, _b);
     case _ColorPicker.hsl:
@@ -18,17 +18,19 @@ SuperColor get _color {
   }
 }
 
-class _RGBSlider extends StatelessWidget {
+class _CMYSlider extends StatelessWidget {
   final String name;
-  final int value, multiplier;
+  final int rgbValue, multiplier;
   final ValueChanged<double> onChanged;
-  const _RGBSlider(this.name, this.value, {required this.multiplier, required this.onChanged});
+  const _CMYSlider(this.name, this.rgbValue, {required this.multiplier, required this.onChanged});
+
+  int get cmyValue => 255 - rgbValue;
 
   @override
   Widget build(BuildContext context) => Column(
         children: [
           RotatedBox(
-            quarterTurns: 3,
+            quarterTurns: 1,
             child: SizedBox(
               width: 384,
               child: SliderTheme(
@@ -37,11 +39,11 @@ class _RGBSlider extends StatelessWidget {
                   thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
                 ),
                 child: Slider(
-                  thumbColor: Color(0xFF000000 + value * multiplier),
-                  activeColor: Color(0x80000000 + value * multiplier),
-                  inactiveColor: Colors.black12,
+                  thumbColor: Color(0xFFFFFFFF - cmyValue * multiplier),
+                  activeColor: Colors.black12,
+                  inactiveColor: Color(0x80FFFFFF - cmyValue * multiplier),
                   max: 255,
-                  value: value.toDouble(),
+                  value: rgbValue.toDouble(),
                   onChanged: onChanged,
                 ),
               ),
@@ -50,7 +52,8 @@ class _RGBSlider extends StatelessWidget {
           Container(
             width: 125,
             alignment: Alignment.center,
-            child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
+            child: Text('$name:  ${(100 - rgbValue / 256 * 100).round()}%',
+                style: Theme.of(context).textTheme.titleMedium),
           ),
         ],
       );
@@ -104,12 +107,11 @@ class _HSLSlider extends StatelessWidget {
 }
 
 enum _ColorPicker {
-  rgb(icon: Icons.tune, tag: 'sliders'),
+  cmy(icon: Icons.tune, tag: 'sliders'),
   hsl(icon: Icons.gradient, tag: 'plane'),
-  select(icon: Icons.list, tag: 'a color');
+  select(icon: Icons.motion_photos_on, tag: 'a color');
 
   final IconData icon;
-  // final String desc;
   final String tag;
   const _ColorPicker({required this.icon, required this.tag});
   String get upperName => name == 'select' ? 'Select' : name.toUpperCase();
@@ -117,7 +119,7 @@ enum _ColorPicker {
   static List<BottomNavigationBarItem> get navBarItems => [
         for (final value in values)
           BottomNavigationBarItem(
-            icon: Icon(value.icon, size: 50),
+            icon: Transform.flip(flipX: value == cmy, child: Icon(value.icon, size: 50)),
             label: value.upperName,
             tooltip: value.desc,
             backgroundColor: contrastWith(_color, threshold: 0.8).withAlpha(64),
@@ -133,39 +135,46 @@ class _ColorSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
-        padding: const EdgeInsets.symmetric(vertical: 50),
-        child: Column(
-          children: [
-            for (final color in SuperColors.fullList)
-              SizedBox(
-                width: 500,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    shape: const BeveledRectangleBorder(),
-                    foregroundColor: color,
-                    backgroundColor:
-                        _color.rounded.hexCode == color.hexCode ? SuperColors.white80 : null,
-                  ),
-                  onPressed: () => updateColor(color, HSLColor.fromColor(color)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                          width: 150,
-                          child:
-                              Text(color.name, style: Theme.of(context).textTheme.headlineSmall)),
-                      Container(
-                        width: 150,
-                        height: 40,
-                        margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
-                        color: color,
+        decoration: BoxDecoration(
+          border: Border.all(color: _color, width: 5),
+          shape: BoxShape.circle,
+        ),
+        padding: const EdgeInsets.all(10),
+        child: Container(
+          width: 400,
+          height: 400,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: SweepGradient(
+              colors: [for (int hue = 360; hue >= 0; hue -= 60) SuperColor.hue(hue)],
+            ),
+            shape: BoxShape.circle,
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              for (int hue = 0; hue < 360; hue += 30)
+                RotationTransition(
+                  turns: AlwaysStoppedAnimation(-hue / 360),
+                  child: Container(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      icon: Icon(
+                        _color.rounded == SuperColor.hue(hue)
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_off,
+                        color: Colors.black,
+                        size: 32,
                       ),
-                    ],
+                      onPressed: () {
+                        final SuperColor c = SuperColor.hue(hue);
+                        updateColor(c, HSLColor.fromColor(c));
+                      },
+                    ),
                   ),
-                ),
-              )
-          ],
+                )
+            ],
+          ),
         ),
       );
 }
@@ -209,7 +218,7 @@ class _HslSandboxState extends State<HslSandbox> {
   void colorPickerPicker(int index) {
     setState(() {
       switch (_colorPicker) {
-        case _ColorPicker.rgb:
+        case _ColorPicker.cmy:
           HSLColor hslColor = HSLColor.fromColor(_color);
           _h = hslColor.hue;
           _l = hslColor.lightness;
@@ -232,7 +241,7 @@ class _HslSandboxState extends State<HslSandbox> {
         'color name',
         _color.rounded.name,
         textStyle: TextStyle(color: _color, fontSize: 20, fontWeight: FontWeight.bold, shadows: [
-          Shadow(color: contrastWith(_color, threshold: 0.8).withAlpha(64), blurRadius: 3)
+          Shadow(color: contrastWith(_color, threshold: 0.8).withAlpha(128), blurRadius: 3)
         ]),
       );
   Widget get hue => _ColorLabel('hue', HSLColor.fromColor(_color).hue.round().toString());
@@ -255,7 +264,7 @@ class _HslSandboxState extends State<HslSandbox> {
   @override
   Widget build(BuildContext context) {
     final Widget colorPicker = {
-      _ColorPicker.rgb: Column(
+      _ColorPicker.cmy: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(width: 300, height: 300, color: _color),
@@ -263,20 +272,20 @@ class _HslSandboxState extends State<HslSandbox> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _RGBSlider(
-                'red',
+              _CMYSlider(
+                'cyan',
                 _r,
                 multiplier: 0x010000,
                 onChanged: (value) => setState(() => _r = value.round()),
               ),
-              _RGBSlider(
-                'green',
+              _CMYSlider(
+                'magenta',
                 _g,
                 multiplier: 0x000100,
                 onChanged: (value) => setState(() => _g = value.round()),
               ),
-              _RGBSlider(
-                'blue',
+              _CMYSlider(
+                'yellow',
                 _b,
                 multiplier: 0x000001,
                 onChanged: (value) => setState(() => _b = value.round()),
@@ -295,7 +304,6 @@ class _HslSandboxState extends State<HslSandbox> {
             child: Stack(
               children: [
                 Padding(
-                  // color: Colors.amber,
                   padding: const EdgeInsets.all(20),
                   child: Stack(
                     children: [
@@ -335,7 +343,7 @@ class _HslSandboxState extends State<HslSandbox> {
           _HSLSlider(
             'hue',
             _h,
-            color: SuperColor.hsl(_h, 1, 0.5),
+            color: SuperColor.hue(_h),
             onChanged: (value) => setState(() => _h = value),
           ),
           _HSLSlider(

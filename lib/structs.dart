@@ -155,6 +155,8 @@ class SuperColor extends Color {
     return SuperColor.noName(colorCode);
   }
 
+  factory SuperColor.hue(num h) => SuperColor.hsv(h % 360, 1, 1);
+
   factory SuperColor.hsl(num h, double s, double l) {
     if (l == 0) return SuperColors.black;
     if (l == 1) return SuperColors.white;
@@ -165,7 +167,10 @@ class SuperColor extends Color {
     return SuperColor.noName(colorCode);
   }
 
-  double get hue => HSLColor.fromColor(this).hue;
+  num get hue {
+    final int i = SuperColors.twelveHues.indexOf(this);
+    return i == -1 ? HSVColor.fromColor(this).hue : i * 30;
+  }
 
   /// The hexadecimal color code (doesn't include alpha).
   String get hexCode => '#${colorCode.toRadixString(16).padLeft(6, "0").toUpperCase()}';

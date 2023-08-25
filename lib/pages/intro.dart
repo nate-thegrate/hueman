@@ -96,7 +96,7 @@ class _IntroModeState extends State<IntroMode> {
     recentChoices.add(hue);
   }
 
-  SuperColor get color => SuperColor.hsv(hue, 1, 1);
+  SuperColor get color => SuperColor.hue(hue);
 
   @override
   void initState() {

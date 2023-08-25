@@ -138,7 +138,6 @@ class _TrueMasteryState extends State<TrueMastery> {
                         ),
                       ).then((_) => setState(nextColor));
                     }),
-                    // const FixedSpacer(20),
                   ],
                 ),
               ),

@@ -143,7 +143,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   static const animationTime = 25;
   static const duration = Duration(milliseconds: animationTime);
 
-  String get name => SuperColor.hsv(hue, 1, 1).name;
+  String get name => SuperColor.hue(hue).name;
 
   Color get color => anyColor(hue);
 
@@ -152,7 +152,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   double get solidMix => cosineShit(cosineShit(itsLerpinTime));
 
   Color anyColor(int hue) => {
-        'vibrant': SuperColor.hsv(hue, 1, 1),
+        'vibrant': SuperColor.hue(hue),
         'mixed': Color.lerp(epicColors[hue], inverseColors[hue], solidMix)!,
       }[widget.mode]!;
 
@@ -454,8 +454,7 @@ class Splendid extends StatelessWidget {
                 ? ShaderMask(
                     blendMode: BlendMode.srcIn,
                     shaderCallback: (bounds) => LinearGradient(colors: [
-                      for (int i = 0; i < 360; i += 10)
-                        SuperColor.hsv((gradientCycle + i) % 360, 1, 1)
+                      for (int i = 0; i < 360; i += 10) SuperColor.hue((gradientCycle + i) % 360)
                     ]).createShader(
                       Rect.fromLTWH(0, 0, bounds.width, bounds.height),
                     ),
