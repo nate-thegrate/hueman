@@ -21,40 +21,51 @@ SuperColor get _color {
 
 class _RGBSlider extends StatelessWidget {
   final String name;
-  final int value, multiplier;
+  final int value;
   final ValueChanged<double> onChanged;
-  const _RGBSlider(this.name, this.value, {required this.multiplier, required this.onChanged});
+  const _RGBSlider(this.name, this.value, {required this.onChanged});
 
   @override
-  Widget build(BuildContext context) => Column(
-        children: [
-          RotatedBox(
-            quarterTurns: 3,
-            child: SizedBox(
-              width: 384,
-              child: SliderTheme(
-                data: const SliderThemeData(
-                  trackHeight: 15,
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
-                ),
-                child: Slider(
-                  thumbColor: Color(0xFF000000 + value * multiplier),
-                  activeColor: Color(0x80000000 + value * multiplier),
-                  inactiveColor: Colors.white24,
-                  max: 255,
-                  value: value.toDouble(),
-                  onChanged: onChanged,
-                ),
+  Widget build(BuildContext context) {
+    final SuperColor color = {
+      'red': SuperColor.rgb(value, 0, 0),
+      'green': SuperColor.rgb(0, value, 0),
+      'blue': SuperColor.rgb(0, 0, value),
+    }[name]!;
+    final bool horizontal = context.squished;
+
+    return Flex(
+      direction: horizontal ? Axis.horizontal : Axis.vertical,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        RotatedBox(
+          quarterTurns: horizontal ? 0 : 3,
+          child: SizedBox(
+            width: 384,
+            child: SliderTheme(
+              data: const SliderThemeData(
+                trackHeight: 15,
+                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
+              ),
+              child: Slider(
+                thumbColor: color,
+                activeColor: color.withAlpha(0x80),
+                inactiveColor: Colors.white24,
+                max: 255,
+                value: value.toDouble(),
+                onChanged: onChanged,
               ),
             ),
           ),
-          Container(
-            width: 125,
-            alignment: Alignment.center,
-            child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
-          ),
-        ],
-      );
+        ),
+        Container(
+          width: 125,
+          alignment: Alignment.center,
+          child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
+        ),
+      ],
+    );
+  }
 }
 
 class _HSVSlider extends StatelessWidget {
@@ -137,36 +148,40 @@ class _ColorSelection extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
         padding: const EdgeInsets.symmetric(vertical: 50),
-        child: Column(
-          children: [
-            for (final color in SuperColors.fullList)
-              SizedBox(
-                width: 500,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    shape: const BeveledRectangleBorder(),
-                    foregroundColor: color,
-                    backgroundColor: _color == color ? Colors.black45 : null,
-                  ),
-                  onPressed: () => updateColor(color, HSVColor.fromColor(color)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
+        constraints: BoxConstraints.loose(Size(double.infinity, context.screenHeight - 400)),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final color in SuperColors.fullList)
+                SizedBox(
+                  width: 500,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      shape: const BeveledRectangleBorder(),
+                      foregroundColor: color,
+                      backgroundColor: _color == color ? Colors.black45 : null,
+                    ),
+                    onPressed: () => updateColor(color, HSVColor.fromColor(color)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                            width: 150,
+                            child: Text(color.name,
+                                style: Theme.of(context).textTheme.headlineSmall)),
+                        Container(
                           width: 150,
-                          child:
-                              Text(color.name, style: Theme.of(context).textTheme.headlineSmall)),
-                      Container(
-                        width: 150,
-                        height: 40,
-                        margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
-                        color: color,
-                      ),
-                    ],
+                          height: 40,
+                          margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
+                          color: color,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              )
-          ],
+                )
+            ],
+          ),
         ),
       );
 }
@@ -257,31 +272,31 @@ class _SandboxState extends State<Sandbox> {
 
   @override
   Widget build(BuildContext context) {
+    final bool horizontal = context.squished;
     final Widget colorPicker = {
       _ColorPicker.rgb: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(width: 300, height: 300, color: _color),
           const FixedSpacer(30),
-          Row(
+          Flex(
+            direction: horizontal ? Axis.vertical : Axis.horizontal,
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _RGBSlider(
                 'red',
                 _r,
-                multiplier: 0x010000,
                 onChanged: (value) => setState(() => _r = value.round()),
               ),
               _RGBSlider(
                 'green',
                 _g,
-                multiplier: 0x000100,
                 onChanged: (value) => setState(() => _g = value.round()),
               ),
               _RGBSlider(
                 'blue',
                 _b,
-                multiplier: 0x000001,
                 onChanged: (value) => setState(() => _b = value.round()),
               ),
             ],
@@ -356,21 +371,16 @@ class _SandboxState extends State<Sandbox> {
           Container(width: 500, height: 100, color: _color),
         ],
       ),
-      _ColorPicker.select: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _ColorSelection(
-            updateColor: (rgb, hsv) => setState(() {
-              _r = rgb.red;
-              _g = rgb.green;
-              _b = rgb.blue;
+      _ColorPicker.select: _ColorSelection(
+        updateColor: (rgb, hsv) => setState(() {
+          _r = rgb.red;
+          _g = rgb.green;
+          _b = rgb.blue;
 
-              _h = hsv.hue;
-              _s = hsv.saturation;
-              _v = hsv.value;
-            }),
-          ),
-        ],
+          _h = hsv.hue;
+          _s = hsv.saturation;
+          _v = hsv.value;
+        }),
       ),
     }[_colorPicker]!;
 

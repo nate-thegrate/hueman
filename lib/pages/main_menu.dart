@@ -326,9 +326,9 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
                   Align(
                     alignment: const Alignment(0, 0.69),
                     child: ScaleTransition(
-                      scale: Tween<double>(begin: 3, end: 0).animate(controller),
+                      scale: Tween<double>(begin: 12, end: 0).animate(controller),
                       child: Container(
-                        height: context.screenWidth,
+                        height: context.screenWidth / 4,
                         decoration: const BoxDecoration(
                           backgroundBlendMode: BlendMode.difference,
                           color: SuperColors.inverting,

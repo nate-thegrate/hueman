@@ -112,6 +112,8 @@ extension ContextStuff on BuildContext {
   Size get _size => MediaQuery.of(this).size;
   double get screenWidth => _size.width;
   double get screenHeight => _size.height;
+
+  bool get squished => screenHeight < 1040;
 }
 
 void Function() gotoWebsite(String url) => () => launchUrl(Uri.parse(url));

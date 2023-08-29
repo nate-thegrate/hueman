@@ -410,38 +410,53 @@ class _GameScreen extends StatelessWidget {
     final sk = scoreKeeper;
     final bars = (sk is MasterScoreKeeper) ? _RankBars(sk.rank, color: color) : empty;
 
+    final double colorBoxWidth = context.screenWidth * 2 / 3;
+    final bool littleBitSquished =
+        image != null && context.screenHeight < 1200 && !externalKeyboard;
+
     return Scaffold(
       body: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           bars,
-          Column(
-            children: <Widget>[
-              const Spacer(flex: 2),
-              const GoBack(),
-              const FixedSpacer(50),
-              ...image == null
-                  ? [Container(width: 400, height: 400, color: color)]
-                  : [
-                      image!,
-                      const Spacer(),
-                      Container(width: 500, height: 150, color: color),
-                    ],
-              const Spacer(),
-              const Text(
-                'What\'s the hue?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Segoe UI',
-                  fontSize: 28,
-                  letterSpacing: 0,
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                const Spacer(),
+                const GoBack(),
+                const Spacer(),
+                ...image == null
+                    ? [
+                        Container(
+                          width: colorBoxWidth,
+                          height: min(colorBoxWidth, context.screenHeight - 700),
+                          color: color,
+                        )
+                      ]
+                    : [
+                        image!,
+                        ...littleBitSquished
+                            ? []
+                            : [
+                                const Spacer(),
+                                Container(width: colorBoxWidth, height: 150, color: color),
+                              ],
+                      ],
+                const Spacer(),
+                const Text(
+                  'What\'s the hue?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Segoe UI',
+                    fontSize: 28,
+                    letterSpacing: 0,
+                  ),
                 ),
-              ),
-              const FixedSpacer(50),
-              ...userInput,
-              scoreKeeper?.midRoundDisplay ?? empty,
-              const Spacer(),
-            ],
+                ...userInput,
+                scoreKeeper?.midRoundDisplay ?? empty,
+                const Spacer(),
+              ],
+            ),
           ),
           bars,
         ],
@@ -557,14 +572,8 @@ class NumPadGame extends StatelessWidget {
     return _GameScreen(
       [
         const Spacer(),
-        Container(
-          width: 250,
-          height: 100,
-          decoration: const BoxDecoration(boxShadow: []),
-          alignment: Alignment.center,
-          child: Text(numPadVal, style: const TextStyle(fontSize: 32)),
-        ),
-        const FixedSpacer(20),
+        Center(child: Text(numPadVal, style: const TextStyle(fontSize: 32))),
+        const Spacer(),
         numPad(submit),
       ],
       image,

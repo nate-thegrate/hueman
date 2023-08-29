@@ -27,36 +27,41 @@ class _CMYSlider extends StatelessWidget {
   int get cmyValue => 255 - rgbValue;
 
   @override
-  Widget build(BuildContext context) => Column(
-        children: [
-          RotatedBox(
-            quarterTurns: 1,
-            child: SizedBox(
-              width: 384,
-              child: SliderTheme(
-                data: const SliderThemeData(
-                  trackHeight: 15,
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
-                ),
-                child: Slider(
-                  thumbColor: Color(0xFFFFFFFF - cmyValue * multiplier),
-                  activeColor: Colors.black12,
-                  inactiveColor: Color(0x80FFFFFF - cmyValue * multiplier),
-                  max: 255,
-                  value: rgbValue.toDouble(),
-                  onChanged: onChanged,
-                ),
+  Widget build(BuildContext context) {
+    final bool horizontal = context.squished;
+    return Flex(
+      direction: horizontal ? Axis.horizontal : Axis.vertical,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        RotatedBox(
+          quarterTurns: horizontal ? 2 : 1,
+          child: SizedBox(
+            width: 384,
+            child: SliderTheme(
+              data: const SliderThemeData(
+                trackHeight: 15,
+                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
+              ),
+              child: Slider(
+                thumbColor: Color(0xFFFFFFFF - cmyValue * multiplier),
+                activeColor: Colors.black12,
+                inactiveColor: Color(0x80FFFFFF - cmyValue * multiplier),
+                max: 255,
+                value: rgbValue.toDouble(),
+                onChanged: onChanged,
               ),
             ),
           ),
-          Container(
-            width: 125,
-            alignment: Alignment.center,
-            child: Text('$name:  ${(100 - rgbValue / 256 * 100).round()}%',
-                style: Theme.of(context).textTheme.titleMedium),
-          ),
-        ],
-      );
+        ),
+        Container(
+          width: 125,
+          alignment: Alignment.center,
+          child: Text('$name:  ${(100 - rgbValue / 256 * 100).round()}%',
+              style: Theme.of(context).textTheme.titleMedium),
+        ),
+      ],
+    );
+  }
 }
 
 class _HSLSlider extends StatelessWidget {
@@ -131,7 +136,8 @@ enum _ColorPicker {
 
 class _ColorSelection extends StatelessWidget {
   final void Function(Color, HSLColor) updateColor;
-  const _ColorSelection(this.updateColor);
+  final Color centerColor;
+  const _ColorSelection(this.updateColor, {required this.centerColor});
 
   @override
   Widget build(BuildContext context) => Container(
@@ -153,6 +159,30 @@ class _ColorSelection extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
+              centerColor == SuperColors.lightBackground
+                  ? empty
+                  : Container(
+                      margin: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(colors: [centerColor, centerColor.withAlpha(0)]),
+                      ),
+                      child: Center(
+                        child: IconButton(
+                          icon: Icon(
+                            _color.rounded == centerColor
+                                ? Icons.radio_button_checked
+                                : Icons.radio_button_off,
+                            color:
+                                centerColor == SuperColors.black ? Colors.white70 : Colors.black,
+                            size: 32,
+                          ),
+                          onPressed: () {
+                            updateColor(centerColor, HSLColor.fromColor(centerColor));
+                          },
+                        ),
+                      ),
+                    ),
               for (int hue = 0; hue < 360; hue += 30)
                 RotationTransition(
                   turns: AlwaysStoppedAnimation(-hue / 360),
@@ -172,7 +202,7 @@ class _ColorSelection extends StatelessWidget {
                       },
                     ),
                   ),
-                )
+                ),
             ],
           ),
         ),
@@ -261,16 +291,34 @@ class _HslSandboxState extends State<HslSandbox> {
         _l = hsl.lightness;
       });
 
+  double colorWheelValue = 0;
+  int get colorWheelIndex => colorWheelValue.toInt();
+  SuperColor get colorWheelCenter => [
+        SuperColors.lightBackground,
+        SuperColors.black,
+        SuperColors.gray,
+        SuperColors.white,
+      ][colorWheelIndex];
+  String get colorWheelLabel => [
+        '[none]',
+        'black',
+        'gray',
+        'white',
+      ][colorWheelIndex];
+
   @override
   Widget build(BuildContext context) {
+    final bool horizontal = context.squished;
     final Widget colorPicker = {
       _ColorPicker.cmy: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(width: 300, height: 300, color: _color),
           const FixedSpacer(30),
-          Row(
+          Flex(
+            direction: horizontal ? Axis.vertical : Axis.horizontal,
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _CMYSlider(
                 'cyan',
@@ -363,9 +411,46 @@ class _HslSandboxState extends State<HslSandbox> {
         ],
       ),
       _ColorPicker.select: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          _ColorSelection(updateColor),
+          _ColorSelection(updateColor, centerColor: colorWheelCenter),
+          const FixedSpacer(10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('center:  ', style: TextStyle(fontSize: 16)),
+              SizedBox(
+                width: 66,
+                child: Text(
+                  colorWheelLabel,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: colorWheelIndex == 0 ? Colors.black38 : colorWheelCenter,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    shadows: colorWheelIndex == 3 ? [const Shadow(blurRadius: 1)] : [],
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 240,
+                child: SliderTheme(
+                  data: const SliderThemeData(
+                    trackHeight: 12,
+                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12),
+                  ),
+                  child: Slider(
+                    value: colorWheelValue,
+                    onChanged: (value) => setState(() => colorWheelValue = value),
+                    max: 3,
+                    divisions: 3,
+                    thumbColor: colorWheelCenter,
+                    activeColor: colorWheelCenter.withAlpha(0xcc),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     }[_colorPicker]!;

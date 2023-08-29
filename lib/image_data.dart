@@ -14,12 +14,12 @@ class ImageHues {
     return (imageColor(index1), imageColor(index2));
   }
 
-  Widget get image => SizedBox(
-        width: 500,
-        height: 500,
+  Widget image({double width = 500}) => SizedBox(
+        width: width,
+        height: width,
         child: Image(
           image: AssetImage('assets/public_domain_photos/$filename.jpg'),
-          width: 500,
+          width: width,
         ),
       );
 }

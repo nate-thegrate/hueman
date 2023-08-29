@@ -148,7 +148,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   Color get color => anyColor(hue);
 
   double itsLerpinTime = rng.nextDouble();
-  double cosineShit(double x) => (-cos(pi * x) + 1) / 2;
+  double cosineShit(double x) => (1 - cos(pi * x)) / 2;
   double get solidMix => cosineShit(cosineShit(itsLerpinTime));
 
   Color anyColor(int hue) => {
@@ -211,28 +211,31 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     height: 5 / 3,
   );
 
-  Widget get tensionDesc => AnimatedContainer(
-        duration: expandDuration,
-        curve: curve,
-        height: !showDetails ? 0 : 800,
-        child: SingleChildScrollView(
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
-              child: const Text(
-                ' tension value = Δ hue between options\n'
-                ' smaller value = higher difficulty\n\n'
-                'Each answer alters the respective color tension value by ±1.\n'
-                'Current values are listed below.\n',
-              ),
+  Widget get tensionDesc {
+    final double height = min(800, context.screenHeight - 400);
+    return AnimatedContainer(
+      duration: expandDuration,
+      curve: curve,
+      height: !showDetails ? 0 : height,
+      child: SingleChildScrollView(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
+            child: const Text(
+              ' tension value = Δ hue between options\n'
+              ' smaller value = higher difficulty\n\n'
+              'Each answer alters the respective color tension value by ±1.\n'
+              'Current values are listed below.\n',
             ),
-            for (final entry in tension.entries) Target(entry.key, entry.value.toString()),
-            const FixedSpacer(20),
-            Target('average', tensionList.average.toStringAsFixed(2)),
-            Target('tension_rank', tensionRank),
-          ]),
-        ),
-      );
+          ),
+          for (final entry in tension.entries) Target(entry.key, entry.value.toString()),
+          const FixedSpacer(20),
+          Target('average', tensionList.average.toStringAsFixed(2)),
+          Target('tension_rank', tensionRank),
+        ]),
+      ),
+    );
+  }
 
   Widget get target => Container(
         width: 500,
@@ -424,7 +427,7 @@ class Splendid extends StatelessWidget {
       child: Container(
         constraints: const BoxConstraints.expand(),
         color: Colors.transparent,
-        alignment: const Alignment(0, 0.69),
+        alignment: const Alignment(0, 0.72),
         child: Stack(
           children: [
             Padding(

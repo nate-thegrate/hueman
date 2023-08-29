@@ -89,6 +89,8 @@ class IntenseScoreKeeper implements ScoreKeeper {
   final Pages page = Pages.intense;
 }
 
+double screenHeight = 0;
+
 class MasterScoreKeeper implements IntenseScoreKeeper {
   @override
   int superCount = 0;
@@ -135,7 +137,11 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
     final Widget rankLabel = rank == 100
         ? Card(color: cardColor, elevation: 8, shadowColor: cardColor, child: rankDesc)
         : Card(color: Colors.black38, elevation: 0, child: rankDesc);
-    return Column(children: [roundLabel, const FixedSpacer(25), rankLabel]);
+
+    return Flex(
+      direction: screenHeight < 1000 ? Axis.horizontal : Axis.vertical,
+      children: [roundLabel, const SizedBox(width: 15, height: 15), rankLabel],
+    );
   }
 
   @override
@@ -284,7 +290,7 @@ class _IntenseModeState extends State<IntenseMode> {
     if (newHue + 30 >= hue) newHue += 60;
 
     setState(() {
-      hue = newHue;
+      hue = 0; // newHue;
       masterRNG = rng.nextDouble();
     });
   }
@@ -358,10 +364,11 @@ class _IntenseModeState extends State<IntenseMode> {
     if (showPics) {
       final ogPics = allImages.toList();
       ogPics.shuffle();
+      final double width = screenHeight < 1200 ? screenHeight - 700 : 500;
       for (final ogPic in ogPics) {
         final randomColors = ogPic.randomColors;
-        pics.add((ogPic.image, randomColors.$1));
-        pics.add((ogPic.image, randomColors.$2));
+        pics.add((ogPic.image(width: width), randomColors.$1));
+        pics.add((ogPic.image(width: width), randomColors.$2));
       }
       hue = HSVColor.fromColor(pics.first.$2).hue.round();
     }
@@ -391,23 +398,38 @@ class _IntenseModeState extends State<IntenseMode> {
               : PercentGrade(accuracy: accuracy, color: color),
         );
 
+  bool get littleBitSquished => image != null && context.screenHeight < 1200;
   @override
-  Widget build(BuildContext context) => externalKeyboard
-      ? KeyboardGame(
-          color: color,
-          hueFocusNode: hueFocusNode!,
-          hueController: hueController!,
-          hueDialogBuilder: hueDialogBuilder,
-          generateHue: showPics ? generatePic : generateHue,
-          scoreKeeper: scoreKeeper,
-          image: image,
-        )
-      : NumPadGame(
-          color: color,
-          numPad: (submit) => NumPad(numPadController!, submit: submit),
-          numPadVal: numPadController!.displayValue,
-          hueDialogBuilder: hueDialogBuilder,
-          scoreKeeper: scoreKeeper,
-          generateHue: showPics ? generatePic : generateHue,
-        );
+  Widget build(BuildContext context) {
+    screenHeight = context.screenHeight;
+    final double width = screenHeight < 1200 ? screenHeight - 700 : 500;
+    return externalKeyboard
+        ? KeyboardGame(
+            color: color,
+            hueFocusNode: hueFocusNode!,
+            hueController: hueController!,
+            hueDialogBuilder: hueDialogBuilder,
+            generateHue: showPics ? generatePic : generateHue,
+            scoreKeeper: scoreKeeper,
+            image: image,
+          )
+        : NumPadGame(
+            color: color,
+            numPad: (submit) => NumPad(numPadController!, submit: submit),
+            numPadVal: numPadController!.displayValue,
+            hueDialogBuilder: hueDialogBuilder,
+            scoreKeeper: scoreKeeper,
+            generateHue: showPics ? generatePic : generateHue,
+            image: littleBitSquished
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(width: 100, height: width, color: color),
+                      image!,
+                      Container(width: 100, height: width, color: color),
+                    ],
+                  )
+                : image,
+          );
+  }
 }

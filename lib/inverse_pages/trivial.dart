@@ -91,7 +91,7 @@ const List<TriviaQuestion> allTriviaQuestions = [
     'Only 1 of those 3 colors is correct—which is it?',
     [SuperColors.yellow],
     explanation: 'The subtractive primary colors are cyan, magenta and yellow.\n\n'
-        'Subtractive mixing rules apply when mixing pigments (e.g. dyes, inks, and paints).',
+        'Subtractive mixing rules apply when mixing pigments\n(e.g. dyes, inks, and paints).',
   ),
   TriviaQuestion(
     'Complementary colors are 180° apart on the color wheel. '
