@@ -10,8 +10,8 @@ import 'package:super_hueman/inverse_pages/true_mastery.dart';
 import 'package:super_hueman/pages/intense_master.dart';
 import 'package:super_hueman/pages/intro.dart';
 import 'package:super_hueman/inverse_pages/menu.dart';
-import 'package:super_hueman/inverse_pages/hsl_sandbox.dart';
-import 'package:super_hueman/pages/main_menu.dart';
+import 'package:super_hueman/inverse_pages/sandbox.dart';
+import 'package:super_hueman/pages/menu.dart';
 import 'package:super_hueman/pages/sandbox.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -42,7 +42,7 @@ enum Pages {
   tenseVibrant(TenseMode('vibrant')),
   tenseMixed(TenseMode('mixed')),
   trueMastery(TrueMastery()),
-  inverseSandbox(HslSandbox()),
+  inverseSandbox(InverseSandbox()),
   ;
 
   final Widget widget;

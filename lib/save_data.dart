@@ -6,4 +6,16 @@ bool externalKeyboard = true;
 // game progress
 bool mastery = true;
 bool inverted = true;
-bool clickedOnAds = false;
+
+abstract class Tutorials {
+  static bool intro3 = false;
+  static bool intro6 = false;
+  static bool intro12 = false;
+  static bool intense = false;
+  static bool master = false;
+
+  static bool colorCodes = false;
+  static bool trueMastery = false;
+
+  static bool ads = false;
+}

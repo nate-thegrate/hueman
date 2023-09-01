@@ -103,7 +103,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
           toggle: (value) => setState(() => casualMode = value),
         ),
         const FixedSpacer(67),
-        ...clickedOnAds
+        ...Tutorials.ads
             ? [
                 Container(
                   alignment: Alignment.center,

@@ -336,7 +336,8 @@ class _HueDialogState extends State<HueDialog> {
     super.dispose();
   }
 
-  late bool unclickable = widget.isSuper;
+  late final bool isSuper = widget.isSuper;
+  late bool unclickable = isSuper;
 
   @override
   Widget build(BuildContext context) => Stack(
@@ -345,18 +346,19 @@ class _HueDialogState extends State<HueDialog> {
             title: Text(
               widget.text,
               textAlign: TextAlign.center,
-              style: widget.isSuper
+              style: isSuper
                   ? TextStyle(
                       shadows: const [Shadow(blurRadius: 8)],
                       fontSize: 42,
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.bold,
-                      color: epicColor)
+                      color: epicColor,
+                    )
                   : null,
             ),
-            elevation: widget.isSuper ? (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 10 : null,
-            shadowColor: widget.isSuper ? epicColor : null,
-            surfaceTintColor: widget.isSuper ? epicColor : null,
+            elevation: isSuper ? (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 10 : null,
+            shadowColor: isSuper ? epicColor : null,
+            surfaceTintColor: isSuper ? epicColor : null,
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -364,7 +366,7 @@ class _HueDialogState extends State<HueDialog> {
                 const FixedSpacer(20),
                 _AnswerFeedback(widget.guess, text: 'Your answer:'),
                 _AnswerFeedback(widget.hue, text: 'Correct answer:'),
-                ...(mastery || !widget.isSuper)
+                ...(mastery || !isSuper)
                     ? []
                     : [
                         const FixedSpacer(20),
@@ -491,29 +493,30 @@ class KeyboardGame extends StatelessWidget {
           hueFocusNode.requestFocus();
         });
 
-    TextEditingValue textFormatFunction(TextEditingValue oldValue, TextEditingValue newValue) {
-      if (newValue.text.length == 3 && autoSubmit) submit();
-      if (newValue.text.length > 3) return oldValue;
-      return (newValue.toInt() < 360)
-          ? newValue
-          : const TextEditingValue(text: '359', selection: TextSelection.collapsed(offset: 3));
-    }
+    final hueValidation = TextInputFormatter.withFunction(
+      (oldValue, newValue) => newValue.text.length > 3
+          ? oldValue
+          : newValue.toInt() < 360
+              ? newValue
+              : const TextEditingValue(
+                  text: '359',
+                  selection: TextSelection.collapsed(offset: 3),
+                ),
+    );
 
     return _GameScreen(
       [
         SizedBox(
           width: 100,
           child: TextField(
+            onChanged: (text) => (autoSubmit && text.length == 3) ? submit() : (),
             focusNode: hueFocusNode,
             controller: hueController,
             onSubmitted: (_) => submit(),
             textAlign: TextAlign.center,
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(border: OutlineInputBorder()),
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              TextInputFormatter.withFunction(textFormatFunction)
-            ],
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly, hueValidation],
           ),
         ),
         const FixedSpacer(25),

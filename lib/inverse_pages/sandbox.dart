@@ -247,7 +247,7 @@ class _HSLSlider extends StatelessWidget {
 }
 
 class _ColorWheel extends StatefulWidget {
-  final void Function(Color, HSLColor) updateColor;
+  final void Function(Color) updateColor;
   const _ColorWheel(this.updateColor);
 
   @override
@@ -312,8 +312,7 @@ class _ColorWheelState extends State<_ColorWheel> {
                                     : Colors.black,
                                 size: 32,
                               ),
-                              onPressed: () => widget.updateColor(
-                                  centerColor, HSLColor.fromColor(centerColor)),
+                              onPressed: () => widget.updateColor(centerColor),
                             ),
                           ),
                         ),
@@ -330,10 +329,7 @@ class _ColorWheelState extends State<_ColorWheel> {
                             color: Colors.black,
                             size: 32,
                           ),
-                          onPressed: () {
-                            final SuperColor c = SuperColor.hue(hue);
-                            widget.updateColor(c, HSLColor.fromColor(c));
-                          },
+                          onPressed: () => widget.updateColor(SuperColor.hue(hue)),
                         ),
                       ),
                     ),
@@ -435,14 +431,14 @@ class _ColorLabel extends StatelessWidget {
   }
 }
 
-class HslSandbox extends StatefulWidget {
-  const HslSandbox({super.key});
+class InverseSandbox extends StatefulWidget {
+  const InverseSandbox({super.key});
 
   @override
-  State<HslSandbox> createState() => _HslSandboxState();
+  State<InverseSandbox> createState() => _InverseSandboxState();
 }
 
-class _HslSandboxState extends State<HslSandbox> {
+class _InverseSandboxState extends State<InverseSandbox> {
   void colorPickerPicker(int index) {
     setState(() {
       switch (_colorPicker) {
@@ -474,16 +470,6 @@ class _HslSandboxState extends State<HslSandbox> {
         ],
       );
   String get hue => HSLColor.fromColor(_color).hue.round().toString();
-
-  void updateColor(Color rgb, HSLColor hsl) => setState(() {
-        _r = rgb.red;
-        _g = rgb.green;
-        _b = rgb.blue;
-
-        _h = hsl.hue;
-        _s = hsl.saturation;
-        _l = hsl.lightness;
-      });
 
   @override
   Widget build(BuildContext context) => Theme(
@@ -518,7 +504,18 @@ class _HslSandboxState extends State<HslSandbox> {
                       updateS: (value) => setState(() => _s = value),
                       updateL: (value) => setState(() => _l = value),
                     ),
-                    _ColorPicker.select: _ColorWheel(updateColor),
+                    _ColorPicker.select: _ColorWheel(
+                      (rgb) => setState(() {
+                        _r = rgb.red;
+                        _g = rgb.green;
+                        _b = rgb.blue;
+
+                        final hsl = HSLColor.fromColor(rgb);
+                        _h = hsl.hue;
+                        _s = hsl.saturation;
+                        _l = hsl.lightness;
+                      }),
+                    ),
                   }[_colorPicker]!,
                 ),
                 const Spacer(flex: 2),

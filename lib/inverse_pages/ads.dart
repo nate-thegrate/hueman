@@ -47,7 +47,7 @@ class _AdsState extends State<Ads> {
   @override
   void initState() {
     super.initState();
-    sleep(1).then((_) => clickedOnAds = true);
+    sleep(1).then((_) => Tutorials.ads = true);
     inverseHues = inverseSetup(setState);
     animateThisPage();
   }
