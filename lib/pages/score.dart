@@ -4,15 +4,15 @@ import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
-class GameEnd extends StatefulWidget {
+class ScoreScreen extends StatefulWidget {
   final ScoreKeeper scoreKeeper;
-  const GameEnd(this.scoreKeeper, {super.key});
+  const ScoreScreen(this.scoreKeeper, {super.key});
 
   @override
-  State<GameEnd> createState() => _GameEndState();
+  State<ScoreScreen> createState() => _ScoreScreenState();
 }
 
-class _GameEndState extends State<GameEnd> {
+class _ScoreScreenState extends State<ScoreScreen> {
   late final Ticker ticker;
 
   @override

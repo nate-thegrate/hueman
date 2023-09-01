@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
-int _r = 255, _g = 255, _b = 255;
+int _r = 0xFF, _g = 0xFF, _b = 0xFF;
 double _h = 0, _s = 0, _v = 0;
 
 _ColorPicker _colorPicker = _ColorPicker.rgb;

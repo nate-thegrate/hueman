@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:super_hueman/inverse_pages/thanks_for_playing.dart';
+import 'package:super_hueman/pages/thanks_for_playing.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
@@ -14,41 +14,49 @@ class TrueMastery extends StatefulWidget {
 
 class RGBSlider extends StatelessWidget {
   final String name;
-  final int value, multiplier;
+  final int value;
   final ValueChanged<double> onChanged;
-  const RGBSlider(this.name, this.value,
-      {required this.multiplier, required this.onChanged, super.key});
+  const RGBSlider(this.name, this.value, {required this.onChanged, super.key});
 
   @override
-  Widget build(BuildContext context) => Column(
-        children: [
-          RotatedBox(
-            quarterTurns: 3,
-            child: SizedBox(
-              width: context.screenHeight - 500,
-              child: SliderTheme(
-                data: const SliderThemeData(
-                  trackHeight: 15,
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
-                ),
-                child: Slider(
-                  thumbColor: Color(0xFF000000 + value * multiplier),
-                  activeColor: Color(0x80000000 + value * multiplier),
-                  inactiveColor: Colors.black12,
-                  max: 255,
-                  value: value.toDouble(),
-                  onChanged: onChanged,
-                ),
+  Widget build(BuildContext context) {
+    final SuperColor color = {
+      'red': SuperColor.rgb(value, 0, 0),
+      'green': SuperColor.rgb(0, value, 0),
+      'blue': SuperColor.rgb(0, 0, value),
+    }[name]!;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        RotatedBox(
+          quarterTurns: 3,
+          child: SizedBox(
+            width: context.screenHeight - 500,
+            child: SliderTheme(
+              data: const SliderThemeData(
+                trackHeight: 15,
+                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
+              ),
+              child: Slider(
+                thumbColor: color,
+                activeColor: color.withAlpha(0x80),
+                inactiveColor: Colors.black12,
+                max: 255,
+                value: value.toDouble(),
+                onChanged: onChanged,
               ),
             ),
           ),
-          Container(
-            width: 125,
-            alignment: Alignment.center,
-            child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
-          ),
-        ],
-      );
+        ),
+        Container(
+          width: 125,
+          alignment: Alignment.center,
+          child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
+        ),
+      ],
+    );
+  }
 }
 
 class _TrueMasteryState extends State<TrueMastery> {
@@ -103,19 +111,16 @@ class _TrueMasteryState extends State<TrueMastery> {
                         RGBSlider(
                           'red',
                           r,
-                          multiplier: 0x010000,
                           onChanged: (value) => setState(() => r = value.toInt()),
                         ),
                         RGBSlider(
                           'green',
                           g,
-                          multiplier: 0x000100,
                           onChanged: (value) => setState(() => g = value.toInt()),
                         ),
                         RGBSlider(
                           'blue',
                           b,
-                          multiplier: 1,
                           onChanged: (value) => setState(() => b = value.toInt()),
                         ),
                       ],
@@ -131,11 +136,10 @@ class _TrueMasteryState extends State<TrueMastery> {
                         const FixedSpacer.horizontal(10),
                         TextButton(
                           style: TextButton.styleFrom(foregroundColor: Colors.black),
-                          onPressed: () => showDialog(
-                            context: context,
-                            builder: (context) => ManualColorCode(color),
-                          ).then(
-                            ManualColorCode.verifyHexCode(context, updateColor: updateUserColor),
+                          onPressed: ManualColorCode.run(
+                            context,
+                            color: color,
+                            updateColor: updateUserColor,
                           ),
                           child: Text(
                             userColorCode,
@@ -145,13 +149,23 @@ class _TrueMasteryState extends State<TrueMastery> {
                       ],
                     ),
                     const FixedSpacer(30),
-                    SuperButton('submit', color: color, onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => TrueMasteryScore(guess: userColor, actual: color),
-                        barrierDismissible: userColor.colorCode != color.colorCode,
-                      ).then((_) => setState(nextColor));
-                    }),
+                    ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => TrueMasteryScore(guess: userColor, actual: color),
+                          barrierDismissible: userColor.colorCode != color.colorCode,
+                        ).then((_) => setState(nextColor));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: color,
+                        foregroundColor: contrastWith(color),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.only(bottom: 4),
+                        child: Text('submit', style: TextStyle(fontSize: 24)),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -173,7 +187,7 @@ class TrueMasteryScore extends StatefulWidget {
 }
 
 const errorRecoveryText = '''\
-DIV0 ERROR
+DIV_0 ERROR
 
 
 rebuilding window
@@ -213,23 +227,23 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
             fontFamily: 'Segoe UI',
             fontSize: 16.0,
             fontWeight: FontWeight.w400,
-            letterSpacing: 0.5,
-            height: 1.5,
+            // letterSpacing: 0.5,
+            // height: 1.5,
             decoration: TextDecoration.none,
           ),
         ));
     await sleep(2);
     setState(() => showFlicker = true);
     ticker!.start();
-    await sleep(2);
+    await sleep(3);
     ticker!.stop();
     setState(() {
       showFlicker = false;
-      perfectScoreOverlay = const _ErrorScreen('DIV0 ERROR');
+      perfectScoreOverlay = const _ErrorScreen('DIV_0 ERROR');
     });
-    await sleep(3);
+    await sleep(4);
     setState(() => perfectScoreOverlay = const _ErrorScreen(errorRecoveryText));
-    await sleep(5.5);
+    await sleep(6);
   }
 
   @override
@@ -457,7 +471,7 @@ class _ErrorScreen extends StatelessWidget {
         padding: EdgeInsets.all(context.screenWidth / 16),
         child: Text(
           text,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),
     );

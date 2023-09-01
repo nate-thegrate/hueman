@@ -156,6 +156,16 @@ class ManualColorCode extends StatefulWidget {
   final SuperColor color;
   const ManualColorCode(this.color, {super.key});
 
+  static void Function() run(
+    BuildContext context, {
+    required SuperColor color,
+    required void Function(SuperColor) updateColor,
+  }) =>
+      () => showDialog(
+            context: context,
+            builder: (context) => ManualColorCode(color),
+          ).then(verifyHexCode(context, updateColor: updateColor));
+
   static void Function(dynamic) verifyHexCode(BuildContext context,
           {required void Function(SuperColor) updateColor}) =>
       (dynamic value) {
@@ -182,7 +192,7 @@ class _ManualColorCodeState extends State<ManualColorCode> {
   void popText() => Navigator.pop(context, controller.text);
 
   final TextInputFormatter onlyHexChars = TextInputFormatter.withFunction(
-    (TextEditingValue oldValue, TextEditingValue newValue) {
+    (oldValue, newValue) {
       final inputChars = newValue.text.toUpperCase().characters;
       final validChars = '0123456789ABCDEF'.characters;
 
@@ -192,6 +202,8 @@ class _ManualColorCodeState extends State<ManualColorCode> {
       return newValue;
     },
   );
+  final TextInputFormatter maxLength6 = TextInputFormatter.withFunction(
+      (oldValue, newValue) => newValue.text.length > 6 ? oldValue : newValue);
 
   @override
   void initState() {
@@ -233,7 +245,7 @@ class _ManualColorCodeState extends State<ManualColorCode> {
                 cursorColor: Colors.black,
                 controller: controller,
                 onSubmitted: (_) => popText(),
-                inputFormatters: [onlyHexChars],
+                inputFormatters: [onlyHexChars, maxLength6],
               ),
             ),
             const FixedSpacer.horizontal(10),

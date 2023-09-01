@@ -42,18 +42,13 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
     super.dispose();
   }
 
-  static const superStyle = TextStyle(
+  static const TextStyle titleStyle = TextStyle(
     color: Colors.black,
-    fontFamily: 'Segoe UI',
-    fontSize: 32.0,
+    fontSize: 32,
     fontWeight: FontWeight.w400,
-    letterSpacing: 0,
-    height: 1.25,
+    height: 1.3,
   );
-
-  TextStyle get titleTheme =>
-      Theme.of(context).textTheme.headlineLarge!.copyWith(color: Colors.black);
-  TextStyle get hueTheme => TextStyle(
+  TextStyle get hueStyle => TextStyle(
         fontSize: 24,
         color: inverseColor,
         fontWeight: FontWeight.bold,
@@ -70,11 +65,11 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text('super', style: titleTheme),
+            const Text('super', style: titleStyle),
             const FixedSpacer.horizontal(1),
-            Text('HUE', style: hueTheme),
+            Text('HUE', style: hueStyle),
             const FixedSpacer.horizontal(1),
-            Text('man', style: titleTheme),
+            const Text('man', style: titleStyle),
           ],
         ),
         const FixedSpacer(67),
@@ -176,11 +171,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
         ),
       ],
       MenuPage.tenseSelect: [
-        const Text(
-          'tense',
-          textAlign: TextAlign.center,
-          style: superStyle,
-        ),
+        const Text('tense', textAlign: TextAlign.center, style: titleStyle),
         const FixedSpacer(50),
         NavigateButton(Pages.tenseVibrant, color: inverseColor),
         const FixedSpacer(33),
@@ -218,13 +209,9 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
                         foregroundColor: inverseColor,
                         backgroundColor: mainMenu ? Colors.white : Colors.white54,
                       ),
-                      onPressed: () {
-                        if (mainMenu) {
-                          setState(() => menuPage = MenuPage.settings);
-                        } else {
-                          setState(() => menuPage = MenuPage.main);
-                        }
-                      },
+                      onPressed: () => setState(
+                        () => menuPage = (mainMenu) ? MenuPage.settings : MenuPage.main,
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(8),
                         child: mainMenu

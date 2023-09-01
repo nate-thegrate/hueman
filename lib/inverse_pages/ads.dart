@@ -4,9 +4,9 @@ import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
-class Snippet extends StatelessWidget {
+class _Snippet extends StatelessWidget {
   final String text;
-  const Snippet(this.text, {super.key});
+  const _Snippet(this.text);
 
   @override
   Widget build(BuildContext context) => Text(
@@ -16,29 +16,29 @@ class Snippet extends StatelessWidget {
       );
 }
 
+class _AdsAnimation {
+  final double delay;
+  final Widget Function(Color) widget;
+  final bool replacePrevious;
+  _AdsAnimation(this.delay, this.widget, {this.replacePrevious = false});
+
+  double opacity = 0;
+}
+
+class _SnippetAnimation extends _AdsAnimation {
+  final String text;
+  _SnippetAnimation(double delay, this.text, {bool replacePrevious = false})
+      : super(delay, (_) => _Snippet(text), replacePrevious: replacePrevious);
+}
+
+Widget _none(_) => empty;
+
 class Ads extends StatefulWidget {
   const Ads({super.key});
 
   @override
   State<Ads> createState() => _AdsState();
 }
-
-class AdsAnimation {
-  final double delay;
-  final Widget Function(Color) widget;
-  final bool replacePrevious;
-  AdsAnimation(this.delay, this.widget, {this.replacePrevious = false});
-
-  double opacity = 0;
-}
-
-class SnippetAnimation extends AdsAnimation {
-  final String text;
-  SnippetAnimation(double delay, this.text, {bool replacePrevious = false})
-      : super(delay, (_) => Snippet(text), replacePrevious: replacePrevious);
-}
-
-Widget none(_) => empty;
 
 class _AdsState extends State<Ads> {
   late final Ticker inverseHues;
@@ -58,26 +58,26 @@ class _AdsState extends State<Ads> {
     super.dispose();
   }
 
-  final List<AdsAnimation> allItems = [
-    AdsAnimation(1, none),
-    SnippetAnimation(
+  final List<_AdsAnimation> allItems = [
+    _AdsAnimation(1, _none),
+    _SnippetAnimation(
         6,
         'This game is free to play. It also uses cookies\n'
         'to communicate with third-party advertisers.'),
-    SnippetAnimation(3.5, 'Just kidding.  :)', replacePrevious: true),
-    SnippetAnimation(4, "This game is open-source: it doesn't have any ads or paywalls.",
+    _SnippetAnimation(3.5, 'Just kidding.  :)', replacePrevious: true),
+    _SnippetAnimation(4, "This game is open-source: it doesn't have any ads or paywalls.",
         replacePrevious: true),
-    SnippetAnimation(
+    _SnippetAnimation(
         7.5,
         'Most open-source projects rely on community support\n'
         'to cover the cost of servers and ongoing development.'),
-    SnippetAnimation(5, 'You can make a huge difference\n' 'by making a small donation.',
+    _SnippetAnimation(5, 'You can make a huge difference\n' 'by making a small donation.',
         replacePrevious: true),
-    SnippetAnimation(3, 'Just kidding again  :)\n', replacePrevious: true),
-    SnippetAnimation(4, 'asking people for money is super cringe lol\n', replacePrevious: true),
-    SnippetAnimation(5, "But there's something else I'd like to ask, if it's all right."),
-    SnippetAnimation(3.5, "I'm working on another game right now."),
-    AdsAnimation(
+    _SnippetAnimation(3, 'Just kidding again  :)\n', replacePrevious: true),
+    _SnippetAnimation(4, 'asking people for money is super cringe lol\n', replacePrevious: true),
+    _SnippetAnimation(5, "But there's something else I'd like to ask, if it's all right."),
+    _SnippetAnimation(3.5, "I'm working on another game right now."),
+    _AdsAnimation(
         7,
         (c) => RichText(
               textAlign: TextAlign.center,
@@ -98,12 +98,12 @@ class _AdsState extends State<Ads> {
                 ],
               ),
             )),
-    SnippetAnimation(
+    _SnippetAnimation(
         5.5,
         "It's a much bigger project than this one though,\n"
         "so it's gonna be a while before I'm ready to release it."),
-    SnippetAnimation(4, 'If you want me to send you an email when it comes out,'),
-    AdsAnimation(
+    _SnippetAnimation(4, 'If you want me to send you an email when it comes out,'),
+    _AdsAnimation(
       4,
       (c) => SizedBox(
         height: 50,
@@ -114,14 +114,14 @@ class _AdsState extends State<Ads> {
         ),
       ),
     ),
-    AdsAnimation(0, none),
-    AdsAnimation(0, none),
-    SnippetAnimation(
+    _AdsAnimation(0, _none),
+    _AdsAnimation(0, _none),
+    _SnippetAnimation(
         5,
         'Hopefully a bunch of people join that email list,\n'
         "and it'll really motivate my ADHD brain to work on it."),
-    SnippetAnimation(1.5, 'Thanks for your time.'),
-    AdsAnimation(
+    _SnippetAnimation(1.5, 'Thanks for your time.'),
+    _AdsAnimation(
       0,
       (_) => const GoBack(text: 'go back'),
     ),
@@ -135,7 +135,7 @@ class _AdsState extends State<Ads> {
     return total;
   }
 
-  late final List<AdsAnimation?> items;
+  late final List<_AdsAnimation?> items;
 
   void animateThisPage() async {
     items = List.filled(permanentItems, null);

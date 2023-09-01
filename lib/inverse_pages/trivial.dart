@@ -62,7 +62,7 @@ class TriviaQuestion {
   const TriviaQuestion(this.question, this.answers, {this.explanation});
 }
 
-const List<TriviaQuestion> allTriviaQuestions = [
+const List<TriviaQuestion> _allQuestions = [
   TriviaQuestion(
     'What are the secondary subtractive colors?',
     [SuperColors.red, SuperColors.green, SuperColors.blue],
@@ -221,7 +221,7 @@ class AnsweredEveryQuestion extends StatelessWidget {
 late Map<SuperColor, bool> buttonData;
 
 class _TriviaModeState extends State<TriviaMode> {
-  final triviaQuestions = allTriviaQuestions.toList();
+  final triviaQuestions = _allQuestions.toList();
 
   void resetButtons() => buttonData = {for (final color in SuperColors.twelveHues) color: false};
 

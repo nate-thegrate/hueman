@@ -7,7 +7,7 @@ import 'package:super_hueman/inverse_pages/tense.dart';
 import 'package:super_hueman/inverse_pages/trivial.dart';
 import 'package:super_hueman/inverse_pages/ads.dart';
 import 'package:super_hueman/inverse_pages/true_mastery.dart';
-import 'package:super_hueman/pages/intense.dart';
+import 'package:super_hueman/pages/intense_master.dart';
 import 'package:super_hueman/pages/intro.dart';
 import 'package:super_hueman/inverse_pages/menu.dart';
 import 'package:super_hueman/inverse_pages/hsl_sandbox.dart';

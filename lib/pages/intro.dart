@@ -1,5 +1,5 @@
-import 'package:super_hueman/pages/game_end.dart';
-import 'package:super_hueman/pages/game_screen.dart';
+import 'package:super_hueman/pages/score.dart';
+import 'package:super_hueman/pages/hue_typing_game.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
@@ -31,7 +31,7 @@ class IntroScoreKeeper implements ScoreKeeper {
   void roundCheck(BuildContext context) {
     if (round == 29) {
       Navigator.pushReplacement(
-          context, MaterialPageRoute<void>(builder: (context) => GameEnd(this)));
+          context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)));
     }
   }
 

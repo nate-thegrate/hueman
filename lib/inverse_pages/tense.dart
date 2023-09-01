@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:super_hueman/pages/game_end.dart';
+import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
@@ -38,7 +38,7 @@ class TenseScoreKeeper implements ScoreKeeper {
       ? round++
       : Navigator.pushReplacement(
           context,
-          MaterialPageRoute<void>(builder: (context) => GameEnd(this)),
+          MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)),
         );
 
   @override
