@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/inverse_pages/thanks_for_playing.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
@@ -52,13 +53,18 @@ class RGBSlider extends StatelessWidget {
 
 class _TrueMasteryState extends State<TrueMastery> {
   late int r, g, b, colorCode;
+
   SuperColor get color => SuperColor.noName(colorCode);
-  void nextColor() => setState(() {
-        colorCode = rng.nextInt(0xFFFFFF + 1);
-        r = 0;
-        g = 0;
-        b = 0;
+
+  void updateUserColor(SuperColor colorFromHex) => setState(() {
+        r = colorFromHex.red;
+        g = colorFromHex.green;
+        b = colorFromHex.blue;
       });
+  void nextColor() {
+    setState(() => colorCode = rng.nextInt(0xFFFFFF + 1));
+    updateUserColor(SuperColors.black);
+  }
 
   SuperColor get userColor => SuperColor.rgb(r, g, b);
   String get userColorCode => userColor.hexCode;
@@ -115,15 +121,35 @@ class _TrueMasteryState extends State<TrueMastery> {
                       ],
                     ),
                     const FixedSpacer(50),
-                    Text(
-                      'color code: $userColorCode',
-                      style: const TextStyle(fontFamily: 'Consolas', fontSize: 20),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'color code:',
+                          style: TextStyle(fontFamily: 'Consolas', fontSize: 20),
+                        ),
+                        const FixedSpacer.horizontal(10),
+                        TextButton(
+                          style: TextButton.styleFrom(foregroundColor: Colors.black),
+                          onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) => ManualColorCode(color),
+                          ).then(
+                            ManualColorCode.verifyHexCode(context, updateColor: updateUserColor),
+                          ),
+                          child: Text(
+                            userColorCode,
+                            style: const TextStyle(fontFamily: 'Consolas', fontSize: 20),
+                          ),
+                        ),
+                      ],
                     ),
                     const FixedSpacer(30),
                     SuperButton('submit', color: color, onPressed: () {
                       showDialog(
                         context: context,
                         builder: (context) => TrueMasteryScore(guess: userColor, actual: color),
+                        barrierDismissible: userColor.colorCode != color.colorCode,
                       ).then((_) => setState(nextColor));
                     }),
                   ],
@@ -146,31 +172,89 @@ class TrueMasteryScore extends StatefulWidget {
   State<TrueMasteryScore> createState() => _TrueMasteryScoreState();
 }
 
+const errorRecoveryText = '''\
+DIV0 ERROR
+
+
+rebuilding window
+
+(_) => Navigator.pushReplacement<void, void>(
+        context,
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) => const ThanksForPlaying(),
+        ),
+      );''';
+
 class _TrueMasteryScoreState extends State<TrueMasteryScore> {
   late final guess = widget.guess, actual = widget.actual;
+
+  int diff(int a, int b) => (a - b).abs();
 
   late final redOffBy = diff(guess.red, actual.red);
   late final greenOffBy = diff(guess.green, actual.green);
   late final blueOffBy = diff(guess.blue, actual.blue);
   late final offBy = redOffBy + greenOffBy + blueOffBy;
 
+  late final Ticker? ticker;
+
+  Widget perfectScoreOverlay = empty;
+
+  bool showFlicker = false;
+
+  /// alternates between `true` and `false` to make a rapid glitchy flicker :)
+  bool flickerValue = false;
+
+  Future<void> perfectScore() async {
+    await sleep(4);
+    setState(() => perfectScoreOverlay = Text(
+          '9' * 10000,
+          style: const TextStyle(
+            color: Colors.black,
+            fontFamily: 'Segoe UI',
+            fontSize: 16.0,
+            fontWeight: FontWeight.w400,
+            letterSpacing: 0.5,
+            height: 1.5,
+            decoration: TextDecoration.none,
+          ),
+        ));
+    await sleep(2);
+    setState(() => showFlicker = true);
+    ticker!.start();
+    await sleep(2);
+    ticker!.stop();
+    setState(() {
+      showFlicker = false;
+      perfectScoreOverlay = const _ErrorScreen('DIV0 ERROR');
+    });
+    await sleep(3);
+    setState(() => perfectScoreOverlay = const _ErrorScreen(errorRecoveryText));
+    await sleep(5.5);
+  }
+
   @override
   void initState() {
     super.initState();
-
-    inverseHues =
-        (guess.red == actual.red) || (guess.green == actual.green) || (guess.blue == actual.blue)
-            ? inverseSetup(setState)
-            : null;
+    if (offBy == 0) {
+      ticker = Ticker((_) => setState(() => flickerValue = !flickerValue));
+      perfectScore().then((_) => Navigator.pushReplacement<void, void>(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => const ThanksForPlaying(),
+            ),
+          ));
+    } else {
+      ticker = guess.red == actual.red || guess.green == actual.green || guess.blue == actual.blue
+          ? inverseSetup(setState)
+          : null;
+    }
   }
 
   @override
   void dispose() {
-    inverseHues?.dispose();
+    ticker?.dispose();
     super.dispose();
   }
-
-  late final Ticker? inverseHues;
 
   late final List<DataRow> rows = [
     DataRow(cells: [
@@ -195,26 +279,12 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
     ]),
   ];
 
-  int diff(int a, int b) => (a - b).abs();
-
-  String _matchPercent(num difference) =>
-      difference == 0 ? '100%' : '${(100 * (1 - difference / 256)).toStringAsFixed(2)}%';
-
   static const List<DataColumn> columns = [
     DataColumn(label: empty),
     DataColumn(label: Text('red')),
     DataColumn(label: Text('green')),
     DataColumn(label: Text('blue')),
   ];
-
-  TextStyle get superStyle => TextStyle(
-        fontWeight: FontWeight.bold,
-        color: inverseColor,
-        fontSize: 18,
-        shadows: [
-          for (double i = 0; i <= 3; i += 0.5) Shadow(blurRadius: i, color: Colors.white),
-        ],
-      );
 
   Widget title(bool isGuess) {
     final String text =
@@ -230,80 +300,164 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
     );
   }
 
+  DataCell matchPercent(int offBy) => DataCell(
+        offBy == 0
+            ? Text(
+                '100%',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: inverseColor,
+                  fontSize: 18,
+                  shadows: [
+                    for (double i = 0.5; i <= 3; i += 0.5)
+                      Shadow(blurRadius: i, color: Colors.white),
+                  ],
+                ),
+              )
+            : Text('${(100 * (1 - offBy / 256)).toStringAsFixed(2)}%'),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(useMaterial3: true),
-      child: AlertDialog(
-        backgroundColor: SuperColors.lightBackground,
-        title: Column(children: [title(true), title(false)]),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            DataTable(columns: columns, rows: [
-              ...rows,
-              DataRow(cells: [
-                const DataCell(Center(
-                    child: Text('match %', style: TextStyle(fontWeight: FontWeight.bold)))),
-                DataCell(Text(_matchPercent(redOffBy), style: redOffBy == 0 ? superStyle : null)),
-                DataCell(
-                    Text(_matchPercent(greenOffBy), style: greenOffBy == 0 ? superStyle : null)),
-                DataCell(
-                    Text(_matchPercent(blueOffBy), style: blueOffBy == 0 ? superStyle : null)),
-              ]),
-            ]),
-            const FixedSpacer(30),
-            Row(
+      child: Stack(
+        children: [
+          AlertDialog(
+            surfaceTintColor: Colors.transparent,
+            backgroundColor: SuperColors.lightBackground,
+            title: Column(children: [title(true), title(false)]),
+            content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('score:', style: TextStyle(fontSize: 18)),
-                const FixedSpacer.horizontal(10),
-                const Column(
+                DataTable(columns: columns, rows: [
+                  ...rows,
+                  DataRow(cells: [
+                    const DataCell(Center(
+                        child: Text('match %', style: TextStyle(fontWeight: FontWeight.bold)))),
+                    matchPercent(redOffBy),
+                    matchPercent(greenOffBy),
+                    matchPercent(blueOffBy),
+                  ]),
+                ]),
+                const FixedSpacer(30),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      '3 \u00d7 0xFF',
-                      style: TextStyle(fontFamily: 'Consolas', height: 0.5),
+                    const Text('score:', style: TextStyle(fontSize: 18)),
+                    const FixedSpacer.horizontal(10),
+                    const Column(
+                      children: [
+                        Text(
+                          '3 \u00d7 0xFF',
+                          style: TextStyle(fontFamily: 'Consolas', height: 0.5),
+                        ),
+                        SizedBox(
+                          width: 110,
+                          child: Divider(thickness: 1, color: Colors.black),
+                        ),
+                        Text(
+                          'total difference',
+                          style: TextStyle(
+                            // fontFamily: 'Consolas',
+                            height: 0.5,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      width: 110,
-                      child: Divider(thickness: 1, color: Colors.black),
+                    const Text(' = ', style: TextStyle(fontSize: 18, height: -0.2)),
+                    Column(
+                      children: [
+                        const Text('765'),
+                        Container(
+                          decoration: const BoxDecoration(border: Border(top: BorderSide())),
+                          padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
+                          margin: const EdgeInsets.only(top: 3),
+                          child: Text(
+                            '$redOffBy + $blueOffBy + $greenOffBy',
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'total difference',
-                      style: TextStyle(
-                        // fontFamily: 'Consolas',
-                        height: 0.5,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
+                    const Text(' = ', style: TextStyle(fontSize: 18, height: -0.2)),
+                    offBy == 0
+                        ? empty
+                        : Text(
+                            (765 / offBy).toStringAsFixed(1),
+                            style: const TextStyle(fontSize: 18, height: -0.15),
+                          ),
                   ],
                 ),
-                const Text(' = ', style: TextStyle(fontSize: 18, height: -0.2)),
-                Column(
-                  children: [
-                    const Text('765'),
-                    // const FixedSpacer(2),
-                    Container(
-                      decoration: const BoxDecoration(border: Border(top: BorderSide())),
-                      padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
-                      margin: const EdgeInsets.only(top: 3),
-                      child: Text(
-                        '$redOffBy + $blueOffBy + $greenOffBy',
-                      ),
-                    ),
-                  ],
-                ),
-                const Text(' = ', style: TextStyle(fontSize: 18, height: -0.2)),
-                offBy == 0
-                    ? empty
-                    : Text(
-                        (765 / offBy).toStringAsFixed(1),
-                        style: const TextStyle(fontSize: 18, height: -0.15),
-                      ),
+                const FixedSpacer(10),
               ],
             ),
-            const FixedSpacer(10),
-          ],
+          ),
+          perfectScoreOverlay,
+          showFlicker
+              ? Align(
+                  alignment: const Alignment(1, -.4),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(width: context.screenWidth, height: 1, color: actual),
+                      Container(width: context.screenWidth * .75, height: 2, color: actual),
+                      const FixedSpacer(4),
+                      Container(
+                        width: context.screenWidth * 2 / 3,
+                        height: 2,
+                        color: flickerValue ? actual : Colors.transparent,
+                      ),
+                      const FixedSpacer(4),
+                      Container(width: context.screenWidth / 2, height: 2, color: actual),
+                      const FixedSpacer(10),
+                      Container(
+                        height: 5,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: const BoxDecoration(
+                            border: Border.symmetric(
+                                vertical:
+                                    BorderSide(color: SuperColors.lightBackground, width: 300))),
+                        child: empty,
+                      ),
+                      Container(
+                          width: context.screenWidth / 2,
+                          height: 3,
+                          color: SuperColors.lightBackground),
+                      const FixedSpacer(10),
+                      Container(
+                        height: 3,
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        decoration: const BoxDecoration(
+                            border: Border.symmetric(
+                                vertical:
+                                    BorderSide(color: SuperColors.lightBackground, width: 250))),
+                        child: empty,
+                      ),
+                    ],
+                  ),
+                )
+              : empty,
+        ],
+      ),
+    );
+  }
+}
+
+class _ErrorScreen extends StatelessWidget {
+  final String text;
+  const _ErrorScreen(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: SuperColors.blue,
+      body: Padding(
+        padding: EdgeInsets.all(context.screenWidth / 16),
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.white),
         ),
       ),
     );

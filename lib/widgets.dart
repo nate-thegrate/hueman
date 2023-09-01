@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 
@@ -151,7 +152,98 @@ class ColorNameBox extends StatelessWidget {
       );
 }
 
+class ManualColorCode extends StatefulWidget {
+  final SuperColor color;
+  const ManualColorCode(this.color, {super.key});
 
-// START
+  static void Function(dynamic) verifyHexCode(BuildContext context,
+          {required void Function(SuperColor) updateColor}) =>
+      (dynamic value) {
+        if (value is String) {
+          if (value.length == 6) {
+            final int colorCode = int.parse(value, radix: 16);
+            updateColor(SuperColor.noName(colorCode));
+          } else if (value.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('invalid hex code: $value')),
+            );
+          }
+        }
+      };
 
+  @override
+  State<ManualColorCode> createState() => _ManualColorCodeState();
+}
 
+class _ManualColorCodeState extends State<ManualColorCode> {
+  final TextEditingController controller = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+
+  void popText() => Navigator.pop(context, controller.text);
+
+  final TextInputFormatter onlyHexChars = TextInputFormatter.withFunction(
+    (TextEditingValue oldValue, TextEditingValue newValue) {
+      final inputChars = newValue.text.toUpperCase().characters;
+      final validChars = '0123456789ABCDEF'.characters;
+
+      for (final char in inputChars) {
+        if (!validChars.contains(char)) return oldValue;
+      }
+      return newValue;
+    },
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    focusNode.requestFocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme(
+          brightness: Brightness.light,
+          primary: widget.color,
+          onPrimary: widget.color,
+          secondary: widget.color,
+          onSecondary: widget.color,
+          error: widget.color,
+          onError: widget.color,
+          background: SuperColors.lightBackground,
+          onBackground: SuperColors.lightBackground,
+          surface: Colors.black,
+          onSurface: Colors.black,
+        ),
+      ),
+      child: AlertDialog(
+        surfaceTintColor: Colors.transparent,
+        title: const Text('enter color code'),
+        content: Row(
+          children: [
+            Container(
+              color: const Color(0x08000000),
+              width: 200,
+              child: TextField(
+                focusNode: focusNode,
+                style: const TextStyle(fontFamily: 'Consolas'),
+                textAlign: TextAlign.center,
+                cursorColor: Colors.black,
+                controller: controller,
+                onSubmitted: (_) => popText(),
+                inputFormatters: [onlyHexChars],
+              ),
+            ),
+            const FixedSpacer.horizontal(10),
+            IconButton(
+              onPressed: popText,
+              icon: const Icon(Icons.check),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
