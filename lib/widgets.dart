@@ -172,7 +172,7 @@ class ManualColorCode extends StatefulWidget {
         if (value is String) {
           if (value.length == 6) {
             final int colorCode = int.parse(value, radix: 16);
-            updateColor(SuperColor.noName(colorCode));
+            updateColor(SuperColor(colorCode));
           } else if (value.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('invalid hex code: $value')),

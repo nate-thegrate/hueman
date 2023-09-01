@@ -14,7 +14,7 @@ abstract class Tutorials {
   static bool intense = false;
   static bool master = false;
 
-  static bool colorCodes = false;
+  static bool compSci = false;
   static bool trueMastery = false;
 
   static bool ads = false;

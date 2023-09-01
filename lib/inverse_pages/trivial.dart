@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
@@ -116,8 +118,7 @@ const List<TriviaQuestion> _allQuestions = [
     "What's my favorite color?",
     [SuperColors.cyan],
     explanation: "100% useless information, but that's what trivia's all about!\n\n"
-        "I think it's a very aesthetically pleasing color, "
-        'and cyan (along with magenta) is a primary color '
+        'Cyan (along with magenta) is a primary color '
         'that no one seems to be talking about. '
         "Hopefully that's about to change!",
   ),
@@ -328,10 +329,15 @@ class _TriviaModeState extends State<TriviaMode> {
     final Widget questionText = Container(
       height: 200,
       padding: const EdgeInsets.symmetric(horizontal: 50),
+      alignment: Alignment.center,
       child: Text(
         triviaQuestions.first.question,
         textAlign: TextAlign.center,
-        style: const TextStyle(color: Colors.black, fontSize: 32, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: min(context.screenHeight / 2, context.screenWidth) / 20,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
 

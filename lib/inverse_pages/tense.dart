@@ -254,7 +254,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
           child: Column(children: [
             Target('hue', '$hue°'),
             Target(widget.mode == 'vibrant' ? 'color' : 'color [mixed]', name),
-            Target('color_code', SuperColor.noName(color.value - SuperColor.opaque).hexCode),
+            Target('color_code', SuperColor(color.value - SuperColor.opaque).hexCode),
             Target('tension', tension[name]),
             casualMode ? empty : Target('round', scoreKeeper!.round),
             tensionDesc,

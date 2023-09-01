@@ -62,7 +62,7 @@ class RGBSlider extends StatelessWidget {
 class _TrueMasteryState extends State<TrueMastery> {
   late int r, g, b, colorCode;
 
-  SuperColor get color => SuperColor.noName(colorCode);
+  SuperColor get color => SuperColor(colorCode);
 
   void updateUserColor(SuperColor colorFromHex) => setState(() {
         r = colorFromHex.red;
@@ -201,8 +201,6 @@ rebuilding window
 class _TrueMasteryScoreState extends State<TrueMasteryScore> {
   late final guess = widget.guess, actual = widget.actual;
 
-  int diff(int a, int b) => (a - b).abs();
-
   late final redOffBy = diff(guess.red, actual.red);
   late final greenOffBy = diff(guess.green, actual.green);
   late final blueOffBy = diff(guess.blue, actual.blue);
@@ -226,8 +224,6 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
             fontFamily: 'Segoe UI',
             fontSize: 16.0,
             fontWeight: FontWeight.w400,
-            // letterSpacing: 0.5,
-            // height: 1.5,
             decoration: TextDecoration.none,
           ),
         ));
@@ -271,21 +267,21 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
 
   late final List<DataRow> rows = [
     DataRow(cells: [
-      const DataCell(Center(child: Text('guess', style: TextStyle(fontWeight: FontWeight.bold)))),
+      const DataCell(Center(child: Text('guess', style: TextStyle(fontWeight: FontWeight.w600)))),
       DataCell(_Base10PlusHex(guess.red)),
       DataCell(_Base10PlusHex(guess.green)),
       DataCell(_Base10PlusHex(guess.blue)),
     ]),
     DataRow(cells: [
       const DataCell(
-          Center(child: Text('actual', style: TextStyle(fontWeight: FontWeight.bold)))),
+          Center(child: Text('actual', style: TextStyle(fontWeight: FontWeight.w600)))),
       DataCell(_Base10PlusHex(actual.red)),
       DataCell(_Base10PlusHex(actual.green)),
       DataCell(_Base10PlusHex(actual.blue)),
     ]),
     DataRow(cells: [
       const DataCell(
-          Center(child: Text('difference', style: TextStyle(fontWeight: FontWeight.bold)))),
+          Center(child: Text('difference', style: TextStyle(fontWeight: FontWeight.w600)))),
       DataCell(Text(redOffBy.toString())),
       DataCell(Text(greenOffBy.toString())),
       DataCell(Text(blueOffBy.toString())),
@@ -294,24 +290,10 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
 
   static const List<DataColumn> columns = [
     DataColumn(label: empty),
-    DataColumn(label: Text('red')),
-    DataColumn(label: Text('green')),
-    DataColumn(label: Text('blue')),
+    DataColumn(label: _TableHeader('red')),
+    DataColumn(label: _TableHeader('green')),
+    DataColumn(label: _TableHeader('blue')),
   ];
-
-  Widget title(bool isGuess) {
-    final String text =
-        isGuess ? 'your guess: ${widget.guess.hexCode}' : 'actual: ${widget.actual.hexCode}';
-    return Container(
-      margin: const EdgeInsets.only(right: 50),
-      width: 210,
-      child: Text(
-        text,
-        textAlign: TextAlign.right,
-        style: const TextStyle(fontFamily: 'Consolas', fontWeight: FontWeight.bold, fontSize: 20),
-      ),
-    );
-  }
 
   DataCell matchPercent(int offBy) => DataCell(
         offBy == 0
@@ -330,6 +312,26 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
             : Text('${(100 * (1 - offBy / 256)).toStringAsFixed(2)}%'),
       );
 
+  static const scoreFormula = Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        '3 \u00d7 0xFF',
+        style: TextStyle(fontFamily: 'Consolas', height: 0.5),
+      ),
+      SizedBox(
+        width: 110,
+        child: Divider(thickness: 1, color: Colors.black),
+      ),
+      Text(
+        'total difference',
+        style: TextStyle(height: 0.5, fontStyle: FontStyle.italic),
+      ),
+    ],
+  );
+
+  static const equals = Text(' = ', style: TextStyle(fontSize: 18, height: -0.2));
+
   @override
   Widget build(BuildContext context) => Theme(
         data: ThemeData(useMaterial3: true),
@@ -338,47 +340,36 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
             AlertDialog(
               surfaceTintColor: Colors.transparent,
               backgroundColor: SuperColors.lightBackground,
-              title: Column(children: [title(true), title(false)]),
+              title: Column(children: [
+                _ScoreTitle.guess(widget.guess),
+                _ScoreTitle.actual(widget.actual),
+              ]),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  DataTable(columns: columns, rows: [
-                    ...rows,
-                    DataRow(cells: [
-                      const DataCell(Center(
-                          child: Text('match %', style: TextStyle(fontWeight: FontWeight.bold)))),
-                      matchPercent(redOffBy),
-                      matchPercent(greenOffBy),
-                      matchPercent(blueOffBy),
-                    ]),
-                  ]),
+                  DataTable(
+                    columnSpacing: 35,
+                    columns: columns,
+                    rows: [
+                      ...rows,
+                      DataRow(cells: [
+                        const DataCell(Center(
+                            child:
+                                Text('match %', style: TextStyle(fontWeight: FontWeight.w600)))),
+                        matchPercent(redOffBy),
+                        matchPercent(greenOffBy),
+                        matchPercent(blueOffBy),
+                      ]),
+                    ],
+                  ),
                   const FixedSpacer(30),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text('score:', style: TextStyle(fontSize: 18)),
                       const FixedSpacer.horizontal(10),
-                      const Column(
-                        children: [
-                          Text(
-                            '3 \u00d7 0xFF',
-                            style: TextStyle(fontFamily: 'Consolas', height: 0.5),
-                          ),
-                          SizedBox(
-                            width: 110,
-                            child: Divider(thickness: 1, color: Colors.black),
-                          ),
-                          Text(
-                            'total difference',
-                            style: TextStyle(
-                              // fontFamily: 'Consolas',
-                              height: 0.5,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Text(' = ', style: TextStyle(fontSize: 18, height: -0.2)),
+                      scoreFormula,
+                      equals,
                       Column(
                         children: [
                           const Text('765'),
@@ -386,13 +377,11 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
                             decoration: const BoxDecoration(border: Border(top: BorderSide())),
                             padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
                             margin: const EdgeInsets.only(top: 3),
-                            child: Text(
-                              '$redOffBy + $blueOffBy + $greenOffBy',
-                            ),
+                            child: Text('$redOffBy + $blueOffBy + $greenOffBy'),
                           ),
                         ],
                       ),
-                      const Text(' = ', style: TextStyle(fontSize: 18, height: -0.2)),
+                      equals,
                       offBy == 0
                           ? empty
                           : Text(
@@ -406,58 +395,145 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
               ),
             ),
             perfectScoreOverlay,
-            showFlicker
-                ? Align(
-                    alignment: const Alignment(1, -.4),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(width: context.screenWidth, height: 1, color: actual),
-                        Container(width: context.screenWidth * .75, height: 2, color: actual),
-                        const FixedSpacer(4),
-                        Container(
-                          width: context.screenWidth * 2 / 3,
-                          height: 2,
-                          color: flickerValue ? actual : Colors.transparent,
-                        ),
-                        const FixedSpacer(4),
-                        Container(width: context.screenWidth / 2, height: 2, color: actual),
-                        const FixedSpacer(10),
-                        Container(
-                          height: 5,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: const BoxDecoration(
-                            border: Border.symmetric(
-                              vertical: BorderSide(
-                                color: SuperColors.lightBackground,
-                                width: 300,
-                              ),
-                            ),
-                          ),
-                          child: empty,
-                        ),
-                        Container(
-                            width: context.screenWidth / 2,
-                            height: 3,
-                            color: SuperColors.lightBackground),
-                        const FixedSpacer(10),
-                        Container(
-                          height: 3,
-                          padding: const EdgeInsets.symmetric(horizontal: 40),
-                          decoration: const BoxDecoration(
-                              border: Border.symmetric(
-                                  vertical: BorderSide(
-                                      color: SuperColors.lightBackground, width: 250))),
-                          child: empty,
-                        ),
-                      ],
-                    ),
-                  )
-                : empty,
+            showFlicker ? _Flicker(flickerValue, actual) : empty,
           ],
         ),
       );
+}
+
+class _ScoreTitle extends StatefulWidget {
+  final bool isGuess;
+  final SuperColor color;
+  const _ScoreTitle.guess(this.color) : isGuess = true;
+  const _ScoreTitle.actual(this.color) : isGuess = false;
+
+  @override
+  State<_ScoreTitle> createState() => _ScoreTitleState();
+}
+
+class _ScoreTitleState extends State<_ScoreTitle> {
+  String get label => widget.isGuess ? 'your guess' : 'actual';
+  bool expanded = false;
+
+  late final BoxDecoration decoration;
+
+  @override
+  void initState() {
+    super.initState();
+
+    bool opaque(int i) => widget.isGuess ? i != 0 : i != 10;
+    final Color c = widget.color, clear = c.withAlpha(0);
+    const r = Radius.circular(25);
+    decoration = BoxDecoration(
+      gradient: LinearGradient(colors: [for (int i = 0; i <= 10; i++) opaque(i) ? c : clear]),
+      borderRadius: widget.isGuess
+          ? const BorderRadius.only(topRight: r, bottomRight: r)
+          : const BorderRadius.only(topLeft: r, bottomLeft: r),
+    );
+
+    sleep(0.1).then((value) => setState(() => expanded = true));
+  }
+
+  late final Widget text = Align(
+    alignment: Alignment.centerLeft,
+    child: SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 50),
+        child: Text(
+          '$label: ${widget.color.hexCode}',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'Consolas',
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: contrastWith(widget.color).withAlpha(0xCC),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 450,
+      child: Align(
+        alignment: widget.isGuess ? Alignment.centerLeft : Alignment.centerRight,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 600),
+          curve: curve,
+          width: expanded ? 407 : 0,
+          height: 50,
+          decoration: decoration,
+          child: text,
+        ),
+      ),
+    );
+  }
+}
+
+class _Flicker extends StatelessWidget {
+  final bool flickerValue;
+  final SuperColor color;
+  const _Flicker(this.flickerValue, this.color);
+
+  @override
+  Widget build(BuildContext context) => Container(
+        constraints: const BoxConstraints.expand(),
+        alignment: const Alignment(1, -.4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(width: context.screenWidth, height: 1, color: color),
+            Container(width: context.screenWidth * .75, height: 2, color: color),
+            const FixedSpacer(4),
+            Container(
+              width: context.screenWidth * 2 / 3,
+              height: 2,
+              color: flickerValue ? color : null,
+            ),
+            const FixedSpacer(3),
+            Container(width: context.screenWidth / 2, height: 2, color: color),
+            const FixedSpacer(10),
+            Container(
+              height: 5,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: const BoxDecoration(
+                border: Border.symmetric(
+                  vertical: BorderSide(color: SuperColors.lightBackground, width: 300),
+                ),
+              ),
+              child: empty,
+            ),
+            Container(
+              width: context.screenWidth / 2,
+              height: 3,
+              color: SuperColors.lightBackground,
+            ),
+            const FixedSpacer(10),
+            Container(
+              height: 3,
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              decoration: const BoxDecoration(
+                border: Border.symmetric(
+                  vertical: BorderSide(color: SuperColors.lightBackground, width: 250),
+                ),
+              ),
+              child: empty,
+            ),
+          ],
+        ),
+      );
+}
+
+class _TableHeader extends StatelessWidget {
+  final String text;
+  const _TableHeader(this.text);
+
+  @override
+  Widget build(BuildContext context) => SizedBox(width: 60, child: Center(child: Text(text)));
 }
 
 class _ErrorScreen extends StatelessWidget {
