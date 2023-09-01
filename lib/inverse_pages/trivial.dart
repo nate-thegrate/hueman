@@ -12,47 +12,45 @@ class TriviaButton extends StatelessWidget {
   bool get selected => buttonData[color]!;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 200,
-      height: 75,
-      margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-      decoration: selected
-          ? BoxDecoration(
-              border: Border.all(color: color, width: 10),
-              boxShadow: const [BoxShadow(color: Colors.black, blurRadius: 10)],
-            )
-          : null,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white,
-          backgroundColor: selected ? SuperColors.darkBackground : color,
-          shape: const BeveledRectangleBorder(),
+  Widget build(BuildContext context) => Container(
+        width: 200,
+        height: 75,
+        margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+        decoration: selected
+            ? BoxDecoration(
+                border: Border.all(color: color, width: 10),
+                boxShadow: const [BoxShadow(color: Colors.black, blurRadius: 10)],
+              )
+            : null,
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: selected ? SuperColors.darkBackground : color,
+            shape: const BeveledRectangleBorder(),
+          ),
+          child: Text(
+            color.name,
+            style: selected
+                ? TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                    height: -0.1,
+                  )
+                : const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                    shadows: [
+                      Shadow(color: Colors.white24, blurRadius: 1),
+                      Shadow(color: Colors.white30, blurRadius: 25),
+                    ],
+                    height: -0.1,
+                  ),
+          ),
         ),
-        child: Text(
-          color.name,
-          style: selected
-              ? TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                  height: -0.1,
-                )
-              : const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                  shadows: [
-                    Shadow(color: Colors.white24, blurRadius: 1),
-                    Shadow(color: Colors.white30, blurRadius: 25),
-                  ],
-                  height: -0.1,
-                ),
-        ),
-      ),
-    );
-  }
+      );
 }
 
 class TriviaQuestion {

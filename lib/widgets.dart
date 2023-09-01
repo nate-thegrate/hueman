@@ -212,50 +212,48 @@ class _ManualColorCodeState extends State<ManualColorCode> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme(
-          brightness: Brightness.light,
-          primary: widget.color,
-          onPrimary: widget.color,
-          secondary: widget.color,
-          onSecondary: widget.color,
-          error: widget.color,
-          onError: widget.color,
-          background: SuperColors.lightBackground,
-          onBackground: SuperColors.lightBackground,
-          surface: Colors.black,
-          onSurface: Colors.black,
+  Widget build(BuildContext context) => Theme(
+        data: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme(
+            brightness: Brightness.light,
+            primary: widget.color,
+            onPrimary: widget.color,
+            secondary: widget.color,
+            onSecondary: widget.color,
+            error: widget.color,
+            onError: widget.color,
+            background: SuperColors.lightBackground,
+            onBackground: SuperColors.lightBackground,
+            surface: Colors.black,
+            onSurface: Colors.black,
+          ),
         ),
-      ),
-      child: AlertDialog(
-        surfaceTintColor: Colors.transparent,
-        title: const Text('enter color code'),
-        content: Row(
-          children: [
-            Container(
-              color: const Color(0x08000000),
-              width: 200,
-              child: TextField(
-                focusNode: focusNode,
-                style: const TextStyle(fontFamily: 'Consolas'),
-                textAlign: TextAlign.center,
-                cursorColor: Colors.black,
-                controller: controller,
-                onSubmitted: (_) => popText(),
-                inputFormatters: [onlyHexChars, maxLength6],
+        child: AlertDialog(
+          surfaceTintColor: Colors.transparent,
+          title: const Text('enter color code'),
+          content: Row(
+            children: [
+              Container(
+                color: const Color(0x08000000),
+                width: 200,
+                child: TextField(
+                  focusNode: focusNode,
+                  style: const TextStyle(fontFamily: 'Consolas'),
+                  textAlign: TextAlign.center,
+                  cursorColor: Colors.black,
+                  controller: controller,
+                  onSubmitted: (_) => popText(),
+                  inputFormatters: [onlyHexChars, maxLength6],
+                ),
               ),
-            ),
-            const FixedSpacer.horizontal(10),
-            IconButton(
-              onPressed: popText,
-              icon: const Icon(Icons.check),
-            ),
-          ],
+              const FixedSpacer.horizontal(10),
+              IconButton(
+                onPressed: popText,
+                icon: const Icon(Icons.check),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

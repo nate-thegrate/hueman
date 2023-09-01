@@ -54,25 +54,23 @@ class _CMYScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(width: 300, height: 300, color: _color),
-        const FixedSpacer(30),
-        Flex(
-          direction: context.squished ? Axis.vertical : Axis.horizontal,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _CMYSlider('cyan', 0xFF - red, onChanged: updateC),
-            _CMYSlider('magenta', 0xFF - green, onChanged: updateM),
-            _CMYSlider('yellow', 0xFF - blue, onChanged: updateY),
-          ],
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(width: 300, height: 300, color: _color),
+          const FixedSpacer(30),
+          Flex(
+            direction: context.squished ? Axis.vertical : Axis.horizontal,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _CMYSlider('cyan', 0xFF - red, onChanged: updateC),
+              _CMYSlider('magenta', 0xFF - green, onChanged: updateM),
+              _CMYSlider('yellow', 0xFF - blue, onChanged: updateY),
+            ],
+          ),
+        ],
+      );
 }
 
 class _CMYSlider extends StatelessWidget {
@@ -131,76 +129,74 @@ class _HSLScreen extends StatelessWidget {
       {required this.updateH, required this.updateS, required this.updateL});
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 400,
-          height: 400,
-          alignment: Alignment.center,
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Stack(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(0.5),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [SuperColors.gray, SuperColor.hue(hue)],
+  Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 400,
+            height: 400,
+            alignment: Alignment.center,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Stack(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(0.5),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [SuperColors.gray, SuperColor.hue(hue)],
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.white, Colors.transparent, Colors.black],
+                      Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.white, Colors.transparent, Colors.black],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Align(
-                alignment: Alignment(2 * saturation - 1, 1 - 2 * lightness),
-                child: Icon(
-                  Icons.add,
-                  color: contrastWith(_color),
-                  size: 40,
+                Align(
+                  alignment: Alignment(2 * saturation - 1, 1 - 2 * lightness),
+                  child: Icon(
+                    Icons.add,
+                    color: contrastWith(_color),
+                    size: 40,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        _HSLSlider(
-          'hue',
-          hue,
-          color: SuperColor.hue(hue),
-          onChanged: updateH,
-        ),
-        _HSLSlider(
-          'saturation',
-          saturation,
-          color: SuperColor.hsl(hue, saturation, 0.5),
-          onChanged: updateS,
-        ),
-        _HSLSlider(
-          'lightness',
-          lightness,
-          color: SuperColor.hsl(hue, saturation, lightness),
-          onChanged: updateL,
-        ),
-        const FixedSpacer(25),
-        Container(width: 500, height: 100, color: _color),
-      ],
-    );
-  }
+          _HSLSlider(
+            'hue',
+            hue,
+            color: SuperColor.hue(hue),
+            onChanged: updateH,
+          ),
+          _HSLSlider(
+            'saturation',
+            saturation,
+            color: SuperColor.hsl(hue, saturation, 0.5),
+            onChanged: updateS,
+          ),
+          _HSLSlider(
+            'lightness',
+            lightness,
+            color: SuperColor.hsl(hue, saturation, lightness),
+            onChanged: updateL,
+          ),
+          const FixedSpacer(25),
+          Container(width: 500, height: 100, color: _color),
+        ],
+      );
 }
 
 class _HSLSlider extends StatelessWidget {
@@ -372,45 +368,43 @@ class _ColorWheelSlider extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text('center:  ', style: TextStyle(fontSize: 16)),
-        SizedBox(
-          width: 66,
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: index == 0 ? Colors.black38 : centerColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              shadows: index == 3 ? [const Shadow(blurRadius: 1)] : [],
+  Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('center:  ', style: TextStyle(fontSize: 16)),
+          SizedBox(
+            width: 66,
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: index == 0 ? Colors.black38 : centerColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                shadows: index == 3 ? [const Shadow(blurRadius: 1)] : [],
+              ),
             ),
           ),
-        ),
-        SizedBox(
-          width: 240,
-          child: SliderTheme(
-            data: const SliderThemeData(
-              trackHeight: 12,
-              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12),
-            ),
-            child: Slider(
-              value: value,
-              onChanged: updateValue,
-              max: 3,
-              divisions: 3,
-              thumbColor: centerColor,
-              activeColor: centerColor.withAlpha(0xcc),
+          SizedBox(
+            width: 240,
+            child: SliderTheme(
+              data: const SliderThemeData(
+                trackHeight: 12,
+                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12),
+              ),
+              child: Slider(
+                value: value,
+                onChanged: updateValue,
+                max: 3,
+                divisions: 3,
+                thumbColor: centerColor,
+                activeColor: centerColor.withAlpha(0xcc),
+              ),
             ),
           ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
 }
 
 class _ColorLabel extends StatelessWidget {

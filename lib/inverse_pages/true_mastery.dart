@@ -85,97 +85,96 @@ class _TrueMasteryState extends State<TrueMastery> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(useMaterial3: true),
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            children: [
-              const Spacer(),
-              const GoBack(),
-              const Spacer(flex: 3),
-              Container(
-                decoration: const BoxDecoration(
-                    color: SuperColors.lightBackground,
-                    borderRadius: BorderRadiusDirectional.only(
-                        topStart: Radius.circular(50), topEnd: Radius.circular(50))),
-                padding: const EdgeInsets.fromLTRB(30, 60, 30, 40),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        RGBSlider(
-                          'red',
-                          r,
-                          onChanged: (value) => setState(() => r = value.toInt()),
-                        ),
-                        RGBSlider(
-                          'green',
-                          g,
-                          onChanged: (value) => setState(() => g = value.toInt()),
-                        ),
-                        RGBSlider(
-                          'blue',
-                          b,
-                          onChanged: (value) => setState(() => b = value.toInt()),
-                        ),
-                      ],
-                    ),
-                    const FixedSpacer(50),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'color code:',
-                          style: TextStyle(fontFamily: 'Consolas', fontSize: 20),
-                        ),
-                        const FixedSpacer.horizontal(10),
-                        TextButton(
-                          style: TextButton.styleFrom(foregroundColor: Colors.black),
-                          onPressed: ManualColorCode.run(
-                            context,
-                            color: color,
-                            updateColor: updateUserColor,
+  Widget build(BuildContext context) => Theme(
+        data: ThemeData(useMaterial3: true),
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              children: [
+                const Spacer(),
+                const GoBack(),
+                const Spacer(flex: 3),
+                Container(
+                  decoration: const BoxDecoration(
+                      color: SuperColors.lightBackground,
+                      borderRadius: BorderRadiusDirectional.only(
+                          topStart: Radius.circular(50), topEnd: Radius.circular(50))),
+                  padding: const EdgeInsets.fromLTRB(30, 60, 30, 40),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          RGBSlider(
+                            'red',
+                            r,
+                            onChanged: (value) => setState(() => r = value.toInt()),
                           ),
-                          child: Text(
-                            userColorCode,
-                            style: const TextStyle(fontFamily: 'Consolas', fontSize: 20),
+                          RGBSlider(
+                            'green',
+                            g,
+                            onChanged: (value) => setState(() => g = value.toInt()),
                           ),
+                          RGBSlider(
+                            'blue',
+                            b,
+                            onChanged: (value) => setState(() => b = value.toInt()),
+                          ),
+                        ],
+                      ),
+                      const FixedSpacer(50),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'color code:',
+                            style: TextStyle(fontFamily: 'Consolas', fontSize: 20),
+                          ),
+                          const FixedSpacer.horizontal(10),
+                          TextButton(
+                            style: TextButton.styleFrom(foregroundColor: Colors.black),
+                            onPressed: ManualColorCode.run(
+                              context,
+                              color: color,
+                              updateColor: updateUserColor,
+                            ),
+                            child: Text(
+                              userColorCode,
+                              style: const TextStyle(fontFamily: 'Consolas', fontSize: 20),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const FixedSpacer(30),
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) =>
+                                TrueMasteryScore(guess: userColor, actual: color),
+                            barrierDismissible: userColor.colorCode != color.colorCode,
+                          ).then((_) => setState(nextColor));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: color,
+                          foregroundColor: contrastWith(color),
                         ),
-                      ],
-                    ),
-                    const FixedSpacer(30),
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => TrueMasteryScore(guess: userColor, actual: color),
-                          barrierDismissible: userColor.colorCode != color.colorCode,
-                        ).then((_) => setState(nextColor));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color,
-                        foregroundColor: contrastWith(color),
+                        child: const Padding(
+                          padding: EdgeInsets.only(bottom: 4),
+                          child: Text('submit', style: TextStyle(fontSize: 24)),
+                        ),
                       ),
-                      child: const Padding(
-                        padding: EdgeInsets.only(bottom: 4),
-                        child: Text('submit', style: TextStyle(fontSize: 24)),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+          backgroundColor: color,
         ),
-        backgroundColor: color,
-      ),
-    );
-  }
+      );
 }
 
 class TrueMasteryScore extends StatefulWidget {
@@ -332,131 +331,133 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
       );
 
   @override
-  Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(useMaterial3: true),
-      child: Stack(
-        children: [
-          AlertDialog(
-            surfaceTintColor: Colors.transparent,
-            backgroundColor: SuperColors.lightBackground,
-            title: Column(children: [title(true), title(false)]),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DataTable(columns: columns, rows: [
-                  ...rows,
-                  DataRow(cells: [
-                    const DataCell(Center(
-                        child: Text('match %', style: TextStyle(fontWeight: FontWeight.bold)))),
-                    matchPercent(redOffBy),
-                    matchPercent(greenOffBy),
-                    matchPercent(blueOffBy),
+  Widget build(BuildContext context) => Theme(
+        data: ThemeData(useMaterial3: true),
+        child: Stack(
+          children: [
+            AlertDialog(
+              surfaceTintColor: Colors.transparent,
+              backgroundColor: SuperColors.lightBackground,
+              title: Column(children: [title(true), title(false)]),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DataTable(columns: columns, rows: [
+                    ...rows,
+                    DataRow(cells: [
+                      const DataCell(Center(
+                          child: Text('match %', style: TextStyle(fontWeight: FontWeight.bold)))),
+                      matchPercent(redOffBy),
+                      matchPercent(greenOffBy),
+                      matchPercent(blueOffBy),
+                    ]),
                   ]),
-                ]),
-                const FixedSpacer(30),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('score:', style: TextStyle(fontSize: 18)),
-                    const FixedSpacer.horizontal(10),
-                    const Column(
-                      children: [
-                        Text(
-                          '3 \u00d7 0xFF',
-                          style: TextStyle(fontFamily: 'Consolas', height: 0.5),
-                        ),
-                        SizedBox(
-                          width: 110,
-                          child: Divider(thickness: 1, color: Colors.black),
-                        ),
-                        Text(
-                          'total difference',
-                          style: TextStyle(
-                            // fontFamily: 'Consolas',
-                            height: 0.5,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Text(' = ', style: TextStyle(fontSize: 18, height: -0.2)),
-                    Column(
-                      children: [
-                        const Text('765'),
-                        Container(
-                          decoration: const BoxDecoration(border: Border(top: BorderSide())),
-                          padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
-                          margin: const EdgeInsets.only(top: 3),
-                          child: Text(
-                            '$redOffBy + $blueOffBy + $greenOffBy',
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Text(' = ', style: TextStyle(fontSize: 18, height: -0.2)),
-                    offBy == 0
-                        ? empty
-                        : Text(
-                            (765 / offBy).toStringAsFixed(1),
-                            style: const TextStyle(fontSize: 18, height: -0.15),
-                          ),
-                  ],
-                ),
-                const FixedSpacer(10),
-              ],
-            ),
-          ),
-          perfectScoreOverlay,
-          showFlicker
-              ? Align(
-                  alignment: const Alignment(1, -.4),
-                  child: Column(
+                  const FixedSpacer(30),
+                  Row(
                     mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Container(width: context.screenWidth, height: 1, color: actual),
-                      Container(width: context.screenWidth * .75, height: 2, color: actual),
-                      const FixedSpacer(4),
-                      Container(
-                        width: context.screenWidth * 2 / 3,
-                        height: 2,
-                        color: flickerValue ? actual : Colors.transparent,
+                      const Text('score:', style: TextStyle(fontSize: 18)),
+                      const FixedSpacer.horizontal(10),
+                      const Column(
+                        children: [
+                          Text(
+                            '3 \u00d7 0xFF',
+                            style: TextStyle(fontFamily: 'Consolas', height: 0.5),
+                          ),
+                          SizedBox(
+                            width: 110,
+                            child: Divider(thickness: 1, color: Colors.black),
+                          ),
+                          Text(
+                            'total difference',
+                            style: TextStyle(
+                              // fontFamily: 'Consolas',
+                              height: 0.5,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
                       ),
-                      const FixedSpacer(4),
-                      Container(width: context.screenWidth / 2, height: 2, color: actual),
-                      const FixedSpacer(10),
-                      Container(
-                        height: 5,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: const BoxDecoration(
-                            border: Border.symmetric(
-                                vertical:
-                                    BorderSide(color: SuperColors.lightBackground, width: 300))),
-                        child: empty,
+                      const Text(' = ', style: TextStyle(fontSize: 18, height: -0.2)),
+                      Column(
+                        children: [
+                          const Text('765'),
+                          Container(
+                            decoration: const BoxDecoration(border: Border(top: BorderSide())),
+                            padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
+                            margin: const EdgeInsets.only(top: 3),
+                            child: Text(
+                              '$redOffBy + $blueOffBy + $greenOffBy',
+                            ),
+                          ),
+                        ],
                       ),
-                      Container(
-                          width: context.screenWidth / 2,
-                          height: 3,
-                          color: SuperColors.lightBackground),
-                      const FixedSpacer(10),
-                      Container(
-                        height: 3,
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
-                        decoration: const BoxDecoration(
-                            border: Border.symmetric(
-                                vertical:
-                                    BorderSide(color: SuperColors.lightBackground, width: 250))),
-                        child: empty,
-                      ),
+                      const Text(' = ', style: TextStyle(fontSize: 18, height: -0.2)),
+                      offBy == 0
+                          ? empty
+                          : Text(
+                              (765 / offBy).toStringAsFixed(1),
+                              style: const TextStyle(fontSize: 18, height: -0.15),
+                            ),
                     ],
                   ),
-                )
-              : empty,
-        ],
-      ),
-    );
-  }
+                  const FixedSpacer(10),
+                ],
+              ),
+            ),
+            perfectScoreOverlay,
+            showFlicker
+                ? Align(
+                    alignment: const Alignment(1, -.4),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(width: context.screenWidth, height: 1, color: actual),
+                        Container(width: context.screenWidth * .75, height: 2, color: actual),
+                        const FixedSpacer(4),
+                        Container(
+                          width: context.screenWidth * 2 / 3,
+                          height: 2,
+                          color: flickerValue ? actual : Colors.transparent,
+                        ),
+                        const FixedSpacer(4),
+                        Container(width: context.screenWidth / 2, height: 2, color: actual),
+                        const FixedSpacer(10),
+                        Container(
+                          height: 5,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: const BoxDecoration(
+                            border: Border.symmetric(
+                              vertical: BorderSide(
+                                color: SuperColors.lightBackground,
+                                width: 300,
+                              ),
+                            ),
+                          ),
+                          child: empty,
+                        ),
+                        Container(
+                            width: context.screenWidth / 2,
+                            height: 3,
+                            color: SuperColors.lightBackground),
+                        const FixedSpacer(10),
+                        Container(
+                          height: 3,
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          decoration: const BoxDecoration(
+                              border: Border.symmetric(
+                                  vertical: BorderSide(
+                                      color: SuperColors.lightBackground, width: 250))),
+                          child: empty,
+                        ),
+                      ],
+                    ),
+                  )
+                : empty,
+          ],
+        ),
+      );
 }
 
 class _ErrorScreen extends StatelessWidget {
@@ -464,18 +465,16 @@ class _ErrorScreen extends StatelessWidget {
   const _ErrorScreen(this.text);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: SuperColors.blue,
-      body: Padding(
-        padding: EdgeInsets.all(context.screenWidth / 16),
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: SuperColors.blue,
+        body: Padding(
+          padding: EdgeInsets.all(context.screenWidth / 16),
+          child: Text(
+            text,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
 
 class _Base10PlusHex extends StatelessWidget {
@@ -483,16 +482,14 @@ class _Base10PlusHex extends StatelessWidget {
   const _Base10PlusHex(this.value);
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Text(value.toString()),
-        Text(
-          ' (0x${value.toRadixString(16).padLeft(2, "0").toUpperCase()})',
-          style: const TextStyle(fontFamily: 'Consolas', fontSize: 12),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text(value.toString()),
+          Text(
+            ' (0x${value.toRadixString(16).padLeft(2, "0").toUpperCase()})',
+            style: const TextStyle(fontFamily: 'Consolas', fontSize: 12),
+          ),
+        ],
+      );
 }

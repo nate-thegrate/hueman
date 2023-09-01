@@ -91,13 +91,13 @@ class Target extends StatelessWidget {
   const Target(this.label, this.value, {super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Row(children: [
-      Expanded(child: Text('$label:', textAlign: TextAlign.right)),
-      const FixedSpacer.horizontal(15),
-      Expanded(child: Text(value.toString())),
-    ]);
-  }
+  Widget build(BuildContext context) => Row(
+        children: [
+          Expanded(child: Text('$label:', textAlign: TextAlign.right)),
+          const FixedSpacer.horizontal(15),
+          Expanded(child: Text(value.toString())),
+        ],
+      );
 }
 
 class TenseMode extends StatefulWidget {
@@ -358,59 +358,57 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(useMaterial3: true, textTheme: const TextTheme(bodyMedium: style)),
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Center(
-              child: Column(
-                children: [
-                  const Spacer(),
-                  const GoBack(),
-                  const Spacer(),
-                  target,
-                  const Spacer(),
-                  button2by2,
-                  const Spacer(flex: 2),
-                  TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.black12,
-                        foregroundColor: SuperColors.darkBackground,
-                      ),
-                      onPressed: () => setState(() => showDetails = !showDetails),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Text(
-                          showDetails ? '[hide details]' : '[show tension details]',
-                          style: const TextStyle(fontFamily: 'Consolas', fontSize: 16),
+  Widget build(BuildContext context) => Theme(
+        data: ThemeData(useMaterial3: true, textTheme: const TextTheme(bodyMedium: style)),
+        child: Scaffold(
+          body: Stack(
+            children: [
+              Center(
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    const GoBack(),
+                    const Spacer(),
+                    target,
+                    const Spacer(),
+                    button2by2,
+                    const Spacer(flex: 2),
+                    TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.black12,
+                          foregroundColor: SuperColors.darkBackground,
                         ),
-                      )),
-                  const FixedSpacer(15),
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 100),
-                    child: casualMode || showDetails
-                        ? const SizedBox(width: double.infinity)
-                        : scoreKeeper!.midRoundDisplay,
-                  ),
-                  const FixedSpacer(15),
-                ],
+                        onPressed: () => setState(() => showDetails = !showDetails),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Text(
+                            showDetails ? '[hide details]' : '[show tension details]',
+                            style: const TextStyle(fontFamily: 'Consolas', fontSize: 16),
+                          ),
+                        )),
+                    const FixedSpacer(15),
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 100),
+                      child: casualMode || showDetails
+                          ? const SizedBox(width: double.infinity)
+                          : scoreKeeper!.midRoundDisplay,
+                    ),
+                    const FixedSpacer(15),
+                  ],
+                ),
               ),
-            ),
-            showReaction
-                ? Splendid(
-                    correct: selectedHue == hue,
-                    onTap: tapReaction,
-                    gradientCycle: inverseHue,
-                  )
-                : empty,
-          ],
+              showReaction
+                  ? Splendid(
+                      correct: selectedHue == hue,
+                      onTap: tapReaction,
+                      gradientCycle: inverseHue,
+                    )
+                  : empty,
+            ],
+          ),
+          backgroundColor: SuperColors.lightBackground,
         ),
-        backgroundColor: SuperColors.lightBackground,
-      ),
-    );
-  }
+      );
 }
 
 class Splendid extends StatelessWidget {
@@ -421,61 +419,60 @@ class Splendid extends StatelessWidget {
       {required this.correct, required this.onTap, required this.gradientCycle, super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        constraints: const BoxConstraints.expand(),
-        color: Colors.transparent,
-        alignment: const Alignment(0, 0.72),
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: correct
-                  ? Text(
-                      'Splendid!',
-                      style: TextStyle(
-                        fontFamily: 'Consolas',
-                        fontSize: 50,
-                        shadows: [
-                          for (double i = 2; i <= 20; i += 2)
-                            Shadow(color: Colors.white, blurRadius: i),
-                          for (int i = 0; i < 10; i++) const Shadow(blurRadius: 1)
-                        ],
-                      ),
-                    )
-                  : Text(
-                      correct ? 'Splendid!' : '[incorrect]',
-                      style: const TextStyle(
-                        color: SuperColors.darkBackground,
-                        fontFamily: 'Consolas',
-                      ),
-                    ),
-            ),
-            correct
-                ? ShaderMask(
-                    blendMode: BlendMode.srcIn,
-                    shaderCallback: (bounds) => LinearGradient(colors: [
-                      for (int i = 0; i < 360; i += 10) SuperColor.hue((gradientCycle + i) % 360)
-                    ]).createShader(
-                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: onTap,
+        child: Container(
+          constraints: const BoxConstraints.expand(),
+          color: Colors.transparent,
+          alignment: const Alignment(0, 0.72),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: correct
+                    ? Text(
                         'Splendid!',
                         style: TextStyle(
                           fontFamily: 'Consolas',
                           fontSize: 50,
+                          shadows: [
+                            for (double i = 2; i <= 20; i += 2)
+                              Shadow(color: Colors.white, blurRadius: i),
+                            for (int i = 0; i < 10; i++) const Shadow(blurRadius: 1)
+                          ],
+                        ),
+                      )
+                    : Text(
+                        correct ? 'Splendid!' : '[incorrect]',
+                        style: const TextStyle(
+                          color: SuperColors.darkBackground,
+                          fontFamily: 'Consolas',
                         ),
                       ),
-                    ),
-                  )
-                : empty,
-          ],
+              ),
+              correct
+                  ? ShaderMask(
+                      blendMode: BlendMode.srcIn,
+                      shaderCallback: (bounds) => LinearGradient(colors: [
+                        for (int i = 0; i < 360; i += 10)
+                          SuperColor.hue((gradientCycle + i) % 360)
+                      ]).createShader(
+                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          'Splendid!',
+                          style: TextStyle(
+                            fontFamily: 'Consolas',
+                            fontSize: 50,
+                          ),
+                        ),
+                      ),
+                    )
+                  : empty,
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

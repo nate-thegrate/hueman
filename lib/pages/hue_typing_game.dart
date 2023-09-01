@@ -47,22 +47,20 @@ class _NumberButton extends StatelessWidget {
   void onLongPress() => controller.clear();
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 125,
-      height: 100,
-      padding: const EdgeInsets.all(2),
-      child: TextButton(
-        style: TextButton.styleFrom(
-          backgroundColor: Colors.black54,
-          shape: const BeveledRectangleBorder(),
+  Widget build(BuildContext context) => Container(
+        width: 125,
+        height: 100,
+        padding: const EdgeInsets.all(2),
+        child: TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.black54,
+            shape: const BeveledRectangleBorder(),
+          ),
+          onPressed: disabled ? null : onPressed,
+          onLongPress: number == 10 ? onLongPress : null,
+          child: child,
         ),
-        onPressed: disabled ? null : onPressed,
-        onLongPress: number == 10 ? onLongPress : null,
-        child: child,
-      ),
-    );
-  }
+      );
 }
 
 class NumPad extends StatelessWidget {
@@ -71,21 +69,19 @@ class NumPad extends StatelessWidget {
   const NumPad(this.numPadController, {required this.submit, super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (int row = 0; row < 4; row++)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (int i = row * 3; i < row * 3 + 3; i++)
-                _NumberButton(i, controller: numPadController, submit: submit),
-            ],
-          )
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (int row = 0; row < 4; row++)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (int i = row * 3; i < row * 3 + 3; i++)
+                  _NumberButton(i, controller: numPadController, submit: submit),
+              ],
+            )
+        ],
+      );
 }
 
 class NumPadController {
@@ -130,13 +126,11 @@ class _RankBars extends StatelessWidget {
     final int activeIndex = rank ~/ 25 + 1;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    double barHeight(int i) {
-      return (i < activeIndex)
-          ? screenHeight
-          : (i == activeIndex)
-              ? screenHeight * (rank % 25) / 25
-              : 0;
-    }
+    double barHeight(int i) => (i < activeIndex)
+        ? screenHeight
+        : (i == activeIndex)
+            ? screenHeight * (rank % 25) / 25
+            : 0;
 
     return Stack(
       children: [

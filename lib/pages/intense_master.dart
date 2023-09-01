@@ -177,55 +177,53 @@ class SawEveryPic extends StatelessWidget {
   GestureRecognizer hyperlink(String url) => TapGestureRecognizer()..onTap = gotoWebsite(url);
 
   @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Congrats!'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const Text(
-            "You've made it through every image!",
-            style: TextStyle(fontSize: 16),
-          ),
-          const FixedSpacer(16),
-          RichText(
-            text: TextSpan(children: [
-              const TextSpan(text: '(shoutout to'),
-              TextSpan(
-                text: '  Wikipedia  ',
-                style: const TextStyle(color: SuperColors.azure, height: 3),
-                recognizer: hyperlink('https://commons.wikimedia.org/w/index.php'
-                    '?title=Special:MediaSearch&type=image&haslicense=unrestricted'),
-              ),
-              const TextSpan(text: 'and'),
-              TextSpan(
-                text: '  rawpixel  ',
-                style: const TextStyle(color: SuperColors.azure, height: 3),
-                recognizer: hyperlink('https://www.rawpixel.com/public-domain'),
-              ),
-              const TextSpan(text: '\nfor hosting all those public domain images)'),
-            ]),
-          ),
-        ],
-      ),
-      actions: [
-        Center(
-          child: TextButton(
-            style: TextButton.styleFrom(backgroundColor: Colors.black38),
-            onPressed: () => context.goto(Pages.mainMenu),
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
-              child: Text(
-                'back to menu',
-                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+  Widget build(BuildContext context) => AlertDialog(
+        title: const Text('Congrats!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const Text(
+              "You've made it through every image!",
+              style: TextStyle(fontSize: 16),
+            ),
+            const FixedSpacer(16),
+            RichText(
+              text: TextSpan(children: [
+                const TextSpan(text: '(shoutout to'),
+                TextSpan(
+                  text: '  Wikipedia  ',
+                  style: const TextStyle(color: SuperColors.azure, height: 3),
+                  recognizer: hyperlink('https://commons.wikimedia.org/w/index.php'
+                      '?title=Special:MediaSearch&type=image&haslicense=unrestricted'),
+                ),
+                const TextSpan(text: 'and'),
+                TextSpan(
+                  text: '  rawpixel  ',
+                  style: const TextStyle(color: SuperColors.azure, height: 3),
+                  recognizer: hyperlink('https://www.rawpixel.com/public-domain'),
+                ),
+                const TextSpan(text: '\nfor hosting all those public domain images)'),
+              ]),
+            ),
+          ],
+        ),
+        actions: [
+          Center(
+            child: TextButton(
+              style: TextButton.styleFrom(backgroundColor: Colors.black38),
+              onPressed: () => context.goto(Pages.mainMenu),
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
+                child: Text(
+                  'back to menu',
+                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
 }
 
 class IntenseMode extends StatefulWidget {
