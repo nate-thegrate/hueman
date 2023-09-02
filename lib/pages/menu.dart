@@ -323,8 +323,9 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
                       color: SuperColors.inverting,
                     ),
                   ),
-                  Align(
-                    alignment: const Alignment(0, 0.69),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.only(top: 400),
                     child: ScaleTransition(
                       scale: Tween<double>(begin: 12, end: 0).animate(controller),
                       child: Container(

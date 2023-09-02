@@ -256,8 +256,9 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
             ),
             backgroundColor: SuperColors.lightBackground,
           ),
-          Align(
-            alignment: const Alignment(0, 0.43),
+          Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.only(top: 275),
             child: ScaleTransition(
               scale: Tween<double>(begin: 0, end: 12).animate(controller),
               child: Container(

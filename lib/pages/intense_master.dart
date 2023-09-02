@@ -28,12 +28,10 @@ class IntenseScoreKeeper implements ScoreKeeper {
   void scoreTheRound() => scoring();
 
   @override
-  void roundCheck(BuildContext context) {
-    if (round == 30) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)));
-    }
-  }
+  void roundCheck(BuildContext context) => (round == 30)
+      ? Navigator.pushReplacement(
+          context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)))
+      : ();
 
   @override
   Widget get midRoundDisplay {

@@ -1,62 +1,87 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/thanks_for_playing.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
+
+const _errorRecoveryText = '''\
+DIV_0 ERROR
+
+
+rebuilding window
+
+(_) => Navigator.pushReplacement<void, void>(
+        context,
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) => const ThanksForPlaying(),
+        ),
+      );''';
+
+class TrueMasteryScoreKeeper implements ScoreKeeper {
+  TrueMasteryScoreKeeper();
+
+  int round = 0;
+  static const int _maxRounds = 10;
+  double score = 0;
+  int superCount = 0;
+
+  @override
+  void roundCheck(BuildContext context) => (round == _maxRounds - 1)
+      ? Navigator.pushReplacement(
+          context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)))
+      : round++;
+
+  @override
+  void scoreTheRound() {
+    score += thisRoundScore;
+    superCount += thisRoundSuperCount;
+  }
+
+  @override
+  Widget get finalDetails {
+    String scoreDesc = '$_maxRounds rounds, total score = ${score.toStringAsFixed(1)}';
+    if (superCount > 0) {
+      scoreDesc += '\n\u00d7${superCount + 1} bonus! '
+          '($superCount s\u1d1cᴘᴇʀscore${superCount > 1 ? "s" : ""})';
+    }
+    return Text(
+      scoreDesc,
+      textAlign: TextAlign.center,
+      style: const TextStyle(fontSize: 18, color: Colors.black54),
+    );
+  }
+
+  @override
+  Widget get finalScore => Text(
+        (score * (superCount + 1)).toStringAsFixed(1),
+        style: const TextStyle(fontSize: 32),
+      );
+
+  @override
+  Widget get midRoundDisplay {
+    String text = 'round ${round + 1}/$_maxRounds\nscore: ${score.toStringAsFixed(1)}';
+    if (superCount > 0) text += ', $superCount sᴜᴘᴇʀscore${superCount > 1 ? 's' : ''}!';
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Text(text, textAlign: TextAlign.center),
+    );
+  }
+
+  @override
+  final Pages page = Pages.trueMastery;
+}
+
+late double thisRoundScore;
+late int thisRoundSuperCount;
 
 class TrueMastery extends StatefulWidget {
   const TrueMastery({super.key});
 
   @override
   State<TrueMastery> createState() => _TrueMasteryState();
-}
-
-class RGBSlider extends StatelessWidget {
-  final String name;
-  final int value;
-  final ValueChanged<double> onChanged;
-  const RGBSlider(this.name, this.value, {required this.onChanged, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final SuperColor color = {
-      'red': SuperColor.rgb(value, 0, 0),
-      'green': SuperColor.rgb(0, value, 0),
-      'blue': SuperColor.rgb(0, 0, value),
-    }[name]!;
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        RotatedBox(
-          quarterTurns: 3,
-          child: SizedBox(
-            width: context.screenHeight - 500,
-            child: SliderTheme(
-              data: const SliderThemeData(
-                trackHeight: 15,
-                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
-              ),
-              child: Slider(
-                thumbColor: color,
-                activeColor: color.withAlpha(0x80),
-                inactiveColor: Colors.black12,
-                max: 255,
-                value: value.toDouble(),
-                onChanged: onChanged,
-              ),
-            ),
-          ),
-        ),
-        Container(
-          width: 125,
-          alignment: Alignment.center,
-          child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
-        ),
-      ],
-    );
-  }
 }
 
 class _TrueMasteryState extends State<TrueMastery> {
@@ -77,10 +102,14 @@ class _TrueMasteryState extends State<TrueMastery> {
   SuperColor get userColor => SuperColor.rgb(r, g, b);
   String get userColorCode => userColor.hexCode;
 
+  late final TrueMasteryScoreKeeper? scoreKeeper;
+
   @override
   void initState() {
     super.initState();
     inverted = true;
+
+    scoreKeeper = casualMode ? null : TrueMasteryScoreKeeper();
     nextColor();
   }
 
@@ -149,14 +178,15 @@ class _TrueMasteryState extends State<TrueMastery> {
                       ),
                       const FixedSpacer(30),
                       ElevatedButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) =>
-                                TrueMasteryScore(guess: userColor, actual: color),
-                            barrierDismissible: userColor.colorCode != color.colorCode,
-                          ).then((_) => setState(nextColor));
-                        },
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (context) => TrueMasteryScore(guess: userColor, actual: color),
+                          barrierDismissible: userColor.colorCode != color.colorCode,
+                        ).then((_) {
+                          scoreKeeper?.scoreTheRound();
+                          scoreKeeper?.roundCheck(context);
+                          setState(nextColor);
+                        }),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: color,
                           foregroundColor: contrastWith(color),
@@ -166,6 +196,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                           child: Text('submit', style: TextStyle(fontSize: 24)),
                         ),
                       ),
+                      scoreKeeper == null ? empty : scoreKeeper!.midRoundDisplay,
                     ],
                   ),
                 ),
@@ -177,6 +208,53 @@ class _TrueMasteryState extends State<TrueMastery> {
       );
 }
 
+class RGBSlider extends StatelessWidget {
+  final String name;
+  final int value;
+  final ValueChanged<double> onChanged;
+  const RGBSlider(this.name, this.value, {required this.onChanged, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final SuperColor color = {
+      'red': SuperColor.rgb(value, 0, 0),
+      'green': SuperColor.rgb(0, value, 0),
+      'blue': SuperColor.rgb(0, 0, value),
+    }[name]!;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        RotatedBox(
+          quarterTurns: 3,
+          child: SizedBox(
+            width: context.screenHeight - 500,
+            child: SliderTheme(
+              data: const SliderThemeData(
+                trackHeight: 15,
+                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
+              ),
+              child: Slider(
+                thumbColor: color,
+                activeColor: color.withAlpha(0x80),
+                inactiveColor: Colors.black12,
+                max: 255,
+                value: value.toDouble(),
+                onChanged: onChanged,
+              ),
+            ),
+          ),
+        ),
+        Container(
+          width: 125,
+          alignment: Alignment.center,
+          child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
+        ),
+      ],
+    );
+  }
+}
+
 class TrueMasteryScore extends StatefulWidget {
   final SuperColor guess, actual;
   const TrueMasteryScore({required this.guess, required this.actual, super.key});
@@ -184,19 +262,6 @@ class TrueMasteryScore extends StatefulWidget {
   @override
   State<TrueMasteryScore> createState() => _TrueMasteryScoreState();
 }
-
-const errorRecoveryText = '''\
-DIV_0 ERROR
-
-
-rebuilding window
-
-(_) => Navigator.pushReplacement<void, void>(
-        context,
-        MaterialPageRoute<void>(
-          builder: (BuildContext context) => const ThanksForPlaying(),
-        ),
-      );''';
 
 class _TrueMasteryScoreState extends State<TrueMasteryScore> {
   late final guess = widget.guess, actual = widget.actual;
@@ -237,13 +302,24 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
       perfectScoreOverlay = const _ErrorScreen('DIV_0 ERROR');
     });
     await sleep(4);
-    setState(() => perfectScoreOverlay = const _ErrorScreen(errorRecoveryText));
+    setState(() => perfectScoreOverlay = const _ErrorScreen(_errorRecoveryText));
     await sleep(6);
   }
 
   @override
   void initState() {
     super.initState();
+
+    thisRoundScore = 765 / offBy;
+    thisRoundSuperCount = 0;
+    for (final val in [
+      guess.red == actual.red,
+      guess.green == actual.green,
+      guess.blue == actual.blue,
+    ]) {
+      if (val) thisRoundSuperCount++;
+    }
+
     if (offBy == 0) {
       ticker = Ticker((_) => setState(() => flickerValue = !flickerValue));
       perfectScore().then((_) => Navigator.pushReplacement<void, void>(
@@ -385,7 +461,7 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
                       offBy == 0
                           ? empty
                           : Text(
-                              (765 / offBy).toStringAsFixed(1),
+                              thisRoundScore.toStringAsFixed(1),
                               style: const TextStyle(fontSize: 18, height: -0.15),
                             ),
                     ],

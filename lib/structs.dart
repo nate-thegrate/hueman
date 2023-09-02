@@ -13,6 +13,7 @@ import 'package:super_hueman/inverse_pages/menu.dart';
 import 'package:super_hueman/inverse_pages/sandbox.dart';
 import 'package:super_hueman/pages/menu.dart';
 import 'package:super_hueman/pages/sandbox.dart';
+import 'package:super_hueman/pages/start.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -28,6 +29,7 @@ Future<void> sleep(double seconds) =>
 const Curve curve = Curves.easeOutCubic;
 
 enum Pages {
+  start(StartScreen()),
   mainMenu(MainMenu()),
   intro3(IntroMode(3)),
   intro6(IntroMode(6)),
@@ -64,6 +66,15 @@ enum Pages {
     for (final page in values) page.name: (context) => page.widget
   };
 
+  static String get initialRoute {
+    final Pages route = !Tutorials.intro
+        ? start
+        : inverted
+            ? inverseMenu
+            : mainMenu;
+    return route.name;
+  }
+
   String get gameMode {
     switch (this) {
       case intro3:
@@ -80,6 +91,8 @@ enum Pages {
         return 'Tense (vibrant)';
       case tenseMixed:
         return 'Tense (mixed!)';
+      case trueMastery:
+        return 'True Mastery';
       default:
         return "lol this shouldn't pop up";
     }
@@ -208,6 +221,8 @@ abstract class SuperColors {
   static const white = SuperColor.named('white', 0xFFFFFF);
   static const gray = SuperColor.named('gray', 0x808080);
   static const black = SuperColor.named('black', 0x000000);
+
+  static const fakeBlue = SuperColor(0x0060FF);
 
   static const darkBackground = SuperColor(0x121212);
   static const lightBackground = SuperColor(0xffeef3f8);
