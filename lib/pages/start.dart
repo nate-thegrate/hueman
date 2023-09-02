@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rive/rive.dart';
 import 'package:super_hueman/structs.dart';
 
 class StartScreen extends StatefulWidget {
@@ -9,16 +10,36 @@ class StartScreen extends StatefulWidget {
 }
 
 class _StartScreenState extends State<StartScreen> {
+  late RiveAnimationController controller, controller2;
+
   late final Widget startButton = OutlinedButton(
     style: OutlinedButton.styleFrom(
       foregroundColor: Colors.black,
       side: const BorderSide(width: 2),
     ),
-    onPressed: transition(const _ColorBullshit()),
+    onPressed: () => setState(() => controller.isActive = !controller.isActive),
     child: const Padding(
       padding: EdgeInsets.fromLTRB(0, 5, 0, 10),
       child: Text(
         'start',
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.normal,
+          letterSpacing: 0.5,
+        ),
+      ),
+    ),
+  );
+  late final Widget startButton2 = OutlinedButton(
+    style: OutlinedButton.styleFrom(
+      foregroundColor: Colors.black,
+      side: const BorderSide(width: 2),
+    ),
+    onPressed: () => setState(() => controller2.isActive = true),
+    child: const Padding(
+      padding: EdgeInsets.fromLTRB(0, 5, 0, 10),
+      child: Text(
+        'start2',
         style: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.normal,
@@ -43,87 +64,35 @@ class _StartScreenState extends State<StartScreen> {
   @override
   void initState() {
     super.initState();
+    controller = SimpleAnimation('colorChange');
+    controller2 = OneShotAnimation('spin');
     sleep(2 / 3).then((_) => setState(() => visible = true));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimatedOpacity(
-        duration: const Duration(milliseconds: 750),
-        opacity: visible ? 1 : 0,
-        child: Center(child: content),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 750),
+            opacity: visible ? 1 : 0,
+            child: Center(child: content),
+          ),
+          startButton2,
+          SizedBox(
+            width: context.screenWidth,
+            height: context.screenWidth,
+            child: RiveAnimation.asset(
+              'assets/animations/lucidium.riv',
+              fit: BoxFit.contain,
+              controllers: [controller, controller2],
+            ),
+          ),
+        ],
       ),
       backgroundColor: SuperColors.lightBackground,
-    );
-  }
-}
-
-class _ColorBullshit extends StatefulWidget {
-  const _ColorBullshit();
-
-  @override
-  State<_ColorBullshit> createState() => _ColorBullshitState();
-}
-
-class _ColorBullshitState extends State<_ColorBullshit> {
-  static const title = Text(
-    'There are 3 primary colors:',
-    style: TextStyle(color: Colors.black, fontSize: 18),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Spacer(flex: 2),
-        title,
-        Spacer(),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _BullshitBox(SuperColors.red),
-            _BullshitBox(SuperColors.yellow),
-            _BullshitBox(SuperColors.fakeBlue),
-          ],
-        ),
-        Spacer(flex: 2),
-      ],
-    );
-  }
-}
-
-class _BullshitBox extends StatelessWidget {
-  final SuperColor color;
-  const _BullshitBox(this.color);
-
-  Widget get text => color.name == '[none]'
-      ? Text(
-          '${color.name},',
-          style: const TextStyle(color: Colors.black, fontSize: 20),
-        )
-      : Text(
-          '${color.name},',
-          style: const TextStyle(color: Colors.black, fontSize: 20),
-        );
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        text,
-        Container(
-          width: 150,
-          height: 75,
-          margin: const EdgeInsets.fromLTRB(15, 10, 15, 0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: color,
-          ),
-          alignment: Alignment.center,
-        ),
-      ],
     );
   }
 }

@@ -37,6 +37,7 @@ dependencies:
   # google_fonts: ^5.1.0
   url_launcher: ">=6.1.12"
   collection: ">=1.17.1"
+  rive: ">=0.11.15"
 
 dev_dependencies:
   flutter_test:
@@ -61,7 +62,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - "assets/public_domain_photos/"
+    - assets/public_domain_photos/
+    - assets/animations/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

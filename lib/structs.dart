@@ -222,8 +222,6 @@ abstract class SuperColors {
   static const gray = SuperColor.named('gray', 0x808080);
   static const black = SuperColor.named('black', 0x000000);
 
-  static const fakeBlue = SuperColor(0x0060FF);
-
   static const darkBackground = SuperColor(0x121212);
   static const lightBackground = SuperColor(0xffeef3f8);
   static const inverting = SuperColor(0xf5faff);

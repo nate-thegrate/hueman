@@ -208,53 +208,6 @@ class _TrueMasteryState extends State<TrueMastery> {
       );
 }
 
-class RGBSlider extends StatelessWidget {
-  final String name;
-  final int value;
-  final ValueChanged<double> onChanged;
-  const RGBSlider(this.name, this.value, {required this.onChanged, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final SuperColor color = {
-      'red': SuperColor.rgb(value, 0, 0),
-      'green': SuperColor.rgb(0, value, 0),
-      'blue': SuperColor.rgb(0, 0, value),
-    }[name]!;
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        RotatedBox(
-          quarterTurns: 3,
-          child: SizedBox(
-            width: context.screenHeight - 500,
-            child: SliderTheme(
-              data: const SliderThemeData(
-                trackHeight: 15,
-                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
-              ),
-              child: Slider(
-                thumbColor: color,
-                activeColor: color.withAlpha(0x80),
-                inactiveColor: Colors.black12,
-                max: 255,
-                value: value.toDouble(),
-                onChanged: onChanged,
-              ),
-            ),
-          ),
-        ),
-        Container(
-          width: 125,
-          alignment: Alignment.center,
-          child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
-        ),
-      ],
-    );
-  }
-}
-
 class TrueMasteryScore extends StatefulWidget {
   final SuperColor guess, actual;
   const TrueMasteryScore({required this.guess, required this.actual, super.key});
