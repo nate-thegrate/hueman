@@ -224,6 +224,7 @@ abstract class SuperColors {
 
   static const darkBackground = SuperColor(0x121212);
   static const lightBackground = SuperColor(0xffeef3f8);
+  static const bullshitBackground = SuperColor(0xfff2d6);
   static const inverting = SuperColor(0xf5faff);
 
   static const black80 = Color(0xCC000000);
@@ -989,9 +990,7 @@ const List<SuperColor> inverseColors = [
   SuperColor(0x9d0003),
 ];
 
-const int _epicStepSize = 60;
 int epicHue = 0, inverseHue = 0;
-late int _lastEpicChange;
 
 /// a [Color] with [epicHue] as its hue.
 ///
@@ -1003,16 +1002,19 @@ Color get epicColor => epicColors[epicHue];
 ///
 /// It also cycles the reverse way through the hues.
 Color get inverseColor => inverseColors[inverseHue];
+
 Ticker epicSetup(StateSetter setState) {
+  int lastEpicChange = 0;
+  const int hueChangeDelay = 60;
   void epicCycle(Duration elapsed) {
-    if (elapsed.inMilliseconds >= _lastEpicChange + _epicStepSize) {
-      _lastEpicChange += _epicStepSize;
+    if (elapsed.inMilliseconds >= lastEpicChange + hueChangeDelay) {
+      lastEpicChange += hueChangeDelay;
       setState(() => epicHue = ++epicHue % 360);
     }
   }
 
   epicHue = rng.nextInt(360);
-  _lastEpicChange = 0;
+  lastEpicChange = 0;
   final Ticker epicHues = Ticker(epicCycle)..start();
 
   return epicHues;

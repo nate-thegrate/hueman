@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:rive/rive.dart';
 import 'package:super_hueman/structs.dart';
+import 'package:super_hueman/widgets.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -10,89 +14,123 @@ class StartScreen extends StatefulWidget {
 }
 
 class _StartScreenState extends State<StartScreen> {
-  late RiveAnimationController controller, controller2;
+  void Function() onStop(double sleepyTime, void Function() fn) =>
+      () => sleep(sleepyTime).then((_) => setState(fn));
 
-  late final Widget startButton = OutlinedButton(
-    style: OutlinedButton.styleFrom(
-      foregroundColor: Colors.black,
-      side: const BorderSide(width: 2),
+  late final List<RiveAnimationController> controllers = [
+    SimpleAnimation('button spin'),
+    OneShotAnimation(
+      'button pressed',
+      autoplay: false,
+      onStop: onStop(5.9, () => controllers[3].isActive = true),
     ),
-    onPressed: () => setState(() => controller.isActive = !controller.isActive),
-    child: const Padding(
-      padding: EdgeInsets.fromLTRB(0, 5, 0, 10),
-      child: Text(
-        'start',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.normal,
-          letterSpacing: 0.5,
-        ),
-      ),
+    OneShotAnimation(
+      'fade in everything',
+      onStop: onStop(9.9, () => controllers[4].isActive = true),
     ),
-  );
-  late final Widget startButton2 = OutlinedButton(
-    style: OutlinedButton.styleFrom(
-      foregroundColor: Colors.black,
-      side: const BorderSide(width: 2),
+    OneShotAnimation(
+      'mixing',
+      autoplay: false,
+      onStop: onStop(9.8, () => callOutTheLie = const _CallOutTheLie()),
     ),
-    onPressed: () => setState(() => controller2.isActive = true),
-    child: const Padding(
-      padding: EdgeInsets.fromLTRB(0, 5, 0, 10),
-      child: Text(
-        'start2',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.normal,
-          letterSpacing: 0.5,
-        ),
-      ),
-    ),
-  );
+    OneShotAnimation('complete lie', autoplay: false),
+  ];
 
-  void Function() transition(Widget newContent) => () async {
-        setState(() => visible = false);
-        await sleep(2);
-        setState(() {
-          content = newContent;
-          visible = true;
-        });
-      };
+  double get aspectRatio => context.screenWidth / context.screenHeight;
+  double get padding => aspectRatio - 9 / 16 * context.screenWidth;
 
-  late Widget content = startButton;
-  bool visible = false;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = SimpleAnimation('colorChange');
-    controller2 = OneShotAnimation('spin');
-    sleep(2 / 3).then((_) => setState(() => visible = true));
-  }
+  String artboard = 'start button screen';
+  Widget callOutTheLie = empty;
+  SuperColor backgroundColor = SuperColors.lightBackground;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AnimatedOpacity(
-            duration: const Duration(milliseconds: 750),
-            opacity: visible ? 1 : 0,
-            child: Center(child: content),
-          ),
-          startButton2,
-          SizedBox(
-            width: context.screenWidth,
-            height: context.screenWidth,
-            child: RiveAnimation.asset(
-              'assets/animations/lucidium.riv',
-              fit: BoxFit.contain,
-              controllers: [controller, controller2],
+      body: GestureDetector(
+        onTap: () {
+          setState(() => controllers[1].isActive = true);
+          sleep(1.48).then((_) => setState(() {
+                artboard = 'fake primaries';
+                backgroundColor = SuperColors.bullshitBackground;
+              }));
+        },
+        child: Stack(
+          children: [
+            Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints.loose(
+                  Size(context.screenHeight * 2 / 3, double.infinity),
+                ),
+                child: RiveAnimation.asset(
+                  'assets/animations/color_bullshit.riv',
+                  artboard: artboard,
+                  fit: BoxFit.cover,
+                  controllers: controllers,
+                ),
+              ),
             ),
-          ),
-        ],
+            callOutTheLie,
+          ],
+        ),
       ),
-      backgroundColor: SuperColors.lightBackground,
+      backgroundColor: backgroundColor,
+    );
+  }
+}
+
+class _CallOutTheLie extends StatefulWidget {
+  const _CallOutTheLie();
+
+  @override
+  State<_CallOutTheLie> createState() => _CallOutTheLieState();
+}
+
+class _CallOutTheLieState extends State<_CallOutTheLie> {
+  late final Ticker ticker;
+
+  @override
+  void initState() {
+    super.initState();
+    ticker = epicSetup(setState);
+    sleep(3).then((_) => setState(() => showButton = true));
+  }
+
+  bool showButton = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            const Spacer(flex: 2),
+            const Text(
+              'Except that was\na complete lie.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 48),
+            ),
+            const Spacer(),
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 600),
+              opacity: showButton ? 1 : 0,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: SuperColors.darkBackground,
+                  elevation: (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 6,
+                  shadowColor: Colors.white,
+                ),
+                onPressed: showButton ? () {} : null,
+                child: const Padding(
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                  child: Text('see the truth',
+                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400)),
+                ),
+              ),
+            ),
+            const Spacer(flex: 2),
+          ],
+        ),
+      ),
     );
   }
 }

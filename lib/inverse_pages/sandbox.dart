@@ -157,7 +157,16 @@ class _HSLScreen extends StatelessWidget {
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [Colors.white, Colors.transparent, Colors.black],
+                            colors: [Colors.white, Color(0x00FFFFFF), Color(0x00FFFFFF)],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.transparent, Colors.transparent, Colors.black],
                           ),
                         ),
                       ),
