@@ -123,6 +123,19 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
       ],
       MenuPage.settings: [
         MenuCheckbox(
+          'music',
+          value: music,
+          description: const ('', ''),
+          toggle: (value) => setState(() => music = value),
+        ),
+        MenuCheckbox(
+          'sounds',
+          value: sounds,
+          description: const ('', ''),
+          toggle: (value) => setState(() => sounds = value),
+        ),
+        const FixedSpacer(33),
+        MenuCheckbox(
           'auto-submit',
           value: autoSubmit,
           description: ("'submit' when 3 digits are entered", "submit with the 'submit' button"),

@@ -113,6 +113,8 @@ class _TrueMasteryState extends State<TrueMastery> {
     nextColor();
   }
 
+  bool giveHint = false;
+
   @override
   Widget build(BuildContext context) => Theme(
         data: ThemeData(useMaterial3: true),
@@ -136,19 +138,22 @@ class _TrueMasteryState extends State<TrueMastery> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          RGBSlider(
+                          _RGBSlider(
                             'red',
                             r,
+                            giveHint ? color.red : r,
                             onChanged: (value) => setState(() => r = value.toInt()),
                           ),
-                          RGBSlider(
+                          _RGBSlider(
                             'green',
                             g,
+                            giveHint ? color.green : g,
                             onChanged: (value) => setState(() => g = value.toInt()),
                           ),
-                          RGBSlider(
+                          _RGBSlider(
                             'blue',
                             b,
+                            giveHint ? color.blue : b,
                             onChanged: (value) => setState(() => b = value.toInt()),
                           ),
                         ],
@@ -164,11 +169,16 @@ class _TrueMasteryState extends State<TrueMastery> {
                           const FixedSpacer.horizontal(10),
                           TextButton(
                             style: TextButton.styleFrom(foregroundColor: Colors.black),
-                            onPressed: ManualColorCode.run(
-                              context,
-                              color: color,
-                              updateColor: updateUserColor,
-                            ),
+                            onPressed: () {
+                              if (casualMode) setState(() => giveHint = true);
+                              ManualColorCode.run(
+                                context,
+                                color: color,
+                                updateColor: updateUserColor,
+                              ).then((_) {
+                                if (casualMode) setState(() => giveHint = false);
+                              });
+                            },
                             child: Text(
                               userColorCode,
                               style: const TextStyle(fontFamily: 'Consolas', fontSize: 20),
@@ -599,11 +609,11 @@ class _Base10PlusHex extends StatelessWidget {
       );
 }
 
-class RGBSlider extends StatelessWidget {
+class _RGBSlider extends StatelessWidget {
   final String name;
-  final int value;
+  final int value, displayValue;
   final ValueChanged<double> onChanged;
-  const RGBSlider(this.name, this.value, {required this.onChanged, super.key});
+  const _RGBSlider(this.name, this.value, this.displayValue, {required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -639,7 +649,7 @@ class RGBSlider extends StatelessWidget {
         Container(
           width: 125,
           alignment: Alignment.center,
-          child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
+          child: Text('$name:  $displayValue', style: Theme.of(context).textTheme.titleMedium),
         ),
       ],
     );

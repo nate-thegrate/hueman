@@ -83,15 +83,84 @@ class _CallOutTheLie extends StatefulWidget {
   State<_CallOutTheLie> createState() => _CallOutTheLieState();
 }
 
+class _CallOutTheLieState extends State<_CallOutTheLie> {
+  @override
+  void initState() {
+    super.initState();
+    sleep(3).then((_) => setState(() {
+          content = _TruthButton(onPressed: seeTheTruth);
+          showButton = true;
+        }));
+  }
+
+  bool showStuff = true;
+  bool showButton = false;
+
+  void seeTheTruth() async {
+    setState(() => showStuff = false);
+    await sleep(2);
+    setState(() {
+      title = const Column(
+        children: [
+          Icon(Icons.headphones_outlined, size: 300),
+          Text(
+            '(headphones recommended)',
+            style: TextStyle(fontSize: 18, letterSpacing: 0.5),
+          )
+        ],
+      );
+      content = ContinueButton(onPressed: () {
+        setState(() => showStuff = false);
+        sleep(2).then((value) => context.noTransition(const _FirstLaunchMenu()));
+      });
+    });
+    await sleep(0.2);
+    setState(() => showStuff = true);
+  }
+
+  Widget title = const Text(
+    'Except that was\na complete lie.',
+    textAlign: TextAlign.center,
+    style: TextStyle(fontSize: 48),
+  );
+
+  Widget content = empty;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 600),
+          opacity: showStuff ? 1 : 0,
+          child: Column(
+            children: [
+              const Spacer(flex: 2),
+              title,
+              const Spacer(),
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 600),
+                opacity: showButton ? 1 : 0,
+                child: SizedBox(height: 80, child: content),
+              ),
+              const Spacer(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _TruthButton extends StatefulWidget {
   final void Function() onPressed;
   const _TruthButton({required this.onPressed});
 
   @override
-  State<_TruthButton> createState() => __TruthButtonState();
+  State<_TruthButton> createState() => _TruthButtonState();
 }
 
-class __TruthButtonState extends State<_TruthButton> {
+class _TruthButtonState extends State<_TruthButton> {
   late final Ticker ticker;
 
   @override
@@ -124,71 +193,6 @@ class __TruthButtonState extends State<_TruthButton> {
   }
 }
 
-class _CallOutTheLieState extends State<_CallOutTheLie> {
-  @override
-  void initState() {
-    super.initState();
-    sleep(3).then((_) => setState(() {
-          content = _TruthButton(onPressed: seeTheTruth);
-          showButton = true;
-        }));
-  }
-
-  bool showStuff = true;
-  bool showButton = false;
-
-  void seeTheTruth() => () async {
-        setState(() => showStuff = false);
-        await sleep(2);
-        setState(() {
-          title = const Icon(Icons.headphones_outlined, size: 300);
-          content = const Text(
-            '(headphones recommended)',
-            style: TextStyle(fontSize: 18, letterSpacing: 0.5),
-          );
-        });
-        await sleep(0.2);
-        setState(() => showStuff = true);
-        await sleep(4.5);
-        setState(() => showStuff = false);
-        await sleep(2);
-      }()
-          .then((value) => context.noTransition(const _FirstLaunchMenu()));
-
-  Widget title = const Text(
-    'Except that was\na complete lie.',
-    textAlign: TextAlign.center,
-    style: TextStyle(fontSize: 48),
-  );
-
-  Widget content = empty;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 600),
-          opacity: showStuff ? 1 : 0,
-          child: Column(
-            children: [
-              const Spacer(flex: 2),
-              title,
-              const Spacer(),
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 600),
-                opacity: showButton ? 1 : 0,
-                child: SizedBox(height: 80, child: content),
-              ),
-              const Spacer(flex: 2),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _FirstLaunchMenu extends StatefulWidget {
   const _FirstLaunchMenu();
 
@@ -199,24 +203,24 @@ class _FirstLaunchMenu extends StatefulWidget {
 class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
   late final Ticker ticker;
   int counter = 1;
-  bool showAll = false;
-  bool expanded = false;
   Widget? introButton;
-  static const duration = Duration(milliseconds: 1200);
+  bool showAll = false, expanded = false;
+  static const showAllDuration = Duration(milliseconds: 1200),
+      expandDuration = Duration(milliseconds: 600);
+
   @override
   void initState() {
     super.initState();
     epicHue = 0;
     ticker = Ticker((elapsed) => setState(() {
-          counter++;
-          if (counter % 3 == 0) epicHue = (epicHue + 1) % 360;
+          if (++counter % 3 == 0) epicHue = (epicHue + 1) % 360;
           switch (counter) {
             case 1400:
               return setState(() => showAll = true);
             case 1600:
               return setState(() => expanded = true);
             case 1650:
-              return setState(() => introButton = const _IntroButton(duration));
+              return setState(() => introButton = const _IntroButton(expandDuration));
           }
         }))
       ..start();
@@ -230,12 +234,21 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
 
   double get girth {
     final double x = counter / 3;
-    assert(x < 360);
-
     const int peak = 345;
     final double val = x < peak ? x : (x - peak) * peak / (peak - 360) + peak;
     return val * min(context.screenWidth, context.screenHeight) / 350;
   }
+
+  static const buffer = Expanded(
+      child: ColoredBox(
+    color: SuperColors.darkBackground,
+    child: SizedBox.expand(),
+  ));
+  static const buffer2 = Expanded(
+      child: ColoredBox(
+    color: SuperColors.darkBackground,
+    child: SizedBox(height: 39),
+  ));
 
   @override
   Widget build(BuildContext context) {
@@ -258,9 +271,9 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
         ),
       ),
       AnimatedContainer(
-        duration: duration,
+        duration: expandDuration,
         curve: curve,
-        padding: EdgeInsets.only(right: expanded ? 0 : 22),
+        padding: EdgeInsets.only(right: expanded ? 0 : 18),
         child: Text(
           'man',
           textAlign: TextAlign.center,
@@ -269,22 +282,12 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
       ),
     ];
 
-    const buffer = Expanded(
-        child: ColoredBox(
-      color: SuperColors.darkBackground,
-      child: SizedBox.expand(),
-    ));
-    const buffer2 = Expanded(
-        child: ColoredBox(
-      color: SuperColors.darkBackground,
-      child: SizedBox(height: 39),
-    ));
     return Scaffold(
       body: counter < 360 * 3
           ? Center(
               child: Container(
+                margin: const EdgeInsets.only(top: 39),
                 width: girth,
-                height: girth,
                 decoration: BoxDecoration(shape: BoxShape.circle, color: epicColor),
               ),
             )
@@ -310,7 +313,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                               children: [
                                 buffer2,
                                 AnimatedSize(
-                                  duration: duration,
+                                  duration: showAllDuration,
                                   curve: curve,
                                   child: SizedBox(width: showAll ? 200 : 4),
                                 ),
@@ -322,11 +325,11 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                         ),
                       ),
                       AnimatedContainer(
-                        duration: duration,
+                        duration: expandDuration,
                         curve: curve,
                         width: expanded ? 300 : context.screenWidth,
-                        height: expanded ? 250 : 0,
-                        margin: expanded ? const EdgeInsets.only(top: 50) : EdgeInsets.zero,
+                        height: expanded ? 200 : 0,
+                        margin: expanded ? const EdgeInsets.only(top: 34) : EdgeInsets.zero,
                         decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
                         child: introButton,
                       ),
@@ -337,15 +340,15 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                   children: [
                     buffer,
                     AnimatedSize(
-                      duration: duration,
+                      duration: showAllDuration,
                       curve: curve,
-                      child: SizedBox(width: showAll ? context.screenWidth : 4),
+                      child: SizedBox(width: showAll ? context.screenWidth : 46),
                     ),
                     buffer,
                   ],
                 ),
                 AnimatedOpacity(
-                  duration: duration,
+                  duration: showAllDuration,
                   opacity: showAll ? 0 : 1,
                   child: Center(
                     child: Padding(
@@ -372,10 +375,10 @@ class _IntroButton extends StatefulWidget {
   const _IntroButton(this.duration);
 
   @override
-  State<_IntroButton> createState() => __IntroButtonState();
+  State<_IntroButton> createState() => _IntroButtonState();
 }
 
-class __IntroButtonState extends State<_IntroButton> {
+class _IntroButtonState extends State<_IntroButton> {
   late final Ticker epicHues;
   SuperColor color = epicColor;
 
@@ -384,7 +387,7 @@ class __IntroButtonState extends State<_IntroButton> {
     super.initState();
     epicHues = Ticker((elapsed) => setState(() => color = epicColor))..start();
     sleep(0.1).then((_) => setState(() => exists = true));
-    sleep(1.5).then((_) => setState(() => visible = true));
+    sleep(1).then((_) => setState(() => visible = true));
   }
 
   @override
@@ -417,6 +420,7 @@ class __IntroButtonState extends State<_IntroButton> {
                       color: color,
                       onPressed: () => context.goto(Pages.intro3),
                     ),
+                    const FixedSpacer(10),
                   ],
                 ),
               ),

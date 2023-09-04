@@ -98,6 +98,19 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
       ],
       MenuPage.settings: [
         MenuCheckbox(
+          'music',
+          value: music,
+          description: const ('', ''),
+          toggle: (value) => setState(() => music = value),
+        ),
+        MenuCheckbox(
+          'sounds',
+          value: sounds,
+          description: const ('', ''),
+          toggle: (value) => setState(() => sounds = value),
+        ),
+        const FixedSpacer(33),
+        MenuCheckbox(
           'casual mode',
           value: casualMode,
           description: ('play without keeping score', 'keep score when you play'),

@@ -16,6 +16,34 @@ class FixedSpacer extends StatelessWidget {
       horizontal ? SizedBox(width: size) : SizedBox(height: size);
 }
 
+class ContinueButton extends StatelessWidget {
+  final void Function() onPressed;
+  const ContinueButton({required this.onPressed, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 50,
+      height: 50,
+      child: Stack(
+        children: [
+          const Center(child: Icon(Icons.arrow_forward)),
+          Center(
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              child: OutlinedButton(
+                onPressed: onPressed,
+                child: empty,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class SuperButton extends StatelessWidget {
   final String label;
   final void Function() onPressed;
@@ -156,15 +184,15 @@ class ManualColorCode extends StatefulWidget {
   final SuperColor color;
   const ManualColorCode(this.color, {super.key});
 
-  static void Function() run(
+  static Future<void> run(
     BuildContext context, {
     required SuperColor color,
     required void Function(SuperColor) updateColor,
   }) =>
-      () => showDialog(
-            context: context,
-            builder: (context) => ManualColorCode(color),
-          ).then(verifyHexCode(context, updateColor: updateColor));
+      showDialog(
+        context: context,
+        builder: (context) => ManualColorCode(color),
+      ).then(verifyHexCode(context, updateColor: updateColor));
 
   static void Function(dynamic) verifyHexCode(BuildContext context,
           {required void Function(SuperColor) updateColor}) =>

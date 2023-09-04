@@ -3,6 +3,8 @@ bool casualMode = true;
 bool autoSubmit = true;
 bool externalKeyboard = true;
 bool inverted = false;
+bool music = true;
+bool sounds = true;
 
 // game progress
 int? superHue;
