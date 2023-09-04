@@ -112,7 +112,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
         ),
         const FixedSpacer(33),
         NavigateButton(Pages.intense, color: epicColor),
-        ...mastery
+        ...hueMaster
             ? [
                 const FixedSpacer(33),
                 NavigateButton(Pages.master, color: epicColor),
@@ -136,7 +136,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
           toggle: (value) => setState(() => externalKeyboard = value),
         ),
         const FixedSpacer(33),
-        ...mastery
+        ...hueMaster
             ? [
                 MenuCheckbox(
                   'casual mode',

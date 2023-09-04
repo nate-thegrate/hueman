@@ -366,7 +366,7 @@ class _HueDialogState extends State<HueDialog> {
                 const FixedSpacer(20),
                 _AnswerFeedback(widget.guess, text: 'Your answer:'),
                 _AnswerFeedback(widget.hue, text: 'Correct answer:'),
-                ...(mastery || !isSuper)
+                ...(hueMaster || !isSuper)
                     ? []
                     : [
                         const FixedSpacer(20),

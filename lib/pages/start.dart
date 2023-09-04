@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:rive/rive.dart';
+import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
@@ -14,24 +15,25 @@ class StartScreen extends StatefulWidget {
 }
 
 class _StartScreenState extends State<StartScreen> {
-  void Function() onStop(double sleepyTime, void Function() fn) =>
-      () => sleep(sleepyTime).then((_) => setState(fn));
+  void Function() onStop({required double sleepFor, required int controllerIndex}) =>
+      () => sleep(sleepFor - 0.1)
+          .then((_) => setState(() => controllers[controllerIndex].isActive = true));
 
   late final List<RiveAnimationController> controllers = [
     SimpleAnimation('button spin'),
     OneShotAnimation(
       'button pressed',
       autoplay: false,
-      onStop: onStop(5.9, () => controllers[3].isActive = true),
+      onStop: onStop(sleepFor: 6, controllerIndex: 3),
     ),
     OneShotAnimation(
       'fade in everything',
-      onStop: onStop(9.9, () => controllers[4].isActive = true),
+      onStop: onStop(sleepFor: 10, controllerIndex: 4),
     ),
     OneShotAnimation(
       'mixing',
       autoplay: false,
-      onStop: onStop(9.8, () => callOutTheLie = const _CallOutTheLie()),
+      onStop: () => sleep(9.9).then((_) => context.noTransition(const _CallOutTheLie())),
     ),
     OneShotAnimation('complete lie', autoplay: false),
   ];
@@ -43,34 +45,31 @@ class _StartScreenState extends State<StartScreen> {
   Widget callOutTheLie = empty;
   SuperColor backgroundColor = SuperColors.lightBackground;
 
+  void start() {
+    setState(() => controllers[1].isActive = true);
+    sleep(1.48).then((_) => setState(() {
+          artboard = 'fake primaries';
+          backgroundColor = SuperColors.bullshitBackground;
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GestureDetector(
-        onTap: () {
-          setState(() => controllers[1].isActive = true);
-          sleep(1.48).then((_) => setState(() {
-                artboard = 'fake primaries';
-                backgroundColor = SuperColors.bullshitBackground;
-              }));
-        },
-        child: Stack(
-          children: [
-            Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints.loose(
-                  Size(context.screenHeight * 2 / 3, double.infinity),
-                ),
-                child: RiveAnimation.asset(
-                  'assets/animations/color_bullshit.riv',
-                  artboard: artboard,
-                  fit: BoxFit.cover,
-                  controllers: controllers,
-                ),
-              ),
+        onTap: start,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints.loose(
+              Size(context.screenHeight * 2 / 3, double.infinity),
             ),
-            callOutTheLie,
-          ],
+            child: RiveAnimation.asset(
+              'assets/animations/color_bs.riv',
+              artboard: artboard,
+              fit: BoxFit.cover,
+              controllers: controllers,
+            ),
+          ),
         ),
       ),
       backgroundColor: backgroundColor,
@@ -95,7 +94,18 @@ class _CallOutTheLieState extends State<_CallOutTheLie> {
     sleep(3).then((_) => setState(() => showButton = true));
   }
 
+  @override
+  void dispose() {
+    ticker.dispose();
+    super.dispose();
+  }
+
   bool showButton = false;
+
+  void toMenu() {
+    inverted = true;
+    context.invert(); // TODO: make special animated menu for first launch
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +129,7 @@ class _CallOutTheLieState extends State<_CallOutTheLie> {
                   elevation: (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 6,
                   shadowColor: Colors.white,
                 ),
-                onPressed: showButton ? () {} : null,
+                onPressed: showButton ? toMenu : null,
                 child: const Padding(
                   padding: EdgeInsets.fromLTRB(0, 10, 0, 15),
                   child: Text('see the truth',

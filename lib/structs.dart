@@ -112,15 +112,16 @@ abstract class ScoreKeeper {
 extension ContextStuff on BuildContext {
   void goto(Pages page) => Navigator.pushReplacementNamed(this, page.name);
 
-  void invert() => Navigator.pushReplacement(
+  void noTransition(Widget screen) => Navigator.pushReplacement<void, void>(
         this,
-        PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) =>
-              inverted ? const MainMenu() : const InverseMenu(),
+        PageRouteBuilder<void>(
+          pageBuilder: (context, animation1, animation2) => screen,
           transitionDuration: Duration.zero,
           reverseTransitionDuration: Duration.zero,
         ),
       );
+
+  void invert() => noTransition(inverted ? const MainMenu() : const InverseMenu());
 
   Size get _size => MediaQuery.of(this).size;
   double get screenWidth => _size.width;
@@ -208,7 +209,7 @@ abstract class SuperColors {
   static const red = SuperColor.named('red', 0xFF0000);
   static const orange = SuperColor.named('orange', 0xFF8000);
   static const yellow = SuperColor.named('yellow', 0xFFFF00);
-  static const lime = SuperColor.named('lime', 0x80FF00);
+  static const chartreuse = SuperColor.named('chartreuse', 0x80FF00);
   static const green = SuperColor.named('green', 0x00FF00);
   static const spring = SuperColor.named('spring', 0x00FF80);
   static const cyan = SuperColor.named('cyan', 0x00FFFF);
@@ -236,7 +237,7 @@ abstract class SuperColors {
     red,
     orange,
     yellow,
-    lime,
+    chartreuse,
     green,
     spring,
     cyan,
@@ -250,7 +251,7 @@ abstract class SuperColors {
     red,
     orange,
     yellow,
-    lime,
+    chartreuse,
     green,
     spring,
     cyan,

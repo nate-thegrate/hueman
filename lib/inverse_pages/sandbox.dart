@@ -73,6 +73,7 @@ class _CMYScreen extends StatelessWidget {
       );
 }
 
+// TODO: convert to CMYKSlider
 class _CMYSlider extends StatelessWidget {
   final String name;
   final int value;

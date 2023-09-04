@@ -279,14 +279,15 @@ class _IntenseModeState extends State<IntenseMode> {
     setState(() => hue = HSVColor.fromColor(pics.first.$2).hue.round());
   }
 
+  /// new random hue will be at least 30° away from previous.
   void generateHue() {
     numPadController?.clear();
-    if (!mastery && offBy == 0) mastery = true;
+    if (!hueMaster && offBy == 0) superHue = hue;
     int newHue = rng.nextInt(300);
     if (newHue + 30 >= hue) newHue += 60;
 
     setState(() {
-      hue = 0; // newHue;
+      hue = newHue;
       masterRNG = rng.nextDouble();
     });
   }

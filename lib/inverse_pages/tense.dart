@@ -111,20 +111,7 @@ class TenseMode extends StatefulWidget {
 const expandDuration = Duration(milliseconds: 500);
 
 class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
-  Map<String, int> tension = {
-    'red': 15,
-    'orange': 15,
-    'yellow': 15,
-    'lime': 15,
-    'green': 15,
-    'spring': 15,
-    'cyan': 15,
-    'azure': 15,
-    'blue': 15,
-    'violet': 15,
-    'magenta': 15,
-    'rose': 15,
-  };
+  Map<String, int> tension = {for (final color in SuperColors.twelveHues) color.name: 15};
 
   List<int> get tensionList => tension.values.toList();
   String get tensionRank => tensionList

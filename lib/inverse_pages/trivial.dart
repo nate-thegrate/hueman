@@ -15,7 +15,7 @@ class TriviaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        width: 200,
+        width: 215,
         height: 75,
         margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
         decoration: selected
@@ -115,6 +115,16 @@ const List<TriviaQuestion> _allQuestions = [
     explanation: 'The Netherlands national football team wears orange because of this.',
   ),
   TriviaQuestion(
+    "Which 2 color names are different from the names on Wikipedia's color wheel?",
+    [SuperColors.chartreuse, SuperColors.spring],
+    explanation: "On Wikipedia's color wheel, "
+        'chartreuse and spring show up as "chartreuse green" and "spring green" respectively.\n\n'
+        'My guess is that they thought "chartreuse" was a word that almost nobody knew '
+        'and that "spring" is always thought of as a season rather than a color.\n\n'
+        'But back in the 1500s, people got used to "orange" being both a color and a fruit, '
+        "so I don't think it'll be too hard for us to do something similar right now.",
+  ),
+  TriviaQuestion(
     "What's my favorite color?",
     [SuperColors.cyan],
     explanation: "100% useless information, but that's what trivia's all about!\n\n"
@@ -124,7 +134,7 @@ const List<TriviaQuestion> _allQuestions = [
   ),
   TriviaQuestion(
     'If you were born in August, what color would your birthstone be?',
-    [SuperColors.lime],
+    [SuperColors.chartreuse],
     explanation: 'According to what I just read on Wikipedia, '
         "Peridot is one of only two gems observed to be formed not in Earth's crust, "
         'but in the molten rock of the upper mantle.',
@@ -150,7 +160,7 @@ const List<TriviaQuestion> _allQuestions = [
         'by a recessive gene in the X-chromosome, '
         'so it affects males more often than females.\n\n'
         'When I first started working on this game, '
-        'it felt like I had "green-lime color blindness" '
+        'it felt like I had "green-chartreuse color blindness" '
         'since I was having so much difficulty telling those two apart.',
   ),
   TriviaQuestion(
