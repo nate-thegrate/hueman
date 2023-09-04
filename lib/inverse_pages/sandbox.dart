@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
@@ -13,7 +12,7 @@ void updateRGB() {
 }
 
 void updateCMYK() {
-  final brightest = max(_r, max(_g, _b));
+  final brightest = [_r, _g, _b].max;
   _black = 0xFF - brightest;
 
   _cyan = 0xFF * (brightest - _r) ~/ brightest;

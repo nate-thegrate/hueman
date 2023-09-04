@@ -32,7 +32,7 @@ class _StartScreenState extends State<StartScreen> {
     OneShotAnimation(
       'mixing',
       autoplay: false,
-      onStop: () => sleep(9.9).then((_) => context.noTransition(const _CallOutTheLie())),
+      onStop: () => sleep(9.85).then((_) => context.noTransition(const _CallOutTheLie())),
     ),
     OneShotAnimation('complete lie', autoplay: false),
   ];
@@ -202,20 +202,20 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
   bool showAll = false;
   bool expanded = false;
   Widget? introButton;
-  static const duration = Duration(milliseconds: 1000);
+  static const duration = Duration(milliseconds: 1200);
   @override
   void initState() {
     super.initState();
     epicHue = 0;
     ticker = Ticker((elapsed) => setState(() {
           counter++;
-          if (counter % 2 == 0) epicHue = (epicHue + 1) % 360;
+          if (counter % 3 == 0) epicHue = (epicHue + 1) % 360;
           switch (counter) {
-            case 850:
+            case 1400:
               return setState(() => showAll = true);
-            case 1200:
+            case 1600:
               return setState(() => expanded = true);
-            case 1300:
+            case 1650:
               return setState(() => introButton = const _IntroButton(duration));
           }
         }))
@@ -229,7 +229,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
   }
 
   double get girth {
-    final double x = counter / 2;
+    final double x = counter / 3;
     assert(x < 360);
 
     const int peak = 345;
@@ -259,6 +259,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
       ),
       AnimatedContainer(
         duration: duration,
+        curve: curve,
         padding: EdgeInsets.only(right: expanded ? 0 : 22),
         child: Text(
           'man',
@@ -268,9 +269,18 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
       ),
     ];
 
-    final buffer = Expanded(child: Container(color: SuperColors.darkBackground));
+    const buffer = Expanded(
+        child: ColoredBox(
+      color: SuperColors.darkBackground,
+      child: SizedBox.expand(),
+    ));
+    const buffer2 = Expanded(
+        child: ColoredBox(
+      color: SuperColors.darkBackground,
+      child: SizedBox(height: 39),
+    ));
     return Scaffold(
-      body: counter < 720
+      body: counter < 360 * 3
           ? Center(
               child: Container(
                 width: girth,
@@ -284,11 +294,32 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: superHUEman,
+                      SizedBox(
+                        width: 220,
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: superHUEman,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                buffer2,
+                                AnimatedSize(
+                                  duration: duration,
+                                  curve: curve,
+                                  child: SizedBox(width: showAll ? 200 : 4),
+                                ),
+                                buffer2,
+                                const FixedSpacer.horizontal(20),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                       AnimatedContainer(
                         duration: duration,
@@ -310,7 +341,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                       curve: curve,
                       child: SizedBox(width: showAll ? context.screenWidth : 4),
                     ),
-                    buffer
+                    buffer,
                   ],
                 ),
                 AnimatedOpacity(

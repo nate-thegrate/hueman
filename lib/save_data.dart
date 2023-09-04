@@ -2,14 +2,14 @@
 bool casualMode = true;
 bool autoSubmit = true;
 bool externalKeyboard = true;
-bool inverted = true;
+bool inverted = false;
 
 // game progress
 int? superHue;
 bool get hueMaster => superHue != null;
 
 abstract class Tutorials {
-  static bool intro = true;
+  static bool intro = false;
   static bool intro3 = false;
   static bool intro6 = false;
   static bool intro12 = false;
