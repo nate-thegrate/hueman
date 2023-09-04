@@ -997,12 +997,12 @@ int epicHue = 0, inverseHue = 0;
 ///
 /// The color is retrieved from [epicColors],
 /// where all colors have the same luminosity.
-Color get epicColor => epicColors[epicHue];
+SuperColor get epicColor => epicColors[epicHue];
 
 /// similar to [epicColor], but the color is darker.
 ///
 /// It also cycles the reverse way through the hues.
-Color get inverseColor => inverseColors[inverseHue];
+SuperColor get inverseColor => inverseColors[inverseHue];
 
 Ticker epicSetup(StateSetter setState) {
   int lastEpicChange = 0;
@@ -1032,6 +1032,10 @@ Ticker inverseSetup(StateSetter setState) {
 
 extension ToInt on TextEditingValue {
   int toInt() => text.isEmpty ? 0 : int.parse(text);
+}
+
+extension TwoDecimalPlaces on double {
+  double get twoDecimalPlaces => double.parse((this).toStringAsFixed(2)).abs();
 }
 
 final rng = Random();

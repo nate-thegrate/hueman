@@ -1,12 +1,60 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
-int _r = 0, _g = 0, _b = 0;
+int _r = 0x80, _g = 0x80, _b = 0x80;
+int _cyan = 0, _magenta = 0, _yellow = 0, _black = 0x7f;
+void updateRGB() {
+  _r = ((0xFF - _cyan) * (1 - _black / 0xFF)).round();
+  _g = ((0xFF - _magenta) * (1 - _black / 0xFF)).round();
+  _b = ((0xFF - _yellow) * (1 - _black / 0xFF)).round();
+}
+
+void updateCMYK() {
+  final brightest = max(_r, max(_g, _b));
+  _black = 0xFF - brightest;
+
+  _cyan = 0xFF * (brightest - _r) ~/ brightest;
+  _magenta = 0xFF * (brightest - _g) ~/ brightest;
+  _yellow = 0xFF * (brightest - _b) ~/ brightest;
+}
+
+double get _c => _cyan / 0xFF;
+double get _m => _magenta / 0xFF;
+double get _y => _yellow / 0xFF;
+double get _k => _black / 0xFF;
+
+set _c(double val) {
+  _cyan = (val * 0xFF).round();
+  updateRGB();
+}
+
+set _m(double val) {
+  _magenta = (val * 0xFF).round();
+  updateRGB();
+}
+
+set _y(double val) {
+  _yellow = (val * 0xFF).round();
+  updateRGB();
+}
+
+set _k(double val) {
+  if (val == 1) {
+    _cyan = 0;
+    _magenta = 0;
+    _yellow = 0;
+  }
+  _black = (val * 0xFF).round();
+  updateRGB();
+}
+
 double _h = 0, _s = 0, _l = 0;
 
 enum _ColorPicker {
-  cmy(icon: Icons.tune, tag: 'sliders'),
+  cmyk(icon: Icons.tune, tag: 'sliders'),
   hsl(icon: Icons.gradient, tag: 'plane'),
   select(icon: Icons.motion_photos_on, tag: 'from color wheel');
 
@@ -18,7 +66,7 @@ enum _ColorPicker {
   static List<BottomNavigationBarItem> get navBarItems => [
         for (final value in values)
           BottomNavigationBarItem(
-            icon: Transform.flip(flipX: value == cmy, child: Icon(value.icon, size: 50)),
+            icon: Transform.flip(flipX: value == cmyk, child: Icon(value.icon, size: 50)),
             label: value.upperName,
             tooltip: value.desc,
             backgroundColor: contrastWith(_color, threshold: 0.8).withAlpha(64),
@@ -28,10 +76,10 @@ enum _ColorPicker {
   String get desc => '$upperName $tag';
 }
 
-_ColorPicker _colorPicker = _ColorPicker.cmy;
+_ColorPicker _colorPicker = _ColorPicker.cmyk;
 SuperColor get _color {
   switch (_colorPicker) {
-    case _ColorPicker.cmy:
+    case _ColorPicker.cmyk:
     case _ColorPicker.select:
       return SuperColor.rgb(_r, _g, _b);
     case _ColorPicker.hsl:
@@ -42,15 +90,12 @@ SuperColor get _color {
 }
 
 class _CMYScreen extends StatelessWidget {
-  final int red, green, blue;
-  final ValueChanged<double> updateC, updateM, updateY;
-  const _CMYScreen(
-    this.red,
-    this.green,
-    this.blue, {
+  final ValueChanged<double> updateC, updateM, updateY, updateK;
+  const _CMYScreen({
     required this.updateC,
     required this.updateM,
     required this.updateY,
+    required this.updateK,
   });
 
   @override
@@ -64,28 +109,36 @@ class _CMYScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _CMYSlider('cyan', 0xFF - red, onChanged: updateC),
-              _CMYSlider('magenta', 0xFF - green, onChanged: updateM),
-              _CMYSlider('yellow', 0xFF - blue, onChanged: updateY),
+              _CMYKSlider('cyan', _c, onChanged: updateC),
+              _CMYKSlider('magenta', _m, onChanged: updateM),
+              _CMYKSlider('yellow', _y, onChanged: updateY),
+              _CMYKSlider('black', _k, onChanged: updateK),
             ],
           ),
         ],
       );
 }
 
-// TODO: convert to CMYKSlider
-class _CMYSlider extends StatelessWidget {
+class _CMYKSlider extends StatelessWidget {
   final String name;
-  final int value;
+  final double value;
   final ValueChanged<double> onChanged;
-  const _CMYSlider(this.name, this.value, {required this.onChanged});
+  const _CMYKSlider(this.name, this.value, {required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
+    final int byte = (0xFF * (1 - value)).toInt();
     final SuperColor color = {
-      'cyan': SuperColor.rgb(0xFF - value, 0xFF, 0xFF),
-      'magenta': SuperColor.rgb(0xFF, 0xFF - value, 0xFF),
-      'yellow': SuperColor.rgb(0xFF, 0xFF, 0xFF - value),
+      'cyan': SuperColor.rgb(byte, 0xFF, 0xFF),
+      'magenta': SuperColor.rgb(0xFF, byte, 0xFF),
+      'yellow': SuperColor.rgb(0xFF, 0xFF, byte),
+      'black': SuperColor.rgb(byte, byte, byte),
+    }[name]!;
+    final bool enabled = {
+      'cyan': (_magenta == 0 || _yellow == 0) && _black < 0xFF,
+      'magenta': (_cyan == 0 || _yellow == 0) && _black < 0xFF,
+      'yellow': (_cyan == 0 || _magenta == 0) && _black < 0xFF,
+      'black': true,
     }[name]!;
     final bool horizontal = context.squished;
 
@@ -106,9 +159,8 @@ class _CMYSlider extends StatelessWidget {
                 thumbColor: color,
                 activeColor: color.withAlpha(0x80),
                 inactiveColor: Colors.white24,
-                max: 255,
                 value: value.toDouble(),
-                onChanged: onChanged,
+                onChanged: enabled ? onChanged : null,
               ),
             ),
           ),
@@ -116,7 +168,10 @@ class _CMYSlider extends StatelessWidget {
         Container(
           width: 125,
           alignment: Alignment.center,
-          child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
+          child: Text(
+            '$name:  ${(value * 100).toStringAsFixed(0)}%',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
         ),
       ],
     );
@@ -452,7 +507,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
   void colorPickerPicker(int index) {
     setState(() {
       switch (_colorPicker) {
-        case _ColorPicker.cmy:
+        case _ColorPicker.cmyk:
           HSLColor hslColor = HSLColor.fromColor(_color);
           _h = hslColor.hue;
           _l = hslColor.lightness;
@@ -462,8 +517,10 @@ class _InverseSandboxState extends State<InverseSandbox> {
           _r = _color.red;
           _g = _color.green;
           _b = _color.blue;
+          updateCMYK();
           break;
         default:
+          updateCMYK();
       }
       _colorPicker = _ColorPicker.values[index];
     });
@@ -498,13 +555,11 @@ class _InverseSandboxState extends State<InverseSandbox> {
                   duration: const Duration(milliseconds: 100),
                   curve: Curves.easeInOutCubic,
                   child: {
-                    _ColorPicker.cmy: _CMYScreen(
-                      _r,
-                      _g,
-                      _b,
-                      updateC: (value) => setState(() => _r = 0xFF - value.round()),
-                      updateM: (value) => setState(() => _g = 0xFF - value.round()),
-                      updateY: (value) => setState(() => _b = 0xFF - value.round()),
+                    _ColorPicker.cmyk: _CMYScreen(
+                      updateC: (value) => setState(() => _c = value),
+                      updateM: (value) => setState(() => _m = value),
+                      updateY: (value) => setState(() => _y = value),
+                      updateK: (value) => setState(() => _k = value),
                     ),
                     _ColorPicker.hsl: _HSLScreen(
                       _h,

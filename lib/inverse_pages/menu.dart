@@ -52,6 +52,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
         fontSize: 24,
         color: inverseColor,
         fontWeight: FontWeight.bold,
+        height: 1.5,
       );
 
   double opacity = 1;

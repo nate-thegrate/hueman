@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:rive/rive.dart';
-import 'package:super_hueman/save_data.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
@@ -84,14 +83,22 @@ class _CallOutTheLie extends StatefulWidget {
   State<_CallOutTheLie> createState() => _CallOutTheLieState();
 }
 
-class _CallOutTheLieState extends State<_CallOutTheLie> {
+class _TruthButton extends StatefulWidget {
+  final void Function() onPressed;
+  const _TruthButton({required this.onPressed});
+
+  @override
+  State<_TruthButton> createState() => __TruthButtonState();
+}
+
+class __TruthButtonState extends State<_TruthButton> {
   late final Ticker ticker;
 
   @override
   void initState() {
     super.initState();
     ticker = epicSetup(setState);
-    sleep(3).then((_) => setState(() => showButton = true));
+    setState(() => epicHue = 0);
   }
 
   @override
@@ -100,47 +107,290 @@ class _CallOutTheLieState extends State<_CallOutTheLie> {
     super.dispose();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        backgroundColor: SuperColors.darkBackground,
+        elevation: (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 6,
+        shadowColor: Colors.white,
+      ),
+      onPressed: widget.onPressed,
+      child: const Padding(
+        padding: EdgeInsets.only(bottom: 5),
+        child: Text('see the truth', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400)),
+      ),
+    );
+  }
+}
+
+class _CallOutTheLieState extends State<_CallOutTheLie> {
+  @override
+  void initState() {
+    super.initState();
+    sleep(3).then((_) => setState(() {
+          content = _TruthButton(onPressed: seeTheTruth);
+          showButton = true;
+        }));
+  }
+
+  bool showStuff = true;
   bool showButton = false;
 
-  void toMenu() {
-    inverted = true;
-    context.invert(); // TODO: make special animated menu for first launch
-  }
+  void seeTheTruth() => () async {
+        setState(() => showStuff = false);
+        await sleep(2);
+        setState(() {
+          title = const Icon(Icons.headphones_outlined, size: 300);
+          content = const Text(
+            '(headphones recommended)',
+            style: TextStyle(fontSize: 18, letterSpacing: 0.5),
+          );
+        });
+        await sleep(0.2);
+        setState(() => showStuff = true);
+        await sleep(4.5);
+        setState(() => showStuff = false);
+        await sleep(2);
+      }()
+          .then((value) => context.noTransition(const _FirstLaunchMenu()));
+
+  Widget title = const Text(
+    'Except that was\na complete lie.',
+    textAlign: TextAlign.center,
+    style: TextStyle(fontSize: 48),
+  );
+
+  Widget content = empty;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          children: [
-            const Spacer(flex: 2),
-            const Text(
-              'Except that was\na complete lie.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 48),
-            ),
-            const Spacer(),
-            AnimatedOpacity(
-              duration: const Duration(milliseconds: 600),
-              opacity: showButton ? 1 : 0,
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: SuperColors.darkBackground,
-                  elevation: (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 6,
-                  shadowColor: Colors.white,
-                ),
-                onPressed: showButton ? toMenu : null,
-                child: const Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 15),
-                  child: Text('see the truth',
-                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400)),
-                ),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 600),
+          opacity: showStuff ? 1 : 0,
+          child: Column(
+            children: [
+              const Spacer(flex: 2),
+              title,
+              const Spacer(),
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 600),
+                opacity: showButton ? 1 : 0,
+                child: SizedBox(height: 80, child: content),
               ),
-            ),
-            const Spacer(flex: 2),
-          ],
+              const Spacer(flex: 2),
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class _FirstLaunchMenu extends StatefulWidget {
+  const _FirstLaunchMenu();
+
+  @override
+  State<_FirstLaunchMenu> createState() => _FirstLaunchMenuState();
+}
+
+class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
+  late final Ticker ticker;
+  int counter = 1;
+  bool showAll = false;
+  bool expanded = false;
+  Widget? introButton;
+  static const duration = Duration(milliseconds: 1000);
+  @override
+  void initState() {
+    super.initState();
+    epicHue = 0;
+    ticker = Ticker((elapsed) => setState(() {
+          counter++;
+          if (counter % 2 == 0) epicHue = (epicHue + 1) % 360;
+          switch (counter) {
+            case 850:
+              return setState(() => showAll = true);
+            case 1200:
+              return setState(() => expanded = true);
+            case 1300:
+              return setState(() => introButton = const _IntroButton(duration));
+          }
+        }))
+      ..start();
+  }
+
+  @override
+  void dispose() {
+    ticker.dispose();
+    super.dispose();
+  }
+
+  double get girth {
+    final double x = counter / 2;
+    assert(x < 360);
+
+    const int peak = 345;
+    final double val = x < peak ? x : (x - peak) * peak / (peak - 360) + peak;
+    return val * min(context.screenWidth, context.screenHeight) / 350;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final superHUEman = [
+      Text(
+        'super',
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.headlineLarge,
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
+        child: Text(
+          'HUE',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 24,
+            color: epicColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      AnimatedContainer(
+        duration: duration,
+        padding: EdgeInsets.only(right: expanded ? 0 : 22),
+        child: Text(
+          'man',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headlineLarge,
+        ),
+      ),
+    ];
+
+    final buffer = Expanded(child: Container(color: SuperColors.darkBackground));
+    return Scaffold(
+      body: counter < 720
+          ? Center(
+              child: Container(
+                width: girth,
+                height: girth,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: epicColor),
+              ),
+            )
+          : Stack(
+              children: [
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: superHUEman,
+                      ),
+                      AnimatedContainer(
+                        duration: duration,
+                        curve: curve,
+                        width: expanded ? 300 : context.screenWidth,
+                        height: expanded ? 250 : 0,
+                        margin: expanded ? const EdgeInsets.only(top: 50) : EdgeInsets.zero,
+                        decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
+                        child: introButton,
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    buffer,
+                    AnimatedSize(
+                      duration: duration,
+                      curve: curve,
+                      child: SizedBox(width: showAll ? context.screenWidth : 4),
+                    ),
+                    buffer
+                  ],
+                ),
+                AnimatedOpacity(
+                  duration: duration,
+                  opacity: showAll ? 0 : 1,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Opacity(opacity: 0, child: superHUEman[0]),
+                          superHUEman[1],
+                          Opacity(opacity: 0, child: superHUEman[2]),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+class _IntroButton extends StatefulWidget {
+  final Duration duration;
+  const _IntroButton(this.duration);
+
+  @override
+  State<_IntroButton> createState() => __IntroButtonState();
+}
+
+class __IntroButtonState extends State<_IntroButton> {
+  late final Ticker epicHues;
+  SuperColor color = epicColor;
+
+  @override
+  void initState() {
+    super.initState();
+    epicHues = Ticker((elapsed) => setState(() => color = epicColor))..start();
+    sleep(0.1).then((_) => setState(() => exists = true));
+    sleep(1.5).then((_) => setState(() => visible = true));
+  }
+
+  @override
+  void dispose() {
+    epicHues.dispose();
+    super.dispose();
+  }
+
+  bool exists = false, visible = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSize(
+      duration: widget.duration,
+      child: exists
+          ? Center(
+              child: AnimatedOpacity(
+                opacity: visible ? 1 : 0,
+                duration: widget.duration,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'intro (3 colors)',
+                      style: TextStyle(color: SuperColors.white80, fontSize: 20),
+                    ),
+                    const FixedSpacer(25),
+                    SuperButton(
+                      'start',
+                      color: color,
+                      onPressed: () => context.goto(Pages.intro3),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : empty,
     );
   }
 }
