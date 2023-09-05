@@ -494,22 +494,20 @@ class _ScoreTitleState extends State<_ScoreTitle> {
   );
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 450,
-      child: Align(
-        alignment: widget.isGuess ? Alignment.centerLeft : Alignment.centerRight,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 600),
-          curve: curve,
-          width: expanded ? 407 : 0,
-          height: 50,
-          decoration: decoration,
-          child: text,
+  Widget build(BuildContext context) => SizedBox(
+        width: 450,
+        child: Align(
+          alignment: widget.isGuess ? Alignment.centerLeft : Alignment.centerRight,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 600),
+            curve: curve,
+            width: expanded ? 407 : 0,
+            height: 50,
+            decoration: decoration,
+            child: text,
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
 
 class _Flicker extends StatelessWidget {

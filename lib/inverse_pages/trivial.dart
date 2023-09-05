@@ -104,6 +104,16 @@ const List<TriviaQuestion> _allQuestions = [
         'and its complement spring is 0% red / 100% green / 50% blue.',
   ),
   TriviaQuestion(
+    'Which color caused CMYK to have a "K"?',
+    [SuperColors.blue],
+    explanation: 'CMYK is an abbreviation for the ink colors that printers need:\n'
+        'cyan, magenta, yellow, and black.\n\n'
+        'Since "B" is already short for "blue" in RGB, '
+        'it would be confusing to use a "B" here too.\n\n'
+        'So instead, we decided to call black ink "Key" '
+        "(since it's the most important type of ink to have).",
+  ),
+  TriviaQuestion(
     'Which color is also the name of a cloud computing platform?',
     [SuperColors.azure],
     explanation: 'You can use Microsoft Azure to make websites\nand virtual machines.\n\n'
@@ -119,8 +129,8 @@ const List<TriviaQuestion> _allQuestions = [
     [SuperColors.chartreuse, SuperColors.spring],
     explanation: "On Wikipedia's color wheel, "
         'chartreuse and spring show up as "chartreuse green" and "spring green" respectively.\n\n'
-        'My guess is that they thought "chartreuse" was a word that almost nobody knew '
-        'and that "spring" is always thought of as a season rather than a color.\n\n'
+        'Maybe they thought that not enough people know what "chartreuse" means '
+        'and that everyone refers to "spring" as a season rather than a color.\n\n'
         'But back in the 1500s, people got used to "orange" being both a color and a fruit, '
         "so I don't think it'll be too hard for us to do something similar right now.",
   ),

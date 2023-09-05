@@ -248,14 +248,13 @@ class HundredPercentGrade extends StatefulWidget {
 
 class _HundredPercentGradeState extends State<HundredPercentGrade> {
   late final Ticker epicHues;
-  Color c = epicColor;
+  SuperColor color = epicColor;
   double lineWidth = 0;
 
   @override
   void initState() {
     super.initState();
-    epicHues = Ticker((_) => setState(() => c = epicColor));
-    epicHues.start();
+    epicHues = Ticker((_) => setState(() => color = epicColor))..start();
   }
 
   @override
@@ -283,7 +282,7 @@ class _HundredPercentGradeState extends State<HundredPercentGrade> {
         children: [
           fullLine,
           Container(
-            color: c,
+            color: color,
             child: Container(
               constraints: const BoxConstraints.expand(height: 60),
               alignment: Alignment.center,

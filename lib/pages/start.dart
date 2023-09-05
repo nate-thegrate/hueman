@@ -53,27 +53,25 @@ class _StartScreenState extends State<StartScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        onTap: start,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints.loose(
-              Size(context.screenHeight * 2 / 3, double.infinity),
-            ),
-            child: RiveAnimation.asset(
-              'assets/animations/color_bs.riv',
-              artboard: artboard,
-              fit: BoxFit.cover,
-              controllers: controllers,
+  Widget build(BuildContext context) => Scaffold(
+        body: GestureDetector(
+          onTap: start,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints.loose(
+                Size(context.screenHeight * 2 / 3, double.infinity),
+              ),
+              child: RiveAnimation.asset(
+                'assets/animations/color_bs.riv',
+                artboard: artboard,
+                fit: BoxFit.cover,
+                controllers: controllers,
+              ),
             ),
           ),
         ),
-      ),
-      backgroundColor: backgroundColor,
-    );
-  }
+        backgroundColor: backgroundColor,
+      );
 }
 
 class _CallOutTheLie extends StatefulWidget {
@@ -127,29 +125,27 @@ class _CallOutTheLieState extends State<_CallOutTheLie> {
   Widget content = empty;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 600),
-          opacity: showStuff ? 1 : 0,
-          child: Column(
-            children: [
-              const Spacer(flex: 2),
-              title,
-              const Spacer(),
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 600),
-                opacity: showButton ? 1 : 0,
-                child: SizedBox(height: 80, child: content),
-              ),
-              const Spacer(),
-            ],
+  Widget build(BuildContext context) => Scaffold(
+        body: Center(
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 600),
+            opacity: showStuff ? 1 : 0,
+            child: Column(
+              children: [
+                const Spacer(flex: 2),
+                title,
+                const Spacer(),
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 600),
+                  opacity: showButton ? 1 : 0,
+                  child: SizedBox(height: 80, child: content),
+                ),
+                const Spacer(),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }
 
 class _TruthButton extends StatefulWidget {
@@ -177,20 +173,21 @@ class _TruthButtonState extends State<_TruthButton> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        backgroundColor: SuperColors.darkBackground,
-        elevation: (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 6,
-        shadowColor: Colors.white,
-      ),
-      onPressed: widget.onPressed,
-      child: const Padding(
-        padding: EdgeInsets.only(bottom: 5),
-        child: Text('see the truth', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400)),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          backgroundColor: SuperColors.darkBackground,
+          elevation: (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 6,
+          shadowColor: Colors.white,
+        ),
+        onPressed: widget.onPressed,
+        child: const Padding(
+          padding: EdgeInsets.only(bottom: 5),
+          child: Text(
+            'see the truth',
+            style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400),
+          ),
+        ),
+      );
 }
 
 class _FirstLaunchMenu extends StatefulWidget {
@@ -386,8 +383,7 @@ class _IntroButtonState extends State<_IntroButton> {
   void initState() {
     super.initState();
     epicHues = Ticker((elapsed) => setState(() => color = epicColor))..start();
-    sleep(0.1).then((_) => setState(() => exists = true));
-    sleep(1).then((_) => setState(() => visible = true));
+    sleep(0.1).then((_) => setState(() => visible = true));
   }
 
   @override
@@ -396,36 +392,29 @@ class _IntroButtonState extends State<_IntroButton> {
     super.dispose();
   }
 
-  bool exists = false, visible = false;
+  bool visible = false;
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedSize(
-      duration: widget.duration,
-      child: exists
-          ? Center(
-              child: AnimatedOpacity(
-                opacity: visible ? 1 : 0,
-                duration: widget.duration,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'intro (3 colors)',
-                      style: TextStyle(color: SuperColors.white80, fontSize: 20),
-                    ),
-                    const FixedSpacer(25),
-                    SuperButton(
-                      'start',
-                      color: color,
-                      onPressed: () => context.goto(Pages.intro3),
-                    ),
-                    const FixedSpacer(10),
-                  ],
-                ),
+  Widget build(BuildContext context) => Center(
+        child: AnimatedOpacity(
+          opacity: visible ? 1 : 0,
+          duration: widget.duration,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'intro (3 colors)',
+                style: TextStyle(color: SuperColors.white80, fontSize: 20),
               ),
-            )
-          : empty,
-    );
-  }
+              const FixedSpacer(25),
+              SuperButton(
+                'start',
+                color: color,
+                onPressed: () => context.goto(Pages.intro3),
+              ),
+              const FixedSpacer(10),
+            ],
+          ),
+        ),
+      );
 }

@@ -21,27 +21,25 @@ class ContinueButton extends StatelessWidget {
   const ContinueButton({required this.onPressed, super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 50,
-      height: 50,
-      child: Stack(
-        children: [
-          const Center(child: Icon(Icons.arrow_forward)),
-          Center(
-            child: SizedBox(
-              width: 50,
-              height: 50,
-              child: OutlinedButton(
-                onPressed: onPressed,
-                child: empty,
+  Widget build(BuildContext context) => SizedBox(
+        width: 50,
+        height: 50,
+        child: Stack(
+          children: [
+            const Center(child: Icon(Icons.arrow_forward)),
+            Center(
+              child: SizedBox(
+                width: 50,
+                height: 50,
+                child: OutlinedButton(
+                  onPressed: onPressed,
+                  child: empty,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      );
 }
 
 class SuperButton extends StatelessWidget {
