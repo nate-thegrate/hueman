@@ -17,7 +17,7 @@ class FixedSpacer extends StatelessWidget {
 }
 
 class ContinueButton extends StatelessWidget {
-  final void Function() onPressed;
+  final void Function()? onPressed;
   const ContinueButton({required this.onPressed, super.key});
 
   @override
@@ -282,4 +282,17 @@ class _ManualColorCodeState extends State<ManualColorCode> {
           ),
         ),
       );
+}
+
+class Fader extends AnimatedOpacity {
+  final bool visible;
+  static const _1sec = Duration(seconds: 1); // ignore: constant_identifier_names
+
+  const Fader(
+    this.visible, {
+    super.key,
+    required super.child,
+    super.duration = _1sec,
+    super.curve,
+  }) : super(opacity: visible ? 1 : 0);
 }

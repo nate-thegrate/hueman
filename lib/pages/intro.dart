@@ -14,6 +14,8 @@ class IntroMode extends StatefulWidget {
   State<IntroMode> createState() => _IntroModeState();
 }
 
+// TODO: TutorialScoreKeeper
+
 class IntroScoreKeeper implements ScoreKeeper {
   int round = 0;
   int numCorrect = 0;

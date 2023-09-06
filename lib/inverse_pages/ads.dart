@@ -22,7 +22,7 @@ class _AdsAnimation {
   final bool replacePrevious;
   _AdsAnimation(this.delay, this.widget, {this.replacePrevious = false});
 
-  double opacity = 0;
+  bool visible = false;
 }
 
 class _SnippetAnimation extends _AdsAnimation {
@@ -42,12 +42,12 @@ class Ads extends StatefulWidget {
 
 class _AdsState extends State<Ads> {
   late final Ticker inverseHues;
-  static const duration = Duration(milliseconds: 300);
+  static const duration = Duration(milliseconds: 500);
 
   @override
   void initState() {
     super.initState();
-    sleep(1).then((_) => Tutorials.ads = true);
+    sleep(1, then: () => Tutorials.ads = true);
     inverseHues = inverseSetup(setState);
     animateThisPage();
   }
@@ -143,14 +143,14 @@ class _AdsState extends State<Ads> {
 
     for (final animation in allItems) {
       if (animation.replacePrevious) {
-        setState(() => items[childrenIndex]!.opacity = 0);
+        setState(() => items[childrenIndex]!.visible = false);
         await Future.delayed(duration);
       } else {
         childrenIndex++;
       }
       setState(() => items[childrenIndex] = animation);
       await sleep(duration.inMilliseconds * 0.0005);
-      setState(() => items[childrenIndex]!.opacity = 1);
+      setState(() => items[childrenIndex]!.visible = true);
       await sleep(animation.delay);
     }
   }
@@ -167,9 +167,9 @@ class _AdsState extends State<Ads> {
                   AnimatedSize(
                     duration: duration,
                     curve: curve,
-                    child: AnimatedOpacity(
+                    child: Fader(
+                      child?.visible ?? false,
                       duration: duration,
-                      opacity: child?.opacity ?? 0,
                       child: Center(child: child?.widget(inverseColor)),
                     ),
                   ),

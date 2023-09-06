@@ -470,7 +470,7 @@ class _ScoreTitleState extends State<_ScoreTitle> {
           : const BorderRadius.only(topLeft: r, bottomLeft: r),
     );
 
-    sleep(0.1).then((value) => setState(() => expanded = true));
+    sleep(0.1, then: () => setState(() => expanded = true));
   }
 
   late final Widget text = Align(

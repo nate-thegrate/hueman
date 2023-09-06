@@ -15,8 +15,8 @@ class StartScreen extends StatefulWidget {
 
 class _StartScreenState extends State<StartScreen> {
   void Function() onStop({required double sleepFor, required int controllerIndex}) =>
-      () => sleep(sleepFor - 0.1)
-          .then((_) => setState(() => controllers[controllerIndex].isActive = true));
+      () => sleep(sleepFor - 0.1,
+          then: () => setState(() => controllers[controllerIndex].isActive = true));
 
   late final List<RiveAnimationController> controllers = [
     SimpleAnimation('button spin'),
@@ -32,7 +32,7 @@ class _StartScreenState extends State<StartScreen> {
     OneShotAnimation(
       'mixing',
       autoplay: false,
-      onStop: () => sleep(9.85).then((_) => context.noTransition(const _CallOutTheLie())),
+      onStop: () => sleep(9.85, then: () => context.noTransition(const _CallOutTheLie())),
     ),
     OneShotAnimation('complete lie', autoplay: false),
   ];
@@ -46,10 +46,13 @@ class _StartScreenState extends State<StartScreen> {
 
   void start() {
     setState(() => controllers[1].isActive = true);
-    sleep(1.48).then((_) => setState(() {
-          artboard = 'fake primaries';
-          backgroundColor = SuperColors.bullshitBackground;
-        }));
+    sleep(
+      1.48,
+      then: () => setState(() {
+        artboard = 'fake primaries';
+        backgroundColor = SuperColors.bullshitBackground;
+      }),
+    );
   }
 
   @override
@@ -85,10 +88,13 @@ class _CallOutTheLieState extends State<_CallOutTheLie> {
   @override
   void initState() {
     super.initState();
-    sleep(3).then((_) => setState(() {
-          content = _TruthButton(onPressed: seeTheTruth);
-          showButton = true;
-        }));
+    sleep(
+      3,
+      then: () => setState(() {
+        content = _TruthButton(onPressed: seeTheTruth);
+        showButton = true;
+      }),
+    );
   }
 
   bool showStuff = true;
@@ -109,7 +115,7 @@ class _CallOutTheLieState extends State<_CallOutTheLie> {
       );
       content = ContinueButton(onPressed: () {
         setState(() => showStuff = false);
-        sleep(2).then((value) => context.noTransition(const _FirstLaunchMenu()));
+        sleep(2, then: () => context.noTransition(const _FirstLaunchMenu()));
       });
     });
     await sleep(0.2);
@@ -127,17 +133,17 @@ class _CallOutTheLieState extends State<_CallOutTheLie> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: Center(
-          child: AnimatedOpacity(
+          child: Fader(
+            showStuff,
             duration: const Duration(milliseconds: 600),
-            opacity: showStuff ? 1 : 0,
             child: Column(
               children: [
                 const Spacer(flex: 2),
                 title,
                 const Spacer(),
-                AnimatedOpacity(
+                Fader(
+                  showButton,
                   duration: const Duration(milliseconds: 600),
-                  opacity: showButton ? 1 : 0,
                   child: SizedBox(height: 80, child: content),
                 ),
                 const Spacer(),
@@ -344,9 +350,9 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                     buffer,
                   ],
                 ),
-                AnimatedOpacity(
+                Fader(
+                  showAll,
                   duration: showAllDuration,
-                  opacity: showAll ? 0 : 1,
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 6),
@@ -383,7 +389,7 @@ class _IntroButtonState extends State<_IntroButton> {
   void initState() {
     super.initState();
     epicHues = Ticker((elapsed) => setState(() => color = epicColor))..start();
-    sleep(0.1).then((_) => setState(() => visible = true));
+    sleep(0.1, then: () => setState(() => visible = true));
   }
 
   @override
@@ -396,8 +402,8 @@ class _IntroButtonState extends State<_IntroButton> {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: AnimatedOpacity(
-          opacity: visible ? 1 : 0,
+        child: Fader(
+          visible,
           duration: widget.duration,
           child: Column(
             mainAxisSize: MainAxisSize.min,

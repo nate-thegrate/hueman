@@ -24,7 +24,7 @@ class TenseScoreKeeper implements ScoreKeeper {
       if (health == maxHealth) {
         overfills++;
         healthBarFlash = true;
-        sleep(1 / 3).then((_) => healthBarFlash = false);
+        sleep(1 / 3, then: () => healthBarFlash = false);
       } else {
         health = min(health + 3, maxHealth);
       }

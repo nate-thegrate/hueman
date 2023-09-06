@@ -27,12 +27,12 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
     inverseHues = inverseSetup(setState);
     controller = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
     if (inverted) {
-      opacity = 0;
+      visible = false;
       exists = false;
     } else {
       inverted = true;
-      sleep(0.01).then((_) => setState(() => opacity = 0));
-      sleep(0.6).then((_) => setState(() => exists = false));
+      sleep(0.01, then: () => setState(() => visible = false));
+      sleep(0.6, then: () => setState(() => exists = false));
     }
   }
 
@@ -55,7 +55,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
         height: 1.5,
       );
 
-  double opacity = 1;
+  bool visible = true;
   bool exists = true;
 
   @override
@@ -284,8 +284,8 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
-                child: AnimatedOpacity(
-                  opacity: inverting ? 1 : 0,
+                child: Fader(
+                  inverting,
                   duration: const Duration(milliseconds: 300),
                   child: Container(color: SuperColors.darkBackground),
                 ),
@@ -293,9 +293,9 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
             ),
           ),
           exists
-              ? AnimatedOpacity(
+              ? Fader(
+                  visible,
                   duration: const Duration(milliseconds: 600),
-                  opacity: opacity,
                   curve: Curves.easeInOutQuad,
                   child: Container(
                     constraints: const BoxConstraints.expand(),

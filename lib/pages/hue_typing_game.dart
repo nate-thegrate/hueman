@@ -184,7 +184,7 @@ class _PercentBarState extends State<_PercentBar> {
   @override
   void initState() {
     super.initState();
-    sleep(.1).then((_) => setState(() => width = widget.width / 2));
+    sleep(.1, then: () => setState(() => width = widget.width / 2));
   }
 
   @override
@@ -322,10 +322,13 @@ class _HueDialogState extends State<HueDialog> {
   void initState() {
     super.initState();
     epicHues = widget.isSuper ? epicSetup(setState) : null;
-    sleep(widget.isSuper ? 2 : 0.2).then((_) {
-      addListener(_listenForEnter);
-      setState(() => unclickable = false);
-    });
+    sleep(
+      widget.isSuper ? 2 : 0.2,
+      then: () {
+        addListener(_listenForEnter);
+        setState(() => unclickable = false);
+      },
+    );
   }
 
   @override

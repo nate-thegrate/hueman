@@ -13,18 +13,19 @@ import 'package:super_hueman/inverse_pages/menu.dart';
 import 'package:super_hueman/inverse_pages/sandbox.dart';
 import 'package:super_hueman/pages/menu.dart';
 import 'package:super_hueman/pages/sandbox.dart';
-import 'package:super_hueman/pages/start.dart';
+import 'package:super_hueman/tutorial_pages/intro3.dart';
+import 'package:super_hueman/tutorial_pages/start.dart';
 import 'package:super_hueman/save_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// ```dart
 ///
 /// await sleep(3); // in an async function
-/// sleep(3).then((_) => do_something()); // use anywhere
+/// sleep(3, then: do_something()); // use anywhere
 /// ```
 /// Just like `time.sleep(3)` in Python.
-Future<void> sleep(double seconds) =>
-    Future.delayed(Duration(milliseconds: (seconds * 1000).toInt()));
+Future<void> sleep(double seconds, {Function()? then}) =>
+    Future.delayed(Duration(milliseconds: (seconds * 1000).toInt()), then);
 
 const Curve curve = Curves.easeOutCubic;
 
@@ -47,8 +48,14 @@ enum Pages {
   inverseSandbox(InverseSandbox()),
   ;
 
-  final Widget widget;
-  const Pages(this.widget);
+  Widget get widget =>
+      {
+        (intro3, Tutorials.intro3): const Intro3Tutorial(),
+      }[(this, false)] ??
+      _widget;
+
+  final Widget _widget;
+  const Pages(this._widget);
 
   String call() {
     if (name.contains('intro')) return '${name.substring(5)} colors';
@@ -99,7 +106,7 @@ enum Pages {
   }
 }
 
-abstract class ScoreKeeper {
+abstract interface class ScoreKeeper {
   Pages get page;
   Widget get midRoundDisplay;
   Widget get finalDetails;
@@ -131,7 +138,7 @@ extension ContextStuff on BuildContext {
 }
 
 void Function() gotoWebsite(String url) => () => launchUrl(Uri.parse(url));
-int diff(int a, int b) => (a - b).abs();
+T diff<T extends num>(T a, T b) => (a - b).abs() as T;
 
 void addListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.addListener(func);
 void yeetListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.removeListener(func);
@@ -205,7 +212,7 @@ class SuperColor extends Color {
   }
 }
 
-abstract class SuperColors {
+abstract final class SuperColors {
   static const red = SuperColor.named('red', 0xFF0000);
   static const orange = SuperColor.named('orange', 0xFF8000);
   static const yellow = SuperColor.named('yellow', 0xFFFF00);

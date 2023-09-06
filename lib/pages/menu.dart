@@ -29,10 +29,10 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
     epicHues = epicSetup(setState);
     if (inverted) {
       inverted = false;
-      sleep(0.01).then((_) => setState(() => opacity = 0));
-      sleep(0.5).then((_) => setState(() => darkBackground = null));
+      sleep(0.01, then: () => setState(() => visible = false));
+      sleep(0.5, then: () => setState(() => darkBackground = null));
     } else {
-      opacity = 0;
+      visible = false;
       darkBackground = null;
     }
   }
@@ -65,7 +65,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
 
   bool showMasteryText = false;
   bool inverting = false;
-  double opacity = 1;
+  bool visible = true;
   bool? darkBackground = true;
 
   @override
@@ -182,7 +182,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
                         await sleep(0.7);
                         setState(() => darkBackground = false);
                         await sleep(0.1);
-                        setState(() => opacity = 1);
+                        setState(() => visible = true);
                         await sleep(0.5);
                       }
 
@@ -214,7 +214,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
                   onPressed: () {
                     if (!showMasteryText) {
                       setState(() => showMasteryText = true);
-                      sleep(4).then((_) => setState(() => showMasteryText = false));
+                      sleep(4, then: () => setState(() => showMasteryText = false));
                     }
                   },
                   child: const Padding(
@@ -355,9 +355,9 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
               : [],
           darkBackground == null
               ? empty
-              : AnimatedOpacity(
+              : Fader(
+                  visible,
                   duration: const Duration(milliseconds: 500),
-                  opacity: opacity,
                   curve: Curves.easeInOutQuad,
                   child: Container(
                     constraints: const BoxConstraints.expand(),
