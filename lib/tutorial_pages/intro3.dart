@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/pages/intro.dart';
 import 'package:super_hueman/structs.dart';
 import 'package:super_hueman/widgets.dart';
 
@@ -14,18 +15,29 @@ class Intro3Tutorial extends StatefulWidget {
 
 class _Intro3TutorialState extends State<Intro3Tutorial> {
   bool visible = false;
+  late final pages = [
+    _Page1(nextPage),
+    _Page2(nextPage),
+    _Page3(nextPage),
+    _Page4(nextPage),
+    _Page5(nextPage),
+    _Page6(nextPage),
+    const _FinalPage(),
+  ];
   int page = 1;
+
   // ignore: constant_identifier_names
   static const Duration _1sec = Duration(seconds: 1), _halfSec = Duration(milliseconds: 500);
   Duration duration = _1sec;
 
   void nextPage() async {
     setState(() => duration = _halfSec);
+    if (page == 5) setState(() => backgroundColor = Colors.black);
     setState(() => visible = false);
     if (page != 2) await sleep(1);
     setState(() {
       page++;
-      duration = _1sec;
+      if (page < 7) duration = _1sec;
     });
     setState(() => visible = true);
   }
@@ -36,21 +48,18 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
     sleep(1, then: () => setState(() => visible = true));
   }
 
+  Color? backgroundColor;
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: Center(
           child: Fader(
             visible,
             duration: duration,
-            child: [
-              _Page1(nextPage),
-              _Page2(nextPage),
-              _Page3(nextPage),
-              _Page4(nextPage),
-              _Page5(nextPage),
-            ][page - 1],
+            child: pages[page - 1],
           ),
         ),
+        backgroundColor: backgroundColor,
       );
 }
 
@@ -239,6 +248,7 @@ class _Page2State extends State<_Page2> {
               : EdgeInsets.zero,
           child: AnimatedContainer(
             duration: squeezeDuration,
+            curve: Curves.easeInQuad,
             height: expanded ? context.screenHeight : 300,
             child: Stack(
               children: [
@@ -432,37 +442,142 @@ class _Page4 extends StatefulWidget {
 }
 
 class _Page4State extends State<_Page4> {
-  bool visible = false, buttonVisible = false;
+  int textProgress = 0;
+
+  void animate() async {
+    for (final (_, sleepyTime) in text) {
+      await sleep(sleepyTime);
+      setState(() => textProgress++);
+    }
+    await sleep(2.5);
+    setState(() => textProgress++);
+  }
 
   @override
   void initState() {
     super.initState();
-    sleep(4, then: () => setState(() => visible = true));
-    sleep(6, then: () => setState(() => buttonVisible = true));
+    animate();
   }
+
+  /// (text line, time to read)
+  static const List<(String, double)> text = [
+    ("Let's say I took green", 3),
+    ('and added a bit of red.', 2),
+    ('', 2),
+    ('How would you describe that color?', 2),
+    ('', 2),
+    ('You could call it by its RGB value,', 3.5),
+    ('or just make up a name for it.', 2),
+  ];
+
+  static const List<(String, SuperColor)> colorCode = [
+    ('red: 128', SuperColor(0x800000)),
+    ('green: 255', SuperColor(0x00FF00)),
+    ('blue: 0', SuperColor(0x000000)),
+  ];
+
+  late final colorCodeBox = Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      color: SuperColors.darkBackground.withAlpha(0x60),
+    ),
+    margin: EdgeInsets.symmetric(horizontal: context.screenWidth / 16),
+    padding: const EdgeInsets.symmetric(vertical: 10),
+    child: Row(
+      children: [
+        const Spacer(),
+        for (final (desc, color) in colorCode) ...[
+          Text(
+            desc,
+            style: TextStyle(
+              fontFamily: 'Consolas',
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+              color: color,
+            ),
+          ),
+          const Spacer(),
+        ],
+      ],
+    ),
+  );
+
+  static const colorName = Column(
+    children: [
+      Text(
+        '"chartreuse"',
+        style: TextStyle(
+          fontSize: 48,
+          fontWeight: FontWeight.bold,
+          color: SuperColors.darkBackground,
+          height: 1.25,
+        ),
+      ),
+      Text(
+        '(not a great name tbh)',
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: SuperColors.darkBackground,
+          letterSpacing: 0,
+        ),
+      ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         const Spacer(flex: 2),
-        const Text(
-          'You can describe a color\nby listing out the red, green, and blue values.',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 24),
-        ),
+        for (int i = 0; i < text.length; i++)
+          text[i].$1.isEmpty
+              ? const Spacer()
+              : Fader(
+                  i <= textProgress,
+                  child: Text(
+                    text[i].$1,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                ),
+        const Spacer(),
+        Expanded(
+            flex: 3,
+            child: SizedBox(
+              width: min(context.screenWidth * 2 / 3, 800),
+              child: Stack(
+                children: [
+                  const ColoredBox(color: SuperColors.green, child: SizedBox.expand()),
+                  Fader(
+                    textProgress > 0,
+                    child: AnimatedSlide(
+                      duration: const Duration(milliseconds: 500),
+                      offset: textProgress > 1 ? Offset.zero : const Offset(0, -1),
+                      curve: Curves.easeInQuad,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          backgroundBlendMode: BlendMode.screen,
+                          color: SuperColors.red.withAlpha(0x80),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Fader(textProgress > 4, child: colorCodeBox),
+                      const FixedSpacer(30),
+                      Fader(textProgress > 5, child: colorName),
+                    ],
+                  ),
+                ],
+              ),
+            )),
         const Spacer(),
         Fader(
-          visible,
-          child: const Text(
-            "But wouldn't it be great if every color had a single word\n"
-            'that could describe every shade?',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24),
-          ),
+          textProgress > 7,
+          child: ContinueButton(onPressed: textProgress > 7 ? widget.nextPage : null),
         ),
-        const Spacer(flex: 2),
-        Fader(buttonVisible, child: ContinueButton(onPressed: widget.nextPage)),
         const Spacer(),
       ],
     );
@@ -478,47 +593,519 @@ class _Page5 extends StatefulWidget {
 }
 
 class _Page5State extends State<_Page5> {
-  bool visible = false, buttonVisible = false;
+  bool wishVisible = false, tooBadVisible = false, justKidding = false, buttonVisible = false;
+  late final Ticker epicHues;
 
   @override
   void initState() {
     super.initState();
-    sleep(4, then: () => setState(() => visible = true));
-    sleep(6, then: () => setState(() => buttonVisible = true));
+    animate();
+  }
+
+  @override
+  void dispose() {
+    epicHues.dispose();
+    super.dispose();
+  }
+
+  void animate() async {
+    await sleep(0.75);
+    setState(() => wishVisible = true);
+
+    await sleep(0.5);
+    for (int i = 0; i < hsvWidth * hsvHeight; i++) {
+      await sleep(0.05);
+      setState(() => hsvGrid[i] = (tile: hsvGrid[i].tile, scale: 1 + 1 / 16));
+    }
+
+    await sleep(2);
+    setState(() => tooBadVisible = true);
+
+    await sleep(4.5);
+    setState(() => justKidding = true);
+
+    await sleep(2);
+    epicHues = epicSetup(setState);
+    setState(() => buttonVisible = true);
+  }
+
+  static const hsvWidth = 9, hsvHeight = 5;
+  static const duration = Duration(milliseconds: 250);
+
+  late final hsvGrid = () {
+    final List<({Widget tile, double scale})> tiles = [];
+    for (int value = hsvHeight; value > 0; value--) {
+      for (int saturation = 1; saturation <= hsvWidth; saturation++) {
+        final color = SuperColor.hsv(
+          90,
+          (saturation + 2) / (hsvWidth + 2),
+          (value + 1) / (hsvHeight + 1),
+        );
+        tiles.add((tile: ColoredBox(color: color), scale: 0));
+      }
+    }
+    return tiles;
+  }();
+
+  @override
+  Widget build(BuildContext context) {
+    final tileWidth = context.screenWidth / (hsvWidth + 2);
+
+    return Stack(
+      children: [
+        Column(
+          children: [
+            const Spacer(flex: 2),
+            SizedBox(
+              height: 5 * tileWidth,
+              width: context.screenWidth,
+              child: GridView.count(
+                padding: EdgeInsets.symmetric(horizontal: tileWidth),
+                primary: false,
+                crossAxisCount: hsvWidth,
+                children: [
+                  for (final item in hsvGrid)
+                    AnimatedScale(scale: item.scale, duration: duration, child: item.tile)
+                ],
+              ),
+            ),
+            const Spacer(),
+            Fader(
+              wishVisible,
+              child: const Text(
+                'I wish I could describe every shade of this color\nwith a single name.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            const Spacer(),
+            Fader(
+              tooBadVisible,
+              child: const Text(
+                "Too bad there's no way to do that…",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            const Spacer(flex: 2),
+          ],
+        ),
+        justKidding
+            ? FadeIn(
+                duration: duration,
+                child: ColoredBox(
+                  color: Colors.black,
+                  child: SizedBox.expand(
+                    child: Column(
+                      children: [
+                        const Spacer(),
+                        const Text(
+                          'just kidding  :)',
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w100),
+                        ),
+                        const Spacer(flex: 3),
+                        Fader(
+                          buttonVisible,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              foregroundColor: epicColor,
+                              side: BorderSide(color: epicColor, width: 2),
+                              shadowColor: epicColor,
+                              elevation: epicSine * 8,
+                            ),
+                            onPressed: widget.nextPage,
+                            child: const Padding(
+                              padding: EdgeInsets.fromLTRB(25, 10, 25, 15),
+                              child: Text(
+                                'HUE',
+                                style: TextStyle(
+                                  fontSize: 48,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            : empty,
+      ],
+    );
+  }
+}
+
+class _Page6 extends StatefulWidget {
+  final void Function() nextPage;
+  const _Page6(this.nextPage);
+
+  @override
+  State<_Page6> createState() => _Page6State();
+}
+
+class _Page6State extends State<_Page6> {
+  Widget overlay = const ColoredBox(
+    color: Colors.black,
+    child: SizedBox.expand(
+      child: Center(
+        child: Text(
+          'finding a hue\ncan be done in two steps.',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 36),
+        ),
+      ),
+    ),
+  );
+  static const overlay2 = ColoredBox(color: Colors.black, child: SizedBox.expand());
+  bool showOverlay2 = false;
+
+  late final Ticker animateHue;
+  int step = 0;
+  double _hue = 0;
+  static const duration = Duration(milliseconds: 3000);
+
+  void smoothHue(Duration elapsed) {
+    if (elapsed >= duration) return animateHue.dispose();
+
+    final double t, newHue;
+    t = min(elapsed.inMicroseconds / duration.inMicroseconds, 1);
+    newHue = 90 * curve.transform(t);
+
+    setState(() => _hue = newHue);
+  }
+
+  void animate() async {
+    await sleep(3);
+    setState(() => showOverlay2 = true);
+
+    await sleep(1);
+    setState(() {
+      overlay = empty;
+      showOverlay2 = false;
+    });
+
+    const List<double> sleepyTime = [3, 3, 1, 5, 3, 1];
+    for (final time in sleepyTime) {
+      await sleep(time);
+      setState(() => step++);
+      if (step == 4) {
+        animateHue = Ticker(smoothHue)..start();
+      }
+    }
+
+    await sleep(4.5);
+    widget.nextPage();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    animate();
+  }
+
+  static const step1 = Text(
+    'Step 1: Find a color wheel.',
+    textAlign: TextAlign.center,
+    style: TextStyle(fontSize: 24),
+  );
+
+  static const step2 = Text(
+    'Step 2: Measure the angle to your color, starting at red.',
+    textAlign: TextAlign.center,
+    style: TextStyle(fontSize: 24),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final width = min(context.screenWidth * 0.8, context.screenHeight * .8 - 250);
+    final color = SuperColor.hue(_hue);
+    final hue = _hue.ceil();
+    return Stack(
+      children: [
+        Column(
+          children: [
+            const Spacer(flex: 4),
+            step1,
+            const Spacer(),
+            Fader(step >= 2, child: step2),
+            const Spacer(flex: 4),
+            Fader(
+              step >= 1,
+              child: SizedBox(
+                width: width + 2,
+                height: width,
+                child: Stack(
+                  children: [
+                    const DecoratedBox(
+                      decoration: SuperColors.colorWheel,
+                      child: SizedBox.expand(),
+                    ),
+                    Fader(
+                      step >= 2,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(width / 2, width / 2 + 2, 0, 0),
+                        child: Stack(
+                          children: [
+                            const Divider(
+                              height: 0,
+                              color: Colors.black,
+                              thickness: 4,
+                            ),
+                            AnimatedRotation(
+                              turns: step >= 4 ? -0.25 : 0,
+                              curve: curve,
+                              duration: duration,
+                              alignment: Alignment.bottomLeft,
+                              child: const Divider(
+                                height: 0,
+                                color: Colors.black,
+                                thickness: 4,
+                              ),
+                            ),
+                            Fader(
+                              step >= 5,
+                              child: Transform.translate(
+                                offset: const Offset(-4, 0),
+                                child: Transform.rotate(
+                                  angle: -pi / 2,
+                                  alignment: Alignment.topLeft,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.black, width: 4),
+                                    ),
+                                    width: 25,
+                                    height: 25,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Fader(
+                      step >= 2,
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: Transform.translate(
+                            offset: const Offset(-3, -37),
+                            child: const Icon(
+                              Icons.arrow_drop_down,
+                              size: 50,
+                              color: SuperColors.chartreuse,
+                            )),
+                      ),
+                    ),
+                    Fader(
+                      step >= 5,
+                      child: Align(
+                        alignment: const Alignment(0.2, -0.2),
+                        child: Text(
+                          '$hue°',
+                          style: const TextStyle(
+                            fontSize: 28,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Spacer(flex: 4),
+            SizedBox(
+              height: 100 + width / 8,
+              child: Center(
+                child: Fader(
+                  step >= 2,
+                  duration: const Duration(milliseconds: 400),
+                  child: SexyBox(
+                    child: Container(
+                      width: step < 2 ? 20 : width,
+                      color: color,
+                      padding: const EdgeInsets.all(10),
+                      child: SexyBox(
+                        child: step < 3
+                            ? empty
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SexyBox(
+                                    child: step < 6
+                                        ? const SizedBox(height: 75)
+                                        : SizedBox(
+                                            width: width / 2,
+                                            child: Center(
+                                              child: Text(
+                                                '"chartreuse"',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: width * 0.0667,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      color: SuperColors.darkBackground,
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.all(25),
+                                      child: Text(
+                                        'hue = $hue',
+                                        style: TextStyle(color: color, fontSize: width * 0.06),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const Spacer(flex: 4),
+          ],
+        ),
+        overlay,
+        Fader(showOverlay2, child: overlay2),
+      ],
+    );
+  }
+}
+
+class _FinalPage extends StatefulWidget {
+  const _FinalPage();
+
+  @override
+  State<_FinalPage> createState() => _FinalPageState();
+}
+
+class _FinalPageState extends State<_FinalPage> {
+  late final Ticker epicHues;
+  bool visible = false, buttonVisible = false, itIsTime = false;
+  double width = 0;
+
+  void animate() async {
+    await sleep(1);
+    setState(() => visible = true);
+
+    await sleep(1);
+    setState(() => width = 300);
+
+    await sleep(1);
+    setState(() => itIsTime = true);
+
+    await sleep(1);
+    setState(() => buttonVisible = true);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    epicHues = epicSetup(setState);
+    animate();
+  }
+
+  @override
+  void dispose() {
+    epicHues.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Spacer(flex: 2),
-        const Text(
-          'Fortunately, we can do exactly that.\nAll we need is a color wheel.',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 24),
-        ),
-        const Spacer(),
-        Fader(
-          visible,
-          child: const Text(
-            'Put red, green, and blue an equal distance apart on the wheel,',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24),
+    return ColoredBox(
+      color: SuperColors.darkBackground,
+      child: SizedBox.expand(
+        child: Center(
+          child: Column(
+            children: [
+              const Spacer(flex: 2),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const FixedSpacer.horizontal(5),
+                  Text(
+                    'are',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1),
+                    child: Text(
+                      'YOU',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: epicColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'ready?',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                ],
+              ),
+              const FixedSpacer(50),
+              Fader(
+                visible,
+                child: Container(
+                  decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
+                  child: SexyBox(
+                    child: SizedBox(
+                      width: width,
+                      height: itIsTime ? 250 : null,
+                      child: itIsTime
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'learn the hues\nof the primary colors',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: SuperColors.white80,
+                                  ),
+                                ),
+                                const FixedSpacer(33),
+                                Fader(
+                                  buttonVisible,
+                                  child: SuperButton(
+                                    'play',
+                                    color: epicColor,
+                                    onPressed: () => Navigator.pushReplacement<void, void>(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (context) => const IntroMode(3),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : empty,
+                    ),
+                  ),
+                ),
+              ),
+              const Spacer(flex: 2),
+            ],
           ),
         ),
-        const Spacer(),
-        Fader(
-          visible,
-          child: const Text(
-            'and then fill the rest in.',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
-        const Spacer(flex: 2),
-        Fader(buttonVisible, child: ContinueButton(onPressed: widget.nextPage)),
-        const Spacer(),
-      ],
+      ),
     );
   }
 }

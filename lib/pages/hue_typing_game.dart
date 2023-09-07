@@ -358,7 +358,7 @@ class _HueDialogState extends State<HueDialog> {
                     )
                   : null,
             ),
-            elevation: isSuper ? (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 10 : null,
+            elevation: isSuper ? epicSine * 10 : null,
             shadowColor: isSuper ? epicColor : null,
             surfaceTintColor: isSuper ? epicColor : null,
             content: Column(

@@ -347,12 +347,7 @@ class _ColorWheelState extends State<_ColorWheel> {
               width: 400,
               height: 400,
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: SweepGradient(
-                  colors: [for (int hue = 360; hue >= 0; hue -= 60) SuperColor.hue(hue)],
-                ),
-                shape: BoxShape.circle,
-              ),
+              decoration: SuperColors.colorWheel,
               child: Stack(
                 alignment: Alignment.center,
                 children: [

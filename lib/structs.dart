@@ -21,12 +21,13 @@ import 'package:url_launcher/url_launcher.dart';
 /// ```dart
 ///
 /// await sleep(3); // in an async function
-/// sleep(3, then: do_something()); // use anywhere
+/// sleep(3, then: do_something()); // anywhere
 /// ```
 /// Just like `time.sleep(3)` in Python.
 Future<void> sleep(double seconds, {Function()? then}) =>
     Future.delayed(Duration(milliseconds: (seconds * 1000).toInt()), then);
 
+const oneSec = Duration(seconds: 1);
 const Curve curve = Curves.easeOutCubic;
 
 enum Pages {
@@ -271,6 +272,11 @@ abstract final class SuperColors {
     gray,
     black,
   ];
+
+  static const colorWheel = BoxDecoration(
+    gradient: SweepGradient(colors: [red, magenta, blue, cyan, green, yellow, red]),
+    shape: BoxShape.circle,
+  );
 }
 
 const List<SuperColor> epicColors = [
@@ -1005,6 +1011,12 @@ int epicHue = 0, inverseHue = 0;
 /// The color is retrieved from [epicColors],
 /// where all colors have the same luminosity.
 SuperColor get epicColor => epicColors[epicHue];
+
+/// oscillates between 0 and 2 based on [epicHue].
+///
+/// Each peak is a tertiary color,
+/// and each 0-value is the hue of an additive/subtractive primary :)
+double get epicSine => sin(6 * 2 * pi * (epicHue) / 360) + 1;
 
 /// similar to [epicColor], but the color is darker.
 ///

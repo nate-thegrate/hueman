@@ -15,6 +15,7 @@ class IntroMode extends StatefulWidget {
 }
 
 // TODO: TutorialScoreKeeper
+// also: no dialog if there's a non-tutorial scorekeeper
 
 class IntroScoreKeeper implements ScoreKeeper {
   int round = 0;

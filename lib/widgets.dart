@@ -286,13 +286,50 @@ class _ManualColorCodeState extends State<ManualColorCode> {
 
 class Fader extends AnimatedOpacity {
   final bool visible;
-  static const _1sec = Duration(seconds: 1); // ignore: constant_identifier_names
 
   const Fader(
     this.visible, {
     super.key,
     required super.child,
-    super.duration = _1sec,
+    super.duration = oneSec,
     super.curve,
   }) : super(opacity: visible ? 1 : 0);
+}
+
+class FadeIn extends StatefulWidget {
+  final Widget child;
+  final Duration duration;
+  final Curve curve;
+  const FadeIn({
+    required this.child,
+    this.duration = oneSec,
+    this.curve = Curves.linear,
+    super.key,
+  });
+
+  @override
+  State<FadeIn> createState() => _FadeInState();
+}
+
+class _FadeInState extends State<FadeIn> {
+  bool visible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    sleep(0.01).then((_) => setState(() => visible = true));
+  }
+
+  @override
+  Widget build(BuildContext context) => Fader(
+        visible,
+        duration: widget.duration,
+        curve: widget.curve,
+        child: widget.child,
+      );
+}
+
+class SexyBox extends AnimatedSize {
+  /// very slick size change animation :)
+  const SexyBox({super.child, super.key}) : super(duration: oneSec, curve: Curves.easeInOutQuart);
 }

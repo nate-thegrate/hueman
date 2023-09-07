@@ -58,6 +58,7 @@ class _StartScreenState extends State<StartScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: GestureDetector(
+          // onTap: () => context.noTransition(const _CallOutTheLie()),
           onTap: start,
           child: Center(
             child: ConstrainedBox(
@@ -143,7 +144,6 @@ class _CallOutTheLieState extends State<_CallOutTheLie> {
                 const Spacer(),
                 Fader(
                   showButton,
-                  duration: const Duration(milliseconds: 600),
                   child: SizedBox(height: 80, child: content),
                 ),
                 const Spacer(),
@@ -182,7 +182,7 @@ class _TruthButtonState extends State<_TruthButton> {
   Widget build(BuildContext context) => OutlinedButton(
         style: OutlinedButton.styleFrom(
           backgroundColor: SuperColors.darkBackground,
-          elevation: (sin((epicHue) / 360 * 2 * pi * 6) + 1) * 6,
+          elevation: epicSine * 6,
           shadowColor: Colors.white,
         ),
         onPressed: widget.onPressed,
@@ -207,9 +207,15 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
   late final Ticker ticker;
   int counter = 1;
   Widget? introButton;
-  bool showAll = false, expanded = false;
+  bool showAll = false, expanded = false, expanded2 = false;
   static const showAllDuration = Duration(milliseconds: 1200),
       expandDuration = Duration(milliseconds: 600);
+
+  void expand() async {
+    setState(() => expanded = true);
+    await sleep(1);
+    setState(() => expanded2 = true);
+  }
 
   @override
   void initState() {
@@ -221,7 +227,8 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
             case 1400:
               return setState(() => showAll = true);
             case 1600:
-              return setState(() => expanded = true);
+              expand();
+              return;
             case 1650:
               return setState(() => introButton = const _IntroButton(expandDuration));
           }
@@ -239,7 +246,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
     final double x = counter / 3;
     const int peak = 345;
     final double val = x < peak ? x : (x - peak) * peak / (peak - 360) + peak;
-    return val * min(context.screenWidth, context.screenHeight) / 350;
+    return val * min(context.screenWidth, context.screenHeight - 39) / 350;
   }
 
   static const buffer = Expanded(
@@ -330,11 +337,15 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                       AnimatedContainer(
                         duration: expandDuration,
                         curve: curve,
-                        width: expanded ? 300 : context.screenWidth,
-                        height: expanded ? 200 : 0,
                         margin: expanded ? const EdgeInsets.only(top: 34) : EdgeInsets.zero,
                         decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
-                        child: introButton,
+                        child: SexyBox(
+                          child: SizedBox(
+                            width: expanded ? 300 : context.screenWidth,
+                            height: expanded2 ? 200 : 0,
+                            child: introButton,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -351,19 +362,16 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                   ],
                 ),
                 Fader(
-                  showAll,
+                  !showAll,
                   duration: showAllDuration,
                   child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Opacity(opacity: 0, child: superHUEman[0]),
-                          superHUEman[1],
-                          Opacity(opacity: 0, child: superHUEman[2]),
-                        ],
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Opacity(opacity: 0, child: superHUEman[0]),
+                        superHUEman[1],
+                        Opacity(opacity: 0, child: superHUEman[2]),
+                      ],
                     ),
                   ),
                 ),
@@ -389,7 +397,6 @@ class _IntroButtonState extends State<_IntroButton> {
   void initState() {
     super.initState();
     epicHues = Ticker((elapsed) => setState(() => color = epicColor))..start();
-    sleep(0.1, then: () => setState(() => visible = true));
   }
 
   @override
@@ -398,12 +405,9 @@ class _IntroButtonState extends State<_IntroButton> {
     super.dispose();
   }
 
-  bool visible = false;
-
   @override
   Widget build(BuildContext context) => Center(
-        child: Fader(
-          visible,
+        child: FadeIn(
           duration: widget.duration,
           child: Column(
             mainAxisSize: MainAxisSize.min,

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/save_data.dart';
@@ -193,7 +191,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
                       foregroundColor: epicColor,
                       backgroundColor: SuperColors.darkBackground,
                       shadowColor: epicColor,
-                      elevation: (sin(epicHue / 360 * 2 * pi * 6) + 1) * 5,
+                      elevation: epicSine * 5,
                     ),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 14),
