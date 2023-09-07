@@ -181,6 +181,9 @@ class SuperColor extends Color {
   String get hexCode => '#${colorCode.toRadixString(16).padLeft(6, "0").toUpperCase()}';
 
   SuperColor get rounded {
+    const easterEgg = SuperColor.named('Kali 🙂', 0x8080FF);
+    if (colorCode == 0x8080FF) return easterEgg;
+
     int snapToVals(int rgbVal) {
       const int tolerance = 0x0F;
       for (final int snappable in [0x00, 0x80, 0xFF]) {

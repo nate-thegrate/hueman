@@ -180,34 +180,6 @@ class _ColorSelection extends StatelessWidget {
       );
 }
 
-class _ColorLabel extends StatelessWidget {
-  final String property, value;
-  final TextStyle? textStyle;
-  const _ColorLabel(this.property, this.value, {this.textStyle});
-
-  @override
-  Widget build(BuildContext context) {
-    final TextStyle? defaultStyle = Theme.of(context).textTheme.bodyLarge;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-              width: 200,
-              child: Text(
-                '$property:',
-                style: defaultStyle,
-                textAlign: TextAlign.right,
-              )),
-          const FixedSpacer.horizontal(10),
-          SizedBox(width: 200, child: Text(value, style: textStyle ?? defaultStyle)),
-        ],
-      ),
-    );
-  }
-}
-
 class Sandbox extends StatefulWidget {
   const Sandbox({super.key});
 
@@ -215,18 +187,26 @@ class Sandbox extends StatefulWidget {
   State<Sandbox> createState() => _SandboxState();
 }
 
+void updateHSV() {
+  HSVColor hsvColor = HSVColor.fromColor(SuperColor.rgb(_r, _g, _b));
+  _h = hsvColor.hue;
+  _s = hsvColor.saturation;
+  _v = hsvColor.value;
+}
+
+void updateColor(SuperColor color) {
+  _r = color.red;
+  _g = color.green;
+  _b = color.blue;
+}
+
 class _SandboxState extends State<Sandbox> {
   void colorPickerPicker(int index) => setState(() {
         switch (_colorPicker) {
           case _ColorPicker.rgb:
-            HSVColor hsvColor = HSVColor.fromColor(_color);
-            _h = hsvColor.hue;
-            _s = hsvColor.saturation;
-            _v = hsvColor.value;
+            updateHSV();
           case _ColorPicker.hsv:
-            _r = _color.red;
-            _g = _color.green;
-            _b = _color.blue;
+            updateColor(_color);
           default:
         }
         _colorPicker = _ColorPicker.values[index];
@@ -248,18 +228,18 @@ class _SandboxState extends State<Sandbox> {
       );
 
   Widget get title => Text(_colorPicker.desc, style: Theme.of(context).textTheme.headlineMedium);
-  Widget get colorName => _ColorLabel(
+  Widget get colorName => ColorLabel(
         'color name',
         _color.rounded.name,
         textStyle: TextStyle(color: _color, fontSize: 20, fontWeight: FontWeight.bold, shadows: [
           Shadow(color: contrastWith(_color, threshold: 0.01).withAlpha(64), blurRadius: 3)
         ]),
       );
-  Widget get hue => _ColorLabel('hue', HSLColor.fromColor(_color).hue.round().toString());
-  Widget get colorCode => _ColorLabel(
+  Widget get hue => ColorLabel('hue', _color.hue.round().toString());
+  Widget get colorCode => ColorLabel.colorCode(
         'color code',
         _color.hexCode,
-        textStyle: const TextStyle(fontFamily: 'Consolas', fontSize: 18),
+        updateColorCode: (color) => setState(() => updateColor(color)),
       );
 
   @override

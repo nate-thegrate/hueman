@@ -124,7 +124,7 @@ class _Page2State extends State<_Page2> {
   void startTransition() async {
     await sleep(6);
     setState(() => visible = true);
-    await sleep(4.5);
+    await sleep(4);
     for (final color in SuperColors.primaries) {
       setState(() => colorVisible[color] = true);
       await sleep(1);

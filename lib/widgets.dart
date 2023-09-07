@@ -178,6 +178,66 @@ class ColorNameBox extends StatelessWidget {
       );
 }
 
+class ColorLabel extends StatelessWidget {
+  final String property, value;
+  final TextStyle? textStyle;
+  final ValueChanged<SuperColor>? update;
+  final bool colorCode;
+
+  const ColorLabel(this.property, this.value, {this.textStyle, super.key})
+      : colorCode = false,
+        update = null;
+
+  const ColorLabel.colorCode(this.property, this.value,
+      {required ValueChanged<SuperColor> updateColorCode, super.key})
+      : textStyle = null,
+        colorCode = true,
+        update = updateColorCode;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle? defaultStyle = Theme.of(context).textTheme.bodyLarge;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+              width: 200,
+              child: Text(
+                '$property:',
+                style: defaultStyle,
+                textAlign: TextAlign.right,
+              )),
+          if (!colorCode) const FixedSpacer.horizontal(15),
+          SizedBox(
+            width: colorCode ? 200 : 190,
+            child: colorCode
+                ? Align(
+                    alignment: Alignment.bottomLeft,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                          foregroundColor: inverted ? Colors.black : Colors.white),
+                      onPressed: () => ManualColorCode.run(
+                        context,
+                        color: SuperColor(int.parse(value.substring(1), radix: 16)),
+                        updateColor: update!,
+                      ),
+                      child: Text(
+                        value,
+                        style: const TextStyle(fontFamily: 'Consolas', fontSize: 18),
+                      ),
+                    ),
+                  )
+                : Text(value, style: textStyle ?? defaultStyle),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class ManualColorCode extends StatefulWidget {
   final SuperColor color;
   const ManualColorCode(this.color, {super.key});

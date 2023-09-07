@@ -11,7 +11,7 @@ void updateCMYK() {
   final brightest = [_r, _g, _b].max;
   _black = 0xFF - brightest;
 
-  int value(int rgb) => brightest == 0 ? 0 : 0xFF * (brightest - _r) ~/ brightest;
+  int value(int rgb) => brightest == 0 ? 0 : (0xFF * (1 - rgb / brightest)).round();
 
   _cyan = value(_r);
   _magenta = value(_g);
@@ -19,10 +19,10 @@ void updateCMYK() {
 }
 
 void updateHSL() {
-  HSLColor hslColor = HSLColor.fromColor(_color);
+  HSLColor hslColor = HSLColor.fromColor(SuperColor.rgb(_r, _g, _b));
   _h = hslColor.hue;
   _l = hslColor.lightness;
-  _s = (_l == 0) ? 0 : hslColor.saturation;
+  _s = (_l == 0 || _l == 1) ? 0 : hslColor.saturation;
 }
 
 void updateRGB() {
@@ -38,28 +38,13 @@ double get _m => _magenta / 0xFF;
 double get _y => _yellow / 0xFF;
 double get _k => _black / 0xFF;
 
-set _c(double val) {
-  _cyan = (val * 0xFF).round();
-  updateRGB();
-}
+set _c(double val) => _cmyk(val, (c) => _cyan = c);
+set _m(double val) => _cmyk(val, (m) => _magenta = m);
+set _y(double val) => _cmyk(val, (y) => _yellow = y);
+set _k(double val) => _cmyk(val, (k) => _black = k);
 
-set _m(double val) {
-  _magenta = (val * 0xFF).round();
-  updateRGB();
-}
-
-set _y(double val) {
-  _yellow = (val * 0xFF).round();
-  updateRGB();
-}
-
-set _k(double val) {
-  if (val == 1) {
-    _cyan = 0;
-    _magenta = 0;
-    _yellow = 0;
-  }
-  _black = (val * 0xFF).round();
+void _cmyk(double val, ValueChanged<int> update) {
+  update((val * 0xFF).round());
   updateRGB();
 }
 
@@ -468,34 +453,6 @@ class _ColorWheelSlider extends StatelessWidget {
       );
 }
 
-class _ColorLabel extends StatelessWidget {
-  final String property, value;
-  final TextStyle? textStyle;
-  const _ColorLabel(this.property, this.value, {this.textStyle});
-
-  @override
-  Widget build(BuildContext context) {
-    final TextStyle? defaultStyle = Theme.of(context).textTheme.bodyLarge;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-              width: 200,
-              child: Text(
-                '$property:',
-                style: defaultStyle,
-                textAlign: TextAlign.right,
-              )),
-          const FixedSpacer.horizontal(10),
-          SizedBox(width: 200, child: Text(value, style: textStyle ?? defaultStyle)),
-        ],
-      ),
-    );
-  }
-}
-
 class InverseSandbox extends StatefulWidget {
   const InverseSandbox({super.key});
 
@@ -520,8 +477,15 @@ class _InverseSandboxState extends State<InverseSandbox> {
         _colorPicker = _ColorPicker.values[index];
       });
 
+  void updateColorCode(SuperColor color) => setState(() {
+        _r = color.red;
+        _g = color.green;
+        _b = color.blue;
+        updateCMYK();
+        updateHSL();
+      });
+
   static const titleStyle = TextStyle(fontSize: 28.0, letterSpacing: 0.0, height: 1.3);
-  static const colorCodeStyle = TextStyle(fontFamily: 'Consolas', fontSize: 18);
   TextStyle get colorNameStyle => TextStyle(
         color: _color,
         fontSize: 20,
@@ -578,10 +542,10 @@ class _InverseSandboxState extends State<InverseSandbox> {
                   }[_colorPicker]!,
                 ),
                 const Spacer(flex: 2),
-                _ColorLabel('hue', hue),
-                _ColorLabel('color name', _color.rounded.name, textStyle: colorNameStyle),
-                _ColorLabel('color code', _color.hexCode, textStyle: colorCodeStyle),
-                // TODO: implement color code button
+                ColorLabel('hue', hue),
+                ColorLabel('color name', _color.rounded.name, textStyle: colorNameStyle),
+                ColorLabel.colorCode('color code', _color.hexCode,
+                    updateColorCode: updateColorCode),
                 const Spacer(flex: 2),
               ],
             ),
