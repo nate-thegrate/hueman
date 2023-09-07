@@ -5,11 +5,6 @@ import 'package:super_hueman/widgets.dart';
 
 int _r = 0x80, _g = 0x80, _b = 0x80;
 int _cyan = 0, _magenta = 0, _yellow = 0, _black = 0x7f;
-void updateRGB() {
-  _r = ((0xFF - _cyan) * (1 - _black / 0xFF)).round();
-  _g = ((0xFF - _magenta) * (1 - _black / 0xFF)).round();
-  _b = ((0xFF - _yellow) * (1 - _black / 0xFF)).round();
-}
 
 void updateCMYK() {
   final brightest = [_r, _g, _b].max;
@@ -20,6 +15,19 @@ void updateCMYK() {
   _cyan = value(_r);
   _magenta = value(_g);
   _yellow = value(_b);
+}
+
+void updateHSL() {
+  HSLColor hslColor = HSLColor.fromColor(_color);
+  _h = hslColor.hue;
+  _l = hslColor.lightness;
+  _s = (_l == 0) ? 0 : hslColor.saturation;
+}
+
+void updateRGB() {
+  _r = ((0xFF - _cyan) * (1 - _black / 0xFF)).round();
+  _g = ((0xFF - _magenta) * (1 - _black / 0xFF)).round();
+  _b = ((0xFF - _yellow) * (1 - _black / 0xFF)).round();
 }
 
 double get _c => _cyan / 0xFF;
@@ -504,10 +512,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
     setState(() {
       switch (_colorPicker) {
         case _ColorPicker.cmyk:
-          HSLColor hslColor = HSLColor.fromColor(_color);
-          _h = hslColor.hue;
-          _l = hslColor.lightness;
-          _s = (_l == 0) ? 0 : hslColor.saturation;
+          updateHSL();
           break;
         case _ColorPicker.hsl:
           _r = _color.red;
@@ -516,6 +521,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
           updateCMYK();
           break;
         default:
+          updateHSL();
           updateCMYK();
       }
       _colorPicker = _ColorPicker.values[index];
