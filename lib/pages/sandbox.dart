@@ -7,17 +7,10 @@ double _h = 0, _s = 0, _v = 0;
 
 _ColorPicker _colorPicker = _ColorPicker.rgb;
 
-SuperColor get _color {
-  switch (_colorPicker) {
-    case _ColorPicker.rgb:
-    case _ColorPicker.select:
-      return SuperColor.rgb(_r, _g, _b);
-    case _ColorPicker.hsv:
-      return SuperColor.hsv(_h, _s, _v);
-    default:
-      return SuperColors.black;
-  }
-}
+SuperColor get _color => switch (_colorPicker) {
+      _ColorPicker.rgb || _ColorPicker.select => SuperColor.rgb(_r, _g, _b),
+      _ColorPicker.hsv => SuperColor.hsv(_h, _s, _v),
+    };
 
 class _RGBSlider extends StatelessWidget {
   final String name;
@@ -27,11 +20,12 @@ class _RGBSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SuperColor color = {
-      'red': SuperColor.rgb(value, 0, 0),
-      'green': SuperColor.rgb(0, value, 0),
-      'blue': SuperColor.rgb(0, 0, value),
-    }[name]!;
+    final SuperColor color = switch (name) {
+      'red' => SuperColor.rgb(value, 0, 0),
+      'green' => SuperColor.rgb(0, value, 0),
+      'blue' => SuperColor.rgb(0, 0, value),
+      _ => null,
+    }!;
     final bool horizontal = context.squished;
 
     return Flex(
@@ -229,12 +223,10 @@ class _SandboxState extends State<Sandbox> {
             _h = hsvColor.hue;
             _s = hsvColor.saturation;
             _v = hsvColor.value;
-            break;
           case _ColorPicker.hsv:
             _r = _color.red;
             _g = _color.green;
             _b = _color.blue;
-            break;
           default:
         }
         _colorPicker = _ColorPicker.values[index];

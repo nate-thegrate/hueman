@@ -27,6 +27,7 @@ import 'package:url_launcher/url_launcher.dart';
 Future<void> sleep(double seconds, {Function()? then}) =>
     Future.delayed(Duration(milliseconds: (seconds * 1000).toInt()), then);
 
+const halfSec = Duration(milliseconds: 500);
 const oneSec = Duration(seconds: 1);
 const Curve curve = Curves.easeOutCubic;
 
@@ -49,33 +50,29 @@ enum Pages {
   inverseSandbox(InverseSandbox()),
   ;
 
-  Widget get widget =>
-      {
-        (intro3, Tutorials.intro3): const Intro3Tutorial(),
-      }[(this, false)] ??
-      _widget;
+  Widget get widget => switch (this) {
+        intro3 when !Tutorials.intro3 => const Intro3Tutorial(),
+        _ => _widget,
+      };
 
   final Widget _widget;
   const Pages(this._widget);
 
-  String call() {
-    if (name.contains('intro')) return '${name.substring(5)} colors';
-    if (name.startsWith('tense')) return name.substring(5).toLowerCase();
-
-    return {
-          'inverseMenu': 'invert!',
-          'inverseSandbox': 'sandbox',
-          'trueMastery': 'true\nmastery',
-        }[name] ??
-        name;
-  }
+  String call() => switch (this) {
+        inverseMenu => 'invert!',
+        inverseSandbox => 'sandbox',
+        trueMastery => 'true\nmastery',
+        _ when name.contains('intro') => '${name.substring(5)} colors',
+        _ when name.startsWith('tense') => name.substring(5).toLowerCase(),
+        _ => name,
+      };
 
   static Map<String, WidgetBuilder> routes = {
     for (final page in values) page.name: (context) => page.widget
   };
 
   static String get initialRoute {
-    final Pages route = !Tutorials.intro
+    final route = !Tutorials.intro
         ? start
         : inverted
             ? inverseMenu
@@ -83,28 +80,17 @@ enum Pages {
     return route.name;
   }
 
-  String get gameMode {
-    switch (this) {
-      case intro3:
-        return 'intro  (3 colors)';
-      case intro6:
-        return 'intro  (6 colors)';
-      case intro12:
-        return 'intro  (12 colors)';
-      case intense:
-        return 'Intense';
-      case master:
-        return 'Master';
-      case tenseVibrant:
-        return 'Tense (vibrant)';
-      case tenseMixed:
-        return 'Tense (mixed!)';
-      case trueMastery:
-        return 'True Mastery';
-      default:
-        return "lol this shouldn't pop up";
-    }
-  }
+  String get gameMode => switch (this) {
+        intro3 => 'intro  (3 colors)',
+        intro6 => 'intro  (6 colors)',
+        intro12 => 'intro  (12 colors)',
+        intense => 'Intense',
+        master => 'Master',
+        tenseVibrant => 'Tense (vibrant)',
+        tenseMixed => 'Tense (mixed!)',
+        trueMastery => 'True Mastery',
+        _ => "lol this shouldn't pop up",
+      };
 }
 
 abstract interface class ScoreKeeper {
@@ -168,33 +154,27 @@ class SuperColor extends Color {
     return SuperColor(colorCode);
   }
 
-  factory SuperColor.hsv(num h, double s, double v) {
-    if (s == 1 && v == 1 && h % 30 == 0) return SuperColors.twelveHues[h ~/ 30];
-    if (v == 0) return SuperColors.black;
-    if (s == 0) {
-      if (v == 1) return SuperColors.white;
-      if (v == 0.5) return SuperColors.gray;
-    }
-
-    final int colorCode = HSVColor.fromAHSV(0, h.toDouble(), s, v).toColor().value;
-    return SuperColor(colorCode);
-  }
+  factory SuperColor.hsv(num h, double s, double v) => switch ((h, s, v)) {
+        (_, _, 0) => SuperColors.black,
+        (_, 0, 1) => SuperColors.white,
+        (_, 0, 0.5) => SuperColors.gray,
+        (_, 1, 1) when h % 30 == 0 => SuperColors.twelveHues[h ~/ 30],
+        _ => SuperColor(HSVColor.fromAHSV(0, h.toDouble(), s, v).toColor().value),
+      };
 
   factory SuperColor.hue(num h) => SuperColor.hsv(h % 360, 1, 1);
 
-  factory SuperColor.hsl(num h, double s, double l) {
-    if (l == 0) return SuperColors.black;
-    if (l == 1) return SuperColors.white;
-    if (s == 0 && l == 0.5) return SuperColors.gray;
-    if (s == 1 && l == 0.5 && h % 30 == 0) return SuperColors.twelveHues[h ~/ 30];
-
-    final int colorCode = HSLColor.fromAHSL(0, h.toDouble(), s, l).toColor().value;
-    return SuperColor(colorCode);
-  }
+  factory SuperColor.hsl(num h, double s, double l) => switch ((h, s, l)) {
+        (_, _, 0) => SuperColors.black,
+        (_, _, 1) => SuperColors.white,
+        (_, 0, 0.5) => SuperColors.gray,
+        (_, 1, 0.5) when h % 30 == 0 => SuperColors.twelveHues[h ~/ 30],
+        _ => SuperColor(HSLColor.fromAHSL(0, h.toDouble(), s, l).toColor().value),
+      };
 
   num get hue {
     final int i = SuperColors.twelveHues.indexOf(this);
-    return i == -1 ? HSVColor.fromColor(this).hue : i * 30;
+    return i != -1 ? i * 30 : HSVColor.fromColor(this).hue;
   }
 
   /// The hexadecimal color code (doesn't include alpha).
@@ -255,23 +235,7 @@ abstract final class SuperColors {
     magenta,
     rose,
   ];
-  static const fullList = [
-    red,
-    orange,
-    yellow,
-    chartreuse,
-    green,
-    spring,
-    cyan,
-    azure,
-    blue,
-    violet,
-    magenta,
-    rose,
-    white,
-    gray,
-    black,
-  ];
+  static const fullList = [...twelveHues, white, gray, black];
 
   static const colorWheel = BoxDecoration(
     gradient: SweepGradient(colors: [red, magenta, blue, cyan, green, yellow, red]),

@@ -26,18 +26,16 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
   ];
   int page = 1;
 
-  // ignore: constant_identifier_names
-  static const Duration _1sec = Duration(seconds: 1), _halfSec = Duration(milliseconds: 500);
-  Duration duration = _1sec;
+  Duration duration = oneSec;
 
   void nextPage() async {
-    setState(() => duration = _halfSec);
+    setState(() => duration = halfSec);
     if (page == 5) setState(() => backgroundColor = Colors.black);
     setState(() => visible = false);
     if (page != 2) await sleep(1);
     setState(() {
       page++;
-      if (page < 7) duration = _1sec;
+      if (page < 7) duration = oneSec;
     });
     setState(() => visible = true);
   }
@@ -269,7 +267,7 @@ class _Page2State extends State<_Page2> {
         Fader(
           visible && buttonVisible,
           child: AnimatedSize(
-            duration: const Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 300),
             child: squeezed ? empty : ContinueButton(onPressed: endTransition),
           ),
         ),
@@ -336,21 +334,19 @@ class _Page3State extends State<_Page3> {
   @override
   Widget build(BuildContext context) {
     final width = min(counter, 90) * 400 / 90;
-    final Color epicFull = epicColor,
-        epicHalf = epicColor.withAlpha(0x80),
-        epicClear = epicColor.withAlpha(0);
-    final epicCircle = AnimatedContainer(
-      duration: const Duration(milliseconds: 1),
-      curve: curve,
+    final Color epicFull, epicHalf, epicClear;
+    epicFull = epicColor;
+    epicHalf = epicFull.withAlpha(0x80);
+    epicClear = epicFull.withAlpha(0);
+
+    final epicCircle = Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: RadialGradient(colors: [epicFull, epicClear]),
       ),
       width: width,
     );
-    final epicCircle2 = AnimatedContainer(
-      duration: const Duration(milliseconds: 1),
-      curve: curve,
+    final epicCircle2 = Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: RadialGradient(colors: [epicHalf, epicClear]),
@@ -368,11 +364,9 @@ class _Page3State extends State<_Page3> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 1),
-                curve: curve,
+              DecoratedBox(
                 decoration: rainbow,
-                width: width,
+                child: SizedBox(width: width, height: width),
               ),
               epicCircle,
               epicCircle2,
@@ -459,8 +453,7 @@ class _Page4State extends State<_Page4> {
     animate();
   }
 
-  /// (text line, time to read)
-  static const List<(String, double)> text = [
+  static const List<(String line, double timeToRead)> text = [
     ("Let's say I took green", 3),
     ('and added a bit of red.', 2),
     ('', 2),
@@ -551,7 +544,7 @@ class _Page4State extends State<_Page4> {
                   Fader(
                     textProgress > 0,
                     child: AnimatedSlide(
-                      duration: const Duration(milliseconds: 500),
+                      duration: halfSec,
                       offset: textProgress > 1 ? Offset.zero : const Offset(0, -1),
                       curve: Curves.easeInQuad,
                       child: Container(
@@ -766,7 +759,7 @@ class _Page6State extends State<_Page6> {
   late final Ticker animateHue;
   int step = 0;
   double _hue = 0;
-  static const duration = Duration(milliseconds: 3000);
+  static const duration = Duration(seconds: 3);
 
   void smoothHue(Duration elapsed) {
     if (elapsed >= duration) return animateHue.dispose();

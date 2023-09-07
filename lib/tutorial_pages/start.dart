@@ -211,10 +211,9 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
   static const showAllDuration = Duration(milliseconds: 1200),
       expandDuration = Duration(milliseconds: 600);
 
-  void expand() async {
+  void expand() {
     setState(() => expanded = true);
-    await sleep(1);
-    setState(() => expanded2 = true);
+    sleep(1, then: () => setState(() => expanded2 = true));
   }
 
   @override
@@ -223,15 +222,12 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
     epicHue = 0;
     ticker = Ticker((elapsed) => setState(() {
           if (++counter % 3 == 0) epicHue = (epicHue + 1) % 360;
-          switch (counter) {
-            case 1400:
-              return setState(() => showAll = true);
-            case 1600:
-              expand();
-              return;
-            case 1650:
-              return setState(() => introButton = const _IntroButton(expandDuration));
-          }
+          return switch (counter) {
+            1400 => setState(() => showAll = true),
+            1600 => expand(),
+            1650 => setState(() => introButton = const _IntroButton(expandDuration)),
+            _ => (),
+          };
         }))
       ..start();
   }

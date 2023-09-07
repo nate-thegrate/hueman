@@ -5,6 +5,7 @@ import 'package:super_hueman/widgets.dart';
 
 int _r = 0x80, _g = 0x80, _b = 0x80;
 int _cyan = 0, _magenta = 0, _yellow = 0, _black = 0x7f;
+double _h = 0, _s = 0, _l = 0;
 
 void updateCMYK() {
   final brightest = [_r, _g, _b].max;
@@ -25,9 +26,11 @@ void updateHSL() {
 }
 
 void updateRGB() {
-  _r = ((0xFF - _cyan) * (1 - _black / 0xFF)).round();
-  _g = ((0xFF - _magenta) * (1 - _black / 0xFF)).round();
-  _b = ((0xFF - _yellow) * (1 - _black / 0xFF)).round();
+  int value(int cmy) => ((0xFF - cmy) * (1 - _black / 0xFF)).round();
+
+  _r = value(_cyan);
+  _g = value(_magenta);
+  _b = value(_yellow);
 }
 
 double get _c => _cyan / 0xFF;
@@ -60,16 +63,14 @@ set _k(double val) {
   updateRGB();
 }
 
-double _h = 0, _s = 0, _l = 0;
-
 enum _ColorPicker {
-  cmyk(icon: Icons.tune, tag: 'sliders'),
-  hsl(icon: Icons.gradient, tag: 'plane'),
-  select(icon: Icons.motion_photos_on, tag: 'from color wheel');
+  cmyk(Icons.tune, 'sliders'),
+  hsl(Icons.gradient, 'plane'),
+  select(Icons.motion_photos_on, 'from color wheel');
 
   final IconData icon;
   final String tag;
-  const _ColorPicker({required this.icon, required this.tag});
+  const _ColorPicker(this.icon, this.tag);
   String get upperName => name == 'select' ? 'Select' : name.toUpperCase();
 
   static List<BottomNavigationBarItem> get navBarItems => [
@@ -86,17 +87,10 @@ enum _ColorPicker {
 }
 
 _ColorPicker _colorPicker = _ColorPicker.cmyk;
-SuperColor get _color {
-  switch (_colorPicker) {
-    case _ColorPicker.cmyk:
-    case _ColorPicker.select:
-      return SuperColor.rgb(_r, _g, _b);
-    case _ColorPicker.hsl:
-      return SuperColor.hsl(_h, _s, _l);
-    default:
-      return SuperColors.black;
-  }
-}
+SuperColor get _color => switch (_colorPicker) {
+      _ColorPicker.cmyk || _ColorPicker.select => SuperColor.rgb(_r, _g, _b),
+      _ColorPicker.hsl => SuperColor.hsl(_h, _s, _l),
+    };
 
 class _CMYScreen extends StatelessWidget {
   final ValueChanged<double> updateC, updateM, updateY, updateK;
@@ -137,18 +131,20 @@ class _CMYKSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int byte = (0xFF * (1 - value)).toInt();
-    final SuperColor color = {
-      'cyan': SuperColor.rgb(byte, 0xFF, 0xFF),
-      'magenta': SuperColor.rgb(0xFF, byte, 0xFF),
-      'yellow': SuperColor.rgb(0xFF, 0xFF, byte),
-      'black': SuperColor.rgb(byte, byte, byte),
-    }[name]!;
-    final bool enabled = {
-      'cyan': (_magenta == 0 || _yellow == 0) && _black < 0xFF,
-      'magenta': (_cyan == 0 || _yellow == 0) && _black < 0xFF,
-      'yellow': (_cyan == 0 || _magenta == 0) && _black < 0xFF,
-      'black': true,
-    }[name]!;
+    final SuperColor color = switch (name) {
+      'cyan' => SuperColor.rgb(byte, 0xFF, 0xFF),
+      'magenta' => SuperColor.rgb(0xFF, byte, 0xFF),
+      'yellow' => SuperColor.rgb(0xFF, 0xFF, byte),
+      'black' => SuperColor.rgb(byte, byte, byte),
+      _ => null,
+    }!;
+    final bool enabled = switch (name) {
+      'cyan' => (_magenta == 0 || _yellow == 0) && _black < 0xFF,
+      'magenta' => (_cyan == 0 || _yellow == 0) && _black < 0xFF,
+      'yellow' => (_cyan == 0 || _magenta == 0) && _black < 0xFF,
+      'black' => true,
+      _ => null,
+    }!;
     final bool horizontal = context.squished;
 
     return Flex(
@@ -508,25 +504,21 @@ class InverseSandbox extends StatefulWidget {
 }
 
 class _InverseSandboxState extends State<InverseSandbox> {
-  void colorPickerPicker(int index) {
-    setState(() {
-      switch (_colorPicker) {
-        case _ColorPicker.cmyk:
-          updateHSL();
-          break;
-        case _ColorPicker.hsl:
-          _r = _color.red;
-          _g = _color.green;
-          _b = _color.blue;
-          updateCMYK();
-          break;
-        default:
-          updateHSL();
-          updateCMYK();
-      }
-      _colorPicker = _ColorPicker.values[index];
-    });
-  }
+  void colorPickerPicker(int index) => setState(() {
+        switch (_colorPicker) {
+          case _ColorPicker.cmyk:
+            updateHSL();
+          case _ColorPicker.hsl:
+            _r = _color.red;
+            _g = _color.green;
+            _b = _color.blue;
+            updateCMYK();
+          default:
+            updateHSL();
+            updateCMYK();
+        }
+        _colorPicker = _ColorPicker.values[index];
+      });
 
   static const titleStyle = TextStyle(fontSize: 28.0, letterSpacing: 0.0, height: 1.3);
   static const colorCodeStyle = TextStyle(fontFamily: 'Consolas', fontSize: 18);
@@ -589,6 +581,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
                 _ColorLabel('hue', hue),
                 _ColorLabel('color name', _color.rounded.name, textStyle: colorNameStyle),
                 _ColorLabel('color code', _color.hexCode, textStyle: colorCodeStyle),
+                // TODO: implement color code button
                 const Spacer(flex: 2),
               ],
             ),

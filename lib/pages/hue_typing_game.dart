@@ -32,13 +32,14 @@ class _NumberButton extends StatelessWidget {
       );
 
   void onPressed() {
-    if (number == 10) {
-      controller.backspace();
-    } else if (number == 12) {
-      submit();
-    } else {
-      controller.type(number);
-      if (autoSubmit && controller.displayValue.length == 3) submit();
+    switch (number) {
+      case 10:
+        controller.backspace();
+      case 12:
+        submit();
+      default:
+        controller.type(number);
+        if (autoSubmit && controller.displayValue.length == 3) submit();
     }
   }
 
@@ -323,7 +324,7 @@ class _HueDialogState extends State<HueDialog> {
     super.initState();
     epicHues = widget.isSuper ? epicSetup(setState) : null;
     sleep(
-      widget.isSuper ? 2 : 0.2,
+      widget.isSuper ? 1.5 : 0.2,
       then: () {
         addListener(_listenForEnter);
         setState(() => unclickable = false);

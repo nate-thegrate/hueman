@@ -42,7 +42,7 @@ class Ads extends StatefulWidget {
 
 class _AdsState extends State<Ads> {
   late final Ticker inverseHues;
-  static const duration = Duration(milliseconds: 500);
+  static const duration = halfSec;
 
   @override
   void initState() {

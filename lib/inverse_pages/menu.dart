@@ -25,7 +25,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
   void initState() {
     super.initState();
     inverseHues = inverseSetup(setState);
-    controller = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
+    controller = AnimationController(duration: oneSec, vsync: this);
     if (inverted) {
       visible = false;
       exists = false;

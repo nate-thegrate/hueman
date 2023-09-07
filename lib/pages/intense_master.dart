@@ -299,17 +299,14 @@ class _IntenseModeState extends State<IntenseMode> {
     return c;
   }
 
-  String get text => (offBy == 0)
-      ? 'SUPER!'
-      : (offBy <= 1)
-          ? 'Just 1 away?!'
-          : (offBy <= 5)
-              ? 'Fantastic!'
-              : (offBy <= 10)
-                  ? 'Great job!'
-                  : (offBy <= 20)
-                      ? 'Nicely done.'
-                      : 'oof…';
+  String get text => switch (offBy) {
+        0 => 'SUPER!',
+        1 => 'Just 1 away?!',
+        <= 5 => 'Fantastic!',
+        <= 10 => 'Great job!',
+        <= 20 => 'Nicely done.',
+        _ => 'oof…',
+      };
 
   Widget? get image => (casualMode && masterMode) ? pics.first.$1 : null;
 
@@ -320,24 +317,25 @@ class _IntenseModeState extends State<IntenseMode> {
   }
 
   void masterScore() {
-    if (scoreKeeper!.rank == 100 && offBy <= 20) {
-      if (offBy > 10) scoreKeeper!.rank--;
-    } else if (offBy == 0) {
-      // perfect answer => boost by 11, then round up to nearest 25
-      scoreKeeper!.rank += 11;
-      scoreKeeper!.rank += 25 - (scoreKeeper!.rank % 25);
-    } else if (offBy < 10) {
-      scoreKeeper!.rank += 10 - offBy;
-    } else if (offBy > 20) {
-      scoreKeeper!.rank += 20 - offBy;
+    if (scoreKeeper case MasterScoreKeeper sk) {
+      switch (offBy) {
+        case > 20:
+          sk.rank += 20 - offBy;
+        case _ when sk.rank == 100:
+          if (offBy > 10) sk.rank--;
+        case 0:
+          sk.rank += 11;
+          sk.rank += 25 - (sk.rank % 25);
+          sk.superCount++;
+        case < 10:
+          sk.rank += 10 - offBy;
+      }
+
+      sk.rank = min(100, max(0, sk.rank));
+
+      if (sk.rank == 100) sk.turnsAtRank100++;
+      sk.round++;
     }
-
-    scoreKeeper!.rank = min(100, max(0, scoreKeeper!.rank));
-
-    if (offBy == 0) scoreKeeper!.superCount++;
-    if (scoreKeeper!.rank == 100) scoreKeeper!.turnsAtRank100++;
-
-    scoreKeeper!.round++;
   }
 
   @override

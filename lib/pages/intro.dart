@@ -65,11 +65,12 @@ class IntroScoreKeeper implements ScoreKeeper {
       );
 
   @override
-  Pages get page => {
-        3: Pages.intro3,
-        6: Pages.intro6,
-        12: Pages.intro12,
-      }[numColors]!;
+  Pages get page => switch (numColors) {
+        3 => Pages.intro3,
+        6 => Pages.intro6,
+        12 => Pages.intro12,
+        _ => null,
+      }!;
 }
 
 class _IntroModeState extends State<IntroMode> {

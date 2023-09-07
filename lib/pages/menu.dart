@@ -23,7 +23,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
+    controller = AnimationController(duration: oneSec, vsync: this);
     epicHues = epicSetup(setState);
     if (inverted) {
       inverted = false;
@@ -355,7 +355,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
               ? empty
               : Fader(
                   visible,
-                  duration: const Duration(milliseconds: 500),
+                  duration: halfSec,
                   curve: Curves.easeInOutQuad,
                   child: Container(
                     constraints: const BoxConstraints.expand(),
