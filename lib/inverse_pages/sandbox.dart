@@ -15,9 +15,11 @@ void updateCMYK() {
   final brightest = [_r, _g, _b].max;
   _black = 0xFF - brightest;
 
-  _cyan = 0xFF * (brightest - _r) ~/ brightest;
-  _magenta = 0xFF * (brightest - _g) ~/ brightest;
-  _yellow = 0xFF * (brightest - _b) ~/ brightest;
+  int value(int rgb) => brightest == 0 ? 0 : 0xFF * (brightest - _r) ~/ brightest;
+
+  _cyan = value(_r);
+  _magenta = value(_g);
+  _yellow = value(_b);
 }
 
 double get _c => _cyan / 0xFF;
