@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:super_hueman/structs.dart';
-import 'package:super_hueman/widgets.dart';
+import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/widgets.dart';
 
 int _r = 0xFF, _g = 0xFF, _b = 0xFF;
 double _h = 0, _s = 0, _v = 0;

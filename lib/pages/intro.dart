@@ -1,8 +1,8 @@
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/hue_typing_game.dart';
-import 'package:super_hueman/save_data.dart';
-import 'package:super_hueman/structs.dart';
-import 'package:super_hueman/widgets.dart';
+import 'package:super_hueman/data/save_data.dart';
+import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/widgets.dart';
 
 import 'package:flutter/material.dart';
 

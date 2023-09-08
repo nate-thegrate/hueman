@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:super_hueman/save_data.dart';
-import 'package:super_hueman/structs.dart';
+import 'package:super_hueman/data/save_data.dart';
+import 'package:super_hueman/data/structs.dart';
 
 const Widget empty = SizedBox.shrink();
 
@@ -349,10 +349,10 @@ class Fader extends AnimatedOpacity {
 
   const Fader(
     this.visible, {
-    super.key,
     required super.child,
     super.duration = oneSec,
     super.curve,
+    super.key,
   }) : super(opacity: visible ? 1 : 0);
 }
 

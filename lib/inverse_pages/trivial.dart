@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:super_hueman/save_data.dart';
-import 'package:super_hueman/structs.dart';
-import 'package:super_hueman/widgets.dart';
+import 'package:super_hueman/data/save_data.dart';
+import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/widgets.dart';
 
 class TriviaButton extends StatelessWidget {
   final SuperColor color;

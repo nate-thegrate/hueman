@@ -3,10 +3,11 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/data/color_lists.dart';
 import 'package:super_hueman/pages/score.dart';
-import 'package:super_hueman/save_data.dart';
-import 'package:super_hueman/structs.dart';
-import 'package:super_hueman/widgets.dart';
+import 'package:super_hueman/data/save_data.dart';
+import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/widgets.dart';
 
 class TenseScoreKeeper implements ScoreKeeper {
   @override

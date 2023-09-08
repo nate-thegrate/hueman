@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/thanks_for_playing.dart';
-import 'package:super_hueman/save_data.dart';
-import 'package:super_hueman/structs.dart';
-import 'package:super_hueman/widgets.dart';
+import 'package:super_hueman/data/save_data.dart';
+import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/widgets.dart';
 
 const _errorRecoveryText = '''\
 DIV_0 ERROR
