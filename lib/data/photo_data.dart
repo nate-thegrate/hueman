@@ -142,7 +142,7 @@ const List<ImageHues> allImages = [
     [0xffbfd4, 0x9ca7c8, 0xf07391],
   ),
   ImageHues(
-    'jade leaves',
+    'spring leaves',
     [0x77a18d, 0x02211f],
   ),
   ImageHues(
@@ -350,7 +350,7 @@ const List<ImageHues> allImages = [
     [0x845e49, 0x879661],
   ),
   ImageHues(
-    'jade violet northern lights',
+    'spring violet northern lights',
     [0x6db893, 0x512d4e],
   ),
   ImageHues(

@@ -14,8 +14,45 @@ class IntroMode extends StatefulWidget {
   State<IntroMode> createState() => _IntroModeState();
 }
 
-// TODO: TutorialScoreKeeper
-// also: no dialog if there's a non-tutorial scorekeeper
+class TutorialScoreKeeper implements ScoreKeeper {
+  final int numColors;
+  TutorialScoreKeeper({required this.numColors});
+  int round = 0;
+
+  @override
+  void roundCheck(BuildContext context) => (round + 1 == totalRounds)
+      ? Navigator.pushReplacement(
+          context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)))
+      : ();
+
+  @override
+  void scoreTheRound() => round++;
+
+  @override
+  Widget get midRoundDisplay =>
+      Text('round ${round + 1} / $totalRounds', style: const TextStyle(fontSize: 24));
+
+  @override
+  Widget get finalScore => empty;
+
+  @override
+  Widget get finalDetails => empty;
+
+  @override
+  Pages get page => switch (numColors) {
+        3 => Pages.intro3,
+        6 => Pages.intro6,
+        12 => Pages.intro12,
+        _ => null,
+      }!;
+
+  late final int totalRounds = switch (numColors) {
+    3 => 10,
+    6 => 15,
+    12 => 20,
+    _ => null,
+  }!;
+}
 
 class IntroScoreKeeper implements ScoreKeeper {
   int round = 0;
@@ -31,12 +68,10 @@ class IntroScoreKeeper implements ScoreKeeper {
   void scoreTheRound() => scoring();
 
   @override
-  void roundCheck(BuildContext context) {
-    if (round == 29) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)));
-    }
-  }
+  void roundCheck(BuildContext context) => (round == 29)
+      ? Navigator.pushReplacement(
+          context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)))
+      : ();
 
   double get colorsPerMinute => 30 * 60 * 1000 / stopwatch.elapsedMilliseconds;
   double get accuracy => numCorrect / round * 100;
@@ -85,18 +120,18 @@ class _IntroModeState extends State<IntroMode> {
   final List<int> hueChoices = [];
   final List<int> recentChoices = [];
 
-  late final IntroScoreKeeper? scoreKeeper;
+  late final ScoreKeeper? scoreKeeper;
   void giveScore() {
-    if (guess == hue) scoreKeeper?.numCorrect++;
-    scoreKeeper?.round++;
+    if (scoreKeeper case IntroScoreKeeper sk) {
+      if (guess == hue) sk.numCorrect++;
+      sk.round++;
+    }
   }
 
   void generateHue() {
     numPadController?.clear();
     hue = hueChoices.removeAt(rng.nextInt(hueChoices.length));
-    if (recentChoices.length >= widget.numColors ~/ 2) {
-      hueChoices.add(recentChoices.removeAt(0));
-    }
+    if (recentChoices.length >= widget.numColors ~/ 2) hueChoices.add(recentChoices.removeAt(0));
     recentChoices.add(hue);
   }
 
@@ -115,17 +150,23 @@ class _IntroModeState extends State<IntroMode> {
       hueController = null;
       numPadController = NumPadController(setState);
     }
-    scoreKeeper =
-        casualMode ? null : IntroScoreKeeper(scoring: giveScore, numColors: widget.numColors);
-    scoreKeeper?.stopwatch.start();
-    hueChoices.addAll([for (int i = 0; i < 360; i += 360 ~/ widget.numColors) i]);
+
+    if (Tutorials.intro3) {
+      scoreKeeper =
+          casualMode ? null : IntroScoreKeeper(scoring: giveScore, numColors: widget.numColors);
+    } else {
+      scoreKeeper = TutorialScoreKeeper(numColors: widget.numColors);
+      Tutorials.intro3 = true;
+    }
+    if (scoreKeeper case IntroScoreKeeper sk) sk.stopwatch.start();
+    hueChoices.addAll([for (int hue = 0; hue < 360; hue += 360 ~/ widget.numColors) hue]);
     generateHue();
     hueFocusNode?.requestFocus();
   }
 
   @override
   void dispose() {
-    scoreKeeper?.stopwatch.stop();
+    if (scoreKeeper case IntroScoreKeeper sk) sk.stopwatch.stop();
     super.dispose();
   }
 

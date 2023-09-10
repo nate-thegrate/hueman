@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:super_hueman/data/color_lists.dart';
-import 'package:super_hueman/data/image_data.dart';
+import 'package:super_hueman/data/photo_data.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/hue_typing_game.dart';
 import 'package:super_hueman/data/save_data.dart';

@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/widgets.dart';
+import 'package:super_hueman/pages/intro.dart';
 
 class ScoreScreen extends StatefulWidget {
   final ScoreKeeper scoreKeeper;
@@ -31,6 +32,7 @@ class _ScoreScreenState extends State<ScoreScreen> {
   Widget build(BuildContext context) {
     final ScoreKeeper sk = widget.scoreKeeper;
     final Pages page = sk.page;
+    final bool tutorial = sk is TutorialScoreKeeper;
     final Color color = inverted ? inverseColor : epicColor;
 
     return Theme(
@@ -61,32 +63,59 @@ class _ScoreScreenState extends State<ScoreScreen> {
                 ],
               ),
               const Spacer(flex: 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Score:  ', style: TextStyle(fontSize: 32, color: color)),
-                  sk.finalScore,
-                ],
-              ),
-              const FixedSpacer(10),
-              sk.finalDetails,
-              const Spacer(flex: 3),
-              SuperButton('play again', color: color, onPressed: () => context.goto(page)),
-              const FixedSpacer(33),
-              SuperButton(
-                'play in casual mode',
-                color: color,
-                onPressed: () {
-                  casualMode = true;
-                  context.goto(page);
-                },
-              ),
-              const FixedSpacer(33),
-              SuperButton(
-                'back to menu',
-                color: color,
-                onPressed: () => context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
-              ),
+              ...tutorial
+                  ? [
+                      SuperButton(
+                        'continue',
+                        color: color,
+                        onPressed: () => context.goto(switch (page) {
+                          Pages.intro3 => Pages.intro6,
+                          Pages.intro6 => Pages.intro12,
+                          Pages.intro12 => Pages.intense,
+                          _ => throw Error(),
+                        }),
+                      ),
+                      const FixedSpacer(33),
+                      SuperButton('play again',
+                          color: color, onPressed: () => context.goto(page)),
+                      const FixedSpacer(33),
+                      SuperButton(
+                        'main menu',
+                        color: color,
+                        onPressed: () =>
+                            context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
+                      ),
+                    ]
+                  : [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Score:  ', style: TextStyle(fontSize: 32, color: color)),
+                          sk.finalScore,
+                        ],
+                      ),
+                      const FixedSpacer(10),
+                      sk.finalDetails,
+                      const Spacer(flex: 3),
+                      SuperButton('play again',
+                          color: color, onPressed: () => context.goto(page)),
+                      const FixedSpacer(33),
+                      SuperButton(
+                        'play in casual mode',
+                        color: color,
+                        onPressed: () {
+                          casualMode = true;
+                          context.goto(page);
+                        },
+                      ),
+                      const FixedSpacer(33),
+                      SuperButton(
+                        'main menu',
+                        color: color,
+                        onPressed: () =>
+                            context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
+                      ),
+                    ],
               const Expanded(flex: 4, child: empty),
             ],
           ),

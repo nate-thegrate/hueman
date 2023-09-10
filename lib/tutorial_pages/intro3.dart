@@ -501,7 +501,7 @@ class _Page4State extends State<_Page4> {
     ('How would you describe that color?', 2),
     ('', 2),
     ('You could call it by its RGB value,', 3.5),
-    ('or just make up a name for it.', 2),
+    ('or just make up a name for it.', 1.5),
   ];
 
   static const bitOfRed = DecoratedBox(
