@@ -51,13 +51,13 @@ enum Pages {
   inverseSandbox(InverseSandbox()),
   ;
 
+  const Pages(this._widget);
+  final Widget _widget;
+
   Widget get widget => switch (this) {
         intro3 when !Tutorials.intro3 => const Intro3Tutorial(),
         _ => _widget,
       };
-
-  final Widget _widget;
-  const Pages(this._widget);
 
   String call() => switch (this) {
         inverseMenu => 'invert!',
@@ -135,11 +135,6 @@ Color contrastWith(Color c, {double threshold = .2}) =>
     (c.computeLuminance() > threshold) ? Colors.black : Colors.white;
 
 class SuperColor extends Color {
-  final int colorCode;
-
-  final String name;
-  static const opaque = 0xFF000000;
-
   const SuperColor(this.colorCode)
       : name = '[none]',
         super(colorCode + opaque);
@@ -172,6 +167,10 @@ class SuperColor extends Color {
         (_, 1, 0.5) when h % 30 == 0 => SuperColors.twelveHues[h ~/ 30],
         _ => SuperColor(HSLColor.fromAHSL(0, h.toDouble(), s, l).toColor().value),
       };
+  final int colorCode;
+
+  final String name;
+  static const opaque = 0xFF000000;
 
   num get hue {
     final int i = SuperColors.twelveHues.indexOf(this);

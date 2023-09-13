@@ -3,18 +3,19 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class TriviaButton extends StatelessWidget {
+  const TriviaButton(this.color, {required this.submit, super.key});
   final SuperColor color;
   final void Function() Function(SuperColor) submit;
-  const TriviaButton(this.color, {required this.submit, super.key});
 
   void Function() get onPressed => submit(color);
   bool get selected => buttonData[color]!;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => SuperContainer(
         width: 215,
         height: 75,
         margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -56,10 +57,10 @@ class TriviaButton extends StatelessWidget {
 }
 
 class TriviaQuestion {
+  const TriviaQuestion(this.question, this.answers, {this.explanation});
   final String question;
   final String? explanation;
   final List<SuperColor> answers;
-  const TriviaQuestion(this.question, this.answers, {this.explanation});
 }
 
 const List<TriviaQuestion> _allQuestions = [
@@ -202,8 +203,8 @@ class TriviaMode extends StatefulWidget {
 }
 
 class AnsweredEveryQuestion extends StatelessWidget {
-  final String scoreDesc;
   const AnsweredEveryQuestion(this.scoreDesc, {super.key});
+  final String scoreDesc;
 
   @override
   Widget build(BuildContext context) => Theme(
@@ -346,7 +347,7 @@ class _TriviaModeState extends State<TriviaMode> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget questionText = Container(
+    final Widget questionText = SuperContainer(
       height: 200,
       padding: const EdgeInsets.symmetric(horizontal: 50),
       alignment: Alignment.center,

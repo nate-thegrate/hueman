@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:rive/rive.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class StartScreen extends StatefulWidget {
@@ -155,8 +156,8 @@ class _CallOutTheLieState extends State<_CallOutTheLie> {
 }
 
 class _TruthButton extends StatefulWidget {
-  final void Function() onPressed;
   const _TruthButton({required this.onPressed});
+  final void Function() onPressed;
 
   @override
   State<_TruthButton> createState() => _TruthButtonState();
@@ -246,15 +247,14 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
   }
 
   static const buffer = Expanded(
-      child: ColoredBox(
-    color: SuperColors.darkBackground,
-    child: SizedBox.expand(),
-  ));
+    child: SuperContainer(color: SuperColors.darkBackground),
+  );
   static const buffer2 = Expanded(
-      child: ColoredBox(
-    color: SuperColors.darkBackground,
-    child: SizedBox(height: 39),
-  ));
+    child: SuperContainer(
+      color: SuperColors.darkBackground,
+      height: 39,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -291,7 +291,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
     return Scaffold(
       body: counter < 360 * 3
           ? Center(
-              child: Container(
+              child: SuperContainer(
                 margin: const EdgeInsets.only(top: 39),
                 width: girth,
                 decoration: BoxDecoration(shape: BoxShape.circle, color: epicColor),
@@ -378,8 +378,8 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
 }
 
 class _IntroButton extends StatefulWidget {
-  final Duration duration;
   const _IntroButton(this.duration);
+  final Duration duration;
 
   @override
   State<_IntroButton> createState() => _IntroButtonState();

@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 int _r = 0x80, _g = 0x80, _b = 0x80;
@@ -19,7 +20,7 @@ void updateCMYK() {
 }
 
 void updateHSL() {
-  HSLColor hslColor = HSLColor.fromColor(SuperColor.rgb(_r, _g, _b));
+  final hslColor = HSLColor.fromColor(SuperColor.rgb(_r, _g, _b));
   _h = hslColor.hue;
   _l = hslColor.lightness;
   _s = (_l == 0 || _l == 1) ? 0 : hslColor.saturation;
@@ -33,29 +34,15 @@ void updateRGB() {
   _b = value(_yellow);
 }
 
-double get _c => _cyan / 0xFF;
-double get _m => _magenta / 0xFF;
-double get _y => _yellow / 0xFF;
-double get _k => _black / 0xFF;
-
-set _c(double val) => _cmyk(val, (c) => _cyan = c);
-set _m(double val) => _cmyk(val, (m) => _magenta = m);
-set _y(double val) => _cmyk(val, (y) => _yellow = y);
-set _k(double val) => _cmyk(val, (k) => _black = k);
-
-void _cmyk(double val, ValueChanged<int> update) {
-  update((val * 0xFF).round());
-  updateRGB();
-}
-
 enum _ColorPicker {
   cmyk(Icons.tune, 'sliders'),
   hsl(Icons.gradient, 'plane'),
   select(Icons.motion_photos_on, 'from color wheel');
 
+  const _ColorPicker(this.icon, this.tag);
   final IconData icon;
   final String tag;
-  const _ColorPicker(this.icon, this.tag);
+
   String get upperName => name == 'select' ? 'Select' : name.toUpperCase();
 
   static List<BottomNavigationBarItem> get navBarItems => [
@@ -78,29 +65,28 @@ SuperColor get _color => switch (_colorPicker) {
     };
 
 class _CMYScreen extends StatelessWidget {
-  final ValueChanged<double> updateC, updateM, updateY, updateK;
-  const _CMYScreen({
-    required this.updateC,
-    required this.updateM,
-    required this.updateY,
-    required this.updateK,
-  });
+  const _CMYScreen({required this.update});
+  final dynamic update;
 
   @override
   Widget build(BuildContext context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(width: 300, height: 300, color: _color),
+          SuperContainer(width: 300, height: 300, color: _color),
           const FixedSpacer(30),
           Flex(
             direction: context.squished ? Axis.vertical : Axis.horizontal,
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _CMYKSlider('cyan', _c, onChanged: updateC),
-              _CMYKSlider('magenta', _m, onChanged: updateM),
-              _CMYKSlider('yellow', _y, onChanged: updateY),
-              _CMYKSlider('black', _k, onChanged: updateK),
+              _CMYKSlider('cyan', _cyan / 0xFF,
+                  onChanged: (value) => update(() => _cyan = (value * 0xFF).round())),
+              _CMYKSlider('magenta', _magenta / 0xFF,
+                  onChanged: (value) => update(() => _magenta = (value * 0xFF).round())),
+              _CMYKSlider('yellow', _yellow / 0xFF,
+                  onChanged: (value) => update(() => _yellow = (value * 0xFF).round())),
+              _CMYKSlider('key', _black / 0xFF,
+                  onChanged: (value) => update(() => _black = (value * 0xFF).round())),
             ],
           ),
         ],
@@ -108,10 +94,10 @@ class _CMYScreen extends StatelessWidget {
 }
 
 class _CMYKSlider extends StatelessWidget {
+  const _CMYKSlider(this.name, this.value, {required this.onChanged});
   final String name;
   final double value;
   final ValueChanged<double> onChanged;
-  const _CMYKSlider(this.name, this.value, {required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -120,14 +106,14 @@ class _CMYKSlider extends StatelessWidget {
       'cyan' => SuperColor.rgb(byte, 0xFF, 0xFF),
       'magenta' => SuperColor.rgb(0xFF, byte, 0xFF),
       'yellow' => SuperColor.rgb(0xFF, 0xFF, byte),
-      'black' => SuperColor.rgb(byte, byte, byte),
+      'key' => SuperColor.rgb(byte, byte, byte),
       _ => null,
     }!;
     final bool enabled = switch (name) {
       'cyan' => (_magenta == 0 || _yellow == 0) && _black < 0xFF,
       'magenta' => (_cyan == 0 || _yellow == 0) && _black < 0xFF,
       'yellow' => (_cyan == 0 || _magenta == 0) && _black < 0xFF,
-      'black' => true,
+      'key' => true,
       _ => null,
     }!;
     final bool horizontal = context.squished;
@@ -155,7 +141,7 @@ class _CMYKSlider extends StatelessWidget {
             ),
           ),
         ),
-        Container(
+        SuperContainer(
           width: 125,
           alignment: Alignment.center,
           child: Text(
@@ -168,17 +154,32 @@ class _CMYKSlider extends StatelessWidget {
   }
 }
 
-class _HSLScreen extends StatelessWidget {
-  final double hue, saturation, lightness;
-  final ValueChanged<double> updateH, updateS, updateL;
-  const _HSLScreen(this.hue, this.saturation, this.lightness,
-      {required this.updateH, required this.updateS, required this.updateL});
+class _HSLScreen extends StatefulWidget {
+  const _HSLScreen();
+
+  @override
+  State<_HSLScreen> createState() => _HSLScreenState();
+}
+
+class _HSLScreenState extends State<_HSLScreen> {
+  final updateFuncs = [
+    (value) => _h = value,
+    (value) => _s = value,
+    (value) => _l = value,
+  ];
+  void Function(double) onChanged(int updateFunc) => (value) => setState(() {
+        updateFuncs[updateFunc](value);
+        final c = _color;
+        _r = c.red;
+        _g = c.green;
+        _b = c.blue;
+      });
 
   @override
   Widget build(BuildContext context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
+          SuperContainer(
             width: 400,
             height: 400,
             alignment: Alignment.center,
@@ -188,18 +189,18 @@ class _HSLScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   child: Stack(
                     children: [
-                      Container(
+                      SuperContainer(
                         margin: const EdgeInsets.all(0.5),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
-                            colors: [SuperColors.gray, SuperColor.hue(hue)],
+                            colors: [SuperColors.gray, SuperColor.hue(_h)],
                           ),
                         ),
                       ),
-                      Container(
-                        decoration: const BoxDecoration(
+                      const DecoratedBox(
+                        decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -207,8 +208,8 @@ class _HSLScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Container(
-                        decoration: const BoxDecoration(
+                      const DecoratedBox(
+                        decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -220,7 +221,7 @@ class _HSLScreen extends StatelessWidget {
                   ),
                 ),
                 Align(
-                  alignment: Alignment(2 * saturation - 1, 1 - 2 * lightness),
+                  alignment: Alignment(2 * _s - 1, 1 - 2 * _l),
                   child: Icon(
                     Icons.add,
                     color: contrastWith(_color),
@@ -232,34 +233,34 @@ class _HSLScreen extends StatelessWidget {
           ),
           _HSLSlider(
             'hue',
-            hue,
-            color: SuperColor.hue(hue),
-            onChanged: updateH,
+            _h,
+            color: SuperColor.hue(_h),
+            onChanged: onChanged(0),
           ),
           _HSLSlider(
             'saturation',
-            saturation,
-            color: SuperColor.hsl(hue, saturation, 0.5),
-            onChanged: updateS,
+            _s,
+            color: SuperColor.hsl(_h, _s, 0.5),
+            onChanged: onChanged(1),
           ),
           _HSLSlider(
             'lightness',
-            lightness,
-            color: SuperColor.hsl(hue, saturation, lightness),
-            onChanged: updateL,
+            _l,
+            color: SuperColor.hsl(_h, _s, _l),
+            onChanged: onChanged(2),
           ),
           const FixedSpacer(25),
-          Container(width: 500, height: 100, color: _color),
+          SuperContainer(width: 500, height: 100, color: _color),
         ],
       );
 }
 
 class _HSLSlider extends StatelessWidget {
+  const _HSLSlider(this.name, this.value, {required this.color, required this.onChanged});
   final String name;
   final num value;
   final Color color;
   final ValueChanged<double> onChanged;
-  const _HSLSlider(this.name, this.value, {required this.color, required this.onChanged});
 
   @override
   Widget build(BuildContext context) => Row(
@@ -302,8 +303,8 @@ class _HSLSlider extends StatelessWidget {
 }
 
 class _ColorWheel extends StatefulWidget {
-  final void Function(Color) updateColor;
   const _ColorWheel(this.updateColor);
+  final void Function(Color) updateColor;
 
   @override
   State<_ColorWheel> createState() => _ColorWheelState();
@@ -328,13 +329,13 @@ class _ColorWheelState extends State<_ColorWheel> {
   @override
   Widget build(BuildContext context) => Column(
         children: [
-          Container(
+          SuperContainer(
             decoration: BoxDecoration(
               border: Border.all(color: _color, width: 5),
               shape: BoxShape.circle,
             ),
             padding: const EdgeInsets.all(10),
-            child: Container(
+            child: SuperContainer(
               width: 400,
               height: 400,
               padding: const EdgeInsets.all(16),
@@ -344,7 +345,7 @@ class _ColorWheelState extends State<_ColorWheel> {
                 children: [
                   centerColor == SuperColors.lightBackground
                       ? empty
-                      : Container(
+                      : SuperContainer(
                           margin: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
@@ -369,7 +370,7 @@ class _ColorWheelState extends State<_ColorWheel> {
                   for (int hue = 0; hue < 360; hue += 30)
                     RotationTransition(
                       turns: AlwaysStoppedAnimation(-hue / 360),
-                      child: Container(
+                      child: Align(
                         alignment: Alignment.centerRight,
                         child: IconButton(
                           icon: Icon(
@@ -400,11 +401,6 @@ class _ColorWheelState extends State<_ColorWheel> {
 }
 
 class _ColorWheelSlider extends StatelessWidget {
-  final String label;
-  final int index;
-  final SuperColor centerColor;
-  final double value;
-  final ValueChanged<double> updateValue;
   const _ColorWheelSlider({
     required this.label,
     required this.index,
@@ -412,6 +408,11 @@ class _ColorWheelSlider extends StatelessWidget {
     required this.value,
     required this.updateValue,
   });
+  final String label;
+  final int index;
+  final SuperColor centerColor;
+  final double value;
+  final ValueChanged<double> updateValue;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -445,6 +446,7 @@ class _ColorWheelSlider extends StatelessWidget {
                 max: 3,
                 divisions: 3,
                 thumbColor: centerColor,
+                inactiveColor: Colors.black12,
                 activeColor: centerColor.withAlpha(0xcc),
               ),
             ),
@@ -496,6 +498,11 @@ class _InverseSandboxState extends State<InverseSandbox> {
       );
   String get hue => HSLColor.fromColor(_color).hue.round().toString();
 
+  void updateCMYKval(void Function() updateVal) => setState(() {
+        updateVal();
+        updateRGB();
+      });
+
   @override
   Widget build(BuildContext context) => Theme(
         data: ThemeData(useMaterial3: true),
@@ -513,20 +520,8 @@ class _InverseSandboxState extends State<InverseSandbox> {
                   duration: const Duration(milliseconds: 100),
                   curve: Curves.easeInOutCubic,
                   child: {
-                    _ColorPicker.cmyk: _CMYScreen(
-                      updateC: (value) => setState(() => _c = value),
-                      updateM: (value) => setState(() => _m = value),
-                      updateY: (value) => setState(() => _y = value),
-                      updateK: (value) => setState(() => _k = value),
-                    ),
-                    _ColorPicker.hsl: _HSLScreen(
-                      _h,
-                      _s,
-                      _l,
-                      updateH: (value) => setState(() => _h = value),
-                      updateS: (value) => setState(() => _s = value),
-                      updateL: (value) => setState(() => _l = value),
-                    ),
+                    _ColorPicker.cmyk: _CMYScreen(update: updateCMYKval),
+                    _ColorPicker.hsl: const _HSLScreen(),
                     _ColorPicker.select: _ColorWheel(
                       (rgb) => setState(() {
                         _r = rgb.red;

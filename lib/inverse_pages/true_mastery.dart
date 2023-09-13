@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/thanks_for_playing.dart';
 import 'package:super_hueman/data/save_data.dart';
@@ -125,7 +126,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                 const Spacer(),
                 const GoBack(),
                 const Spacer(flex: 3),
-                Container(
+                SuperContainer(
                   decoration: const BoxDecoration(
                       color: SuperColors.lightBackground,
                       borderRadius: BorderRadiusDirectional.only(
@@ -219,8 +220,8 @@ class _TrueMasteryState extends State<TrueMastery> {
 }
 
 class TrueMasteryScore extends StatefulWidget {
-  final SuperColor guess, actual;
   const TrueMasteryScore({required this.guess, required this.actual, super.key});
+  final SuperColor guess, actual;
 
   @override
   State<TrueMasteryScore> createState() => _TrueMasteryScoreState();
@@ -358,10 +359,7 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
         '3 \u00d7 0xFF',
         style: TextStyle(fontFamily: 'Consolas', height: 0.5),
       ),
-      SizedBox(
-        width: 110,
-        child: Divider(thickness: 1, color: Colors.black),
-      ),
+      SuperContainer(width: double.infinity, height: 1, color: Colors.black),
       Text(
         'total difference',
         style: TextStyle(height: 0.5, fontStyle: FontStyle.italic),
@@ -412,7 +410,7 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
                       Column(
                         children: [
                           const Text('765'),
-                          Container(
+                          SuperContainer(
                             decoration: const BoxDecoration(border: Border(top: BorderSide())),
                             padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
                             margin: const EdgeInsets.only(top: 3),
@@ -441,10 +439,10 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
 }
 
 class _ScoreTitle extends StatefulWidget {
-  final bool isGuess;
-  final SuperColor color;
   const _ScoreTitle.guess(this.color) : isGuess = true;
   const _ScoreTitle.actual(this.color) : isGuess = false;
+  final bool isGuess;
+  final SuperColor color;
 
   @override
   State<_ScoreTitle> createState() => _ScoreTitleState();
@@ -494,66 +492,64 @@ class _ScoreTitleState extends State<_ScoreTitle> {
   );
 
   @override
-  Widget build(BuildContext context) => SizedBox(
+  Widget build(BuildContext context) => SuperContainer(
         width: 450,
-        child: Align(
-          alignment: widget.isGuess ? Alignment.centerLeft : Alignment.centerRight,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 600),
-            curve: curve,
-            width: expanded ? 407 : 0,
-            height: 50,
-            decoration: decoration,
-            child: text,
-          ),
+        alignment: widget.isGuess ? Alignment.centerLeft : Alignment.centerRight,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 600),
+          curve: curve,
+          width: expanded ? 407 : 0,
+          height: 50,
+          decoration: decoration,
+          child: text,
         ),
       );
 }
 
 class _Flicker extends StatelessWidget {
+  const _Flicker(this.flickerValue, this.color);
   final bool flickerValue;
   final SuperColor color;
-  const _Flicker(this.flickerValue, this.color);
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => SuperContainer(
         constraints: const BoxConstraints.expand(),
         alignment: const Alignment(1, -.4),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Container(width: context.screenWidth, height: 1, color: color),
-            Container(width: context.screenWidth * .75, height: 2, color: color),
+            SuperContainer(width: context.screenWidth, height: 1, color: color),
+            SuperContainer(width: context.screenWidth * .75, height: 2, color: color),
             const FixedSpacer(4),
-            Container(
+            SuperContainer(
               width: context.screenWidth * 2 / 3,
               height: 2,
               color: flickerValue ? color : null,
             ),
             const FixedSpacer(3),
-            Container(width: context.screenWidth / 2, height: 2, color: color),
+            SuperContainer(width: context.screenWidth / 2, height: 2, color: color),
             const FixedSpacer(10),
-            Container(
+            const SuperContainer(
               height: 5,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: const BoxDecoration(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
                 border: Border.symmetric(
                   vertical: BorderSide(color: SuperColors.lightBackground, width: 300),
                 ),
               ),
               child: empty,
             ),
-            Container(
+            SuperContainer(
               width: context.screenWidth / 2,
               height: 3,
               color: SuperColors.lightBackground,
             ),
             const FixedSpacer(10),
-            Container(
+            const SuperContainer(
               height: 3,
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              decoration: const BoxDecoration(
+              padding: EdgeInsets.symmetric(horizontal: 40),
+              decoration: BoxDecoration(
                 border: Border.symmetric(
                   vertical: BorderSide(color: SuperColors.lightBackground, width: 250),
                 ),
@@ -566,16 +562,16 @@ class _Flicker extends StatelessWidget {
 }
 
 class _TableHeader extends StatelessWidget {
-  final String text;
   const _TableHeader(this.text);
+  final String text;
 
   @override
   Widget build(BuildContext context) => SizedBox(width: 60, child: Center(child: Text(text)));
 }
 
 class _ErrorScreen extends StatelessWidget {
-  final String text;
   const _ErrorScreen(this.text);
+  final String text;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -591,8 +587,8 @@ class _ErrorScreen extends StatelessWidget {
 }
 
 class _Base10PlusHex extends StatelessWidget {
-  final int value;
   const _Base10PlusHex(this.value);
+  final int value;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -608,10 +604,10 @@ class _Base10PlusHex extends StatelessWidget {
 }
 
 class _RGBSlider extends StatelessWidget {
+  const _RGBSlider(this.name, this.value, this.displayValue, {required this.onChanged});
   final String name;
   final int value, displayValue;
   final ValueChanged<double> onChanged;
-  const _RGBSlider(this.name, this.value, this.displayValue, {required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -644,7 +640,7 @@ class _RGBSlider extends StatelessWidget {
             ),
           ),
         ),
-        Container(
+        SuperContainer(
           width: 125,
           alignment: Alignment.center,
           child: Text('$name:  $displayValue', style: Theme.of(context).textTheme.titleMedium),

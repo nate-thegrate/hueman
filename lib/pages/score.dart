@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 import 'package:super_hueman/pages/intro.dart';
 
 class ScoreScreen extends StatefulWidget {
-  final ScoreKeeper scoreKeeper;
   const ScoreScreen(this.scoreKeeper, {super.key});
+  final ScoreKeeper scoreKeeper;
 
   @override
   State<ScoreScreen> createState() => _ScoreScreenState();
@@ -47,7 +48,7 @@ class _ScoreScreenState extends State<ScoreScreen> {
           child: Column(
             children: [
               const Expanded(flex: 4, child: empty),
-              Container(
+              SuperContainer(
                 decoration: BoxDecoration(
                     border: Border.all(color: color, width: 2),
                     borderRadius: BorderRadius.circular(25)),

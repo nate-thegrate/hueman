@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class MainMenu extends StatefulWidget {
@@ -43,13 +44,13 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
 
   bool done = false;
   List<String> calculateColors(double targetLuminance) {
-    List<String> colors = [];
+    final List<String> colors = [];
     for (double hue = 0; hue < 360; hue++) {
       double max = 1, min = 0;
       double mid() => (max + min) / 2;
       SuperColor color() => SuperColor.hsl(hue, 1, mid());
       for (int i = 0; i < 15; i++) {
-        double luminance = color().computeLuminance();
+        final double luminance = color().computeLuminance();
         if (luminance > targetLuminance) {
           max = mid();
         } else {
@@ -223,7 +224,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
                 AnimatedSize(
                   duration: const Duration(milliseconds: 250),
                   curve: curve,
-                  child: Container(
+                  child: SuperContainer(
                     padding: const EdgeInsets.only(top: 2),
                     width: double.infinity,
                     child: showMasteryText
@@ -305,7 +306,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
                     ),
                   ),
                 ),
-                Container(
+                SuperContainer(
                   decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
                   width: 300,
                   padding: const EdgeInsets.all(50),
@@ -327,19 +328,18 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
           ),
           ...inverting
               ? [
-                  Container(
-                    constraints: const BoxConstraints.expand(),
-                    decoration: const BoxDecoration(
+                  const SuperContainer(
+                    decoration: BoxDecoration(
                       backgroundBlendMode: BlendMode.difference,
                       color: SuperColors.inverting,
                     ),
                   ),
-                  Container(
+                  SuperContainer(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.only(top: 400),
                     child: ScaleTransition(
                       scale: Tween<double>(begin: 12, end: 0).animate(controller),
-                      child: Container(
+                      child: SuperContainer(
                         height: context.screenWidth / 4,
                         decoration: const BoxDecoration(
                           backgroundBlendMode: BlendMode.difference,
@@ -357,8 +357,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
                   visible,
                   duration: halfSec,
                   curve: Curves.easeInOutQuad,
-                  child: Container(
-                    constraints: const BoxConstraints.expand(),
+                  child: SuperContainer(
                     color: darkBackground!
                         ? SuperColors.darkBackground
                         : SuperColors.lightBackground,

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/color_lists.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/pages/intro.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/widgets.dart';
@@ -63,9 +64,9 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
 }
 
 class _EasyText extends StatelessWidget {
+  const _EasyText(this.data, {this.size = 24});
   final String data;
   final double size;
-  const _EasyText(this.data, {this.size = 24});
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +75,8 @@ class _EasyText extends StatelessWidget {
 }
 
 class _Page1 extends StatefulWidget {
-  final void Function() nextPage;
   const _Page1(this.nextPage);
+  final void Function() nextPage;
 
   @override
   State<_Page1> createState() => _Page1State();
@@ -118,19 +119,14 @@ class _Page1State extends State<_Page1> {
 }
 
 class _Page2 extends StatefulWidget {
-  final void Function() nextPage;
   const _Page2(this.nextPage);
+  final void Function() nextPage;
 
   @override
   State<_Page2> createState() => _Page2State();
 }
 
 class _RGBAnimation extends StatelessWidget {
-  final Duration duration;
-  final bool colorVisible, textVisible;
-  final SuperColor color;
-  final double margin;
-
   const _RGBAnimation(
     this.color, {
     required this.colorVisible,
@@ -138,6 +134,10 @@ class _RGBAnimation extends StatelessWidget {
     required this.duration,
     required this.margin,
   });
+  final Duration duration;
+  final bool colorVisible, textVisible;
+  final SuperColor color;
+  final double margin;
 
   @override
   Widget build(BuildContext context) => Expanded(
@@ -284,7 +284,7 @@ class _Page2State extends State<_Page2> {
                   child: AnimatedContainer(
                     duration: squeezeDuration,
                     curve: squeezeCurve,
-                    constraints: const BoxConstraints.expand(),
+                    constraints: const BoxConstraints.expand(), //TODO: see if you can remove this
                     color: squeezed ? Colors.white : const Color(0x00FFFFFF),
                   ),
                 ),
@@ -307,8 +307,8 @@ class _Page2State extends State<_Page2> {
 }
 
 class _Page3 extends StatefulWidget {
-  final void Function() nextPage;
   const _Page3(this.nextPage);
+  final void Function() nextPage;
 
   @override
   State<_Page3> createState() => _Page3State();
@@ -371,9 +371,10 @@ class _ColorOrbState extends State<_ColorOrb> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              DecoratedBox(
+              SuperContainer(
                 decoration: rainbow,
-                child: SizedBox(width: width, height: width),
+                width: width,
+                height: width,
               ),
               _OrbCenter(epic, width: width),
               _OrbCenter(epic, width: width, opaque: true),
@@ -387,13 +388,13 @@ class _ColorOrbState extends State<_ColorOrb> {
 }
 
 class _OrbCenter extends StatelessWidget {
+  const _OrbCenter(this.epicColor, {required this.width, this.opaque = false});
   final SuperColor epicColor;
   final double width;
   final bool opaque;
-  const _OrbCenter(this.epicColor, {required this.width, this.opaque = false});
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
+  Widget build(BuildContext context) => SuperContainer(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: RadialGradient(
@@ -403,7 +404,8 @@ class _OrbCenter extends StatelessWidget {
             ],
           ),
         ),
-        child: SizedBox(width: width, height: width),
+        width: width,
+        height: width,
       );
 }
 
@@ -469,13 +471,14 @@ class _Page3State extends State<_Page3> {
 }
 
 class _Page4 extends StatefulWidget {
-  final void Function() nextPage;
   const _Page4(this.nextPage);
+  final void Function() nextPage;
 
   @override
   State<_Page4> createState() => _Page4State();
 }
 
+// TODO: add red to half of green
 class _Page4State extends State<_Page4> {
   int textProgress = 0;
 
@@ -504,12 +507,11 @@ class _Page4State extends State<_Page4> {
     ('or just make up a name for it.', 1.5),
   ];
 
-  static const bitOfRed = DecoratedBox(
+  static const bitOfRed = SuperContainer(
     decoration: BoxDecoration(
       backgroundBlendMode: BlendMode.screen,
       color: SuperColor(0x800000),
     ),
-    child: SizedBox.expand(),
   );
 
   static const List<(String, SuperColor)> colorCode = [
@@ -518,7 +520,7 @@ class _Page4State extends State<_Page4> {
     ('blue: 0', SuperColor(0x000000)),
   ];
 
-  late final colorCodeBox = Container(
+  late final colorCodeBox = SuperContainer(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10),
       color: SuperColors.darkBackground.withAlpha(0x60),
@@ -585,7 +587,7 @@ class _Page4State extends State<_Page4> {
               width: min(context.screenWidth * 2 / 3, 800),
               child: Stack(
                 children: [
-                  const ColoredBox(color: SuperColors.green, child: SizedBox.expand()),
+                  const SuperContainer(color: SuperColors.green),
                   Fader(
                     textProgress > 0,
                     curve: curve,
@@ -619,8 +621,8 @@ class _Page4State extends State<_Page4> {
 }
 
 class _Page5 extends StatefulWidget {
-  final void Function() nextPage;
   const _Page5(this.nextPage);
+  final void Function() nextPage;
 
   @override
   State<_Page5> createState() => _Page5State();
@@ -732,59 +734,57 @@ class _Page5State extends State<_Page5> {
 }
 
 class _JustKidding extends StatelessWidget {
-  final Duration duration;
-  final bool buttonVisible;
-  final SuperColor color;
-  final void Function() nextPage;
-
   const _JustKidding({
     required this.duration,
     required this.buttonVisible,
     required this.color,
     required this.nextPage,
   });
+  final Duration duration;
+  final bool buttonVisible;
+  final SuperColor color;
+  final void Function() nextPage;
 
   @override
   Widget build(BuildContext context) {
     return FadeIn(
       duration: duration,
-      child: ColoredBox(
+      child: SuperContainer(
         color: Colors.black,
-        child: SizedBox.expand(
-          child: Column(
-            children: [
-              const Spacer(),
-              const Text(
-                'just kidding  :)',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w100),
-              ),
-              const Spacer(flex: 3),
-              Fader(
-                buttonVisible,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: color,
-                    side: BorderSide(color: color, width: 2),
-                    shadowColor: color,
-                    elevation: epicSine * 8,
-                  ),
-                  onPressed: nextPage,
-                  child: const Padding(
-                    padding: EdgeInsets.fromLTRB(25, 10, 25, 15),
-                    child: Text(
-                      'HUE',
-                      style: TextStyle(
-                        fontSize: 48,
-                        fontWeight: FontWeight.w600,
-                      ),
+        constraints: const BoxConstraints.expand(),
+        child: Column(
+          children: [
+            const Spacer(),
+            const Text(
+              'just kidding  :)',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w100),
+            ),
+            const Spacer(flex: 3),
+            Fader(
+              buttonVisible,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: color,
+                  side: BorderSide(color: color, width: 2),
+                  shadowColor: color,
+                  elevation: epicSine * 8,
+                ),
+                onPressed: nextPage,
+                child: const Padding(
+                  padding: EdgeInsets.fromLTRB(25, 10, 25, 15),
+                  child: Text(
+                    'HUE',
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ),
-              const Spacer(),
-            ],
-          ),
+            ),
+            const Spacer(),
+          ],
         ),
       ),
     );
@@ -792,23 +792,21 @@ class _JustKidding extends StatelessWidget {
 }
 
 class _Page6 extends StatefulWidget {
-  final void Function() nextPage;
   const _Page6(this.nextPage);
+  final void Function() nextPage;
 
   @override
   State<_Page6> createState() => _Page6State();
 }
 
 class _Page6State extends State<_Page6> {
-  Widget overlay = const ColoredBox(
+  Widget overlay = const SuperContainer(
     color: Colors.black,
-    child: SizedBox.expand(
-      child: Center(
-        child: _EasyText('finding a hue\ncan be done in two steps.', size: 36),
-      ),
-    ),
+    constraints: BoxConstraints.expand(),
+    alignment: Alignment.center,
+    child: _EasyText('finding a hue\ncan be done in two steps.', size: 36),
   );
-  static const overlay2 = ColoredBox(color: Colors.black, child: SizedBox.expand());
+  static const overlay2 = SuperContainer(color: Colors.black);
   bool showOverlay2 = false;
 
   late final Ticker animateHue;
@@ -855,6 +853,9 @@ class _Page6State extends State<_Page6> {
     animate();
   }
 
+  static const step1 = 'Step 1: Find a color wheel.';
+  static const step2 = 'Step 2: Measure the angle to your color, starting at red.';
+
   @override
   Widget build(BuildContext context) {
     final width = min(context.screenWidth * 0.8, context.screenHeight * .8 - 250);
@@ -865,16 +866,14 @@ class _Page6State extends State<_Page6> {
         Column(
           children: [
             const Spacer(flex: 4),
-            const _EasyText('Step 1: Find a color wheel.'),
+            const _EasyText(step1),
             const Spacer(),
             Fader(
               step >= 2,
-              child: const _EasyText(
-                'Step 2: Measure the angle to your color, starting at red.',
-              ),
+              child: const _EasyText(step2),
             ),
             const Spacer(flex: 4),
-            _MeasuringOrb(step: step, width: width, duration: duration, hue: '$hue°'),
+            MeasuringOrb(step: step, width: width, duration: duration, hue: 90),
             const Spacer(flex: 4),
             _HueBox(step: step, width: width, hue: hue),
             const Spacer(flex: 4),
@@ -887,172 +886,67 @@ class _Page6State extends State<_Page6> {
   }
 }
 
-class _MeasuringOrb extends StatelessWidget {
-  final int step;
-  final double width;
-  final Duration duration;
-  final String hue;
-
-  const _MeasuringOrb({
-    required this.step,
-    required this.width,
-    required this.duration,
-    required this.hue,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Fader(
-      step >= 1,
-      child: SizedBox(
-        width: width + 2,
-        height: width,
-        child: Stack(
-          children: [
-            const DecoratedBox(
-              decoration: SuperColors.colorWheel,
-              child: SizedBox.expand(),
-            ),
-            Fader(
-              step >= 2,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(width / 2, width / 2 + 2, 0, 0),
-                child: Stack(
-                  children: [
-                    const Divider(
-                      height: 0,
-                      color: Colors.black,
-                      thickness: 4,
-                    ),
-                    AnimatedRotation(
-                      turns: step >= 4 ? -0.25 : 0,
-                      curve: curve,
-                      duration: duration,
-                      alignment: Alignment.bottomLeft,
-                      child: const Divider(
-                        height: 0,
-                        color: Colors.black,
-                        thickness: 4,
-                      ),
-                    ),
-                    Fader(
-                      step >= 5,
-                      child: Transform.translate(
-                        offset: const Offset(-4, 0),
-                        child: Transform.rotate(
-                          angle: -pi / 2,
-                          alignment: Alignment.topLeft,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black, width: 4),
-                            ),
-                            width: 25,
-                            height: 25,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Fader(
-              step >= 2,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Transform.translate(
-                    offset: const Offset(-3, -37),
-                    child: const Icon(
-                      Icons.arrow_drop_down,
-                      size: 50,
-                      color: SuperColors.chartreuse,
-                    )),
-              ),
-            ),
-            Fader(
-              step >= 5,
-              child: Align(
-                alignment: const Alignment(0.2, -0.2),
-                child: Text(
-                  hue,
-                  style: const TextStyle(
-                    fontSize: 28,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _HueBox extends StatelessWidget {
-  final int step;
-  final double width;
-  final int hue;
-
   const _HueBox({
     required this.step,
     required this.width,
     required this.hue,
   });
+  final int step;
+  final double width;
+  final int hue;
 
   @override
   Widget build(BuildContext context) {
     final color = SuperColor.hue(hue);
 
-    return SizedBox(
+    return SuperContainer(
       height: 100 + width / 8,
-      child: Center(
-        child: Fader(
-          step >= 2,
-          duration: const Duration(milliseconds: 400),
-          child: SexyBox(
-            child: Container(
-              width: step < 2 ? 20 : width,
-              color: color,
-              padding: const EdgeInsets.all(10),
-              child: SexyBox(
-                child: step < 3
-                    ? empty
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SexyBox(
-                            child: step < 6
-                                ? const SizedBox(height: 75)
-                                : SizedBox(
-                                    width: width / 2,
-                                    child: Center(
-                                      child: Text(
-                                        '"chartreuse"',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: width * 0.0667,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+      alignment: Alignment.center,
+      child: Fader(
+        step >= 2,
+        duration: const Duration(milliseconds: 400),
+        child: SexyBox(
+          child: SuperContainer(
+            width: step < 2 ? 20 : width,
+            color: color,
+            padding: const EdgeInsets.all(10),
+            child: SexyBox(
+              child: step < 3
+                  ? empty
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SexyBox(
+                          child: step < 6
+                              ? const SizedBox(height: 75)
+                              : SizedBox(
+                                  width: width / 2,
+                                  child: Center(
+                                    child: Text(
+                                      '"chartreuse"',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: width * 0.0667,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              color: SuperColors.darkBackground,
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.all(25),
-                              child: Text(
-                                'hue = $hue',
-                                style: TextStyle(color: color, fontSize: width * 0.06),
-                              ),
+                                ),
+                        ),
+                        Expanded(
+                          child: SuperContainer(
+                            color: SuperColors.darkBackground,
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(25),
+                            child: Text(
+                              'hue = $hue',
+                              style: TextStyle(color: color, fontSize: width * 0.06),
                             ),
                           ),
-                        ],
-                      ),
-              ),
+                        ),
+                      ],
+                    ),
             ),
           ),
         ),
@@ -1102,8 +996,11 @@ class _FinalPageState extends State<_FinalPage> {
 
   @override
   Widget build(BuildContext context) {
-    return _FinalPageBoilerplate(
-      children: [
+    return SuperContainer(
+      color: SuperColors.darkBackground,
+      constraints: const BoxConstraints.expand(),
+      alignment: Alignment.center,
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         _AreYouReady(color: epicColor),
         const FixedSpacer(50),
         Fader(
@@ -1121,34 +1018,14 @@ class _FinalPageState extends State<_FinalPage> {
             ),
           ),
         ),
-      ],
-    );
-  }
-}
-
-class _FinalPageBoilerplate extends StatelessWidget {
-  final List<Widget> children;
-  const _FinalPageBoilerplate({required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    return ColoredBox(
-      color: SuperColors.darkBackground,
-      child: SizedBox.expand(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: children,
-          ),
-        ),
-      ),
+      ]),
     );
   }
 }
 
 class _AreYouReady extends StatelessWidget {
-  final SuperColor color;
   const _AreYouReady({required this.color});
+  final SuperColor color;
 
   @override
   Widget build(BuildContext context) {
@@ -1185,9 +1062,9 @@ class _AreYouReady extends StatelessWidget {
 }
 
 class _PlayButton extends StatelessWidget {
+  const _PlayButton({required this.visible, required this.color});
   final bool visible;
   final SuperColor color;
-  const _PlayButton({required this.visible, required this.color});
 
   @override
   Widget build(BuildContext context) {

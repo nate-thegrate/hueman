@@ -7,16 +7,16 @@ import 'package:super_hueman/data/widgets.dart';
 import 'package:flutter/material.dart';
 
 class IntroMode extends StatefulWidget {
-  final int numColors;
   const IntroMode(this.numColors, {super.key});
+  final int numColors;
 
   @override
   State<IntroMode> createState() => _IntroModeState();
 }
 
 class TutorialScoreKeeper implements ScoreKeeper {
-  final int numColors;
   TutorialScoreKeeper({required this.numColors});
+  final int numColors;
   int round = 0;
 
   @override
@@ -55,6 +55,7 @@ class TutorialScoreKeeper implements ScoreKeeper {
 }
 
 class IntroScoreKeeper implements ScoreKeeper {
+  IntroScoreKeeper({required this.numColors, required this.scoring});
   int round = 0;
   int numCorrect = 0;
 
@@ -62,7 +63,6 @@ class IntroScoreKeeper implements ScoreKeeper {
 
   final int numColors;
   final Function scoring;
-  IntroScoreKeeper({required this.numColors, required this.scoring});
 
   @override
   void scoreTheRound() => scoring();
@@ -122,7 +122,7 @@ class _IntroModeState extends State<IntroMode> {
 
   late final ScoreKeeper? scoreKeeper;
   void giveScore() {
-    if (scoreKeeper case IntroScoreKeeper sk) {
+    if (scoreKeeper case final IntroScoreKeeper sk) {
       if (guess == hue) sk.numCorrect++;
       sk.round++;
     }
@@ -158,7 +158,7 @@ class _IntroModeState extends State<IntroMode> {
       scoreKeeper = TutorialScoreKeeper(numColors: widget.numColors);
       Tutorials.intro3 = true;
     }
-    if (scoreKeeper case IntroScoreKeeper sk) sk.stopwatch.start();
+    if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.start();
     hueChoices.addAll([for (int hue = 0; hue < 360; hue += 360 ~/ widget.numColors) hue]);
     generateHue();
     hueFocusNode?.requestFocus();
@@ -166,7 +166,7 @@ class _IntroModeState extends State<IntroMode> {
 
   @override
   void dispose() {
-    if (scoreKeeper case IntroScoreKeeper sk) sk.stopwatch.stop();
+    if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.stop();
     super.dispose();
   }
 
@@ -174,7 +174,13 @@ class _IntroModeState extends State<IntroMode> {
         (hue == guess) ? 'Nice work!' : 'Incorrect…',
         guess,
         hue,
-        ColorNameBox(color),
+        Column(
+          children: [
+            ColorNameBox(color),
+            MeasuringOrb(step: 4, width: 100, duration: const Duration(seconds: 3), hue: hue),
+            //TODO: finish
+          ],
+        ),
       );
 
   @override

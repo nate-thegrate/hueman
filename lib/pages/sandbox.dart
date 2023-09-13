@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 int _r = 0xFF, _g = 0xFF, _b = 0xFF;
@@ -13,10 +14,10 @@ SuperColor get _color => switch (_colorPicker) {
     };
 
 class _RGBSlider extends StatelessWidget {
+  const _RGBSlider(this.name, this.value, {required this.onChanged});
   final String name;
   final int value;
   final ValueChanged<double> onChanged;
-  const _RGBSlider(this.name, this.value, {required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class _RGBSlider extends StatelessWidget {
             ),
           ),
         ),
-        Container(
+        SuperContainer(
           width: 125,
           alignment: Alignment.center,
           child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
@@ -63,11 +64,11 @@ class _RGBSlider extends StatelessWidget {
 }
 
 class _HSVSlider extends StatelessWidget {
+  const _HSVSlider(this.name, this.value, {required this.color, required this.onChanged});
   final String name;
   final num value;
   final Color color;
   final ValueChanged<double> onChanged;
-  const _HSVSlider(this.name, this.value, {required this.color, required this.onChanged});
 
   @override
   Widget build(BuildContext context) => Row(
@@ -115,9 +116,9 @@ enum _ColorPicker {
   hsv(icon: Icons.gradient, tag: 'plane'),
   select(icon: Icons.list, tag: 'a color');
 
+  const _ColorPicker({required this.icon, required this.tag});
   final IconData icon;
   final String tag;
-  const _ColorPicker({required this.icon, required this.tag});
   String get upperName => name == 'select' ? 'Select' : name.toUpperCase();
 
   static List<BottomNavigationBarItem> get navBarItems => [
@@ -135,11 +136,11 @@ enum _ColorPicker {
 }
 
 class _ColorSelection extends StatelessWidget {
-  final void Function(Color, HSVColor) updateColor;
   const _ColorSelection({required this.updateColor});
+  final void Function(Color, HSVColor) updateColor;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => SuperContainer(
         decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
         padding: const EdgeInsets.symmetric(vertical: 50),
         constraints: BoxConstraints.loose(Size(double.infinity, context.screenHeight - 400)),
@@ -161,10 +162,13 @@ class _ColorSelection extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                            width: 150,
-                            child: Text(color.name,
-                                style: Theme.of(context).textTheme.headlineSmall)),
-                        Container(
+                          width: 150,
+                          child: Text(
+                            color.name,
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                        ),
+                        SuperContainer(
                           width: 150,
                           height: 40,
                           margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
@@ -188,7 +192,7 @@ class Sandbox extends StatefulWidget {
 }
 
 void updateHSV() {
-  HSVColor hsvColor = HSVColor.fromColor(SuperColor.rgb(_r, _g, _b));
+  final hsvColor = HSVColor.fromColor(SuperColor.rgb(_r, _g, _b));
   _h = hsvColor.hue;
   _s = hsvColor.saturation;
   _v = hsvColor.value;
@@ -249,7 +253,7 @@ class _SandboxState extends State<Sandbox> {
       _ColorPicker.rgb: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(width: 300, height: 300, color: _color),
+          SuperContainer(width: 300, height: 300, color: _color),
           const FixedSpacer(30),
           Flex(
             direction: horizontal ? Axis.vertical : Axis.horizontal,
@@ -278,7 +282,7 @@ class _SandboxState extends State<Sandbox> {
       _ColorPicker.hsv: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
+          SuperContainer(
             width: 400,
             height: 400,
             alignment: Alignment.center,
@@ -288,7 +292,7 @@ class _SandboxState extends State<Sandbox> {
                   padding: const EdgeInsets.all(20),
                   child: Stack(
                     children: [
-                      Container(
+                      SuperContainer(
                         margin: const EdgeInsets.all(0.5),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -298,8 +302,8 @@ class _SandboxState extends State<Sandbox> {
                           ),
                         ),
                       ),
-                      Container(
-                        decoration: const BoxDecoration(
+                      const DecoratedBox(
+                        decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -340,7 +344,7 @@ class _SandboxState extends State<Sandbox> {
             onChanged: (value) => setState(() => _v = value),
           ),
           const FixedSpacer(25),
-          Container(width: 500, height: 100, color: _color),
+          SuperContainer(width: 500, height: 100, color: _color),
         ],
       ),
       _ColorPicker.select: _ColorSelection(

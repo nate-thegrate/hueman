@@ -1,7 +1,8 @@
 import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:super_hueman/data/color_lists.dart';
-import 'package:super_hueman/data/photo_data.dart';
+import 'package:super_hueman/data/photo_colors.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/hue_typing_game.dart';
 import 'package:super_hueman/data/save_data.dart';
@@ -15,6 +16,7 @@ int hue = rng.nextInt(360);
 SuperColor c = SuperColors.darkBackground;
 
 class IntenseScoreKeeper implements ScoreKeeper {
+  IntenseScoreKeeper({required this.scoring});
   int round = 0;
   final List<int> scores = [];
   int superCount = 0;
@@ -23,7 +25,6 @@ class IntenseScoreKeeper implements ScoreKeeper {
   late int rank, turnsAtRank100;
 
   final Function scoring;
-  IntenseScoreKeeper({required this.scoring});
 
   @override
   void scoreTheRound() => scoring();
@@ -44,7 +45,7 @@ class IntenseScoreKeeper implements ScoreKeeper {
         Text('accuracy: ${scores.average.toStringAsFixed(1)}%', style: style);
     if (superCount == 0) return Column(children: [roundLabel, accuracyDesc]);
 
-    final Widget superDesc = Container(
+    final Widget superDesc = SuperContainer(
       margin: const EdgeInsets.only(top: 25),
       padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
       decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.circular(10)),
@@ -91,6 +92,7 @@ class IntenseScoreKeeper implements ScoreKeeper {
 double screenHeight = 0;
 
 class MasterScoreKeeper implements IntenseScoreKeeper {
+  MasterScoreKeeper({required this.scoring});
   @override
   int superCount = 0;
   @override
@@ -105,7 +107,6 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
 
   @override
   final Function scoring;
-  MasterScoreKeeper({required this.scoring});
 
   @override
   void scoreTheRound() => scoring();
@@ -124,7 +125,7 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
     final Color? cardColor = Color.lerp(c, Colors.white, pow(c.computeLuminance(), 2).toDouble());
 
     final Widget roundLabel = Text('round ${round + 1} / 30', style: style);
-    final Widget rankDesc = Container(
+    final Widget rankDesc = Padding(
       padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
       child: Text(
         'rank: $rank',
@@ -226,8 +227,8 @@ class SawEveryPic extends StatelessWidget {
 }
 
 class IntenseMode extends StatefulWidget {
-  final String? master;
   const IntenseMode([this.master, Key? key]) : super(key: key);
+  final String? master;
 
   @override
   State<IntenseMode> createState() => _IntenseModeState();
@@ -318,7 +319,7 @@ class _IntenseModeState extends State<IntenseMode> {
   }
 
   void masterScore() {
-    if (scoreKeeper case MasterScoreKeeper sk) {
+    if (scoreKeeper case final MasterScoreKeeper sk) {
       switch (offBy) {
         case > 20:
           sk.rank += 20 - offBy;
@@ -420,9 +421,9 @@ class _IntenseModeState extends State<IntenseMode> {
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(width: 100, height: width, color: color),
+                      SuperContainer(width: 100, height: width, color: color),
                       image!,
-                      Container(width: 100, height: width, color: color),
+                      SuperContainer(width: 100, height: width, color: color),
                     ],
                   )
                 : image,

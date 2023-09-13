@@ -1,24 +1,76 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_container.dart';
 
 const Widget empty = SizedBox.shrink();
 
 class FixedSpacer extends StatelessWidget {
-  final double size;
-  final bool horizontal;
   const FixedSpacer(this.size, {super.key}) : horizontal = false;
   const FixedSpacer.horizontal(this.size, {super.key}) : horizontal = true;
+  final double size;
+  final bool horizontal;
 
   @override
   Widget build(BuildContext context) =>
       horizontal ? SizedBox(width: size) : SizedBox(height: size);
 }
 
+class Fader extends AnimatedOpacity {
+  const Fader(
+    this.visible, {
+    required super.child,
+    super.duration = oneSec,
+    super.curve,
+    super.key,
+  }) : super(opacity: visible ? 1 : 0);
+  final bool visible;
+}
+
+class FadeIn extends StatefulWidget {
+  const FadeIn({
+    required this.child,
+    this.duration = oneSec,
+    this.curve = Curves.linear,
+    super.key,
+  });
+  final Widget child;
+  final Duration duration;
+  final Curve curve;
+
+  @override
+  State<FadeIn> createState() => _FadeInState();
+}
+
+class _FadeInState extends State<FadeIn> {
+  bool visible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    sleep(0.01, then: () => setState(() => visible = true));
+  }
+
+  @override
+  Widget build(BuildContext context) => Fader(
+        visible,
+        duration: widget.duration,
+        curve: widget.curve,
+        child: widget.child,
+      );
+}
+
+class SexyBox extends AnimatedSize {
+  /// very slick size change animation :)
+  const SexyBox({super.child, super.key}) : super(duration: oneSec, curve: Curves.easeInOutQuart);
+}
+
 class ContinueButton extends StatelessWidget {
-  final void Function()? onPressed;
   const ContinueButton({required this.onPressed, super.key});
+  final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -27,15 +79,8 @@ class ContinueButton extends StatelessWidget {
         child: Stack(
           children: [
             const Center(child: Icon(Icons.arrow_forward)),
-            Center(
-              child: SizedBox(
-                width: 50,
-                height: 50,
-                child: OutlinedButton(
-                  onPressed: onPressed,
-                  child: empty,
-                ),
-              ),
+            SizedBox.expand(
+              child: OutlinedButton(onPressed: onPressed, child: empty),
             ),
           ],
         ),
@@ -43,10 +88,6 @@ class ContinueButton extends StatelessWidget {
 }
 
 class SuperButton extends StatelessWidget {
-  final String label;
-  final void Function() onPressed;
-  final Color color;
-  final EdgeInsets? padding;
   const SuperButton(
     this.label, {
     required this.color,
@@ -54,6 +95,10 @@ class SuperButton extends StatelessWidget {
     this.padding,
     super.key,
   });
+  final String label;
+  final void Function() onPressed;
+  final Color color;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) => ElevatedButton(
@@ -70,10 +115,10 @@ class SuperButton extends StatelessWidget {
 }
 
 class NavigateButton extends StatelessWidget {
+  const NavigateButton(this.page, {required this.color, this.padding, super.key});
   final Pages page;
   final Color color;
   final EdgeInsets? padding;
-  const NavigateButton(this.page, {required this.color, this.padding, super.key});
 
   @override
   Widget build(BuildContext context) => SuperButton(
@@ -85,10 +130,6 @@ class NavigateButton extends StatelessWidget {
 }
 
 class MenuCheckbox extends StatelessWidget {
-  final ValueChanged<bool> toggle;
-  final bool value;
-  final String label;
-  final (String, String) description;
   const MenuCheckbox(
     this.label, {
     required this.description,
@@ -96,11 +137,15 @@ class MenuCheckbox extends StatelessWidget {
     required this.toggle,
     super.key,
   });
+  final ValueChanged<bool> toggle;
+  final bool value;
+  final String label;
+  final (String, String) description;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => toggle(!value),
-        child: Container(
+        child: ColoredBox(
           color: Colors.transparent,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,8 +175,8 @@ class MenuCheckbox extends StatelessWidget {
 }
 
 class GoBack extends StatelessWidget {
-  final String text;
   const GoBack({this.text = 'back', super.key});
+  final String text;
 
   static const _style = TextStyle(
     fontWeight: FontWeight.normal,
@@ -157,33 +202,27 @@ class GoBack extends StatelessWidget {
 }
 
 class ColorNameBox extends StatelessWidget {
-  final SuperColor color;
-  final Color backgroundColor;
   const ColorNameBox(this.color, {super.key}) : backgroundColor = Colors.black38;
   const ColorNameBox.trivial(this.color, {super.key})
       : backgroundColor = SuperColors.darkBackground;
+  final SuperColor color;
+  final Color backgroundColor;
 
   @override
-  Widget build(BuildContext context) => Container(
-        decoration:
-            BoxDecoration(border: Border.all(color: color, width: 4), color: backgroundColor),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text(
-            color.name,
-            style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
-          ),
+  Widget build(BuildContext context) => SuperContainer(
+        decoration: BoxDecoration(
+          border: Border.all(color: color, width: 4),
+          color: backgroundColor,
+        ),
+        padding: const EdgeInsets.fromLTRB(10, 5, 10, 9),
+        child: Text(
+          color.name,
+          style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
         ),
       );
 }
 
 class ColorLabel extends StatelessWidget {
-  final String property, value;
-  final TextStyle? textStyle;
-  final ValueChanged<SuperColor>? update;
-  final bool colorCode;
-
   const ColorLabel(this.property, this.value, {this.textStyle, super.key})
       : colorCode = false,
         update = null;
@@ -193,6 +232,10 @@ class ColorLabel extends StatelessWidget {
       : textStyle = null,
         colorCode = true,
         update = updateColorCode;
+  final String property, value;
+  final TextStyle? textStyle;
+  final ValueChanged<SuperColor>? update;
+  final bool colorCode;
 
   @override
   Widget build(BuildContext context) {
@@ -239,8 +282,8 @@ class ColorLabel extends StatelessWidget {
 }
 
 class ManualColorCode extends StatefulWidget {
-  final SuperColor color;
   const ManualColorCode(this.color, {super.key});
+  final SuperColor color;
 
   static Future<void> run(
     BuildContext context, {
@@ -320,7 +363,7 @@ class _ManualColorCodeState extends State<ManualColorCode> {
           title: const Text('enter color code'),
           content: Row(
             children: [
-              Container(
+              SuperContainer(
                 color: const Color(0x08000000),
                 width: 200,
                 child: TextField(
@@ -344,52 +387,105 @@ class _ManualColorCodeState extends State<ManualColorCode> {
       );
 }
 
-class Fader extends AnimatedOpacity {
-  final bool visible;
-
-  const Fader(
-    this.visible, {
-    required super.child,
-    super.duration = oneSec,
-    super.curve,
-    super.key,
-  }) : super(opacity: visible ? 1 : 0);
-}
-
-class FadeIn extends StatefulWidget {
-  final Widget child;
-  final Duration duration;
-  final Curve curve;
-  const FadeIn({
-    required this.child,
-    this.duration = oneSec,
-    this.curve = Curves.linear,
+class MeasuringOrb extends StatelessWidget {
+  const MeasuringOrb({
+    required this.step,
+    required this.width,
+    required this.duration,
+    required this.hue,
     super.key,
   });
+  final int step;
+  final double width;
+  final Duration duration;
+  final int hue;
 
   @override
-  State<FadeIn> createState() => _FadeInState();
-}
+  Widget build(BuildContext context) {
+    final bool visible, linesVisible, rotating, showRightAngle;
+    visible = step >= 1;
+    linesVisible = step >= 2;
+    rotating = step >= 4;
+    showRightAngle = step >= 5;
+    // print('step $step');
 
-class _FadeInState extends State<FadeIn> {
-  bool visible = false;
-
-  @override
-  void initState() {
-    super.initState();
-    sleep(0.01).then((_) => setState(() => visible = true));
+    return Fader(
+      visible,
+      child: SizedBox(
+        width: width + 2,
+        height: width,
+        child: Stack(
+          children: [
+            const SuperContainer(decoration: SuperColors.colorWheel),
+            Fader(
+              linesVisible,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(width / 2, width / 2 + 2, 0, 0),
+                child: Stack(
+                  children: [
+                    const Divider(height: 0, color: Colors.black, thickness: 4),
+                    AnimatedRotation(
+                      turns: rotating ? -hue / 360 : 0,
+                      curve: curve,
+                      duration: duration,
+                      alignment: Alignment.bottomLeft,
+                      child: const Divider(
+                        height: 0,
+                        color: Colors.black,
+                        thickness: 4,
+                      ),
+                    ),
+                    Fader(
+                      showRightAngle,
+                      child: Transform.translate(
+                        offset: const Offset(-4, 0),
+                        child: Transform.rotate(
+                          angle: -2 * pi * hue / 360,
+                          alignment: Alignment.topLeft,
+                          child: SuperContainer(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black, width: 4),
+                            ),
+                            width: 25,
+                            height: 25,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Fader(
+              linesVisible,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Transform.translate(
+                    offset: const Offset(-3, -37),
+                    child: const Icon(
+                      Icons.arrow_drop_down,
+                      size: 50,
+                      color: SuperColors.chartreuse,
+                    )),
+              ),
+            ),
+            Fader(
+              showRightAngle,
+              child: Align(
+                alignment: const Alignment(0.2, -0.2),
+                child: Text(
+                  '$hue°',
+                  style: const TextStyle(
+                    fontSize: 28,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
-
-  @override
-  Widget build(BuildContext context) => Fader(
-        visible,
-        duration: widget.duration,
-        curve: widget.curve,
-        child: widget.child,
-      );
-}
-
-class SexyBox extends AnimatedSize {
-  /// very slick size change animation :)
-  const SexyBox({super.child, super.key}) : super(duration: oneSec, curve: Curves.easeInOutQuart);
 }

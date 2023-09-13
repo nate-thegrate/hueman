@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 enum MenuPage { main, settings, tenseSelect }
@@ -119,7 +120,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
         const FixedSpacer(67),
         ...Tutorials.ads
             ? [
-                Container(
+                SuperContainer(
                   alignment: Alignment.center,
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
@@ -246,7 +247,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
                       ),
                     ),
                   ),
-                  Container(
+                  SuperContainer(
                     decoration: BoxDecoration(
                       border: Border.all(color: inverseColor, width: 2),
                     ),
@@ -270,12 +271,12 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
             ),
             backgroundColor: SuperColors.lightBackground,
           ),
-          Container(
+          SuperContainer(
             alignment: Alignment.center,
             padding: const EdgeInsets.only(top: 275),
             child: ScaleTransition(
               scale: Tween<double>(begin: 0, end: 12).animate(controller),
-              child: Container(
+              child: SuperContainer(
                 width: context.screenWidth / 4,
                 height: context.screenWidth / 4,
                 decoration: const BoxDecoration(
@@ -287,7 +288,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
                 child: Fader(
                   inverting,
                   duration: const Duration(milliseconds: 300),
-                  child: Container(color: SuperColors.darkBackground),
+                  child: const SuperContainer(color: SuperColors.darkBackground),
                 ),
               ),
             ),
@@ -297,10 +298,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
                   visible,
                   duration: const Duration(milliseconds: 600),
                   curve: Curves.easeInOutQuad,
-                  child: Container(
-                    constraints: const BoxConstraints.expand(),
-                    color: SuperColors.lightBackground,
-                  ),
+                  child: const SuperContainer(color: SuperColors.lightBackground),
                 )
               : empty,
         ],

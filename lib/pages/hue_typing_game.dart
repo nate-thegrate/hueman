@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/pages/intense_master.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
@@ -13,11 +14,11 @@ import 'package:super_hueman/data/widgets.dart';
 const double _gradeWidth = 200;
 
 class _NumberButton extends StatelessWidget {
+  const _NumberButton(int i, {required this.controller, required this.submit})
+      : number = i == 10 ? 0 : i + 1;
   final int number;
   final NumPadController controller;
   final void Function() submit;
-  const _NumberButton(int i, {required this.controller, required this.submit})
-      : number = i == 10 ? 0 : i + 1;
 
   Icon? get icon => {
         10: const Icon(Icons.backspace, color: SuperColors.white80, size: 32),
@@ -48,7 +49,7 @@ class _NumberButton extends StatelessWidget {
   void onLongPress() => controller.clear();
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => SuperContainer(
         width: 125,
         height: 100,
         padding: const EdgeInsets.all(2),
@@ -65,9 +66,9 @@ class _NumberButton extends StatelessWidget {
 }
 
 class NumPad extends StatelessWidget {
+  const NumPad(this.numPadController, {required this.submit, super.key});
   final NumPadController numPadController;
   final void Function() submit;
-  const NumPad(this.numPadController, {required this.submit, super.key});
 
   @override
   Widget build(BuildContext context) => Column(
@@ -86,9 +87,9 @@ class NumPad extends StatelessWidget {
 }
 
 class NumPadController {
+  NumPadController(this.setState);
   String displayValue = '';
   final StateSetter setState;
-  NumPadController(this.setState);
 
   int get hue => int.parse(displayValue);
 
@@ -109,9 +110,9 @@ class NumPadController {
 }
 
 class _RankBars extends StatelessWidget {
+  const _RankBars(this.rank, {required this.color});
   final int rank;
   final Color color;
-  const _RankBars(this.rank, {required this.color});
 
   static const duration = Duration(milliseconds: 750);
 
@@ -156,25 +157,25 @@ class _RankBars extends StatelessWidget {
 }
 
 class _AnswerFeedback extends StatelessWidget {
+  const _AnswerFeedback(this.val, {required this.text});
   final int val;
-  final String text;
-  const _AnswerFeedback(this.val, {required this.text}); //, super.key});
-  static const TextStyle _style = TextStyle(fontSize: 16);
+  final String text; //, super.key});
+  static const TextStyle style = TextStyle(fontSize: 16);
 
   @override
   Widget build(BuildContext context) => Row(children: [
         const Spacer(),
-        SizedBox(width: 130, child: Text(text, textAlign: TextAlign.end, style: _style)),
-        const SizedBox(width: 10),
-        Text(val.toString(), style: _style),
-        const Expanded(flex: 3, child: empty),
+        SizedBox(width: 130, child: Text(text, textAlign: TextAlign.end, style: style)),
+        const FixedSpacer.horizontal(10),
+        Text(val.toString(), style: style),
+        const Spacer(flex: 3),
       ]);
 }
 
 class _PercentBar extends StatefulWidget {
+  const _PercentBar([this.width = _gradeWidth, this.color = Colors.black]);
   final Color color;
   final double width;
-  const _PercentBar([this.width = _gradeWidth, this.color = Colors.black]);
   @override
   State<_PercentBar> createState() => _PercentBarState();
 }
@@ -199,14 +200,13 @@ class _PercentBarState extends State<_PercentBar> {
 }
 
 class PercentGrade extends StatelessWidget {
-  final int accuracy;
-  final Color color;
-
   const PercentGrade({
     required this.accuracy,
     required this.color,
     super.key,
   });
+  final int accuracy;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +216,7 @@ class PercentGrade extends StatelessWidget {
       fontSize: 18,
       shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
     );
-    return Container(
+    return SuperContainer(
       margin: const EdgeInsets.all(10),
       width: _gradeWidth,
       height: 50,
@@ -225,9 +225,9 @@ class PercentGrade extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           fullLine,
-          Container(
+          ColoredBox(
             color: color.withAlpha(0xff * accuracy ~/ 200),
-            child: Container(
+            child: SuperContainer(
               constraints: const BoxConstraints.expand(height: 30),
               alignment: Alignment.center,
               child: Text('$accuracy%', style: style),
@@ -274,7 +274,7 @@ class _HundredPercentGradeState extends State<HundredPercentGrade> {
       color: Colors.black,
     );
 
-    return Container(
+    return SuperContainer(
       margin: const EdgeInsets.all(20),
       width: _gradeWidth,
       alignment: Alignment.center,
@@ -282,12 +282,12 @@ class _HundredPercentGradeState extends State<HundredPercentGrade> {
         mainAxisSize: MainAxisSize.min,
         children: [
           fullLine,
-          Container(
+          ColoredBox(
             color: color,
-            child: Container(
-              constraints: const BoxConstraints.expand(height: 60),
+            child: const SuperContainer(
+              constraints: BoxConstraints.expand(height: 60),
               alignment: Alignment.center,
-              child: const Text('100', style: style),
+              child: Text('100', style: style),
             ),
           ),
           fullLine,
@@ -298,12 +298,12 @@ class _HundredPercentGradeState extends State<HundredPercentGrade> {
 }
 
 class HueDialog extends StatefulWidget {
+  const HueDialog(this.text, this.guess, this.hue, this.graphic, {super.key})
+      : isSuper = text == 'SUPER!';
   final String text;
   final int guess, hue;
   final Widget graphic;
   final bool isSuper;
-  const HueDialog(this.text, this.guess, this.hue, this.graphic, {super.key})
-      : isSuper = text == 'SUPER!';
 
   @override
   State<HueDialog> createState() => _HueDialogState();
@@ -387,22 +387,17 @@ class _HueDialogState extends State<HueDialog> {
               ],
             ),
           ),
-          unclickable
-              ? Container(
-                  constraints: const BoxConstraints.expand(),
-                  color: Colors.transparent,
-                )
-              : empty,
+          unclickable ? const SuperContainer(color: Colors.transparent) : empty,
         ],
       );
 }
 
 class _GameScreen extends StatelessWidget {
+  const _GameScreen(this.userInput, this.image, this.color, this.scoreKeeper);
   final List<Widget> userInput;
   final Widget? image;
   final Color color;
   final ScoreKeeper? scoreKeeper;
-  const _GameScreen(this.userInput, this.image, this.color, this.scoreKeeper);
 
   @override
   Widget build(BuildContext context) {
@@ -426,7 +421,7 @@ class _GameScreen extends StatelessWidget {
                 const Spacer(),
                 ...image == null
                     ? [
-                        Container(
+                        SuperContainer(
                           width: colorBoxWidth,
                           height: min(colorBoxWidth, context.screenHeight - 700),
                           color: color,
@@ -438,7 +433,7 @@ class _GameScreen extends StatelessWidget {
                             ? []
                             : [
                                 const Spacer(),
-                                Container(width: colorBoxWidth, height: 150, color: color),
+                                SuperContainer(width: colorBoxWidth, height: 150, color: color),
                               ],
                       ],
                 const Spacer(),
@@ -468,13 +463,6 @@ class _GameScreen extends StatelessWidget {
 }
 
 class KeyboardGame extends StatelessWidget {
-  final Color color;
-  final FocusNode hueFocusNode;
-  final TextEditingController hueController;
-  final WidgetBuilder hueDialogBuilder;
-  final ScoreKeeper? scoreKeeper;
-  final void Function() generateHue;
-  final Widget? image;
   const KeyboardGame({
     required this.color,
     required this.hueFocusNode,
@@ -485,6 +473,13 @@ class KeyboardGame extends StatelessWidget {
     this.image,
     super.key,
   });
+  final Color color;
+  final FocusNode hueFocusNode;
+  final TextEditingController hueController;
+  final WidgetBuilder hueDialogBuilder;
+  final ScoreKeeper? scoreKeeper;
+  final void Function() generateHue;
+  final Widget? image;
 
   @override
   Widget build(BuildContext context) {
@@ -543,13 +538,6 @@ class KeyboardGame extends StatelessWidget {
 }
 
 class NumPadGame extends StatelessWidget {
-  final Color color;
-  final NumPad Function(void Function()) numPad;
-  final String numPadVal;
-  final WidgetBuilder hueDialogBuilder;
-  final ScoreKeeper? scoreKeeper;
-  final void Function() generateHue;
-  final Widget? image;
   const NumPadGame({
     required this.color,
     required this.numPad,
@@ -560,6 +548,13 @@ class NumPadGame extends StatelessWidget {
     this.image,
     super.key,
   });
+  final Color color;
+  final NumPad Function(void Function()) numPad;
+  final String numPadVal;
+  final WidgetBuilder hueDialogBuilder;
+  final ScoreKeeper? scoreKeeper;
+  final void Function() generateHue;
+  final Widget? image;
 
   @override
   Widget build(BuildContext context) {

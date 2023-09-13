@@ -7,12 +7,12 @@ bool music = true;
 bool sounds = true;
 
 // game progress
-int? superHue;
+int? superHue = 0;
 bool get hueMaster => superHue != null;
 
 abstract final class Tutorials {
   static bool intro = true;
-  static bool intro3 = false;
+  static bool intro3 = true;
   static bool intro6 = false;
   static bool intro12 = false;
   static bool intense = false;

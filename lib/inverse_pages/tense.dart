@@ -4,16 +4,16 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/color_lists.dart';
+import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class TenseScoreKeeper implements ScoreKeeper {
+  TenseScoreKeeper({required this.page});
   @override
   final Pages page;
-
-  TenseScoreKeeper({required this.page});
 
   static const maxHealth = 25;
   bool healthBarFlash = false;
@@ -47,7 +47,7 @@ class TenseScoreKeeper implements ScoreKeeper {
 
   /// health bar
   @override
-  Widget get midRoundDisplay => Container(
+  Widget get midRoundDisplay => SuperContainer(
         width: 500,
         height: 60,
         padding: const EdgeInsets.all(5),
@@ -87,9 +87,9 @@ class TenseScoreKeeper implements ScoreKeeper {
 }
 
 class Target extends StatelessWidget {
+  const Target(this.label, this.value, {super.key});
   final String label;
   final dynamic value;
-  const Target(this.label, this.value, {super.key});
 
   @override
   Widget build(BuildContext context) => Row(
@@ -102,8 +102,8 @@ class Target extends StatelessWidget {
 }
 
 class TenseMode extends StatefulWidget {
-  final String mode;
   const TenseMode(this.mode, {super.key});
+  final String mode;
 
   @override
   State<TenseMode> createState() => _TenseModeState();
@@ -207,9 +207,9 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
       height: !showDetails ? 0 : height,
       child: SingleChildScrollView(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Container(
-            padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
-            child: const Text(
+          const Padding(
+            padding: EdgeInsets.fromLTRB(20, 50, 20, 20),
+            child: Text(
               ' tension value = Δ hue between options\n'
               ' smaller value = higher difficulty\n\n'
               'Each answer alters the respective color tension value by ±1.\n'
@@ -225,7 +225,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     );
   }
 
-  Widget get target => Container(
+  Widget get target => SuperContainer(
         width: 500,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
@@ -290,9 +290,12 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                           child: Padding(
                             padding: const EdgeInsets.all(4),
                             child: ClipRect(
+                              //TODO: figure out what's going on here
                               child: Stack(
                                 children: [
-                                  Container(
+                                  SuperContainer(
+                                    width: 200,
+                                    height: 200,
                                     decoration: BoxDecoration(boxShadow: [
                                       BoxShadow(color: anyColor(h)),
                                       BoxShadow(
@@ -308,10 +311,8 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                                         blurRadius: shadowSize,
                                       ),
                                     ]),
-                                    width: 200,
-                                    height: 200,
                                   ),
-                                  Container(
+                                  SuperContainer(
                                     width: 200,
                                     height: 200,
                                     color: showReaction && h != hue ? Colors.black45 : null,
@@ -400,16 +401,16 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
 }
 
 class Splendid extends StatelessWidget {
+  const Splendid(
+      {required this.correct, required this.onTap, required this.gradientCycle, super.key});
   final void Function() onTap;
   final num gradientCycle;
   final bool correct;
-  const Splendid(
-      {required this.correct, required this.onTap, required this.gradientCycle, super.key});
 
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: onTap,
-        child: Container(
+        child: SuperContainer(
           constraints: const BoxConstraints.expand(),
           color: Colors.transparent,
           alignment: const Alignment(0, 0.72),

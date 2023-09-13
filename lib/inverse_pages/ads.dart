@@ -5,8 +5,8 @@ import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class _Snippet extends StatelessWidget {
-  final String text;
   const _Snippet(this.text);
+  final String text;
 
   @override
   Widget build(BuildContext context) => Text(
@@ -17,18 +17,18 @@ class _Snippet extends StatelessWidget {
 }
 
 class _AdsAnimation {
+  _AdsAnimation(this.delay, this.widget, {this.replacePrevious = false});
   final double delay;
   final Widget Function(Color) widget;
   final bool replacePrevious;
-  _AdsAnimation(this.delay, this.widget, {this.replacePrevious = false});
 
   bool visible = false;
 }
 
 class _SnippetAnimation extends _AdsAnimation {
-  final String text;
   _SnippetAnimation(double delay, this.text, {bool replacePrevious = false})
       : super(delay, (_) => _Snippet(text), replacePrevious: replacePrevious);
+  final String text;
 }
 
 Widget _none(_) => empty;
