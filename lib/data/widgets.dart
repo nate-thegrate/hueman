@@ -80,7 +80,7 @@ class ContinueButton extends StatelessWidget {
           children: [
             const Center(child: Icon(Icons.arrow_forward)),
             SizedBox.expand(
-              child: OutlinedButton(onPressed: onPressed, child: empty),
+              child: OutlinedButton(onPressed: DelayedPress.from(onPressed), child: empty),
             ),
           ],
         ),
@@ -102,7 +102,7 @@ class SuperButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ElevatedButton(
-        onPressed: onPressed,
+        onPressed: DelayedPress.from(onPressed),
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           foregroundColor: inverted ? Colors.white : Colors.black,

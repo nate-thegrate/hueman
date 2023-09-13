@@ -86,12 +86,16 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
         ElevatedButton(
           onPressed: () => context.goto(Pages.trueMastery),
           style: ElevatedButton.styleFrom(
-              backgroundColor: inverseColor,
-              foregroundColor: inverted ? Colors.white : Colors.black),
+            backgroundColor: inverseColor,
+            foregroundColor: Colors.white,
+          ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 8, 0, 15),
-            child: Text(Pages.trueMastery(),
-                textAlign: TextAlign.center, style: const TextStyle(fontSize: 24, height: 0.95)),
+            child: Text(
+              Pages.trueMastery(),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 24, height: 0.95),
+            ),
           ),
         ),
         const FixedSpacer(67),

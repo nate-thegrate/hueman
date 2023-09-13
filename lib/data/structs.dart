@@ -127,6 +127,7 @@ extension ContextStuff on BuildContext {
 
 void Function() gotoWebsite(String url) => () => launchUrl(Uri.parse(url));
 T diff<T extends num>(T a, T b) => (a - b).abs() as T;
+T stayInRange<T extends num>(T value, T lower, T upper) => min(max(value, lower), upper);
 
 void addListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.addListener(func);
 void yeetListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.removeListener(func);
@@ -300,3 +301,20 @@ extension TwoDecimalPlaces on double {
 }
 
 final rng = Random();
+
+class DelayedPress {
+  DelayedPress({required this.onPressed, this.delay = halfSec});
+  final void Function()? onPressed;
+  final Duration delay;
+  bool pressed = false;
+
+  void press() {
+    if (pressed) return;
+
+    pressed = true;
+    Future.delayed(delay, onPressed);
+  }
+
+  static from(void Function()? onPressed, {Duration delay = halfSec}) =>
+      DelayedPress(onPressed: onPressed, delay: delay).press;
+}

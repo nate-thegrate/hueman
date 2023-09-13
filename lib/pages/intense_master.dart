@@ -261,7 +261,6 @@ class _IntenseModeState extends State<IntenseMode> {
       externalKeyboard ? hueController!.value.toInt() : int.parse(numPadController!.displayValue);
 
   int get offBy {
-    int diff(int a, int b) => (a - b).abs();
     final int hueDiff = diff(hue, guess);
     return min(hueDiff, diff(hueDiff, 360));
   }
@@ -333,7 +332,7 @@ class _IntenseModeState extends State<IntenseMode> {
           sk.rank += 10 - offBy;
       }
 
-      sk.rank = min(100, max(0, sk.rank));
+      sk.rank = stayInRange(sk.rank, 0, 100);
 
       if (sk.rank == 100) sk.turnsAtRank100++;
       sk.round++;

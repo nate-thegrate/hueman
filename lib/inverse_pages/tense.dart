@@ -251,6 +251,35 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
       );
 
   Widget get button2by2 {
+    final List<Widget> children = [];
+    for (int i = 0; i < 4; i += 2) {
+      final List<Widget> rowChildren = [];
+      for (int j = i; j < i + 2; j++) {
+        final buttonHue = (hue + gap * (j - offset)) % 360;
+        rowChildren.add(_TenseButton(
+          targetHue: hue,
+          buttonHue: buttonHue,
+          selectedHue: selectedHue,
+          controller: controllers[j],
+          color: anyColor(buttonHue),
+          select: () async {
+            controllers[j].forward(from: 1);
+            await sleep(.1);
+            final bool correct = buttonHue == hue;
+            setState(() {
+              selectedHue = buttonHue;
+              showReaction = true;
+              tension[name] = stayInRange(tension[name]! + (correct ? -1 : 1), 1, 179);
+              scoreKeeper?.updateHealth(correct);
+            });
+            controllers[j].reverse();
+          },
+          showReaction: showReaction,
+        ));
+      }
+      children.add(Row(mainAxisSize: MainAxisSize.min, children: rowChildren));
+    }
+
     return AnimatedContainer(
       duration: expandDuration,
       curve: curve,
@@ -258,89 +287,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            for (int i = 0; i < 4; i += 2)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (int j = i; j < i + 2; j++)
-                    () {
-                      final int h = (hue + gap * (j - offset)) % 360;
-                      const double shadowSize = 2;
-                      return GestureDetector(
-                        onTap: () async {
-                          controllers[j].forward(from: 1);
-                          await sleep(.1);
-                          setState(() {
-                            selectedHue = h;
-                            showReaction = true;
-                            tension[name] =
-                                max(min(tension[name]! + ((h == hue) ? -1 : 1), 179), 1);
-
-                            final sk = scoreKeeper;
-                            if (sk is TenseScoreKeeper) sk.updateHealth(h == hue);
-                          });
-                          controllers[j].reverse();
-                        },
-                        child: SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0, 0),
-                            end: const Offset(0, 0.01),
-                          ).animate(controllers[j]),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: ClipRect(
-                              //TODO: figure out what's going on here
-                              child: Stack(
-                                children: [
-                                  SuperContainer(
-                                    width: 200,
-                                    height: 200,
-                                    decoration: BoxDecoration(boxShadow: [
-                                      BoxShadow(color: anyColor(h)),
-                                      BoxShadow(
-                                        color: Color.lerp(Colors.white, anyColor(h), 0.75)!,
-                                        offset: const Offset(1, 2),
-                                        spreadRadius: -shadowSize,
-                                        blurRadius: shadowSize * 2,
-                                      ),
-                                      BoxShadow(
-                                        color: anyColor(h),
-                                        offset: const Offset(3, 5),
-                                        spreadRadius: -shadowSize * 2,
-                                        blurRadius: shadowSize,
-                                      ),
-                                    ]),
-                                  ),
-                                  SuperContainer(
-                                    width: 200,
-                                    height: 200,
-                                    color: showReaction && h != hue ? Colors.black45 : null,
-                                    alignment: const Alignment(0.08, -0.05),
-                                    child: Opacity(
-                                      opacity: showReaction ? 1 : 0,
-                                      child: Text(
-                                        '$h°',
-                                        style: TextStyle(
-                                            color: (showReaction &&
-                                                    selectedHue == h &&
-                                                    selectedHue != hue)
-                                                ? Colors.red
-                                                : Colors.black,
-                                            fontSize: 40),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }()
-                ],
-              )
-          ],
+          children: children,
         ),
       ),
     );
@@ -400,6 +347,85 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
       );
 }
 
+class _TenseButton extends StatelessWidget {
+  const _TenseButton({
+    required this.targetHue,
+    required this.buttonHue,
+    required this.selectedHue,
+    required this.controller,
+    required this.color,
+    required this.select,
+    required this.showReaction,
+  });
+
+  final int targetHue, buttonHue;
+  final int? selectedHue;
+  final AnimationController controller;
+  final Color color;
+  final void Function() select;
+  final bool showReaction;
+
+  bool get wrongChoice => showReaction && selectedHue == buttonHue && selectedHue != targetHue;
+
+  @override
+  Widget build(BuildContext context) {
+    const double shadowSize = 2;
+    return GestureDetector(
+      onTap: select,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0),
+          end: const Offset(0, 0.01),
+        ).animate(controller),
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: ClipRect(
+            child: SizedBox(
+              width: 200,
+              height: 200,
+              child: Stack(
+                children: [
+                  SuperContainer(
+                    decoration: BoxDecoration(boxShadow: [
+                      BoxShadow(color: color),
+                      BoxShadow(
+                        color: Color.lerp(Colors.white, color, 0.75)!,
+                        offset: const Offset(1, 2),
+                        spreadRadius: -shadowSize,
+                        blurRadius: shadowSize * 2,
+                      ),
+                      BoxShadow(
+                        color: color,
+                        offset: const Offset(3, 5),
+                        spreadRadius: -shadowSize * 2,
+                        blurRadius: shadowSize,
+                      ),
+                    ]),
+                  ),
+                  SuperContainer(
+                    color: showReaction && buttonHue != targetHue ? Colors.black45 : null,
+                    alignment: const Alignment(0.08, -0.05),
+                    child: Opacity(
+                      opacity: showReaction ? 1 : 0,
+                      child: Text(
+                        '$buttonHue°',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: wrongChoice ? Colors.red : Colors.black,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class Splendid extends StatelessWidget {
   const Splendid(
       {required this.correct, required this.onTap, required this.gradientCycle, super.key});
@@ -411,7 +437,6 @@ class Splendid extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
         onTap: onTap,
         child: SuperContainer(
-          constraints: const BoxConstraints.expand(),
           color: Colors.transparent,
           alignment: const Alignment(0, 0.72),
           child: Stack(

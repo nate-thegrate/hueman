@@ -284,7 +284,6 @@ class _Page2State extends State<_Page2> {
                   child: AnimatedContainer(
                     duration: squeezeDuration,
                     curve: squeezeCurve,
-                    constraints: const BoxConstraints.expand(), //TODO: see if you can remove this
                     color: squeezed ? Colors.white : const Color(0x00FFFFFF),
                   ),
                 ),
@@ -478,7 +477,6 @@ class _Page4 extends StatefulWidget {
   State<_Page4> createState() => _Page4State();
 }
 
-// TODO: add red to half of green
 class _Page4State extends State<_Page4> {
   int textProgress = 0;
 
@@ -570,6 +568,7 @@ class _Page4State extends State<_Page4> {
 
   @override
   Widget build(BuildContext context) {
+    final double width = min(context.screenWidth * 2 / 3, 800);
     return Column(
       children: [
         const Spacer(flex: 2),
@@ -584,7 +583,7 @@ class _Page4State extends State<_Page4> {
         Expanded(
             flex: 3,
             child: SizedBox(
-              width: min(context.screenWidth * 2 / 3, 800),
+              width: width,
               child: Stack(
                 children: [
                   const SuperContainer(color: SuperColors.green),
@@ -595,7 +594,17 @@ class _Page4State extends State<_Page4> {
                       duration: halfSec,
                       offset: textProgress > 1 ? Offset.zero : const Offset(0, -1),
                       curve: Curves.easeInQuad,
-                      child: bitOfRed,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: AnimatedSize(
+                          duration: const Duration(seconds: 3),
+                          curve: curve,
+                          child: SizedBox(
+                            width: textProgress > 2 ? width : width / 2,
+                            child: bitOfRed,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   Column(
@@ -631,6 +640,7 @@ class _Page5 extends StatefulWidget {
 class _Page5State extends State<_Page5> {
   bool wishVisible = false, tooBadVisible = false, justKidding = false, buttonVisible = false;
   late final Ticker epicHues;
+  late final delay = DelayedPress(onPressed: widget.nextPage);
 
   @override
   void initState() {
@@ -661,8 +671,14 @@ class _Page5State extends State<_Page5> {
     setState(() => justKidding = true);
 
     await sleep(2);
+    setState(() {
+      epicHue = 90;
+      buttonVisible = true;
+    });
+
+    await sleep(0.5);
     epicHues = epicSetup(setState);
-    setState(() => buttonVisible = true);
+    epicHue = 90;
   }
 
   static const hsvWidth = 9, hsvHeight = 5;
@@ -725,7 +741,7 @@ class _Page5State extends State<_Page5> {
                 duration: duration,
                 buttonVisible: buttonVisible,
                 color: epicColor,
-                nextPage: widget.nextPage,
+                nextPage: delay.press,
               )
             : empty,
       ],
@@ -751,7 +767,7 @@ class _JustKidding extends StatelessWidget {
       duration: duration,
       child: SuperContainer(
         color: Colors.black,
-        constraints: const BoxConstraints.expand(),
+        width: double.infinity,
         child: Column(
           children: [
             const Spacer(),
@@ -802,7 +818,6 @@ class _Page6 extends StatefulWidget {
 class _Page6State extends State<_Page6> {
   Widget overlay = const SuperContainer(
     color: Colors.black,
-    constraints: BoxConstraints.expand(),
     alignment: Alignment.center,
     child: _EasyText('finding a hue\ncan be done in two steps.', size: 36),
   );
@@ -838,9 +853,7 @@ class _Page6State extends State<_Page6> {
     for (final time in sleepyTime) {
       await sleep(time);
       setState(() => step++);
-      if (step == 4) {
-        animateHue = Ticker(smoothHue)..start();
-      }
+      if (step == 4) animateHue = Ticker(smoothHue)..start();
     }
 
     await sleep(4.5);
@@ -998,7 +1011,6 @@ class _FinalPageState extends State<_FinalPage> {
   Widget build(BuildContext context) {
     return SuperContainer(
       color: SuperColors.darkBackground,
-      constraints: const BoxConstraints.expand(),
       alignment: Alignment.center,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         _AreYouReady(color: epicColor),
@@ -1072,10 +1084,15 @@ class _PlayButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text(
-          'learn the\nprimary color hues',
+          'intro',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 24, height: 2),
+        ),
+        const Text(
+          'learn the RGB hues',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             color: SuperColors.white80,
           ),
         ),
@@ -1093,6 +1110,7 @@ class _PlayButton extends StatelessWidget {
             ),
           ),
         ),
+        const FixedSpacer(16),
       ],
     );
   }

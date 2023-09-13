@@ -513,7 +513,6 @@ class _Flicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SuperContainer(
-        constraints: const BoxConstraints.expand(),
         alignment: const Alignment(1, -.4),
         child: Column(
           mainAxisSize: MainAxisSize.min,

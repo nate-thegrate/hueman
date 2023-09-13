@@ -10,6 +10,7 @@ import 'package:super_hueman/pages/intense_master.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/widgets.dart';
+import 'package:super_hueman/pages/intro.dart';
 
 const double _gradeWidth = 200;
 
@@ -20,33 +21,34 @@ class _NumberButton extends StatelessWidget {
   final NumPadController controller;
   final void Function() submit;
 
-  Icon? get icon => {
-        10: const Icon(Icons.backspace, color: SuperColors.white80, size: 32),
-        12: const Icon(Icons.done, color: SuperColors.white80, size: 36),
-      }[number];
+  static const color = SuperColors.white80;
+  Widget get child => switch (number) {
+        10 => const Icon(Icons.backspace, color: color, size: 32),
+        12 => const Icon(Icons.done, color: color, size: 36),
+        _ => Text(
+            number.toString(),
+            style: const TextStyle(fontSize: 32, color: color),
+          ),
+      };
 
-  Widget get child =>
-      icon ??
-      Text(
-        number.toString(),
-        style: const TextStyle(fontSize: 32, color: SuperColors.white80),
-      );
-
-  void onPressed() {
-    switch (number) {
-      case 10:
-        controller.backspace();
-      case 12:
-        submit();
-      default:
-        controller.type(number);
-        if (autoSubmit && controller.displayValue.length == 3) submit();
-    }
+  void type() {
+    controller.type(number);
+    if (autoSubmit && controller.displayValue.length == 3) submit();
   }
 
-  bool get disabled => number == 12 && controller.displayValue == '';
+  void Function()? get onPressed => switch (number) {
+        10 => controller.backspace,
+        12 when controller.displayValue.isEmpty => null,
+        12 => submit,
+        _ => type,
+      };
 
-  void onLongPress() => controller.clear();
+  void Function()? get onLongPress => number == 10 ? controller.clear : null;
+
+  ButtonStyle get style => TextButton.styleFrom(
+        backgroundColor: Colors.black54,
+        shape: const BeveledRectangleBorder(),
+      );
 
   @override
   Widget build(BuildContext context) => SuperContainer(
@@ -54,12 +56,9 @@ class _NumberButton extends StatelessWidget {
         height: 100,
         padding: const EdgeInsets.all(2),
         child: TextButton(
-          style: TextButton.styleFrom(
-            backgroundColor: Colors.black54,
-            shape: const BeveledRectangleBorder(),
-          ),
-          onPressed: disabled ? null : onPressed,
-          onLongPress: number == 10 ? onLongPress : null,
+          style: style,
+          onPressed: onPressed,
+          onLongPress: onLongPress,
           child: child,
         ),
       );
@@ -417,7 +416,7 @@ class _GameScreen extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 const Spacer(),
-                const GoBack(),
+                (sk is TutorialScoreKeeper) ? empty : const GoBack(),
                 const Spacer(),
                 ...image == null
                     ? [

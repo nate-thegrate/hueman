@@ -21,7 +21,9 @@ class _DynamicBox extends StatelessWidget {
         (final double? w, final double? h, null) => SizedBox(width: w, height: h, child: child),
         (final double? w, final double? h, final BoxConstraints c) when c.debugAssertIsValid() =>
           ConstrainedBox(
-              constraints: (w != null || h != null) ? c.tighten(width: w, height: h) : c),
+            constraints: (w != null || h != null) ? c.tighten(width: w, height: h) : c,
+            child: child,
+          ),
         (_, _, BoxConstraints()) => error('invalid constraints'),
         final Color c => ColoredBox(color: c, child: child),
         (final Decoration d, Clip.none) when d.debugAssertIsValid() =>
@@ -87,7 +89,7 @@ class SuperContainer extends StatelessWidget {
         (final deco, final pad) => pad!.add(deco!),
       };
 
-  Widget? get _child {
+  Widget get _child {
     if (child != null) {
       return _DynamicBox(alignment, child: child);
     }
@@ -101,30 +103,24 @@ class SuperContainer extends StatelessWidget {
     return const SizedBox.shrink();
   }
 
+  List<dynamic> get _layers => [
+        _paddingIncludingDecoration,
+        (decoration, clipBehavior),
+        foregroundDecoration,
+        color,
+        (width, height, constraints),
+        margin,
+        (transform, transformAlignment),
+      ];
+
   @override
   Widget build(BuildContext context) {
-    return _DynamicBox(
-      (transform, transformAlignment),
-      child: _DynamicBox(
-        margin,
-        child: _DynamicBox(
-          color,
-          child: _DynamicBox(
-            (width, height, constraints),
-            child: _DynamicBox(
-              foregroundDecoration,
-              child: _DynamicBox(
-                (decoration, clipBehavior),
-                child: _DynamicBox(
-                  _paddingIncludingDecoration,
-                  child: _child,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    Widget current = _child;
+
+    for (final layer in _layers) {
+      current = _DynamicBox(layer, child: current);
+    }
+    return current;
   }
 }
 
