@@ -15,6 +15,7 @@ import 'package:super_hueman/inverse_pages/sandbox.dart';
 import 'package:super_hueman/pages/menu.dart';
 import 'package:super_hueman/pages/sandbox.dart';
 import 'package:super_hueman/tutorial_pages/intro3.dart';
+import 'package:super_hueman/tutorial_pages/intro6.dart';
 import 'package:super_hueman/tutorial_pages/start.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -56,6 +57,7 @@ enum Pages {
 
   Widget get widget => switch (this) {
         intro3 when !Tutorials.intro3 => const Intro3Tutorial(),
+        intro6 when !Tutorials.intro6 => const Intro6Tutorial(),
         _ => _widget,
       };
 
@@ -126,6 +128,7 @@ extension ContextStuff on BuildContext {
 }
 
 void Function() gotoWebsite(String url) => () => launchUrl(Uri.parse(url));
+
 T diff<T extends num>(T a, T b) => (a - b).abs() as T;
 T stayInRange<T extends num>(T value, T lower, T upper) => min(max(value, lower), upper);
 
@@ -301,20 +304,3 @@ extension TwoDecimalPlaces on double {
 }
 
 final rng = Random();
-
-class DelayedPress {
-  DelayedPress({required this.onPressed, this.delay = halfSec});
-  final void Function()? onPressed;
-  final Duration delay;
-  bool pressed = false;
-
-  void press() {
-    if (pressed) return;
-
-    pressed = true;
-    Future.delayed(delay, onPressed);
-  }
-
-  static from(void Function()? onPressed, {Duration delay = halfSec}) =>
-      DelayedPress(onPressed: onPressed, delay: delay).press;
-}

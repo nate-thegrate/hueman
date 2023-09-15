@@ -63,17 +63,6 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
       );
 }
 
-class _EasyText extends StatelessWidget {
-  const _EasyText(this.data, {this.size = 24});
-  final String data;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(data, textAlign: TextAlign.center, style: TextStyle(fontSize: size));
-  }
-}
-
 class _Page1 extends StatefulWidget {
   const _Page1(this.nextPage);
   final void Function() nextPage;
@@ -97,7 +86,7 @@ class _Page1State extends State<_Page1> {
     return Column(
       children: [
         const Spacer(flex: 2),
-        const _EasyText(
+        const EasyText(
           'Humans have color vision\n'
           'because the retina has 3 types of cone cells.',
           size: 32,
@@ -234,7 +223,7 @@ class _Page2State extends State<_Page2> {
                   Fader(
                     visible || !buttonVisible,
                     duration: duration,
-                    child: const _EasyText(
+                    child: const EasyText(
                       'These 3 cone cell types can be stimulated separately\n'
                       'using 3 different light frequencies.',
                     ),
@@ -243,7 +232,7 @@ class _Page2State extends State<_Page2> {
                   Fader(
                     visible,
                     duration: duration,
-                    child: const _EasyText('We perceive them as 3 colors.'),
+                    child: const EasyText('We perceive them as 3 colors.'),
                   ),
                 ],
               ),
@@ -436,11 +425,11 @@ class _Page3State extends State<_Page3> {
     return Column(
       children: [
         const Spacer(flex: 3),
-        const _EasyText('This screen uses the standard RGB color space.'),
+        const EasyText('This screen uses the standard RGB color space.'),
         const FixedSpacer(25),
         Fader(
           eachPixelVisible,
-          child: const _EasyText(
+          child: const EasyText(
             'Each pixel has a number between 0 and 255\n'
             'to represent how bright each color channel should be.',
           ),
@@ -448,7 +437,7 @@ class _Page3State extends State<_Page3> {
         const Spacer(flex: 2),
         Fader(
           visible,
-          child: const _EasyText(
+          child: const EasyText(
             'With 256 different levels for red, green, and blue,\n'
             'this device is able to display',
           ),
@@ -504,13 +493,6 @@ class _Page4State extends State<_Page4> {
     ('You could call it by its RGB value,', 3.5),
     ('or just make up a name for it.', 1.5),
   ];
-
-  static const bitOfRed = SuperContainer(
-    decoration: BoxDecoration(
-      backgroundBlendMode: BlendMode.screen,
-      color: SuperColor(0x800000),
-    ),
-  );
 
   static const List<(String, SuperColor)> colorCode = [
     ('red: 128', SuperColor(0x800000)),
@@ -577,7 +559,7 @@ class _Page4State extends State<_Page4> {
               ? const Spacer()
               : Fader(
                   i <= textProgress,
-                  child: _EasyText(text[i].$1),
+                  child: EasyText(text[i].$1),
                 ),
         const Spacer(),
         Expanded(
@@ -599,9 +581,12 @@ class _Page4State extends State<_Page4> {
                         child: AnimatedSize(
                           duration: const Duration(seconds: 3),
                           curve: curve,
-                          child: SizedBox(
+                          child: SuperContainer(
                             width: textProgress > 2 ? width : width / 2,
-                            child: bitOfRed,
+                            decoration: const BoxDecoration(
+                              backgroundBlendMode: BlendMode.screen,
+                              color: Color(0x80FF0000),
+                            ),
                           ),
                         ),
                       ),
@@ -637,10 +622,9 @@ class _Page5 extends StatefulWidget {
   State<_Page5> createState() => _Page5State();
 }
 
-class _Page5State extends State<_Page5> {
+class _Page5State extends State<_Page5> with DelayedPress {
   bool wishVisible = false, tooBadVisible = false, justKidding = false, buttonVisible = false;
   late final Ticker epicHues;
-  late final delay = DelayedPress(onPressed: widget.nextPage);
 
   @override
   void initState() {
@@ -661,7 +645,7 @@ class _Page5State extends State<_Page5> {
     await sleep(0.5);
     for (int i = 0; i < hsvWidth * hsvHeight; i++) {
       await sleep(0.05);
-      setState(() => hsvGrid[i] = (tile: hsvGrid[i].tile, scale: 1 + 1 / 16));
+      setState(() => hsvGrid[i] = (tile: hsvGrid[i].tile, scale: 17 / 16));
     }
 
     await sleep(2);
@@ -724,14 +708,14 @@ class _Page5State extends State<_Page5> {
             const Spacer(),
             Fader(
               wishVisible,
-              child: const _EasyText(
+              child: const EasyText(
                 'I wish I could describe every shade of this color\nwith a single name.',
               ),
             ),
             const Spacer(),
             Fader(
               tooBadVisible,
-              child: const _EasyText("Too bad there's no way to do that…"),
+              child: const EasyText("Too bad there's no way to do that…"),
             ),
             const Spacer(flex: 2),
           ],
@@ -741,7 +725,7 @@ class _Page5State extends State<_Page5> {
                 duration: duration,
                 buttonVisible: buttonVisible,
                 color: epicColor,
-                nextPage: delay.press,
+                nextPage: delayed(widget.nextPage),
               )
             : empty,
       ],
@@ -819,7 +803,7 @@ class _Page6State extends State<_Page6> {
   Widget overlay = const SuperContainer(
     color: Colors.black,
     alignment: Alignment.center,
-    child: _EasyText('finding a hue\ncan be done in two steps.', size: 36),
+    child: EasyText('finding a hue\ncan be done in two steps.', size: 36),
   );
   static const overlay2 = SuperContainer(color: Colors.black);
   bool showOverlay2 = false;
@@ -879,11 +863,11 @@ class _Page6State extends State<_Page6> {
         Column(
           children: [
             const Spacer(flex: 4),
-            const _EasyText(step1),
+            const EasyText(step1),
             const Spacer(),
             Fader(
               step >= 2,
-              child: const _EasyText(step2),
+              child: const EasyText(step2),
             ),
             const Spacer(flex: 4),
             MeasuringOrb(step: step, width: width, duration: duration, hue: 90),

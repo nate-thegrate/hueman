@@ -9,13 +9,13 @@ class _DynamicBox extends StatelessWidget {
   const _DynamicBox(this.config, {required this.child});
 
   final dynamic config;
-  final Widget? child;
+  final Widget child;
 
   Never error(String description) => throw Exception('$description: $config');
 
   @override
   Widget build(BuildContext context) => switch (config) {
-        null || (null, null) || (null, null, null) || (null, Clip.none) => child!,
+        null || (null, null) || (null, null, null) || (null, Clip.none) => child,
         final EdgeInsets p when p.isNonNegative => Padding(padding: p, child: child),
         EdgeInsets() => error('negative padding'),
         (final double? w, final double? h, null) => SizedBox(width: w, height: h, child: child),
@@ -91,7 +91,7 @@ class SuperContainer extends StatelessWidget {
 
   Widget get _child {
     if (child != null) {
-      return _DynamicBox(alignment, child: child);
+      return _DynamicBox(alignment, child: child!);
     }
     if (constraints?.isTight ?? true) {
       return const LimitedBox(

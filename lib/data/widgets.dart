@@ -68,10 +68,26 @@ class SexyBox extends AnimatedSize {
   const SexyBox({super.child, super.key}) : super(duration: oneSec, curve: Curves.easeInOutQuart);
 }
 
-class ContinueButton extends StatelessWidget {
+mixin DelayedPress {
+  bool pressed = false;
+
+  delayed(void Function()? onPressed, {Duration delay = halfSec}) => () {
+        if (pressed) return;
+
+        pressed = true;
+        Future.delayed(delay, onPressed);
+      };
+}
+
+class ContinueButton extends StatefulWidget {
   const ContinueButton({required this.onPressed, super.key});
   final void Function()? onPressed;
 
+  @override
+  State<ContinueButton> createState() => _ContinueButtonState();
+}
+
+class _ContinueButtonState extends State<ContinueButton> with DelayedPress {
   @override
   Widget build(BuildContext context) => SizedBox(
         width: 50,
@@ -80,14 +96,14 @@ class ContinueButton extends StatelessWidget {
           children: [
             const Center(child: Icon(Icons.arrow_forward)),
             SizedBox.expand(
-              child: OutlinedButton(onPressed: DelayedPress.from(onPressed), child: empty),
+              child: OutlinedButton(onPressed: delayed(widget.onPressed), child: empty),
             ),
           ],
         ),
       );
 }
 
-class SuperButton extends StatelessWidget {
+class SuperButton extends StatefulWidget {
   const SuperButton(
     this.label, {
     required this.color,
@@ -101,15 +117,20 @@ class SuperButton extends StatelessWidget {
   final EdgeInsets? padding;
 
   @override
+  State<SuperButton> createState() => _SuperButtonState();
+}
+
+class _SuperButtonState extends State<SuperButton> with DelayedPress {
+  @override
   Widget build(BuildContext context) => ElevatedButton(
-        onPressed: DelayedPress.from(onPressed),
+        onPressed: delayed(widget.onPressed),
         style: ElevatedButton.styleFrom(
-          backgroundColor: color,
+          backgroundColor: widget.color,
           foregroundColor: inverted ? Colors.white : Colors.black,
         ),
         child: Padding(
-          padding: padding ?? const EdgeInsets.only(bottom: 4),
-          child: Text(label, style: const TextStyle(fontSize: 24)),
+          padding: widget.padding ?? const EdgeInsets.only(bottom: 4),
+          child: Text(widget.label, style: const TextStyle(fontSize: 24)),
         ),
       );
 }
@@ -384,6 +405,19 @@ class _ManualColorCodeState extends State<ManualColorCode> {
             ],
           ),
         ),
+      );
+}
+
+class EasyText extends StatelessWidget {
+  const EasyText(this.data, {super.key, this.size = 24});
+  final String data;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => Text(
+        data,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: size),
       );
 }
 
