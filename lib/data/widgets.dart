@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:rive/rive.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_container.dart';
@@ -419,6 +420,29 @@ class EasyText extends StatelessWidget {
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: size),
       );
+}
+
+class MyRive extends StatelessWidget {
+  const MyRive({super.key, required this.name, required this.controllers, this.artboard});
+  final String name;
+  final String? artboard;
+  final List<RiveAnimationController<dynamic>> controllers;
+
+  @override
+  Widget build(BuildContext context) {
+    return SuperContainer(
+      alignment: Alignment.center,
+      constraints: BoxConstraints.loose(
+        Size(context.screenHeight * 2 / 3, double.infinity),
+      ),
+      child: RiveAnimation.asset(
+        'assets/animations/$name.riv',
+        fit: BoxFit.cover,
+        artboard: artboard,
+        controllers: controllers,
+      ),
+    );
+  }
 }
 
 class MeasuringOrb extends StatelessWidget {

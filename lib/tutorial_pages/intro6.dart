@@ -1,8 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:rive/rive.dart';
 import 'package:super_hueman/data/structs.dart';
-import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class Intro6Tutorial extends StatefulWidget {
@@ -16,6 +14,8 @@ class _Intro6TutorialState extends State<Intro6Tutorial> {
   bool visible = false;
   late final pages = [
     _Page1(nextPage),
+    _Page2(nextPage),
+    _Page3(nextPage),
   ];
   int page = 1;
 
@@ -59,155 +59,37 @@ class _Page1 extends StatefulWidget {
 }
 
 class _Page1State extends State<_Page1> {
-  int step = 0;
-
-  void animate() async {
-    setState(() => step++);
-
-    await sleep(3);
-    setState(() => step++);
-
-    await sleep(2);
-    setState(() => step++);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final width = min(context.screenWidth, context.screenHeight - 200) / 3.5;
-    return Column(
-      children: [
-        const Spacer(flex: 2),
-        const EasyText("Let's combine the primary colors,\nfor real this time."),
-        const Spacer(),
-        SuperContainer(
-          width: width * 3,
-          height: width * 3,
-          alignment: Alignment.center,
-          child: Stack(
-            children: [
-              const SuperContainer(color: Colors.black),
-              _ColorCoition(const [2, 5, 2, 3], step, width, SuperColors.red),
-              _ColorCoition(const [2, 5, 2, 5], step, width, SuperColors.red),
-              _ColorCoition(const [4, 5, 6, 3], step, width, SuperColors.green),
-              _ColorCoition(const [4, 5, 8, 7], step, width, SuperColors.green),
-              _ColorCoition(const [6, 5, 4, 5], step, width, SuperColors.blue),
-              _ColorCoition(const [6, 5, 4, 7], step, width, SuperColors.blue),
-              Center(
-                child: Fader(
-                  step != 2,
-                  child: Text(
-                    step > 2 ? 'red + blue\n= magenta' : 'R + G + B\n= white',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: SuperColors.darkBackground,
-                      fontSize: width / 8,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.topRight,
-                child: SuperContainer(
-                  width: width,
-                  height: width,
-                  alignment: Alignment.center,
-                  child: Text(
-                    'red + green\n= yellow',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: SuperColors.darkBackground,
-                      fontSize: width / 8,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: SuperContainer(
-                  width: width,
-                  height: width,
-                  alignment: Alignment.center,
-                  child: Text(
-                    'green + blue\n= cyan',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: SuperColors.darkBackground,
-                      fontSize: width / 8,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              const SuperContainer(
-                decoration: BoxDecoration(
-                  color: SuperColors.darkBackground,
-                  backgroundBlendMode: BlendMode.lighten,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const Spacer(),
-        Fader(
-          step == 0,
-          child: ContinueButton(onPressed: animate),
-        ),
-        const Spacer(),
-      ],
-    );
-  }
-}
-
-class _ColorCoition extends StatelessWidget {
-  const _ColorCoition(this.alignSequence, this.progress, this.width, this.color);
-  final List<int> alignSequence;
-  final int progress;
-  final double width;
-  final SuperColor color;
-
-  /// ```dart
-  ///
-  /// 1 2 3
-  /// 4 5 6
-  /// 7 8 9
-  ///
-  /// align[1] → Alignment.topLeft
-  /// ```
-  static const List<Alignment> align = [
-    Alignment.topLeft, // index 0 don't matter
-    Alignment.topLeft,
-    Alignment.topCenter,
-    Alignment.topRight,
-    Alignment.centerLeft,
-    Alignment.center,
-    Alignment.centerRight,
-    Alignment.bottomLeft,
-    Alignment.bottomCenter,
-    Alignment.bottomRight,
+  final controllers = [
+    OneShotAnimation('combine', autoplay: false),
+    SimpleAnimation('spin'),
   ];
 
-  Curve get _curve => switch (progress) {
-        < 2 => Curves.easeInExpo,
-        < 3 => Curves.easeOutExpo,
-        _ => Curves.easeInCubic,
-      };
+  bool get stagnant => !controllers[0].isActive;
+  void weBallin() => controllers[0].isActive = true;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedAlign(
-      duration: progress < 3 ? const Duration(milliseconds: 1500) : const Duration(seconds: 6),
-      alignment: align[alignSequence[progress]],
-      curve: _curve,
-      child: SuperContainer(
-        width: width,
-        height: width,
-        decoration: BoxDecoration(
-          color: color,
-          backgroundBlendMode: BlendMode.screen,
+    return Stack(
+      children: [
+        MyRive(name: 'color_truth', controllers: controllers),
+        Fader(
+          stagnant,
+          child: Center(
+            child: Column(
+              children: [
+                const Spacer(),
+                const EasyText("Let's combine the primary colors,\nfor real this time."),
+                const Spacer(flex: 4),
+                ContinueButton(onPressed: () {
+                  setState(weBallin);
+                  sleep(4.5, then: widget.nextPage);
+                }),
+                const Spacer(),
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

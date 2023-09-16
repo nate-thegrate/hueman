@@ -220,7 +220,7 @@ abstract final class SuperColors {
 
   static const darkBackground = SuperColor(0x121212);
   static const lightBackground = SuperColor(0xffeef3f8);
-  static const bullshitBackground = SuperColor(0xfff2d6);
+  static const bsBackground = SuperColor(0xfff2d6);
   static const inverting = SuperColor(0xf5faff);
 
   static const black80 = Color(0xCC000000);

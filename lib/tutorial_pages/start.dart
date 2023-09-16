@@ -38,9 +38,6 @@ class _StartScreenState extends State<StartScreen> {
     OneShotAnimation('complete lie', autoplay: false),
   ];
 
-  double get aspectRatio => context.screenWidth / context.screenHeight;
-  double get padding => aspectRatio - 9 / 16 * context.screenWidth;
-
   String artboard = 'start button screen';
   Widget callOutTheLie = empty;
   SuperColor backgroundColor = SuperColors.lightBackground;
@@ -51,7 +48,7 @@ class _StartScreenState extends State<StartScreen> {
       1.48,
       then: () => setState(() {
         artboard = 'fake primaries';
-        backgroundColor = SuperColors.bullshitBackground;
+        backgroundColor = SuperColors.bsBackground;
       }),
     );
   }
@@ -59,20 +56,11 @@ class _StartScreenState extends State<StartScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: GestureDetector(
-          // onTap: () => context.noTransition(const _CallOutTheLie()),
           onTap: start,
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints.loose(
-                Size(context.screenHeight * 2 / 3, double.infinity),
-              ),
-              child: RiveAnimation.asset(
-                'assets/animations/color_bs.riv',
-                artboard: artboard,
-                fit: BoxFit.cover,
-                controllers: controllers,
-              ),
-            ),
+          child: MyRive(
+            name: 'color_bs',
+            artboard: artboard,
+            controllers: controllers,
           ),
         ),
         backgroundColor: backgroundColor,
