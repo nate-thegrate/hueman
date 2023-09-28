@@ -2,8 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:rive/rive.dart';
+import 'package:rive/rive.dart' as rive;
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
@@ -19,23 +20,23 @@ class _StartScreenState extends State<StartScreen> {
       () => sleep(sleepFor - 0.1,
           then: () => setState(() => controllers[controllerIndex].isActive = true));
 
-  late final List<RiveAnimationController> controllers = [
-    SimpleAnimation('button spin'),
-    OneShotAnimation(
+  late final List<rive.RiveAnimationController> controllers = [
+    rive.SimpleAnimation('button spin'),
+    rive.OneShotAnimation(
       'button pressed',
       autoplay: false,
       onStop: onStop(sleepFor: 6, controllerIndex: 3),
     ),
-    OneShotAnimation(
+    rive.OneShotAnimation(
       'fade in everything',
       onStop: onStop(sleepFor: 10, controllerIndex: 4),
     ),
-    OneShotAnimation(
+    rive.OneShotAnimation(
       'mixing',
       autoplay: false,
       onStop: () => sleep(9.85, then: () => context.noTransition(const _CallOutTheLie())),
     ),
-    OneShotAnimation('complete lie', autoplay: false),
+    rive.OneShotAnimation('complete lie', autoplay: false),
   ];
 
   String artboard = 'start button screen';
@@ -57,7 +58,7 @@ class _StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) => Scaffold(
         body: GestureDetector(
           onTap: start,
-          child: MyRive(
+          child: Rive(
             name: 'color_bs',
             artboard: artboard,
             controllers: controllers,

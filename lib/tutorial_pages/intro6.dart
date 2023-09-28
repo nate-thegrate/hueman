@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart' as rive;
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
@@ -69,15 +70,15 @@ class _Page1State extends State<_Page1> {
   ];
 
   bool get stagnant => !controllers[1].isActive;
-  void weBallin() => controllers[1].isActive = stagnant;
+  void weBallin() => controllers[1].isActive = true;
   void bestPart() => controllers[2].isActive = true;
-  void noSpin() => controllers[0].isActive = false;
+  void noSpins() => controllers[0].isActive = false;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        MyRive(name: 'color_truth', controllers: controllers),
+        Rive(name: 'color_truth', controllers: controllers),
         Fader(
           stagnant,
           child: Center(
@@ -89,7 +90,7 @@ class _Page1State extends State<_Page1> {
                 ContinueButton(onPressed: () async {
                   setState(weBallin);
                   await sleep(5);
-                  setState(noSpin);
+                  setState(noSpins);
                   setState(bestPart);
                   await sleep(8);
                   widget.nextPage();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
@@ -14,7 +15,7 @@ SuperColor get _color => switch (_colorPicker) {
     };
 
 class _RGBSlider extends StatelessWidget {
-  const _RGBSlider(this.name, this.value, {required this.onChanged});
+  const _RGBSlider(this.name, this.value, this.onChanged);
   final String name;
   final int value;
   final ValueChanged<double> onChanged;
@@ -25,8 +26,8 @@ class _RGBSlider extends StatelessWidget {
       'red' => SuperColor.rgb(value, 0, 0),
       'green' => SuperColor.rgb(0, value, 0),
       'blue' => SuperColor.rgb(0, 0, value),
-      _ => null,
-    }!;
+      _ => throw Error(),
+    };
     final bool horizontal = context.squished;
 
     return Flex(
@@ -64,51 +65,54 @@ class _RGBSlider extends StatelessWidget {
 }
 
 class _HSVSlider extends StatelessWidget {
-  const _HSVSlider(this.name, this.value, {required this.color, required this.onChanged});
-  final String name;
-  final num value;
-  final Color color;
+  const _HSVSlider(this.hsv, this.onChanged);
+  final _HSV hsv;
   final ValueChanged<double> onChanged;
 
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              name,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge,
+  Widget build(BuildContext context) {
+    final SuperColor color = hsv.color;
+    final bool isHue = hsv == _HSV.hue;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 80,
+          child: Text(
+            hsv.name,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+        SizedBox(
+          width: 370,
+          child: SliderTheme(
+            data: const SliderThemeData(
+              trackHeight: 10,
+              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12),
+            ),
+            child: Slider(
+              thumbColor: color,
+              activeColor: color.withAlpha(128),
+              inactiveColor: Colors.white24,
+              max: isHue ? 359 : 1,
+              value: hsv.val.toDouble(),
+              onChanged: onChanged,
             ),
           ),
-          SizedBox(
-            width: 370,
-            child: SliderTheme(
-              data: const SliderThemeData(
-                trackHeight: 10,
-                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12),
-              ),
-              child: Slider(
-                thumbColor: color,
-                activeColor: color.withAlpha(128),
-                inactiveColor: Colors.white24,
-                max: name == 'hue' ? 359 : 1,
-                value: value.toDouble(),
-                onChanged: onChanged,
-              ),
-            ),
+        ),
+        SizedBox(
+          width: 50,
+          child: Text(
+            isHue ? hsv.val.round().toString() : hsv.val.toStringAsFixed(2),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
-          SizedBox(
-            width: 50,
-            child: Text(
-              name == 'hue' ? value.round().toString() : value.toStringAsFixed(2),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          ),
-        ],
-      );
+        ),
+      ],
+    );
+  }
 }
 
 enum _ColorPicker {
@@ -204,6 +208,19 @@ void updateColor(SuperColor color) {
   _b = color.blue;
 }
 
+enum _HSV {
+  hue,
+  saturation,
+  value;
+
+  double get val => switch (this) { hue => _h, saturation => _s, value => _v };
+  SuperColor get color => switch (this) {
+        hue => SuperColor.hue(_h),
+        saturation => SuperColor.hsv(_h, _s, 1),
+        value => SuperColor.hsv(_h, _s, _v),
+      };
+}
+
 class _SandboxState extends State<Sandbox> {
   void colorPickerPicker(int index) => setState(() {
         switch (_colorPicker) {
@@ -246,120 +263,92 @@ class _SandboxState extends State<Sandbox> {
         updateColorCode: (color) => setState(() => updateColor(color)),
       );
 
-  @override
-  Widget build(BuildContext context) {
-    final bool horizontal = context.squished;
-    final Widget colorPicker = {
-      _ColorPicker.rgb: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SuperContainer(width: 300, height: 300, color: _color),
-          const FixedSpacer(30),
-          Flex(
-            direction: horizontal ? Axis.vertical : Axis.horizontal,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+  Widget get colorPicker => switch (_colorPicker) {
+        _ColorPicker.rgb => Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              _RGBSlider(
-                'red',
-                _r,
-                onChanged: (value) => setState(() => _r = value.round()),
-              ),
-              _RGBSlider(
-                'green',
-                _g,
-                onChanged: (value) => setState(() => _g = value.round()),
-              ),
-              _RGBSlider(
-                'blue',
-                _b,
-                onChanged: (value) => setState(() => _b = value.round()),
+              SuperContainer(width: 300, height: 300, color: _color),
+              const FixedSpacer(30),
+              Flex(
+                direction: context.squished ? Axis.vertical : Axis.horizontal,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _RGBSlider('red', _r, (value) => setState(() => _r = value.round())),
+                  _RGBSlider('green', _g, (value) => setState(() => _g = value.round())),
+                  _RGBSlider('blue', _b, (value) => setState(() => _b = value.round())),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-      _ColorPicker.hsv: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SuperContainer(
-            width: 400,
-            height: 400,
-            alignment: Alignment.center,
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Stack(
-                    children: [
-                      SuperContainer(
-                        margin: const EdgeInsets.all(0.5),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Colors.white, SuperColor.hue(_h)],
+        _ColorPicker.hsv => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SuperContainer(
+                width: 400,
+                height: 400,
+                alignment: Alignment.center,
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Stack(
+                        children: [
+                          SuperContainer(
+                            margin: const EdgeInsets.all(0.5),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [Colors.white, SuperColor.hue(_h)],
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      const DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Colors.black],
+                          const SuperContainer(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Colors.transparent, Colors.black],
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Align(
+                      alignment: Alignment(2 * _s - 1, 1 - 2 * _v),
+                      child: Icon(
+                        Icons.add,
+                        color: contrastWith(_color),
+                        size: 40,
+                      ),
+                    ),
+                  ],
                 ),
-                Align(
-                  alignment: Alignment(2 * _s - 1, 1 - 2 * _v),
-                  child: Icon(
-                    Icons.add,
-                    color: contrastWith(_color),
-                    size: 40,
-                  ),
-                ),
-              ],
-            ),
+              ),
+              _HSVSlider(_HSV.hue, (value) => setState(() => _h = value)),
+              _HSVSlider(_HSV.saturation, (value) => setState(() => _s = value)),
+              _HSVSlider(_HSV.value, (value) => setState(() => _v = value)),
+              const FixedSpacer(25),
+              SuperContainer(width: 500, height: 100, color: _color),
+            ],
           ),
-          _HSVSlider(
-            'hue',
-            _h,
-            color: SuperColor.hue(_h),
-            onChanged: (value) => setState(() => _h = value),
-          ),
-          _HSVSlider(
-            'saturation',
-            _s,
-            color: SuperColor.hsv(_h, _s, 1),
-            onChanged: (value) => setState(() => _s = value),
-          ),
-          _HSVSlider(
-            'value',
-            _v,
-            color: SuperColor.hsv(_h, _s, _v),
-            onChanged: (value) => setState(() => _v = value),
-          ),
-          const FixedSpacer(25),
-          SuperContainer(width: 500, height: 100, color: _color),
-        ],
-      ),
-      _ColorPicker.select: _ColorSelection(
-        updateColor: (rgb, hsv) => setState(() {
-          _r = rgb.red;
-          _g = rgb.green;
-          _b = rgb.blue;
+        _ColorPicker.select => _ColorSelection(
+            updateColor: (rgb, hsv) => setState(() {
+              _r = rgb.red;
+              _g = rgb.green;
+              _b = rgb.blue;
 
-          _h = hsv.hue;
-          _s = hsv.saturation;
-          _v = hsv.value;
-        }),
-      ),
-    }[_colorPicker]!;
+              _h = hsv.hue;
+              _s = hsv.saturation;
+              _v = hsv.value;
+            }),
+          ),
+      };
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Column(

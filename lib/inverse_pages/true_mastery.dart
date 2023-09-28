@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/thanks_for_playing.dart';
@@ -468,7 +469,7 @@ class _ScoreTitleState extends State<_ScoreTitle> {
           : const BorderRadius.only(topLeft: r, bottomLeft: r),
     );
 
-    sleep(0.1, then: () => setState(() => expanded = true));
+    quickly(() => setState(() => expanded = true));
   }
 
   late final Widget text = Align(
@@ -610,11 +611,12 @@ class _RGBSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SuperColor color = {
-      'red': SuperColor.rgb(value, 0, 0),
-      'green': SuperColor.rgb(0, value, 0),
-      'blue': SuperColor.rgb(0, 0, value),
-    }[name]!;
+    final SuperColor color = switch (name) {
+      'red' => SuperColor.rgb(value, 0, 0),
+      'green' => SuperColor.rgb(0, value, 0),
+      'blue' => SuperColor.rgb(0, 0, value),
+      _ => throw Error(),
+    };
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,

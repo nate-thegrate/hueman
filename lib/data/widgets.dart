@@ -2,9 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rive/rive.dart';
+import 'package:rive/rive.dart' as rive;
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 
 const Widget empty = SizedBox.shrink();
@@ -52,7 +53,7 @@ class _FadeInState extends State<FadeIn> {
   @override
   void initState() {
     super.initState();
-    sleep(0.01, then: () => setState(() => visible = true));
+    quickly(() => setState(() => visible = true));
   }
 
   @override
@@ -422,11 +423,11 @@ class EasyText extends StatelessWidget {
       );
 }
 
-class MyRive extends StatelessWidget {
-  const MyRive({super.key, required this.name, required this.controllers, this.artboard});
+class Rive extends StatelessWidget {
+  const Rive({super.key, required this.name, required this.controllers, this.artboard});
   final String name;
   final String? artboard;
-  final List<RiveAnimationController<dynamic>> controllers;
+  final List<rive.RiveAnimationController<dynamic>> controllers;
 
   @override
   Widget build(BuildContext context) {
@@ -435,7 +436,7 @@ class MyRive extends StatelessWidget {
       constraints: BoxConstraints.loose(
         Size(context.screenHeight * 2 / 3, double.infinity),
       ),
-      child: RiveAnimation.asset(
+      child: rive.RiveAnimation.asset(
         'assets/animations/$name.riv',
         fit: BoxFit.cover,
         artboard: artboard,
@@ -450,13 +451,16 @@ class MeasuringOrb extends StatelessWidget {
     required this.step,
     required this.width,
     required this.duration,
+    required this.lineColor,
     required this.hue,
+    int? guess,
     super.key,
-  });
+  }) : guess = guess ?? hue;
   final int step;
   final double width;
   final Duration duration;
-  final int hue;
+  final Color lineColor;
+  final int hue, guess;
 
   @override
   Widget build(BuildContext context) {
@@ -466,10 +470,16 @@ class MeasuringOrb extends StatelessWidget {
     rotating = step >= 4;
     showRightAngle = step >= 5;
     // print('step $step');
+    final Widget line = SuperContainer(
+      width: double.infinity,
+      height: 4,
+      color: lineColor,
+    );
 
     return Fader(
       visible,
-      child: SizedBox(
+      child: SuperContainer(
+        margin: const EdgeInsets.symmetric(vertical: 20),
         width: width + 2,
         height: width,
         child: Stack(
@@ -481,34 +491,23 @@ class MeasuringOrb extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(width / 2, width / 2 + 2, 0, 0),
                 child: Stack(
                   children: [
-                    const Divider(height: 0, color: Colors.black, thickness: 4),
-                    AnimatedRotation(
-                      turns: rotating ? -hue / 360 : 0,
-                      curve: curve,
-                      duration: duration,
-                      alignment: Alignment.bottomLeft,
-                      child: const Divider(
-                        height: 0,
-                        color: Colors.black,
-                        thickness: 4,
+                    Transform.translate(
+                      offset: const Offset(0, -2),
+                      child: line,
+                    ),
+                    Transform.translate(
+                      offset: const Offset(0, -2),
+                      child: AnimatedRotation(
+                        turns: rotating ? -hue / 360 : 0,
+                        curve: curve,
+                        duration: duration,
+                        alignment: Alignment.centerLeft,
+                        child: line,
                       ),
                     ),
                     Fader(
                       showRightAngle,
-                      child: Transform.translate(
-                        offset: const Offset(-4, 0),
-                        child: Transform.rotate(
-                          angle: -2 * pi * hue / 360,
-                          alignment: Alignment.topLeft,
-                          child: SuperContainer(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black, width: 4),
-                            ),
-                            width: 25,
-                            height: 25,
-                          ),
-                        ),
-                      ),
+                      child: const _RightAngleBox(size: 25, thiccness: 4),
                     ),
                   ],
                 ),
@@ -516,15 +515,18 @@ class MeasuringOrb extends StatelessWidget {
             ),
             Fader(
               linesVisible,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Transform.translate(
-                    offset: const Offset(-3, -37),
-                    child: const Icon(
-                      Icons.arrow_drop_down,
-                      size: 50,
-                      color: SuperColors.chartreuse,
-                    )),
+              child: Transform.rotate(
+                angle: -2 * pi * (guess - 90) / 360,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Transform.translate(
+                      offset: const Offset(0, -37),
+                      child: Icon(
+                        Icons.arrow_drop_down,
+                        size: 50,
+                        color: SuperColor.hue(guess),
+                      )),
+                ),
               ),
             ),
             Fader(
@@ -543,6 +545,25 @@ class MeasuringOrb extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _RightAngleBox extends StatelessWidget {
+  const _RightAngleBox({required this.size, required this.thiccness});
+  final double size, thiccness;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.translate(
+      offset: Offset(-thiccness / 2, -(size - thiccness / 2)),
+      child: SuperContainer(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black, width: thiccness),
+        ),
+        width: size,
+        height: size,
       ),
     );
   }

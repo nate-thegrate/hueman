@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class _Snippet extends StatelessWidget {

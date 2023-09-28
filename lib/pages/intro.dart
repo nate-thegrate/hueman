@@ -1,3 +1,4 @@
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/hue_typing_game.dart';
 import 'package:super_hueman/data/save_data.dart';
@@ -43,15 +44,15 @@ class TutorialScoreKeeper implements ScoreKeeper {
         3 => Pages.intro3,
         6 => Pages.intro6,
         12 => Pages.intro12,
-        _ => null,
-      }!;
+        _ => throw Error(),
+      };
 
   late final int totalRounds = switch (numColors) {
     3 => 10,
     6 => 15,
     12 => 20,
-    _ => null,
-  }!;
+    _ => throw Error(),
+  };
 }
 
 class IntroScoreKeeper implements ScoreKeeper {
@@ -104,21 +105,19 @@ class IntroScoreKeeper implements ScoreKeeper {
         3 => Pages.intro3,
         6 => Pages.intro6,
         12 => Pages.intro12,
-        _ => null,
-      }!;
+        _ => throw Error(),
+      };
 }
 
 class _IntroModeState extends State<IntroMode> {
   late final FocusNode? hueFocusNode;
-  late final TextEditingController? hueController;
+  late final TextEditingController? textFieldController;
   late final NumPadController? numPadController;
   String get val => numPadController!.displayValue;
   late int hue;
-  int get guess =>
-      externalKeyboard ? hueController!.value.toInt() : int.parse(numPadController!.displayValue);
+  int get guess => externalKeyboard ? textFieldController!.value.toInt() : numPadController!.hue;
 
-  final List<int> hueChoices = [];
-  final List<int> recentChoices = [];
+  late final HueQueue hueQueue;
 
   late final ScoreKeeper? scoreKeeper;
   void giveScore() {
@@ -130,9 +129,7 @@ class _IntroModeState extends State<IntroMode> {
 
   void generateHue() {
     numPadController?.clear();
-    hue = hueChoices.removeAt(rng.nextInt(hueChoices.length));
-    if (recentChoices.length >= widget.numColors ~/ 2) hueChoices.add(recentChoices.removeAt(0));
-    recentChoices.add(hue);
+    hue = hueQueue.queuedHue;
   }
 
   SuperColor get color => SuperColor.hue(hue);
@@ -143,11 +140,11 @@ class _IntroModeState extends State<IntroMode> {
     inverted = false;
     if (externalKeyboard) {
       hueFocusNode = FocusNode();
-      hueController = TextEditingController();
+      textFieldController = TextEditingController();
       numPadController = null;
     } else {
       hueFocusNode = null;
-      hueController = null;
+      textFieldController = null;
       numPadController = NumPadController(setState);
     }
 
@@ -159,7 +156,7 @@ class _IntroModeState extends State<IntroMode> {
       Tutorials.intro3 = true;
     }
     if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.start();
-    hueChoices.addAll([for (int hue = 0; hue < 360; hue += 360 ~/ widget.numColors) hue]);
+    hueQueue = HueQueue([for (int hue = 0; hue < 360; hue += 360 ~/ widget.numColors) hue]);
     generateHue();
     hueFocusNode?.requestFocus();
   }
@@ -174,13 +171,7 @@ class _IntroModeState extends State<IntroMode> {
         (hue == guess) ? 'Nice work!' : 'Incorrect…',
         guess,
         hue,
-        Column(
-          children: [
-            ColorNameBox(color),
-            MeasuringOrb(step: 4, width: 100, duration: const Duration(seconds: 3), hue: hue),
-            //TODO: finish
-          ],
-        ),
+        IntroGraphic(hue: hue, guess: guess),
       );
 
   @override
@@ -188,7 +179,7 @@ class _IntroModeState extends State<IntroMode> {
       ? KeyboardGame(
           color: color,
           hueFocusNode: hueFocusNode!,
-          hueController: hueController!,
+          hueController: textFieldController!,
           hueDialogBuilder: hueDialogBuilder,
           generateHue: () => setState(generateHue),
           scoreKeeper: scoreKeeper,
@@ -201,4 +192,41 @@ class _IntroModeState extends State<IntroMode> {
           scoreKeeper: scoreKeeper,
           generateHue: () => setState(generateHue),
         );
+}
+
+class IntroGraphic extends StatefulWidget {
+  const IntroGraphic({super.key, required this.hue, required this.guess});
+  final int hue, guess;
+
+  @override
+  State<IntroGraphic> createState() => _IntroGraphicState();
+}
+
+class _IntroGraphicState extends State<IntroGraphic> {
+  int step = 3;
+
+  late final SuperColor color = SuperColor.hue(widget.hue);
+
+  @override
+  void initState() {
+    super.initState();
+    quickly(() => setState(() => step++));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ColorNameBox(color),
+        MeasuringOrb(
+          step: step,
+          width: 100,
+          duration: oneSec,
+          lineColor: SuperColors.tintedDarkBackground,
+          hue: widget.hue,
+          guess: widget.guess,
+        ),
+      ],
+    );
+  }
 }

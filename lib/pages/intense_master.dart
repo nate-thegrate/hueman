@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/gestures.dart';
-import 'package:super_hueman/data/color_lists.dart';
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/photo_colors.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/pages/score.dart';
@@ -54,7 +54,7 @@ class IntenseScoreKeeper implements ScoreKeeper {
           children: [
             TextSpan(
                 text: 's\u1d1cᴘᴇʀ',
-                style: style.copyWith(color: epicColors[hue], fontWeight: FontWeight.w600)),
+                style: style.copyWith(color: SuperColors.epic[hue], fontWeight: FontWeight.w600)),
             const TextSpan(text: 'score ', style: style),
             TextSpan(
                 text: 'count:   $superCount',
@@ -332,7 +332,7 @@ class _IntenseModeState extends State<IntenseMode> {
           sk.rank += 10 - offBy;
       }
 
-      sk.rank = stayInRange(sk.rank, 0, 100);
+      sk.rank = sk.rank.stayInRange(0, 100);
 
       if (sk.rank == 100) sk.turnsAtRank100++;
       sk.round++;

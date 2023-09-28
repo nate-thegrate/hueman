@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_color.dart';
 
 class PhotoColors {
   const PhotoColors(this.filename, this.colors);

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:super_hueman/data/color_lists.dart';
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/data/save_data.dart';
@@ -102,14 +102,30 @@ class Target extends StatelessWidget {
 }
 
 class TenseMode extends StatefulWidget {
-  const TenseMode(this.mode, {super.key});
+  const TenseMode(this.mode, {super.key}) : volatile = mode == 'volatile';
   final String mode;
+  final bool volatile;
 
   @override
   State<TenseMode> createState() => _TenseModeState();
 }
 
 const expandDuration = Duration(milliseconds: 500);
+
+class _ButtonData {
+  _ButtonData(this.controller);
+  int hue = 0;
+  SuperColor color = SuperColors.black;
+  AnimationController controller;
+
+  void update(int hue, SuperColor color) {
+    this.hue = hue;
+    this.color = color;
+  }
+
+  @override
+  String toString() => 'ButtonData(hue: $hue, color: $color)';
+}
 
 class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   Map<String, int> tension = {for (final color in SuperColors.twelveHues) color.name: 15};
@@ -121,28 +137,19 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
 
   late final TenseScoreKeeper? scoreKeeper;
 
-  late int hue, offset, gap;
-  final List<int> hueChoices = [for (int i = 0; i < 360; i += 30) i];
-  final List<int> recentChoices = [];
+  late int hue;
+  final HueQueue hueQueue = HueQueue([for (int i = 0; i < 360; i += 30) i]);
   int? selectedHue;
 
-  late final List<AnimationController> controllers;
-  late final Ticker inverseHues;
   static const animationTime = 25;
   static const duration = Duration(milliseconds: animationTime);
 
+  late List<_ButtonData> buttonData = [
+    for (int i = 0; i < 4; i++) _ButtonData(AnimationController(duration: duration, vsync: this))
+  ];
+
   String get name => SuperColor.hue(hue).name;
-
-  Color get color => anyColor(hue);
-
-  double itsLerpinTime = rng.nextDouble();
-  double cosineShit(double x) => (1 - cos(pi * x)) / 2;
-  double get solidMix => cosineShit(cosineShit(itsLerpinTime));
-
-  Color anyColor(int hue) => {
-        'vibrant': SuperColor.hue(hue),
-        'mixed': Color.lerp(epicColors[hue], inverseColors[hue], solidMix)!,
-      }[widget.mode]!;
+  late SuperColor color;
 
   bool showDetails = false, showReaction = false;
   void tapReaction() {
@@ -153,15 +160,21 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   }
 
   void generateHue() {
-    hue = hueChoices.removeAt(rng.nextInt(hueChoices.length));
-    if (recentChoices.length >= 6) {
-      hueChoices.add(recentChoices.removeAt(0));
-    }
-    recentChoices.add(hue);
+    hue = hueQueue.queuedHue;
 
-    offset = rng.nextInt(4);
-    itsLerpinTime = rng.nextDouble();
-    gap = tension[name]!;
+    final int offset = rng.nextInt(4);
+    final int gap = tension[name]!;
+    final double? luminance =
+        widget.volatile ? rng.nextDouble().squared.stayInRange(.05, .6) : null;
+
+    color = SuperColor.hue(hue, luminance);
+    for (int j = 0; j < 4; j++) {
+      final buttonHue = (hue + gap * (j - offset)) % 360;
+      buttonData[j].update(
+        buttonHue,
+        buttonHue == hue ? color : SuperColor.hue(buttonHue, luminance),
+      );
+    }
   }
 
   @override
@@ -170,24 +183,15 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     inverted = true;
     scoreKeeper = casualMode
         ? null
-        : TenseScoreKeeper(
-            page: {
-            'vibrant': Pages.tenseVibrant,
-            'mixed': Pages.tenseMixed,
-          }[widget.mode]!);
-    inverseHues = inverseSetup(setState);
-    controllers = [
-      for (int i = 0; i < 4; i++) AnimationController(duration: duration, vsync: this)
-    ];
+        : TenseScoreKeeper(page: widget.volatile ? Pages.tenseVolatile : Pages.tenseVibrant);
     generateHue();
   }
 
   @override
   void dispose() {
-    for (final controller in controllers) {
-      controller.dispose();
+    for (final data in buttonData) {
+      data.controller.dispose();
     }
-    inverseHues.dispose();
     super.dispose();
   }
 
@@ -241,7 +245,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
           alignment: Alignment.topCenter,
           child: Column(children: [
             Target('hue', '$hue°'),
-            Target(widget.mode == 'vibrant' ? 'color' : 'color [mixed]', name),
+            Target(widget.volatile ? 'source_color' : 'color', name),
             Target('color_code', SuperColor(color.value - SuperColor.opaque).hexCode),
             Target('tension', tension[name]),
             casualMode ? empty : Target('round', scoreKeeper!.round),
@@ -250,101 +254,98 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
         ),
       );
 
-  Widget get button2by2 {
-    final List<Widget> children = [];
-    for (int i = 0; i < 4; i += 2) {
-      final List<Widget> rowChildren = [];
-      for (int j = i; j < i + 2; j++) {
-        final buttonHue = (hue + gap * (j - offset)) % 360;
-        rowChildren.add(_TenseButton(
-          targetHue: hue,
-          buttonHue: buttonHue,
-          selectedHue: selectedHue,
-          controller: controllers[j],
-          color: anyColor(buttonHue),
-          select: () async {
-            controllers[j].forward(from: 1);
-            await sleep(.1);
-            final bool correct = buttonHue == hue;
-            setState(() {
-              selectedHue = buttonHue;
-              showReaction = true;
-              tension[name] = stayInRange(tension[name]! + (correct ? -1 : 1), 1, 179);
-              scoreKeeper?.updateHealth(correct);
-            });
-            controllers[j].reverse();
-          },
-          showReaction: showReaction,
-        ));
-      }
-      children.add(Row(mainAxisSize: MainAxisSize.min, children: rowChildren));
-    }
+  void Function() _select(int j) => () async {
+        buttonData[j].controller.forward(from: 1);
+        await sleep(.1);
+        final bool correct = buttonData[j].hue == hue;
+        setState(() {
+          selectedHue = buttonData[j].hue;
+          showReaction = true;
+          tension[name] = (tension[name]! + (correct ? -1 : 1)).stayInRange(1, 90);
+          scoreKeeper?.updateHealth(correct);
+        });
+        buttonData[j].controller.reverse();
+      };
 
-    return AnimatedContainer(
-      duration: expandDuration,
-      curve: curve,
-      height: showDetails ? 0 : 420,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: children,
+  Widget get button2by2 => AnimatedContainer(
+        duration: expandDuration,
+        curve: curve,
+        height: showDetails ? 0 : 420,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (int i = 0; i < 4; i += 2)
+                Row(mainAxisSize: MainAxisSize.min, children: [
+                  for (int j = i; j < i + 2; j++)
+                    _TenseButton(
+                      targetHue: hue,
+                      buttonHue: buttonData[j].hue,
+                      selectedHue: selectedHue,
+                      controller: buttonData[j].controller,
+                      color: buttonData[j].color,
+                      select: _select(j),
+                      showReaction: showReaction,
+                    )
+                ])
+            ],
+          ),
         ),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData(useMaterial3: true, textTheme: const TextTheme(bodyMedium: style)),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Center(
+              child: Column(
+                children: [
+                  const Spacer(),
+                  const GoBack(),
+                  const Spacer(),
+                  target,
+                  const Spacer(),
+                  button2by2,
+                  const Spacer(flex: 2),
+                  TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.black12,
+                        foregroundColor: SuperColors.darkBackground,
+                      ),
+                      onPressed: () => setState(() => showDetails = !showDetails),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Text(
+                          showDetails ? '[hide details]' : '[show tension details]',
+                          style: const TextStyle(fontFamily: 'Consolas', fontSize: 16),
+                        ),
+                      )),
+                  const FixedSpacer(15),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 100),
+                    child: casualMode || showDetails
+                        ? const SizedBox(width: double.infinity)
+                        : scoreKeeper!.midRoundDisplay,
+                  ),
+                  const FixedSpacer(15),
+                ],
+              ),
+            ),
+            showReaction
+                ? Splendid(
+                    correct: selectedHue == hue,
+                    onTap: tapReaction,
+                  )
+                : empty,
+          ],
+        ),
+        backgroundColor: SuperColors.lightBackground,
       ),
     );
   }
-
-  @override
-  Widget build(BuildContext context) => Theme(
-        data: ThemeData(useMaterial3: true, textTheme: const TextTheme(bodyMedium: style)),
-        child: Scaffold(
-          body: Stack(
-            children: [
-              Center(
-                child: Column(
-                  children: [
-                    const Spacer(),
-                    const GoBack(),
-                    const Spacer(),
-                    target,
-                    const Spacer(),
-                    button2by2,
-                    const Spacer(flex: 2),
-                    TextButton(
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.black12,
-                          foregroundColor: SuperColors.darkBackground,
-                        ),
-                        onPressed: () => setState(() => showDetails = !showDetails),
-                        child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Text(
-                            showDetails ? '[hide details]' : '[show tension details]',
-                            style: const TextStyle(fontFamily: 'Consolas', fontSize: 16),
-                          ),
-                        )),
-                    const FixedSpacer(15),
-                    AnimatedSize(
-                      duration: const Duration(milliseconds: 100),
-                      child: casualMode || showDetails
-                          ? const SizedBox(width: double.infinity)
-                          : scoreKeeper!.midRoundDisplay,
-                    ),
-                    const FixedSpacer(15),
-                  ],
-                ),
-              ),
-              showReaction
-                  ? Splendid(
-                      correct: selectedHue == hue,
-                      onTap: tapReaction,
-                      gradientCycle: inverseHue,
-                    )
-                  : empty,
-            ],
-          ),
-          backgroundColor: SuperColors.lightBackground,
-        ),
-      );
 }
 
 class _TenseButton extends StatelessWidget {
@@ -426,16 +427,32 @@ class _TenseButton extends StatelessWidget {
   }
 }
 
-class Splendid extends StatelessWidget {
-  const Splendid(
-      {required this.correct, required this.onTap, required this.gradientCycle, super.key});
+class Splendid extends StatefulWidget {
+  const Splendid({required this.correct, required this.onTap, super.key});
   final void Function() onTap;
-  final num gradientCycle;
   final bool correct;
 
   @override
+  State<Splendid> createState() => _SplendidState();
+}
+
+class _SplendidState extends State<Splendid> {
+  late final Ticker hues;
+  @override
+  void initState() {
+    super.initState();
+    hues = inverseSetup(setState);
+  }
+
+  @override
+  void dispose() {
+    hues.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
+        onTap: widget.onTap,
         child: SuperContainer(
           color: Colors.transparent,
           alignment: const Alignment(0, 0.72),
@@ -443,7 +460,7 @@ class Splendid extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: correct
+                child: widget.correct
                     ? Text(
                         'Splendid!',
                         style: TextStyle(
@@ -457,19 +474,18 @@ class Splendid extends StatelessWidget {
                         ),
                       )
                     : Text(
-                        correct ? 'Splendid!' : '[incorrect]',
+                        widget.correct ? 'Splendid!' : '[incorrect]',
                         style: const TextStyle(
                           color: SuperColors.darkBackground,
                           fontFamily: 'Consolas',
                         ),
                       ),
               ),
-              correct
+              widget.correct
                   ? ShaderMask(
                       blendMode: BlendMode.srcIn,
                       shaderCallback: (bounds) => LinearGradient(colors: [
-                        for (int i = 0; i < 360; i += 10)
-                          SuperColor.hue((gradientCycle + i) % 360)
+                        for (int i = 0; i < 360; i += 10) SuperColor.hue((inverseHue + i) % 360)
                       ]).createShader(
                         Rect.fromLTWH(0, 0, bounds.width, bounds.height),
                       ),

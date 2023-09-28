@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:super_hueman/data/color_lists.dart';
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/pages/intro.dart';
 import 'package:super_hueman/data/structs.dart';
@@ -330,7 +330,7 @@ class _ColorOrbState extends State<_ColorOrb> {
 
   static const rainbow = BoxDecoration(
     shape: BoxShape.circle,
-    gradient: SweepGradient(colors: orbColors),
+    gradient: SweepGradient(colors: SuperColors.orb),
     boxShadow: [BoxShadow(blurRadius: 30)],
   );
 
@@ -870,7 +870,13 @@ class _Page6State extends State<_Page6> {
               child: const EasyText(step2),
             ),
             const Spacer(flex: 4),
-            MeasuringOrb(step: step, width: width, duration: duration, hue: 90),
+            MeasuringOrb(
+              step: step,
+              width: width,
+              duration: duration,
+              hue: 90,
+              lineColor: Colors.black,
+            ),
             const Spacer(flex: 4),
             _HueBox(step: step, width: width, hue: hue),
             const Spacer(flex: 4),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
@@ -28,7 +29,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
     epicHues = epicSetup(setState);
     if (inverted) {
       inverted = false;
-      sleep(0.01, then: () => setState(() => visible = false));
+      quickly(() => setState(() => visible = false));
       sleep(0.5, then: () => setState(() => darkBackground = null));
     } else {
       visible = false;
@@ -136,104 +137,107 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    children = <MenuPage, List<Widget>>{
-      MenuPage.main: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              'super',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
-              child: Text(
-                'HUE',
+    children = switch (menuPage) {
+      MenuPage.main => [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                'super',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  color: epicColor,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.headlineLarge,
               ),
-            ),
-            Text(
-              'man',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
-          ],
-        ),
-        const FixedSpacer(67),
-        SuperButton('intro',
-            color: epicColor, onPressed: () => setState(() => menuPage = MenuPage.introSelect)),
-        const FixedSpacer(33),
-        NavigateButton(Pages.intense, color: epicColor),
-        hueMaster
-            ? Padding(
-                padding: const EdgeInsets.only(top: 33),
-                child: NavigateButton(Pages.master, color: epicColor),
-              )
-            : empty,
-        const FixedSpacer(67),
-        NavigateButton(Pages.sandbox, color: epicColor),
-      ],
-      MenuPage.settings: [
-        MenuCheckbox(
-          'music',
-          value: music,
-          description: ('', ''),
-          toggle: (value) => setState(() => music = value),
-        ),
-        MenuCheckbox(
-          'sounds',
-          value: sounds,
-          description: ('', ''),
-          toggle: (value) => setState(() => sounds = value),
-        ),
-        const FixedSpacer(33),
-        MenuCheckbox(
-          'auto-submit',
-          value: autoSubmit,
-          description: ("'submit' when 3 digits are entered", "submit with the 'submit' button"),
-          toggle: (value) => setState(() => autoSubmit = value),
-        ),
-        const FixedSpacer(33),
-        MenuCheckbox(
-          'external keyboard',
-          value: externalKeyboard,
-          description: ('type on a keyboard', 'tap buttons on the screen'),
-          toggle: (value) => setState(() => externalKeyboard = value),
-        ),
-        const FixedSpacer(33),
-        ...hueMaster ? masterSettings : noviceSettings,
-      ],
-      MenuPage.introSelect: [
-        Text(
-          'intro',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headlineLarge,
-        ),
-        const FixedSpacer(55),
-        NavigateButton(Pages.intro3, color: epicColor),
-        const FixedSpacer(33),
-        NavigateButton(Pages.intro6, color: epicColor),
-        const FixedSpacer(33),
-        NavigateButton(Pages.intro12, color: epicColor),
-        casualMode
-            ? empty
-            : const Padding(
-                padding: EdgeInsets.only(top: 33),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
                 child: Text(
-                  "during 'intro' games,\nquick answers score higher!",
+                  'HUE',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white60),
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: epicColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-      ],
-    }[menuPage]!;
+              Text(
+                'man',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineLarge,
+              ),
+            ],
+          ),
+          const FixedSpacer(67),
+          SuperButton('intro',
+              color: epicColor, onPressed: () => setState(() => menuPage = MenuPage.introSelect)),
+          const FixedSpacer(33),
+          NavigateButton(Pages.intense, color: epicColor),
+          hueMaster
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 33),
+                  child: NavigateButton(Pages.master, color: epicColor),
+                )
+              : empty,
+          const FixedSpacer(67),
+          NavigateButton(Pages.sandbox, color: epicColor),
+        ],
+      MenuPage.settings => [
+          MenuCheckbox(
+            'music',
+            value: music,
+            description: ('', ''),
+            toggle: (value) => setState(() => music = value),
+          ),
+          MenuCheckbox(
+            'sounds',
+            value: sounds,
+            description: ('', ''),
+            toggle: (value) => setState(() => sounds = value),
+          ),
+          const FixedSpacer(33),
+          MenuCheckbox(
+            'auto-submit',
+            value: autoSubmit,
+            description: (
+              "'submit' when 3 digits are entered",
+              "submit with the 'submit' button"
+            ),
+            toggle: (value) => setState(() => autoSubmit = value),
+          ),
+          const FixedSpacer(33),
+          MenuCheckbox(
+            'external keyboard',
+            value: externalKeyboard,
+            description: ('type on a keyboard', 'tap buttons on the screen'),
+            toggle: (value) => setState(() => externalKeyboard = value),
+          ),
+          const FixedSpacer(33),
+          ...hueMaster ? masterSettings : noviceSettings,
+        ],
+      MenuPage.introSelect => [
+          Text(
+            'intro',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headlineLarge,
+          ),
+          const FixedSpacer(55),
+          NavigateButton(Pages.intro3, color: epicColor),
+          const FixedSpacer(33),
+          NavigateButton(Pages.intro6, color: epicColor),
+          const FixedSpacer(33),
+          NavigateButton(Pages.intro12, color: epicColor),
+          casualMode
+              ? empty
+              : const Padding(
+                  padding: EdgeInsets.only(top: 33),
+                  child: Text(
+                    "during 'intro' games,\nquick answers score higher!",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white60),
+                  ),
+                ),
+        ],
+    };
 
     return Scaffold(
       body: Stack(

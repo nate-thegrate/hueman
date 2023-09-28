@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
 
@@ -107,15 +108,15 @@ class _CMYKSlider extends StatelessWidget {
       'magenta' => SuperColor.rgb(0xFF, byte, 0xFF),
       'yellow' => SuperColor.rgb(0xFF, 0xFF, byte),
       'key' => SuperColor.rgb(byte, byte, byte),
-      _ => null,
-    }!;
+      _ => throw Error(),
+    };
     final bool enabled = switch (name) {
       'cyan' => (_magenta == 0 || _yellow == 0) && _black < 0xFF,
       'magenta' => (_cyan == 0 || _yellow == 0) && _black < 0xFF,
       'yellow' => (_cyan == 0 || _magenta == 0) && _black < 0xFF,
       'key' => true,
-      _ => null,
-    }!;
+      _ => throw Error(),
+    };
     final bool horizontal = context.squished;
 
     return Flex(
@@ -503,58 +504,60 @@ class _InverseSandboxState extends State<InverseSandbox> {
         updateRGB();
       });
 
-  @override
-  Widget build(BuildContext context) => Theme(
-        data: ThemeData(useMaterial3: true),
-        child: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Spacer(),
-                const GoBack(),
-                const Spacer(),
-                Text(_colorPicker.desc, style: titleStyle),
-                const Spacer(),
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 100),
-                  curve: Curves.easeInOutCubic,
-                  child: {
-                    _ColorPicker.cmyk: _CMYScreen(update: updateCMYKval),
-                    _ColorPicker.hsl: const _HSLScreen(),
-                    _ColorPicker.select: _ColorWheel(
-                      (rgb) => setState(() {
-                        _r = rgb.red;
-                        _g = rgb.green;
-                        _b = rgb.blue;
+  void updateFromWheel(rgb) => setState(() {
+        _r = rgb.red;
+        _g = rgb.green;
+        _b = rgb.blue;
 
-                        final hsl = HSLColor.fromColor(rgb);
-                        _h = hsl.hue;
-                        _s = hsl.saturation;
-                        _l = hsl.lightness;
-                      }),
-                    ),
-                  }[_colorPicker]!,
-                ),
-                const Spacer(flex: 2),
-                ColorLabel('hue', hue),
-                ColorLabel('color name', _color.rounded.name, textStyle: colorNameStyle),
-                ColorLabel.colorCode('color code', _color.hexCode,
-                    updateColorCode: updateColorCode),
-                const Spacer(flex: 2),
-              ],
-            ),
+        final hsl = HSLColor.fromColor(rgb);
+        _h = hsl.hue;
+        _s = hsl.saturation;
+        _l = hsl.lightness;
+      });
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData(useMaterial3: true),
+      child: Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Spacer(),
+              const GoBack(),
+              const Spacer(),
+              Text(_colorPicker.desc, style: titleStyle),
+              const Spacer(),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 100),
+                curve: Curves.easeInOutCubic,
+                child: switch (_colorPicker) {
+                  _ColorPicker.cmyk => _CMYScreen(update: updateCMYKval),
+                  _ColorPicker.hsl => const _HSLScreen(),
+                  _ColorPicker.select => _ColorWheel(updateFromWheel),
+                },
+              ),
+              const Spacer(flex: 2),
+              ColorLabel('hue', hue),
+              ColorLabel('color name', _color.rounded.name, textStyle: colorNameStyle),
+              ColorLabel.colorCode('color code', _color.hexCode,
+                  updateColorCode: updateColorCode),
+              const Spacer(flex: 2),
+            ],
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            elevation: 0,
-            type: BottomNavigationBarType.shifting,
-            items: _ColorPicker.navBarItems,
-            currentIndex: _colorPicker.index,
-            selectedItemColor: _color,
-            unselectedItemColor: _color.withAlpha(128),
-            onTap: colorPickerPicker,
-          ),
-          backgroundColor: SuperColors.lightBackground,
         ),
-      );
+        bottomNavigationBar: BottomNavigationBar(
+          elevation: 0,
+          type: BottomNavigationBarType.shifting,
+          items: _ColorPicker.navBarItems,
+          currentIndex: _colorPicker.index,
+          selectedItemColor: _color,
+          unselectedItemColor: _color.withAlpha(128),
+          onTap: colorPickerPicker,
+        ),
+        backgroundColor: SuperColors.lightBackground,
+      ),
+    );
+  }
 }
