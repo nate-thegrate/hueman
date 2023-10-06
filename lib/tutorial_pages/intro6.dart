@@ -20,8 +20,9 @@ class _Intro6TutorialState extends State<Intro6Tutorial> {
     _Page3(nextPage),
     _Page4(nextPage),
     _Page5(nextPage),
+    _Page6(nextPage),
   ];
-  int page = 1;
+  int page = 2;
 
   Duration duration = oneSec;
 
@@ -114,6 +115,15 @@ class _Page2 extends StatefulWidget {
 }
 
 class _Page2State extends State<_Page2> with DelayedPress {
+  bool showPrinter = false, showButton = false;
+
+  @override
+  void initState() {
+    super.initState();
+    sleep(3.25, then: () => setState(() => showPrinter = true));
+    sleep(4.5, then: () => setState(() => showButton = true));
+  }
+
   static const colorText = Text.rich(
     textAlign: TextAlign.center,
     TextSpan(
@@ -138,12 +148,68 @@ class _Page2State extends State<_Page2> with DelayedPress {
     ),
   );
 
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Spacer(flex: 2),
+        colorText,
+        const Spacer(),
+        Fader(
+          showPrinter,
+          child: const EasyText("That's what printers use!"),
+        ),
+        const Spacer(),
+        Fader(
+          showPrinter,
+          child: SizedBox(
+            width: context.screenWidth * .8,
+            height: context.screenWidth * .8,
+            child: const Image(image: AssetImage('assets/ink_cartridge.png')),
+          ),
+        ),
+        const Spacer(flex: 2),
+        Fader(showButton, child: ContinueButton(onPressed: delayed(widget.nextPage))),
+        const Spacer(),
+      ],
+    );
+  }
+}
+
+class _Page3 extends StatefulWidget {
+  const _Page3(this.nextPage);
+  final void Function() nextPage;
+
+  @override
+  State<_Page3> createState() => _Page3State();
+}
+
+class _Page3State extends State<_Page3> with DelayedPress {
+  bool showPrinter = false, showQuestion = false, printing = false, showButton = false;
+
+  void animate() async {
+    await sleep(2);
+    setState(() => showPrinter = true);
+    await sleep(4);
+    setState(() => showQuestion = true);
+    await sleep(4);
+    setState(() => printing = true);
+    await sleep(2.5);
+    setState(() => showButton = true);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    animate();
+  }
+
   static const shouldntPrintersUse = Text.rich(
     textAlign: TextAlign.center,
     style: TextStyle(fontSize: 24),
     TextSpan(
       children: [
-        TextSpan(text: "That's kinda weird though…\nshouldn't printers use "),
+        TextSpan(text: "shouldn't printers use "),
         TextSpan(
           text: 'red',
           style: TextStyle(color: SuperColors.red, fontWeight: FontWeight.bold),
@@ -167,68 +233,139 @@ class _Page2State extends State<_Page2> with DelayedPress {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Spacer(flex: 4),
-        colorText,
+        const Spacer(flex: 2),
+        const EasyText("That's kinda weird though…"),
         const Spacer(),
-        const Text(
-          'Those are the colors that printers use!',
-          style: TextStyle(fontSize: 20),
+        Fader(showPrinter, child: _PrinterAnimation(printing)),
+        const Spacer(),
+        Fader(showPrinter, child: shouldntPrintersUse),
+        const Spacer(flex: 2),
+        Fader(
+          showQuestion,
+          child: const EasyText('How do you print red, a primary color,\nwithout any red ink?'),
         ),
         const Spacer(),
-        SizedBox(
-          width: context.screenWidth * .8,
-          height: context.screenWidth * .8,
-          child: const Image(image: AssetImage('assets/ink_cartridge.png')),
+        Fader(
+          showButton,
+          child: OutlinedButton(
+              onPressed: delayed(widget.nextPage),
+              child: const Padding(
+                padding: EdgeInsets.only(top: 10, bottom: 13),
+                child: Text(
+                  'wow, good question!',
+                  style: TextStyle(fontSize: 18),
+                ),
+              )),
         ),
-        const Spacer(flex: 2),
-        shouldntPrintersUse,
-        const Spacer(flex: 2),
-        OutlinedButton(
-            onPressed: delayed(widget.nextPage),
-            child: const Padding(
-              padding: EdgeInsets.only(top: 10, bottom: 13),
-              child: Text(
-                'wow, good question!',
-                style: TextStyle(fontSize: 18),
-              ),
-            )),
-        const Spacer(flex: 2),
+        const Spacer(),
       ],
     );
   }
 }
 
-class _Page3 extends StatefulWidget {
-  const _Page3(this.nextPage);
+class _PrinterAnimation extends StatelessWidget {
+  const _PrinterAnimation(this.printing);
+  final bool printing;
+
+  static const _curve = Curves.easeOutQuad;
+  static const _duration = Duration(milliseconds: 2000);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        AnimatedContainer(
+          duration: _duration,
+          curve: _curve,
+          margin: const EdgeInsets.only(top: 167),
+          width: 150,
+          height: printing ? 75 : 0,
+          color: SuperColors.red,
+        ),
+        const Icon(Icons.print, size: 300),
+        AnimatedContainer(
+          duration: _duration,
+          curve: _curve,
+          margin: const EdgeInsets.only(top: 33),
+          width: 300,
+          height: printing ? 56 : 0,
+          color: SuperColors.darkBackground,
+        ),
+        const Padding(
+          padding: EdgeInsets.only(top: 175),
+          child: Text(
+            '?',
+            style: TextStyle(
+              color: SuperColors.darkBackground,
+              fontSize: 42,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Page4 extends StatefulWidget {
+  const _Page4(this.nextPage);
   final void Function() nextPage;
 
   @override
-  State<_Page3> createState() => _Page3State();
+  State<_Page4> createState() => _Page4State();
 }
 
-class _Page3State extends State<_Page3> {
+class _Page4State extends State<_Page4> {
+  bool showThanks = true;
+
+  void animate() async {
+    await sleep(3);
+    setState(() => showThanks = false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    animate();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Stack(
+      alignment: Alignment.center,
       children: [
-        Spacer(),
-        Text('Thanks!'),
-        FixedSpacer(10),
-        Text("Here's the answer:"),
-        Spacer(),
-        Text('A screen starts as black, and then adds red/green/blue light.'),
-        Spacer(),
-        _AddSubtract(color: SuperColors.red),
-        Spacer(),
-        Text(
-          'But printers work the opposite way—\n'
-          'they start with a white piece of paper,\n'
-          'and then add pigments that absorb red/green/blue wavelengths.',
-          textAlign: TextAlign.center,
+        const Column(
+          children: [
+            Spacer(),
+            EasyText('A screen starts as black, and then adds red/green/blue light.'),
+            Spacer(),
+            _AddSubtract(color: SuperColors.red),
+            Spacer(),
+            EasyText('But printers work the opposite way.\n\n'
+                'They start with a white piece of paper,\n'
+                'and then add pigments that absorb\n'
+                'red/green/blue wavelengths.'),
+            Spacer(),
+            _AddSubtract(color: SuperColors.cyan, subtract: SuperColors.red),
+            Spacer(),
+          ],
         ),
-        Spacer(),
-        _AddSubtract(color: SuperColors.cyan, subtract: SuperColors.red),
-        Spacer(),
+        Fader(
+          showThanks,
+          child: const SuperContainer(
+            color: SuperColors.darkBackground,
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                EasyText('Thanks!'),
+                FixedSpacer(30),
+                EasyText("Here's the answer…"),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -288,23 +425,6 @@ class _AddSubtract extends StatelessWidget {
   }
 }
 
-class _Page4 extends StatefulWidget {
-  const _Page4(this.nextPage);
-  final void Function() nextPage;
-
-  @override
-  State<_Page4> createState() => _Page4State();
-}
-
-class _Page4State extends State<_Page4> {
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [],
-    );
-  }
-}
-
 class _Page5 extends StatefulWidget {
   const _Page5(this.nextPage);
   final void Function() nextPage;
@@ -314,6 +434,23 @@ class _Page5 extends StatefulWidget {
 }
 
 class _Page5State extends State<_Page5> {
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [],
+    );
+  }
+}
+
+class _Page6 extends StatefulWidget {
+  const _Page6(this.nextPage);
+  final void Function() nextPage;
+
+  @override
+  State<_Page6> createState() => _Page6State();
+}
+
+class _Page6State extends State<_Page6> {
   @override
   Widget build(BuildContext context) {
     return const Column(
