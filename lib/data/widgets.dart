@@ -423,6 +423,30 @@ class EasyText extends StatelessWidget {
       );
 }
 
+class EasyRichText extends StatelessWidget {
+  const EasyRichText(this.children, {super.key});
+  final List<TextSpan> children;
+
+  @override
+  Widget build(BuildContext context) => Text.rich(
+        TextSpan(children: children),
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 24),
+      );
+}
+
+class ColorTextSpan extends TextSpan {
+  const ColorTextSpan(this.color, {this.fontWeight = FontWeight.w600});
+  final SuperColor color;
+  final FontWeight fontWeight;
+
+  @override
+  String get text => color.name;
+
+  @override
+  TextStyle get style => TextStyle(color: color, fontWeight: FontWeight.w600);
+}
+
 class Rive extends StatelessWidget {
   const Rive({super.key, required this.name, required this.controllers, this.artboard});
   final String name;

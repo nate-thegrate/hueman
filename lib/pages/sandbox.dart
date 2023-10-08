@@ -141,7 +141,7 @@ enum _ColorPicker {
 
 class _ColorSelection extends StatelessWidget {
   const _ColorSelection({required this.updateColor});
-  final void Function(Color, HSVColor) updateColor;
+  final void Function(Color rgb, HSVColor hsv) updateColor;
 
   @override
   Widget build(BuildContext context) => SuperContainer(
@@ -293,6 +293,7 @@ class _SandboxState extends State<Sandbox> {
                     Padding(
                       padding: const EdgeInsets.all(20),
                       child: Stack(
+                        // TODO: add touch recognition
                         children: [
                           SuperContainer(
                             margin: const EdgeInsets.all(0.5),

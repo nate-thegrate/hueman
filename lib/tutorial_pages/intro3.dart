@@ -24,6 +24,7 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
     _Page4(nextPage),
     _Page5(nextPage),
     _Page6(nextPage),
+    _Page7(nextPage),
     const _FinalPage(),
   ];
   int page = 1;
@@ -32,7 +33,7 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
 
   void nextPage() async {
     setState(() => duration = halfSec);
-    if (page == 5) setState(() => backgroundColor = Colors.black);
+    if (page == 6) setState(() => backgroundColor = Colors.black);
     setState(() => visible = false);
     if (page != 2) await sleep(1);
     setState(() {
@@ -71,7 +72,7 @@ class _Page1 extends StatefulWidget {
   State<_Page1> createState() => _Page1State();
 }
 
-class _Page1State extends State<_Page1> {
+class _Page1State extends SafeState<_Page1> {
   bool visible = false, buttonVisible = false;
 
   @override
@@ -89,18 +90,15 @@ class _Page1State extends State<_Page1> {
         const EasyText(
           'Humans have color vision\n'
           'because the retina has 3 types of cone cells.',
-          size: 32,
+          size: 26,
         ),
         const Spacer(),
         Fader(
           visible,
-          child: Image.asset(
-            'assets/retina_diagram.png',
-            width: 500,
-          ),
+          child: Image.asset('assets/retina_diagram.png', width: 500),
         ),
         const Spacer(flex: 2),
-        Fader(buttonVisible, child: ContinueButton(onPressed: visible ? widget.nextPage : null)),
+        Fader(buttonVisible, child: ContinueButton(onPressed: widget.nextPage)),
         const Spacer(),
       ],
     );
@@ -115,52 +113,7 @@ class _Page2 extends StatefulWidget {
   State<_Page2> createState() => _Page2State();
 }
 
-class _RGBAnimation extends StatelessWidget {
-  const _RGBAnimation(
-    this.color, {
-    required this.colorVisible,
-    required this.textVisible,
-    required this.duration,
-    required this.margin,
-  });
-  final Duration duration;
-  final bool colorVisible, textVisible;
-  final SuperColor color;
-  final double margin;
-
-  @override
-  Widget build(BuildContext context) => Expanded(
-        child: Fader(
-          colorVisible,
-          child: AnimatedContainer(
-            duration: duration,
-            curve: curve,
-            color: color,
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(left: margin),
-            child: Fader(
-              textVisible,
-              duration: duration,
-              curve: curve,
-              child: Text(
-                color.name,
-                style: const TextStyle(
-                  color: SuperColors.darkBackground,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w600,
-                  shadows: [
-                    Shadow(color: Colors.white12, blurRadius: 1),
-                    Shadow(color: Colors.white12, blurRadius: 4),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-}
-
-class _Page2State extends State<_Page2> {
+class _Page2State extends SafeState<_Page2> {
   bool visible = false, buttonVisible = false;
 
   final Map<SuperColor, bool> colorVisible = {
@@ -208,90 +161,138 @@ class _Page2State extends State<_Page2> {
   @override
   Widget build(BuildContext context) {
     final double width = expanded ? 0 : context.screenWidth / 25;
-    return Column(
+    return Stack(
       children: [
-        const Spacer(flex: 3),
-        AnimatedSize(
-          duration: duration,
-          curve: curve,
-          child: SizedBox(
-            height: expanded ? 0 : null,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Fader(
-                    visible || !buttonVisible,
-                    duration: duration,
-                    child: const EasyText(
-                      'These 3 cone cell types can be stimulated separately\n'
-                      'using 3 different light frequencies.',
+        Column(
+          children: [
+            const Spacer(flex: 3),
+            AnimatedSize(
+              duration: duration,
+              curve: curve,
+              child: SizedBox(
+                height: expanded ? 0 : null,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Fader(
+                        visible || !buttonVisible,
+                        duration: duration,
+                        child: const EasyText(
+                          'These 3 cone cell types can be stimulated separately\n'
+                          'using 3 different light frequencies.',
+                        ),
+                      ),
+                      const FixedSpacer(48),
+                      Fader(
+                        visible,
+                        duration: duration,
+                        child: const EasyText('We perceive them as 3 colors.'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const Spacer(),
+            AnimatedPadding(
+              duration: squeezeDuration,
+              curve: squeezeCurve,
+              padding: squeezed
+                  ? EdgeInsets.symmetric(horizontal: context.screenWidth / 2)
+                  : EdgeInsets.zero,
+              child: AnimatedContainer(
+                duration: squeezeDuration,
+                curve: Curves.easeInQuad,
+                height: expanded ? context.screenHeight : 300,
+                child: Stack(
+                  children: [
+                    Row(
+                      children: [
+                        for (final color in SuperColors.primaries)
+                          _RGBAnimation(
+                            color,
+                            colorVisible: colorVisible[color]!,
+                            textVisible: visible,
+                            duration: duration,
+                            margin: width,
+                          ),
+                        AnimatedSize(
+                          duration: duration,
+                          curve: curve,
+                          child: SizedBox(width: width),
+                        ),
+                      ],
                     ),
-                  ),
-                  const FixedSpacer(48),
-                  Fader(
-                    visible,
-                    duration: duration,
-                    child: const EasyText('We perceive them as 3 colors.'),
-                  ),
-                ],
+                    Center(
+                      child: AnimatedContainer(
+                        duration: squeezeDuration,
+                        curve: squeezeCurve,
+                        color: squeezed ? Colors.white : const Color(0x00FFFFFF),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Spacer(flex: 4),
+          ],
+        ),
+        Align(
+          alignment: const Alignment(0, .75),
+          child: Fader(
+            visible && buttonVisible,
+            child: ContinueButton(onPressed: endTransition),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RGBAnimation extends StatelessWidget {
+  const _RGBAnimation(
+    this.color, {
+    required this.colorVisible,
+    required this.textVisible,
+    required this.duration,
+    required this.margin,
+  });
+  final Duration duration;
+  final bool colorVisible, textVisible;
+  final SuperColor color;
+  final double margin;
+
+  @override
+  Widget build(BuildContext context) => Expanded(
+        child: Fader(
+          colorVisible,
+          child: AnimatedContainer(
+            duration: duration,
+            curve: curve,
+            color: color,
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(left: margin),
+            child: Fader(
+              textVisible,
+              duration: duration,
+              curve: curve,
+              child: Text(
+                color.name,
+                style: const TextStyle(
+                  color: SuperColors.darkBackground,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w600,
+                  shadows: [
+                    Shadow(color: Colors.white12, blurRadius: 1),
+                    Shadow(color: Colors.white12, blurRadius: 4),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-        const Spacer(),
-        AnimatedPadding(
-          duration: squeezeDuration,
-          curve: squeezeCurve,
-          padding: squeezed
-              ? EdgeInsets.symmetric(horizontal: context.screenWidth / 2)
-              : EdgeInsets.zero,
-          child: AnimatedContainer(
-            duration: squeezeDuration,
-            curve: Curves.easeInQuad,
-            height: expanded ? context.screenHeight : 300,
-            child: Stack(
-              children: [
-                Row(
-                  children: [
-                    for (final color in SuperColors.primaries)
-                      _RGBAnimation(
-                        color,
-                        colorVisible: colorVisible[color]!,
-                        textVisible: visible,
-                        duration: duration,
-                        margin: width,
-                      ),
-                    AnimatedSize(
-                      duration: duration,
-                      curve: curve,
-                      child: SizedBox(width: width),
-                    ),
-                  ],
-                ),
-                Center(
-                  child: AnimatedContainer(
-                    duration: squeezeDuration,
-                    curve: squeezeCurve,
-                    color: squeezed ? Colors.white : const Color(0x00FFFFFF),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const Spacer(flex: 2),
-        Fader(
-          visible && buttonVisible,
-          child: AnimatedSize(
-            duration: const Duration(milliseconds: 300),
-            child: squeezed ? empty : ContinueButton(onPressed: endTransition),
-          ),
-        ),
-        const Spacer(flex: 2),
-      ],
-    );
-  }
+      );
 }
 
 class _Page3 extends StatefulWidget {
@@ -300,6 +301,69 @@ class _Page3 extends StatefulWidget {
 
   @override
   State<_Page3> createState() => _Page3State();
+}
+
+class _Page3State extends SafeState<_Page3> {
+  bool visible = false, eachPixelVisible = false, unleashTheOrb = false, buttonVisible = false;
+
+  void animate() async {
+    final List<(double, void Function())> animation = [
+      (5, () => eachPixelVisible = true),
+      (8, () => visible = true),
+      (5, () => unleashTheOrb = true),
+      (3, () => buttonVisible = true),
+    ];
+
+    for (final (sleepFor, action) in animation) {
+      await sleep(sleepFor);
+      setState(action);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    animate();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Spacer(flex: 3),
+        const EasyText('This screen uses the standard RGB color space.'),
+        const FixedSpacer(25),
+        Fader(
+          eachPixelVisible,
+          child: const EasyText(
+            'Each pixel has a number between 0 and 255\n'
+            'to represent how bright each color channel should be.',
+          ),
+        ),
+        const Spacer(flex: 2),
+        Fader(
+          visible,
+          child: const EasyRichText([
+            TextSpan(text: 'With 256 different levels for '),
+            ColorTextSpan(SuperColors.red),
+            TextSpan(text: ', '),
+            ColorTextSpan(SuperColors.green),
+            TextSpan(text: ', and '),
+            ColorTextSpan(SuperColors.visibleBlue),
+            TextSpan(text: ',\nthis device is able to display'),
+          ]),
+        ),
+        const Spacer(),
+        SizedBox(height: 415, child: unleashTheOrb ? const _ColorOrb() : empty),
+        const Spacer(flex: 3),
+        Fader(
+          buttonVisible,
+          child: ContinueButton(onPressed: widget.nextPage),
+        ),
+        const Spacer(flex: 2),
+      ],
+    );
+  }
 }
 
 class _ColorOrb extends StatefulWidget {
@@ -397,19 +461,26 @@ class _OrbCenter extends StatelessWidget {
       );
 }
 
-class _Page3State extends State<_Page3> {
-  bool visible = false, eachPixelVisible = false, unleashTheOrb = false, buttonVisible = false;
+class _Page4 extends StatefulWidget {
+  const _Page4(this.nextPage);
+  final void Function() nextPage;
+
+  @override
+  State<_Page4> createState() => _Page4State();
+}
+
+class _Page4State extends SafeState<_Page4> {
+  bool showScreenshot = false, sometimesUgotta = false, showButton = false;
 
   void animate() async {
-    final List<(double, void Function())> animation = [
-      (5, () => eachPixelVisible = true),
-      (8, () => visible = true),
-      (5, () => unleashTheOrb = true),
-      (3, () => buttonVisible = true),
+    final List<VoidCallback> steps = [
+      () => showScreenshot = true,
+      () => sometimesUgotta = true,
+      () => showButton = true,
     ];
 
-    for (final (sleepFor, action) in animation) {
-      await sleep(sleepFor);
+    for (final action in steps) {
+      await sleep(3);
       setState(action);
     }
   }
@@ -424,49 +495,46 @@ class _Page3State extends State<_Page3> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Spacer(flex: 3),
-        const EasyText('This screen uses the standard RGB color space.'),
-        const FixedSpacer(25),
+        const Spacer(flex: 4),
+        const EasyText("Whether you're making wedding invitations"),
+        const Spacer(),
+        Image.asset('assets/wedding_invite.png', width: context.screenWidth * 2 / 3),
+        const Spacer(flex: 4),
         Fader(
-          eachPixelVisible,
-          child: const EasyText(
-            'Each pixel has a number between 0 and 255\n'
-            'to represent how bright each color channel should be.',
-          ),
-        ),
-        const Spacer(flex: 2),
-        Fader(
-          visible,
-          child: const EasyText(
-            'With 256 different levels for red, green, and blue,\n'
-            'this device is able to display',
-          ),
+          showScreenshot,
+          child: const EasyRichText([
+            TextSpan(text: 'or making '),
+            TextSpan(
+              text: 'code',
+              style: TextStyle(fontFamily: 'consolas', color: SuperColor(0x00FFEE)),
+            ),
+            TextSpan(text: ' for a video game,'),
+          ]),
         ),
         const Spacer(),
-        SizedBox(
-          height: 415,
-          child: unleashTheOrb ? const _ColorOrb() : empty,
+        Fader(showScreenshot, child: Image.asset('assets/picture_of_itself.png')),
+        const Spacer(flex: 4),
+        Fader(
+          sometimesUgotta,
+          child: const EasyText('Sometimes you gotta tell a computer what color you want.'),
         ),
         const Spacer(flex: 3),
-        Fader(
-          buttonVisible,
-          child: ContinueButton(onPressed: buttonVisible ? widget.nextPage : null),
-        ),
-        const Spacer(flex: 2),
+        Fader(showButton, child: ContinueButton(onPressed: widget.nextPage)),
+        const Spacer(flex: 3),
       ],
     );
   }
 }
 
-class _Page4 extends StatefulWidget {
-  const _Page4(this.nextPage);
+class _Page5 extends StatefulWidget {
+  const _Page5(this.nextPage);
   final void Function() nextPage;
 
   @override
-  State<_Page4> createState() => _Page4State();
+  State<_Page5> createState() => _Page5State();
 }
 
-class _Page4State extends State<_Page4> {
+class _Page5State extends SafeState<_Page5> {
   int textProgress = 0;
 
   void animate() async {
@@ -484,14 +552,27 @@ class _Page4State extends State<_Page4> {
     animate();
   }
 
-  static const List<(String line, double timeToRead)> text = [
-    ("Let's take green", 2.5),
-    ('and add a bit of red.', 2),
-    ('', 2),
-    ('How would you describe that color?', 2),
-    ('', 2),
-    ('You could call it by its RGB value,', 3.5),
-    ('or just make up a name for it.', 1.5),
+  static const List<(Widget line, double timeToRead)> text = [
+    (
+      EasyRichText([
+        TextSpan(text: "Let's take "),
+        ColorTextSpan(SuperColors.green),
+      ]),
+      2.5
+    ),
+    (
+      EasyRichText([
+        TextSpan(text: 'and make it just a little bit '),
+        ColorTextSpan(SuperColors.yellow),
+        TextSpan(text: '.'),
+      ]),
+      2
+    ),
+    (Spacer(), 2),
+    (EasyText('How would you describe that color?'), 2),
+    (Spacer(), 2),
+    (EasyText('You could call it by its RGB value,'), 3.5),
+    (EasyText('or just make up a name for it.'), 1.5),
   ];
 
   static const List<(String, SuperColor)> colorCode = [
@@ -555,12 +636,10 @@ class _Page4State extends State<_Page4> {
       children: [
         const Spacer(flex: 2),
         for (int i = 0; i < text.length; i++)
-          text[i].$1.isEmpty
-              ? const Spacer()
-              : Fader(
-                  i <= textProgress,
-                  child: EasyText(text[i].$1),
-                ),
+          switch (text[i].$1) {
+            final Spacer s => s,
+            _ => Fader(i <= textProgress, child: text[i].$1),
+          },
         const Spacer(),
         Expanded(
             flex: 3,
@@ -585,7 +664,7 @@ class _Page4State extends State<_Page4> {
                             width: textProgress > 2 ? width : width / 2,
                             decoration: const BoxDecoration(
                               backgroundBlendMode: BlendMode.screen,
-                              color: Color(0x80FF0000),
+                              color: Color(0x80FFFF00),
                             ),
                           ),
                         ),
@@ -606,7 +685,7 @@ class _Page4State extends State<_Page4> {
         const Spacer(),
         Fader(
           textProgress > 7,
-          child: ContinueButton(onPressed: textProgress > 7 ? widget.nextPage : null),
+          child: ContinueButton(onPressed: widget.nextPage),
         ),
         const Spacer(),
       ],
@@ -614,17 +693,17 @@ class _Page4State extends State<_Page4> {
   }
 }
 
-class _Page5 extends StatefulWidget {
-  const _Page5(this.nextPage);
+class _Page6 extends StatefulWidget {
+  const _Page6(this.nextPage);
   final void Function() nextPage;
 
   @override
-  State<_Page5> createState() => _Page5State();
+  State<_Page6> createState() => _Page6State();
 }
 
-class _Page5State extends State<_Page5> with DelayedPress {
+class _Page6State extends SafeState<_Page6> with DelayedPress {
   bool wishVisible = false, tooBadVisible = false, justKidding = false, buttonVisible = false;
-  late final Ticker epicHues;
+  late final Ticker? epicHues;
 
   @override
   void initState() {
@@ -634,7 +713,7 @@ class _Page5State extends State<_Page5> with DelayedPress {
 
   @override
   void dispose() {
-    epicHues.dispose();
+    epicHues?.dispose();
     super.dispose();
   }
 
@@ -661,8 +740,10 @@ class _Page5State extends State<_Page5> with DelayedPress {
     });
 
     await sleep(0.5);
-    epicHues = epicSetup(setState);
-    epicHue = 90;
+    if (mounted) {
+      epicHues = epicSetup(setState);
+      epicHue = 90;
+    }
   }
 
   static const hsvWidth = 9, hsvHeight = 5;
@@ -791,15 +872,15 @@ class _JustKidding extends StatelessWidget {
   }
 }
 
-class _Page6 extends StatefulWidget {
-  const _Page6(this.nextPage);
+class _Page7 extends StatefulWidget {
+  const _Page7(this.nextPage);
   final void Function() nextPage;
 
   @override
-  State<_Page6> createState() => _Page6State();
+  State<_Page7> createState() => _Page7State();
 }
 
-class _Page6State extends State<_Page6> {
+class _Page7State extends State<_Page7> {
   Widget overlay = const SuperContainer(
     color: Colors.black,
     alignment: Alignment.center,
@@ -965,7 +1046,7 @@ class _FinalPage extends StatefulWidget {
   State<_FinalPage> createState() => _FinalPageState();
 }
 
-class _FinalPageState extends State<_FinalPage> {
+class _FinalPageState extends SafeState<_FinalPage> with DelayedPress {
   late final Ticker epicHues;
   bool visible = false, buttonVisible = false, expanded = false;
   double width = 0;
@@ -983,6 +1064,11 @@ class _FinalPageState extends State<_FinalPage> {
       setState(action);
     }
   }
+
+  void onPressed() => delayed(() => Navigator.pushReplacement<void, void>(
+        context,
+        MaterialPageRoute<void>(builder: (context) => const IntroMode(3)),
+      ))();
 
   @override
   void initState() {
@@ -1014,7 +1100,11 @@ class _FinalPageState extends State<_FinalPage> {
                   ? SizedBox(
                       width: width,
                       height: 250,
-                      child: _PlayButton(visible: buttonVisible, color: epicColor),
+                      child: _PlayButton(
+                        visible: buttonVisible,
+                        color: epicColor,
+                        onPressed: onPressed,
+                      ),
                     )
                   : SizedBox(width: width),
             ),
@@ -1064,9 +1154,10 @@ class _AreYouReady extends StatelessWidget {
 }
 
 class _PlayButton extends StatelessWidget {
-  const _PlayButton({required this.visible, required this.color});
+  const _PlayButton({required this.visible, required this.color, required this.onPressed});
   final bool visible;
   final SuperColor color;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -1092,12 +1183,7 @@ class _PlayButton extends StatelessWidget {
           child: SuperButton(
             'play',
             color: color,
-            onPressed: () => Navigator.pushReplacement<void, void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const IntroMode(3),
-              ),
-            ),
+            onPressed: onPressed,
           ),
         ),
         const FixedSpacer(16),

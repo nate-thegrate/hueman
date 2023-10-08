@@ -76,6 +76,7 @@ class SuperColor extends Color {
   @override
   String toString() => switch (name) { '[none]' => hexCode, _ => 'SuperColors.$name ($hexCode)' };
 
+  SuperColor get complement => SuperColor.rgb(0xFF - red, 0xFF - green, 0xFF - blue).rounded;
   SuperColor get rounded {
     const easterEgg = SuperColor.named('Kali 🙂', 0x8080FF);
     if (colorCode == 0x8080FF) return easterEgg;
@@ -116,10 +117,14 @@ abstract final class SuperColors {
   static const bsBackground = SuperColor(0xfff2d6);
   static const inverting = SuperColor(0xf5faff);
 
+  // blue is struggling to be seen, #relatable
+  static const visibleBlue = SuperColor.named('blue', 0x1212FF);
+
   static const black80 = Color(0xCC000000);
   static const white80 = Color(0xCCFFFFFF);
 
   static const primaries = [red, green, blue];
+  static const subtractivePrimaries = [cyan, magenta, yellow];
   static const allPrimaries = [red, yellow, green, cyan, blue, magenta];
   static const twelveHues = [
     red,

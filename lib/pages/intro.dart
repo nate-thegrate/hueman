@@ -21,7 +21,7 @@ class TutorialScoreKeeper implements ScoreKeeper {
   int round = 0;
 
   @override
-  void roundCheck(BuildContext context) => (round + 1 == totalRounds)
+  void roundCheck(BuildContext context) => (round == totalRounds)
       ? Navigator.pushReplacement(
           context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)))
       : ();
@@ -148,13 +148,18 @@ class _IntroModeState extends State<IntroMode> {
       numPadController = NumPadController(setState);
     }
 
-    if (Tutorials.intro3) {
-      scoreKeeper =
-          casualMode ? null : IntroScoreKeeper(scoring: giveScore, numColors: widget.numColors);
-    } else {
-      scoreKeeper = TutorialScoreKeeper(numColors: widget.numColors);
-      Tutorials.intro3 = true;
+    switch (widget.numColors) {
+      case 3 when !Tutorials.intro3:
+        scoreKeeper = TutorialScoreKeeper(numColors: widget.numColors);
+        Tutorials.intro3 = true;
+      case 6 when !Tutorials.intro6:
+        scoreKeeper = TutorialScoreKeeper(numColors: widget.numColors);
+        Tutorials.intro6 = true;
+      default:
+        scoreKeeper =
+            casualMode ? null : IntroScoreKeeper(scoring: giveScore, numColors: widget.numColors);
     }
+
     if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.start();
     hueQueue = HueQueue([for (int hue = 0; hue < 360; hue += 360 ~/ widget.numColors) hue]);
     generateHue();
@@ -186,7 +191,7 @@ class _IntroModeState extends State<IntroMode> {
         )
       : NumPadGame(
           color: color,
-          numPad: (void Function() submit) => NumPad(numPadController!, submit: submit),
+          numPad: (submit) => NumPad(numPadController!, submit: submit),
           numPadVal: numPadController!.displayValue,
           hueDialogBuilder: hueDialogBuilder,
           scoreKeeper: scoreKeeper,

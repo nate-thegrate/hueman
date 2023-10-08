@@ -17,7 +17,7 @@ class InverseMenu extends StatefulWidget {
 
 class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStateMixin {
   late final Ticker inverseHues;
-  late final AnimationController controller;
+  late final AnimationController controller = AnimationController(duration: oneSec, vsync: this);
   bool inverting = false;
   List<Widget> children = [];
   MenuPage menuPage = MenuPage.main;
@@ -27,7 +27,6 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
   void initState() {
     super.initState();
     inverseHues = inverseSetup(setState);
-    controller = AnimationController(duration: oneSec, vsync: this);
     if (inverted) {
       visible = false;
       exists = false;

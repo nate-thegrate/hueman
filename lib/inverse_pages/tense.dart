@@ -135,7 +135,9 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
       .fold(0.0, (previousValue, element) => previousValue + 125 / element)
       .toStringAsFixed(2);
 
-  late final TenseScoreKeeper? scoreKeeper;
+  late final TenseScoreKeeper? scoreKeeper = casualMode
+      ? null
+      : TenseScoreKeeper(page: widget.volatile ? Pages.tenseVolatile : Pages.tenseVibrant);
 
   late int hue;
   final HueQueue hueQueue = HueQueue([for (int i = 0; i < 360; i += 30) i]);
@@ -181,9 +183,6 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     inverted = true;
-    scoreKeeper = casualMode
-        ? null
-        : TenseScoreKeeper(page: widget.volatile ? Pages.tenseVolatile : Pages.tenseVibrant);
     generateHue();
   }
 

@@ -18,8 +18,8 @@ class PhotoColors {
   Widget image({double width = 500}) => SizedBox(
         width: width,
         height: width,
-        child: Image(
-          image: AssetImage('assets/public_domain_photos/$filename.jpg'),
+        child: Image.asset(
+          'assets/public_domain_photos/$filename.jpg',
           width: width,
         ),
       );

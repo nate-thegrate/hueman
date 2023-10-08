@@ -50,7 +50,7 @@ class _AdsState extends State<Ads> {
     super.initState();
     sleep(1, then: () => Tutorials.ads = true);
     inverseHues = inverseSetup(setState);
-    animateThisPage();
+    animate();
   }
 
   @override
@@ -136,10 +136,9 @@ class _AdsState extends State<Ads> {
     return total;
   }
 
-  late final List<_AdsAnimation?> items;
+  late final List<_AdsAnimation?> items = List.filled(permanentItems, null);
 
-  void animateThisPage() async {
-    items = List.filled(permanentItems, null);
+  void animate() async {
     int childrenIndex = -1;
 
     for (final animation in allItems) {

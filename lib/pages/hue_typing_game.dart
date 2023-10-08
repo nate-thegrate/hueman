@@ -126,7 +126,7 @@ class _RankBars extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int activeIndex = rank ~/ 25 + 1;
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenHeight = context.screenHeight;
 
     double barHeight(int i) => (i < activeIndex)
         ? screenHeight
@@ -549,7 +549,7 @@ class NumPadGame extends StatelessWidget {
     super.key,
   });
   final Color color;
-  final NumPad Function(void Function()) numPad;
+  final NumPad Function(void Function() submit) numPad;
   final String numPadVal;
   final WidgetBuilder hueDialogBuilder;
   final ScoreKeeper? scoreKeeper;

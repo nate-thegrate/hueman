@@ -121,11 +121,20 @@ extension ContextStuff on BuildContext {
 
   void invert() => noTransition(inverted ? const MainMenu() : const InverseMenu());
 
-  Size get _size => MediaQuery.of(this).size;
-  double get screenWidth => _size.width;
-  double get screenHeight => _size.height;
-
+  Size get screenSize => MediaQuery.of(this).size;
+  double get screenWidth => screenSize.width;
+  double get screenHeight => screenSize.height;
   bool get squished => screenHeight < 1040;
+  double calcWidth(double Function(double width, double height) widthHeight) {
+    final size = screenSize;
+    return widthHeight(size.width, size.height);
+  }
+}
+
+/// prevents all [setState] calls from working once it's disposed.
+abstract class SafeState<T extends StatefulWidget> extends State<T> {
+  @override
+  void setState(fn) => mounted ? super.setState(fn) : null;
 }
 
 void Function() gotoWebsite(String url) => () => launchUrl(Uri.parse(url));
@@ -134,19 +143,15 @@ void addListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.addList
 void yeetListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.removeListener(func);
 
 class HueQueue {
-  HueQueue(this.choices, {int? maxRecentChoices})
-      : numColors = choices.length,
-        recentChoices = [],
-        maxRecent = maxRecentChoices ?? choices.length ~/ 2;
-
-  final List<int> choices, recentChoices;
-  final int numColors;
-  late final int maxRecent;
+  HueQueue(this.choices);
+  final List<int> choices, recentChoices = [];
+  late final int minChoices = choices.length == 3 ? 2 : 3;
 
   /// grabs the next hue to use and updates the queue.
   int get queuedHue {
+    print('choices: $choices\nmin choices: $minChoices');
     final hue = choices.removeAt(rng.nextInt(choices.length));
-    if (recentChoices.length >= maxRecent) choices.add(recentChoices.removeAt(0));
+    if (choices.length < minChoices) choices.add(recentChoices.removeAt(0));
     recentChoices.add(hue);
     return hue;
   }

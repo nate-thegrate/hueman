@@ -1,7 +1,8 @@
-/// I made a pull request to update the official Container :)
-/// https://github.com/flutter/flutter/pull/134605
+/// [Container], but with a `const` constructor!
 ///
-/// I'll delete this file if/when that gets merged.
+/// I made a pull request to update the official Container, sadly it did not go well lol
+///
+/// https://github.com/flutter/flutter/pull/134605
 
 import 'package:flutter/material.dart';
 
@@ -11,24 +12,18 @@ class _DynamicBox extends StatelessWidget {
   final dynamic config;
   final Widget child;
 
-  Never error(String description) => throw Exception('$description: $config');
-
   @override
   Widget build(BuildContext context) => switch (config) {
         null || (null, null) || (null, null, null) || (null, Clip.none) => child,
-        final EdgeInsets p when p.isNonNegative => Padding(padding: p, child: child),
-        EdgeInsets() => error('negative padding'),
+        final EdgeInsets p => Padding(padding: p, child: child),
         (final double? w, final double? h, null) => SizedBox(width: w, height: h, child: child),
-        (final double? w, final double? h, final BoxConstraints c) when c.debugAssertIsValid() =>
-          ConstrainedBox(
+        (final double? w, final double? h, final BoxConstraints c) => ConstrainedBox(
             constraints: (w != null || h != null) ? c.tighten(width: w, height: h) : c,
             child: child,
           ),
-        (_, _, BoxConstraints()) => error('invalid constraints'),
         final Color c => ColoredBox(color: c, child: child),
-        (final Decoration d, Clip.none) when d.debugAssertIsValid() =>
-          DecoratedBox(decoration: d, child: child),
-        (final Decoration d, final Clip c) when d.debugAssertIsValid() => DecoratedBox(
+        (final Decoration d, Clip.none) => DecoratedBox(decoration: d, child: child),
+        (final Decoration d, final Clip c) => DecoratedBox(
             decoration: d,
             child: ClipPath(
               clipper: _DecorationClipper(
@@ -39,12 +34,10 @@ class _DynamicBox extends StatelessWidget {
               child: child,
             ),
           ),
-        (null, final Clip c) when c != Clip.none => error('$c with no decoration'),
-        (Decoration(), _) => error('invalid foreground decoration'),
         final Alignment a => Align(alignment: a, child: child),
         (final Matrix4 t, final AlignmentGeometry? a) =>
           Transform(transform: t, alignment: a, child: child),
-        _ => error('problem with config type ${config.runtimeType}'),
+        _ => throw Exception('problem with config type ${config.runtimeType}'),
       };
 }
 
@@ -64,12 +57,7 @@ class SuperContainer extends StatelessWidget {
     this.transformAlignment,
     this.child,
     this.clipBehavior = Clip.none,
-  })  : assert(decoration != null || clipBehavior == Clip.none),
-        assert(
-          color == null || decoration == null,
-          'Cannot provide both a color and a decoration\n'
-          'To provide both, use "decoration: BoxDecoration(color: color)".',
-        );
+  });
 
   final Widget? child;
   final AlignmentGeometry? alignment;
