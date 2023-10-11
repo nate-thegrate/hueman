@@ -99,7 +99,7 @@ const List<TriviaQuestion> _allQuestions = [
     'Complementary colors are 180° apart on the color wheel. '
     "What's the complementary color to rose?",
     [SuperColors.spring],
-    explanation: 'Spring & rose are "complimentary colors" '
+    explanation: 'Spring & rose are "complementary colors" '
         'because they can combine to make white.\n\n'
         'You can find the complement of any color by flipping its RGB values upside down: '
         'for example, rose is 100% red / 0% green / 50% blue, '
@@ -142,7 +142,9 @@ const List<TriviaQuestion> _allQuestions = [
     explanation: "100% useless information, but that's what trivia's all about!\n\n"
         'Cyan (along with magenta) is a primary color '
         'that no one seems to be talking about. '
-        "Hopefully that's about to change!",
+        "Hopefully that's about to change!\n\n"
+        '(P.S. if you want to know my least-favorite color, '
+        'it starts with a "c" and has a hue of 90°)',
   ),
   TriviaQuestion(
     'If you were born in August, what color would your birthstone be?',

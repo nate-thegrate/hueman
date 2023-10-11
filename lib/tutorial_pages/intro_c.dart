@@ -1,4 +1,4 @@
-/// intro `0x0C`
+/// intro `0xC`
 
 import 'dart:math';
 
@@ -8,9 +8,10 @@ import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/widgets.dart';
+import 'package:super_hueman/pages/intro.dart';
 
 class IntroCTutorial extends StatefulWidget {
-  /// intro `0x0C`
+  /// intro `0xC`
   const IntroCTutorial({super.key});
 
   @override
@@ -23,9 +24,7 @@ class _IntroCTutorialState extends State<IntroCTutorial> {
     _Page1(nextPage),
     _Page2(nextPage),
     _Page3(nextPage),
-    _Page4(nextPage),
-    _Page5(nextPage),
-    _Page6(nextPage),
+    const _FinalPage(),
   ];
   int page = 1;
 
@@ -345,9 +344,28 @@ class _Page2 extends StatefulWidget {
 }
 
 class _Page2State extends SafeState<_Page2> {
-  bool visible = false;
+  bool showBlue = false, showNames = false;
+  int numVisible = 1;
+  void advance() => setState(() => numVisible++);
 
-  void animate() async {}
+  Future<void> animate() async {
+    await sleep(7, then: advance);
+    await sleep(7, then: advance);
+    await sleep(7, then: advance);
+
+    await sleep(3);
+    setState(() => numVisible = 0);
+
+    await sleep(1);
+    setState(() => showBlue = true);
+
+    await sleep(3, then: advance);
+    await sleep(5, then: advance);
+    await sleep(6, then: advance);
+    await sleep(4, then: advance);
+
+    setState(() => showNames = true);
+  }
 
   @override
   void initState() {
@@ -355,10 +373,122 @@ class _Page2State extends SafeState<_Page2> {
     animate();
   }
 
+  static const List<Widget> text = [
+    EasyText(
+      'Back in the 1400s,\n'
+      'both of these colors were called "red",\n'
+      'and people had trouble telling them apart.',
+    ),
+    EasyText(
+      'But then in the 1500s,\n'
+      'somebody decided that orange (the fruit)\n'
+      'should also be a color name.',
+    ),
+    EasyRichText([
+      TextSpan(text: 'And now that '),
+      ColorTextSpan(SuperColors.orange),
+      TextSpan(text: ' is in our color vocabulary,\ndistinguishing it from '),
+      ColorTextSpan(SuperColors.red),
+      TextSpan(text: ' is second-nature.'),
+    ]),
+    empty,
+  ];
+
+  late final List<Widget> text2 = [
+    const EasyText('These "shades of blue"\nare really two different colors.'),
+    const EasyRichText([
+      TextSpan(text: 'And just like with '),
+      ColorTextSpan(SuperColors.red),
+      TextSpan(text: ' & '),
+      ColorTextSpan(SuperColors.orange),
+      TextSpan(text: ',\nour brains can be trained to distinguish them.'),
+    ]),
+    const EasyText('We just need a better color vocabulary.'),
+    ContinueButton(onPressed: widget.nextPage),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [],
+    final screenSize = context.screenSize;
+    const colorBoxFlex = 8;
+    final colorBoxHeight = min(
+      screenSize.height / 3,
+      min(
+        screenSize.width * colorBoxFlex / (2 * colorBoxFlex + 3),
+        screenSize.height - 250,
+      ),
+    );
+
+    final List<Widget> children = showBlue ? text2 : text;
+
+    return Column(
+      children: [
+        FixedSpacer(colorBoxHeight / colorBoxFlex),
+        SizedBox(
+          height: colorBoxHeight,
+          child: Row(
+            children: [
+              const Spacer(),
+              Expanded(
+                flex: colorBoxFlex,
+                child: AnimatedContainer(
+                  duration: const Duration(seconds: 3),
+                  decoration: BoxDecoration(
+                    color: showBlue ? SuperColors.blue : SuperColors.red,
+                    boxShadow: const [BoxShadow(blurRadius: 5, spreadRadius: 2)],
+                  ),
+                  alignment: Alignment.center,
+                  child: showNames
+                      ? const FadeIn(
+                          child: Text(
+                            'blue',
+                            style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: SuperColors.darkBackground,
+                            ),
+                          ),
+                        )
+                      : empty,
+                ),
+              ),
+              const Spacer(),
+              Expanded(
+                flex: colorBoxFlex,
+                child: AnimatedContainer(
+                  duration: const Duration(seconds: 3),
+                  decoration: BoxDecoration(
+                    color: showBlue ? SuperColors.azure : SuperColors.orange,
+                    boxShadow: const [BoxShadow(blurRadius: 5, spreadRadius: 2)],
+                  ),
+                  alignment: Alignment.center,
+                  child: showNames
+                      ? const FadeIn(
+                          child: Text(
+                            'azure',
+                            style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: SuperColors.darkBackground,
+                            ),
+                          ),
+                        )
+                      : empty,
+                ),
+              ),
+              const Spacer(),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              for (int i = 0; i < children.length; i++) Fader(numVisible > i, child: children[i])
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -372,9 +502,41 @@ class _Page3 extends StatefulWidget {
 }
 
 class _Page3State extends SafeState<_Page3> {
-  bool visible = false;
+  bool showLeftDesc = false,
+      expandLeft = false,
+      showLeftLabels = false,
+      showRightDesc = false,
+      showButton = false;
+  int rightLinesExpanded = 0, rightLabelsShown = 0;
 
-  void animate() async {}
+  void animate() async {
+    await sleep(3);
+    setState(() => showLeftDesc = true);
+
+    await sleep(3);
+    setState(() => expandLeft = true);
+
+    await sleep(2);
+    setState(() => showLeftLabels = true);
+
+    await sleep(8);
+    setState(() => showRightDesc = true);
+
+    await sleep(1);
+    for (int i = 0; i < 12; i++) {
+      await sleep(0.1);
+      setState(() => rightLinesExpanded++);
+    }
+
+    await sleep(1);
+    for (int i = 0; i < 12; i++) {
+      await sleep(0.5);
+      setState(() => rightLabelsShown++);
+    }
+
+    await sleep(2);
+    setState(() => showButton = true);
+  }
 
   @override
   void initState() {
@@ -384,51 +546,194 @@ class _Page3State extends SafeState<_Page3> {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [],
+    final left = Column(
+      children: [
+        for (final color in _OldVocab.colors)
+          _VocabLine(color.degreeSpan, expandLeft, showLeftLabels, color.name, color.color)
+      ],
+    );
+
+    final right = Column(
+      children: [
+        for (int i = 0; i < 12; i++)
+          _VocabLine.better(
+            i < rightLinesExpanded,
+            i < rightLabelsShown,
+            SuperColors.twelveHues[i],
+          )
+      ],
+    );
+
+    return Column(
+      children: [
+        SuperContainer(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Fader(
+                showLeftDesc,
+                child: const Text(
+                  'on the left: the color vocabulary I grew up with',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w100),
+                ),
+              ),
+              Fader(
+                showRightDesc,
+                child: const Text(
+                  'on the right: my color vocabulary now',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w100),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30),
+            child: Row(
+              children: [
+                Expanded(child: left),
+                const SuperContainer(
+                  height: double.infinity,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: _VocabLine.gradient,
+                    ),
+                  ),
+                ),
+                Expanded(child: right),
+              ],
+            ),
+          ),
+        ),
+        Fader(showButton, child: ContinueButton(onPressed: widget.nextPage)),
+        const FixedSpacer(20),
+      ],
     );
   }
 }
 
-class _Page4 extends StatefulWidget {
-  const _Page4(this.nextPage);
-  final void Function() nextPage;
+class _VocabLine extends StatelessWidget {
+  const _VocabLine(this.flex, this.expanded, this.showLabel, this.label, this.color)
+      : onLeftSide = false;
+  const _VocabLine.better(this.expanded, this.showLabel, this.color)
+      : label = null,
+        flex = 30,
+        onLeftSide = true;
 
-  @override
-  State<_Page4> createState() => _Page4State();
-}
-
-class _Page4State extends SafeState<_Page4> {
-  bool visible = false;
-
-  void animate() async {}
-
-  @override
-  void initState() {
-    super.initState();
-    animate();
-  }
+  final String? label;
+  final SuperColor color;
+  final int flex;
+  final bool expanded, onLeftSide, showLabel;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [],
+    final Widget name = Fader(
+      showLabel,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        child: Text(
+          label ?? color.name,
+          style: TextStyle(
+            fontSize: (context.screenHeight - 0x80) / 0x20,
+            fontWeight: FontWeight.w100,
+            height: -1 / 3,
+          ),
+        ),
+      ),
+    );
+    final Widget line = SuperContainer(
+      width: 8,
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(0xFF),
+      ),
+      child: SexyBox(
+          child: expanded ? const SizedBox.expand() : const SizedBox(width: double.infinity)),
+    );
+    final List<Widget> children = onLeftSide ? [line, name] : [const Spacer(), name, line];
+
+    return Expanded(
+      flex: flex,
+      child: Row(children: children),
     );
   }
+
+  static const gradient = [
+    SuperColor(0xFF0040),
+    SuperColor(0xFF0000),
+    SuperColor(0xFF4000),
+    SuperColor(0xFF8000),
+    SuperColor(0xFFBF00),
+    SuperColor(0xFFFF00),
+    SuperColor(0xBFFF00),
+    SuperColor(0x80FF00),
+    SuperColor(0x40FF00),
+    SuperColor(0x00FF00),
+    SuperColor(0x00FF40),
+    SuperColor(0x00FF80),
+    SuperColor(0x00FFBF),
+    SuperColor(0x00FFFF),
+    SuperColor(0x00BFFF),
+    SuperColor(0x0080FF),
+    SuperColor(0x0040FF),
+    SuperColor(0x0000FF),
+    SuperColor(0x4000FF),
+    SuperColor(0x8000FF),
+    SuperColor(0xBF00FF),
+    SuperColor(0xFF00FF),
+    SuperColor(0xFF00BF),
+    SuperColor(0xFF0080),
+    SuperColor(0xFF0040),
+  ];
 }
 
-class _Page5 extends StatefulWidget {
-  const _Page5(this.nextPage);
-  final void Function() nextPage;
+class _OldVocab {
+  const _OldVocab(this.degreeSpan, this.color, this.name);
+  final int degreeSpan;
+  final String name;
+  final SuperColor color;
+
+  static const colors = [
+    _OldVocab(30, SuperColors.red, 'red'),
+    _OldVocab(30, SuperColors.orange, 'orange'),
+    _OldVocab(30, SuperColors.yellow, 'yellow'),
+    _OldVocab(80, SuperColors.green, 'green'),
+    _OldVocab(25, SuperColor(0x00F8CC), 'turquoise'),
+    _OldVocab(75, SuperColor(0x0060FF), 'blue'),
+    _OldVocab(40, SuperColor(0xA000F0), 'purple'),
+    _OldVocab(50, SuperColor(0xFF30B0), 'pink'),
+  ];
+}
+
+class _FinalPage extends StatefulWidget {
+  const _FinalPage();
 
   @override
-  State<_Page5> createState() => _Page5State();
+  State<_FinalPage> createState() => _FinalPageState();
 }
 
-class _Page5State extends SafeState<_Page5> {
-  bool visible = false;
+class _FinalPageState extends SafeState<_FinalPage> with DelayedPress {
+  bool superDifficult = false, letsDoIt = false, expandButton = false;
+  late final Ticker? epicHues;
 
-  void animate() async {}
+  void animate() async {
+    await sleep(3);
+    epicHues = epicSetup(setState);
+    setState(() => superDifficult = true);
+
+    await sleep(3);
+    setState(() => letsDoIt = true);
+
+    await sleep(1 / 3);
+    setState(() => expandButton = true);
+  }
 
   @override
   void initState() {
@@ -437,36 +742,75 @@ class _Page5State extends SafeState<_Page5> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [],
-    );
-  }
-}
-
-class _Page6 extends StatefulWidget {
-  const _Page6(this.nextPage);
-  final void Function() nextPage;
-
-  @override
-  State<_Page6> createState() => _Page6State();
-}
-
-class _Page6State extends SafeState<_Page6> {
-  bool visible = false;
-
-  void animate() async {}
-
-  @override
-  void initState() {
-    super.initState();
-    animate();
+  void dispose() {
+    epicHues?.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [],
+    final SuperColor color = epicColor;
+
+    return AnimatedContainer(
+      duration: oneSec,
+      width: 400,
+      height: 500,
+      decoration: letsDoIt
+          ? BoxDecoration(border: Border.all(color: color, width: 2))
+          : const BoxDecoration(),
+      child: Column(
+        children: [
+          const Spacer(),
+          const EasyText('6 new hues at once.'),
+          const FixedSpacer(25),
+          Fader(
+            superDifficult,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const EasyText('super', size: 30),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
+                  child: Text(
+                    'ᴅɪғғɪᴄᴜʟᴛ',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 30,
+                      color: color,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const EasyText('.', size: 30),
+              ],
+            ),
+          ),
+          const Spacer(),
+          Fader(
+            letsDoIt,
+            child: ElevatedButton(
+              onPressed: delayed(() => Navigator.pushReplacement<void, void>(
+                    context,
+                    MaterialPageRoute<void>(builder: (context) => const IntroMode(12)),
+                  )),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: epicColor,
+                foregroundColor: Colors.black,
+              ),
+              child: SexyBox(
+                child: expandButton
+                    ? const Padding(
+                        padding: EdgeInsets.fromLTRB(10, 10, 10, 14),
+                        child: Text("let's do it", style: TextStyle(fontSize: 30)),
+                      )
+                    : empty,
+              ),
+            ),
+          ),
+          const Spacer(),
+        ],
+      ),
     );
   }
 }

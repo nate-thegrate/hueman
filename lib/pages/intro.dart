@@ -49,8 +49,8 @@ class TutorialScoreKeeper implements ScoreKeeper {
 
   late final int totalRounds = switch (numColors) {
     3 => 10,
-    6 => 15,
-    12 => 20,
+    6 => 20,
+    12 => 30,
     _ => throw Error(),
   };
 }
@@ -150,11 +150,14 @@ class _IntroModeState extends State<IntroMode> {
 
     switch (widget.numColors) {
       case 3 when !Tutorials.intro3:
-        scoreKeeper = TutorialScoreKeeper(numColors: widget.numColors);
+        scoreKeeper = TutorialScoreKeeper(numColors: 3);
         Tutorials.intro3 = true;
       case 6 when !Tutorials.intro6:
-        scoreKeeper = TutorialScoreKeeper(numColors: widget.numColors);
+        scoreKeeper = TutorialScoreKeeper(numColors: 6);
         Tutorials.intro6 = true;
+      case 0xC when !Tutorials.introC:
+        scoreKeeper = TutorialScoreKeeper(numColors: 0xC);
+        Tutorials.introC = true;
       default:
         scoreKeeper =
             casualMode ? null : IntroScoreKeeper(scoring: giveScore, numColors: widget.numColors);
