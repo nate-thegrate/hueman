@@ -276,7 +276,7 @@ class _PrinterAnimation extends StatelessWidget {
         Center(
           child: SexyBox(
             child: showcase
-                ? Container(
+                ? const SuperContainer(
                     width: 400,
                     height: 333,
                     color: Colors.black,
@@ -301,19 +301,18 @@ class _PrinterAnimation extends StatelessWidget {
           height: printing ? 56 : 0,
           color: SuperColors.black,
         ),
-        printing
-            ? const Padding(
-                padding: EdgeInsets.only(top: 175),
-                child: Text(
-                  '?',
-                  style: TextStyle(
-                    color: SuperColors.black,
-                    fontSize: 42,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              )
-            : empty,
+        if (printing)
+          const Padding(
+            padding: EdgeInsets.only(top: 175),
+            child: Text(
+              '?',
+              style: TextStyle(
+                color: SuperColors.black,
+                fontSize: 42,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -764,11 +763,7 @@ class _ColorBubbles extends StatelessWidget {
           ],
         ),
         SexyBox(
-          child: showArrows
-              ? FadeIn(
-                  child: _ColorArrows(colors[cycle], subtract),
-                )
-              : empty,
+          child: showArrows ? FadeIn(child: _ColorArrows(colors[cycle], subtract)) : empty,
         ),
       ],
     );
@@ -800,12 +795,14 @@ class _ColorArrows extends StatelessWidget {
             width: 100,
             height: 100,
             alignment: Alignment.center,
-            child: Text(subtract ? 'white' : 'black',
-                style: TextStyle(
-                  color: contrastColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                )),
+            child: Text(
+              subtract ? 'white' : 'black',
+              style: TextStyle(
+                color: contrastColor,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           Stack(
             alignment: Alignment.center,

@@ -21,10 +21,10 @@ class TutorialScoreKeeper implements ScoreKeeper {
   int round = 0;
 
   @override
-  void roundCheck(BuildContext context) => (round == totalRounds)
+  void roundCheck(BuildContext context) => round == totalRounds
       ? Navigator.pushReplacement(
           context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)))
-      : ();
+      : null;
 
   @override
   void scoreTheRound() => round++;
@@ -69,10 +69,10 @@ class IntroScoreKeeper implements ScoreKeeper {
   void scoreTheRound() => scoring();
 
   @override
-  void roundCheck(BuildContext context) => (round == 29)
+  void roundCheck(BuildContext context) => round == 29
       ? Navigator.pushReplacement(
           context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)))
-      : ();
+      : null;
 
   double get colorsPerMinute => 30 * 60 * 1000 / stopwatch.elapsedMilliseconds;
   double get accuracy => numCorrect / round * 100;

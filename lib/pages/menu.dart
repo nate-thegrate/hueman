@@ -172,12 +172,11 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
               color: epicColor, onPressed: () => setState(() => menuPage = MenuPage.introSelect)),
           const FixedSpacer(33),
           NavigateButton(Pages.intense, color: epicColor),
-          hueMaster
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 33),
-                  child: NavigateButton(Pages.master, color: epicColor),
-                )
-              : empty,
+          if (hueMaster)
+            Padding(
+              padding: const EdgeInsets.only(top: 33),
+              child: NavigateButton(Pages.master, color: epicColor),
+            ),
           const FixedSpacer(67),
           NavigateButton(Pages.sandbox, color: epicColor),
         ],
@@ -226,16 +225,15 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
           NavigateButton(Pages.intro6, color: epicColor),
           const FixedSpacer(33),
           NavigateButton(Pages.introC, color: epicColor),
-          casualMode
-              ? empty
-              : const Padding(
-                  padding: EdgeInsets.only(top: 33),
-                  child: Text(
-                    "during 'intro' games,\nquick answers score higher!",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white60),
-                  ),
-                ),
+          if (!casualMode)
+            const Padding(
+              padding: EdgeInsets.only(top: 33),
+              child: Text(
+                "during 'intro' games,\nquick answers score higher!",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white60),
+              ),
+            ),
         ],
     };
 
@@ -299,43 +297,38 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
               ],
             ),
           ),
-          ...inverting
-              ? [
-                  const SuperContainer(
-                    decoration: BoxDecoration(
-                      backgroundBlendMode: BlendMode.difference,
-                      color: SuperColors.inverting,
-                    ),
-                  ),
-                  SuperContainer(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.only(top: 400),
-                    child: ScaleTransition(
-                      scale: Tween<double>(begin: 12, end: 0).animate(controller),
-                      child: SuperContainer(
-                        height: context.screenWidth / 4,
-                        decoration: const BoxDecoration(
-                          backgroundBlendMode: BlendMode.difference,
-                          color: SuperColors.inverting,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ),
-                ]
-              : [],
-          darkBackground == null
-              ? empty
-              : Fader(
-                  visible,
-                  duration: halfSec,
-                  curve: Curves.easeInOutQuad,
-                  child: SuperContainer(
-                    color: darkBackground!
-                        ? SuperColors.darkBackground
-                        : SuperColors.lightBackground,
+          if (inverting) ...[
+            const SuperContainer(
+              decoration: BoxDecoration(
+                backgroundBlendMode: BlendMode.difference,
+                color: SuperColors.inverting,
+              ),
+            ),
+            SuperContainer(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.only(top: 400),
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 12, end: 0).animate(controller),
+                child: SuperContainer(
+                  height: context.screenWidth / 4,
+                  decoration: const BoxDecoration(
+                    backgroundBlendMode: BlendMode.difference,
+                    color: SuperColors.inverting,
+                    shape: BoxShape.circle,
                   ),
                 ),
+              ),
+            ),
+          ],
+          if (darkBackground != null)
+            Fader(
+              visible,
+              duration: halfSec,
+              curve: Curves.easeInOutQuad,
+              child: SuperContainer(
+                color: darkBackground! ? SuperColors.darkBackground : SuperColors.lightBackground,
+              ),
+            ),
         ],
       ),
     );

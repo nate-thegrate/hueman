@@ -220,18 +220,16 @@ class AnsweredEveryQuestion extends StatelessWidget {
                 "You've answered each trivia question!",
                 style: TextStyle(fontSize: 16),
               ),
-              ...casualMode
-                  ? []
-                  : [
-                      const FixedSpacer(8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text('score: ', style: TextStyle(height: 0)),
-                          Text(scoreDesc, style: const TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    ],
+              if (!casualMode) ...[
+                const FixedSpacer(8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('score: ', style: TextStyle(height: 0)),
+                    Text(scoreDesc, style: const TextStyle(fontSize: 12)),
+                  ],
+                ),
+              ],
             ],
           ),
           actions: const [Center(child: GoBack(text: 'back to menu'))],
@@ -289,8 +287,10 @@ class _TriviaModeState extends State<TriviaMode> {
                       const Spacer(),
                       correct
                           ? empty
-                          : const Text('correct answer:  ',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                          : const Text(
+                              'correct answer:  ',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                            ),
                       for (final color in correctAnswers)
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5),

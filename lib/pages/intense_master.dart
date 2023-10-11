@@ -246,11 +246,10 @@ class _IntenseModeState extends State<IntenseMode> {
 
   late final IntenseScoreKeeper? scoreKeeper;
 
-  int get difficulty => masterMode
-      ? casualMode
-          ? 50
-          : scoreKeeper!.rank
-      : 0;
+  int get difficulty {
+    if (!masterMode) return 0;
+    return casualMode ? 50 : scoreKeeper!.rank;
+  }
 
   /// used in 'master' mode if we're keeping score
   double masterRNG = rng.nextDouble();

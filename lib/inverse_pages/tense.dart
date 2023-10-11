@@ -333,12 +333,11 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            showReaction
-                ? Splendid(
-                    correct: selectedHue == hue,
-                    onTap: tapReaction,
-                  )
-                : empty,
+            if (showReaction)
+              Splendid(
+                correct: selectedHue == hue,
+                onTap: tapReaction,
+              ),
           ],
         ),
         backgroundColor: SuperColors.lightBackground,

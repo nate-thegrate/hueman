@@ -65,59 +65,53 @@ class _ScoreScreenState extends State<ScoreScreen> {
                 ],
               ),
               const Spacer(flex: 2),
-              ...tutorial
-                  ? [
-                      SuperButton(
-                        'continue',
-                        color: color,
-                        onPressed: () => context.goto(switch (page) {
-                          Pages.intro3 => Pages.intro6,
-                          Pages.intro6 => Pages.introC,
-                          Pages.introC => Pages.intense,
-                          _ => throw Error(),
-                        }),
-                      ),
-                      const FixedSpacer(33),
-                      SuperButton('play again',
-                          color: color, onPressed: () => context.goto(page)),
-                      const FixedSpacer(33),
-                      SuperButton(
-                        'main menu',
-                        color: color,
-                        onPressed: () =>
-                            context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
-                      ),
-                    ]
-                  : [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Score:  ', style: TextStyle(fontSize: 32, color: color)),
-                          sk.finalScore,
-                        ],
-                      ),
-                      const FixedSpacer(10),
-                      sk.finalDetails,
-                      const Spacer(flex: 3),
-                      SuperButton('play again',
-                          color: color, onPressed: () => context.goto(page)),
-                      const FixedSpacer(33),
-                      SuperButton(
-                        'play in casual mode',
-                        color: color,
-                        onPressed: () {
-                          casualMode = true;
-                          context.goto(page);
-                        },
-                      ),
-                      const FixedSpacer(33),
-                      SuperButton(
-                        'main menu',
-                        color: color,
-                        onPressed: () =>
-                            context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
-                      ),
-                    ],
+              if (tutorial) ...[
+                SuperButton(
+                  'continue',
+                  color: color,
+                  onPressed: () => context.goto(switch (page) {
+                    Pages.intro3 => Pages.intro6,
+                    Pages.intro6 => Pages.introC,
+                    Pages.introC => Pages.intense,
+                    _ => throw Error(),
+                  }),
+                ),
+                const FixedSpacer(33),
+                SuperButton('play again', color: color, onPressed: () => context.goto(page)),
+                const FixedSpacer(33),
+                SuperButton(
+                  'main menu',
+                  color: color,
+                  onPressed: () => context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
+                ),
+              ] else ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Score:  ', style: TextStyle(fontSize: 32, color: color)),
+                    sk.finalScore,
+                  ],
+                ),
+                const FixedSpacer(10),
+                sk.finalDetails,
+                const Spacer(flex: 3),
+                SuperButton('play again', color: color, onPressed: () => context.goto(page)),
+                const FixedSpacer(33),
+                SuperButton(
+                  'play in casual mode',
+                  color: color,
+                  onPressed: () {
+                    casualMode = true;
+                    context.goto(page);
+                  },
+                ),
+                const FixedSpacer(33),
+                SuperButton(
+                  'main menu',
+                  color: color,
+                  onPressed: () => context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
+                ),
+              ],
               const Expanded(flex: 4, child: empty),
             ],
           ),

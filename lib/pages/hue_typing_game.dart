@@ -369,25 +369,23 @@ class _HueDialogState extends State<HueDialog> {
                 const FixedSpacer(20),
                 _AnswerFeedback(widget.guess, text: 'Your answer:'),
                 _AnswerFeedback(widget.hue, text: 'Correct answer:'),
-                ...(hueMaster || !isSuper)
-                    ? []
-                    : [
-                        const FixedSpacer(20),
-                        Text(
-                          'all game modes\nunlocked!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: epicColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                            shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
-                          ),
-                        ),
-                      ]
+                if (!hueMaster && isSuper) ...[
+                  const FixedSpacer(20),
+                  Text(
+                    'all game modes\nunlocked!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: epicColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                      shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
+                    ),
+                  ),
+                ]
               ],
             ),
           ),
-          unclickable ? const SuperContainer(color: Colors.transparent) : empty,
+          if (unclickable) const SuperContainer(color: Colors.transparent),
         ],
       );
 }
@@ -417,25 +415,21 @@ class _GameScreen extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 const Spacer(),
-                (sk is TutorialScoreKeeper) ? empty : const GoBack(),
+                if (sk is! TutorialScoreKeeper) const GoBack(),
                 const Spacer(),
-                ...image == null
-                    ? [
-                        SuperContainer(
-                          width: colorBoxWidth,
-                          height: min(colorBoxWidth, context.screenHeight - 700),
-                          color: color,
-                        )
-                      ]
-                    : [
-                        image!,
-                        ...littleBitSquished
-                            ? []
-                            : [
-                                const Spacer(),
-                                SuperContainer(width: colorBoxWidth, height: 150, color: color),
-                              ],
-                      ],
+                if (image == null) ...[
+                  SuperContainer(
+                    width: colorBoxWidth,
+                    height: min(colorBoxWidth, context.screenHeight - 700),
+                    color: color,
+                  )
+                ] else ...[
+                  image!,
+                  if (!littleBitSquished) ...[
+                    const Spacer(),
+                    SuperContainer(width: colorBoxWidth, height: 150, color: color),
+                  ],
+                ],
                 const Spacer(),
                 const Text(
                   'What\'s the hue?',

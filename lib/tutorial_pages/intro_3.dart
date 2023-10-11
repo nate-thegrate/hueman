@@ -451,7 +451,7 @@ class _OrbCenter extends StatelessWidget {
           shape: BoxShape.circle,
           gradient: RadialGradient(
             colors: [
-              opaque ? epicColor : epicColor.withAlpha(0x80),
+              if (opaque) epicColor else epicColor.withAlpha(0x80),
               epicColor.withAlpha(0),
             ],
           ),
@@ -801,14 +801,13 @@ class _Page6State extends SafeState<_Page6> with DelayedPress {
             const Spacer(flex: 2),
           ],
         ),
-        justKidding
-            ? _JustKidding(
-                duration: duration,
-                buttonVisible: buttonVisible,
-                color: epicColor,
-                nextPage: delayed(widget.nextPage),
-              )
-            : empty,
+        if (justKidding)
+          _JustKidding(
+            duration: duration,
+            buttonVisible: buttonVisible,
+            color: epicColor,
+            nextPage: delayed(widget.nextPage),
+          ),
       ],
     );
   }
@@ -1065,10 +1064,10 @@ class _FinalPageState extends SafeState<_FinalPage> with DelayedPress {
     }
   }
 
-  void onPressed() => delayed(() => Navigator.pushReplacement<void, void>(
+  late VoidCallback onPressed = delayed(() => Navigator.pushReplacement<void, void>(
         context,
         MaterialPageRoute<void>(builder: (context) => const IntroMode(3)),
-      ))();
+      ));
 
   @override
   void initState() {

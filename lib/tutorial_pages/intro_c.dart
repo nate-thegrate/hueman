@@ -68,60 +68,49 @@ class _Page1 extends StatefulWidget {
   State<_Page1> createState() => _Page1State();
 }
 
-class _Page1State extends SafeState<_Page1> {
-  bool showFunky = false,
-      showQuestion = false,
-      showButtons = false,
-      showContinueButton = false,
-      lookatRGB = false,
-      secondTry = false;
-  late final Ticker ticker;
-  int counter = 0x28;
+class _Page1State extends SafeState<_Page1> with DelayedPress {
+  int progress = 0;
+  void advance() => setState(() => progress++);
 
   void animate() async {
-    await sleep(7);
-    setState(() => showFunky = true);
-
-    await sleep(4);
-    setState(() => showQuestion = true);
-
-    await sleep(2);
-    setState(() => showButtons = true);
+    await sleep(7, then: advance); // somethin funky
+    await sleep(4, then: advance); // show questions
+    await sleep(2, then: advance); // show buttons
   }
 
-  void trickQuestion() async {
-    setState(() {
-      showFunky = false;
-      showQuestion = false;
-      showButtons = false;
-    });
+  late VoidCallback trickQuestion = delayed(() async {
+    advance(); // hide everything
 
     await sleep(1);
-    setState(() {
-      funkyText = const EasyText('Yeah sorry, that was a trick question.');
-      showFunky = true;
-    });
+    setState(() => funkyText = const EasyText('Yeah sorry, that was a trick question.'));
+    advance();
 
     await sleep(2);
-    setState(() {
-      questionText = const EasyText("Here's the RGB:");
-      showQuestion = true;
-      lookatRGB = true;
-    });
+    setState(() => questionText = const EasyText("Here's the RGB:"));
+    advance();
 
-    await sleep(1);
-    setState(() => showButtons = true);
-
-    await sleep(5);
-    setState(() => showContinueButton = true);
-  }
+    await sleep(1, then: advance); // show RGB
+    await sleep(7, then: advance); // show continue button
+  });
 
   void tryAgain() async {
+    advance(); // overlay
+
+    await sleep(1.5);
     setState(() {
-      secondTry = true;
+      funkyText = empty;
+      questionText = empty;
     });
+    advance(); // overlay desc
+
+    await sleep(4, then: advance); // overlay try again
+    await sleep(6, then: advance); // hide overlay text
+    await sleep(1.5, then: advance); // show orange
+    await sleep(7, then: advance); // finally done
   }
 
+  late final Ticker ticker;
+  int counter = 0x28;
   static const _cycleLength = 0x100;
 
   @override
@@ -143,16 +132,29 @@ class _Page1State extends SafeState<_Page1> {
   @override
   Widget build(BuildContext context) {
     final double funSine = (sin((counter) / _cycleLength * 2 * pi) + 1) / 2;
+    final int greenVal = (0x40 * (2 - (funSine + funSine.squared))).round();
     final SuperColor funRed, funBlue;
-    funRed = SuperColor.rgb((0xFF * (1 - funSine / 2)).round(), 0, 0);
-    funBlue = SuperColor.rgb(0, (0x40 * (2 - (funSine + funSine.squared))).round(), 0xFF);
+    funRed = progress >= 12
+        ? SuperColor.rgb(0xFF, greenVal, 0)
+        : SuperColor.rgb((0xFF * (1 - funSine / 2)).round(), 0, 0);
+    funBlue = SuperColor.rgb(0, greenVal, 0xFF);
     final boxWidth = context.screenWidth * .4;
+
+    final bool lookatRGB = progress >= 7;
+    final List<Widget> trickButtons = [
+      _TrickButton(funSine, lookatRGB, funRed, onPressed: trickQuestion),
+      _TrickButton(funSine, lookatRGB, funBlue, onPressed: trickQuestion, blue: true),
+    ];
+    final Widget continueButton = progress > 10
+        ? ContinueButton(key: const Key('1'), onPressed: widget.nextPage)
+        : ContinueButton(key: const Key('2'), onPressed: tryAgain);
 
     return Stack(
       children: [
         Column(
           children: [
             const Spacer(),
+            if (progress > 10) const Spacer(),
             Expanded(
               flex: 12,
               child: Row(
@@ -164,61 +166,73 @@ class _Page1State extends SafeState<_Page1> {
               ),
             ),
             const Spacer(),
-            Fader(showFunky, child: funkyText),
-            const Spacer(),
-            Fader(showQuestion, child: questionText),
-            const Spacer(flex: 3),
             Fader(
-              showButtons,
-              child: SexyBox(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _TrickButton(funSine, lookatRGB, funRed, onPressed: trickQuestion),
-                    _TrickButton(funSine, lookatRGB, funBlue,
-                        onPressed: trickQuestion, blue: true),
-                  ],
-                ),
+              progress != 0 && progress != 4,
+              child: funkyText,
+            ),
+            const Spacer(),
+            Fader(
+              switch (progress) { 2 || 3 || > 5 => true, _ => false },
+              child: questionText,
+            ),
+            if (progress < 10) const Spacer(flex: 2),
+            Fader(
+              progress == 3 || progress > 6,
+              child: AnimatedSize(
+                duration: oneSec,
+                curve: curve,
+                child: Row(mainAxisSize: MainAxisSize.min, children: trickButtons),
               ),
             ),
             const Spacer(),
             SexyBox(
               child: lookatRGB
-                  ? Fader(showContinueButton, child: ContinueButton(onPressed: tryAgain))
+                  ? Fader(progress == 8 || progress == 14, child: continueButton)
                   : empty,
             ),
             const Spacer(),
           ],
         ),
-        if (secondTry) const _SecondTry(),
+        if (progress > 8 && progress < 14) _SecondTry(progress),
       ],
     );
   }
 }
 
 class _SecondTry extends StatelessWidget {
-  const _SecondTry();
+  const _SecondTry(this.progress);
+  final int progress;
 
   @override
   Widget build(BuildContext context) {
-    return const FadeIn(
-      child: SuperContainer(
-        color: SuperColors.darkBackground,
-        alignment: Alignment.center,
-        child: Column(
-          children: [
-            Spacer(),
-            EasyRichText([
-              TextSpan(text: 'The '),
-              ColorTextSpan(SuperColors.red),
-              TextSpan(text: ' was just getting lighter and darker,\nbut the '),
-              ColorTextSpan(SuperColors.visibleBlue),
-              TextSpan(text: ' was was changing hue.'),
-            ]),
-            Spacer(),
-            EasyText("Let's try it again:\nthis time, both colors are gonna act the same way."),
-            Spacer(),
-          ],
+    return FadeIn(
+      child: Fader(
+        progress < 13,
+        child: SuperContainer(
+          color: SuperColors.darkBackground,
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              const Spacer(flex: 4),
+              Fader(
+                progress > 9 && progress < 12,
+                child: const EasyRichText([
+                  TextSpan(text: 'The '),
+                  ColorTextSpan(SuperColors.red),
+                  TextSpan(text: ' was just getting lighter and darker,\nbut the '),
+                  ColorTextSpan(SuperColors.visibleBlue),
+                  TextSpan(text: ' was changing hue.'),
+                ]),
+              ),
+              const Spacer(),
+              Fader(
+                progress > 10 && progress < 12,
+                child: const EasyText(
+                    "Let's try it again:\nthis time, both colors are gonna act the same way."),
+              ),
+              const Spacer(flex: 4),
+            ],
+          ),
         ),
       ),
     );

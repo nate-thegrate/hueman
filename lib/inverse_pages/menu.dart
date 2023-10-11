@@ -122,47 +122,44 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
             toggle: (value) => setState(() => casualMode = value),
           ),
           const FixedSpacer(67),
-          ...Tutorials.ads
-              ? [
-                  SuperContainer(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Text(
-                      'get notified when\nthe next game comes out!',
-                      textAlign: TextAlign.center,
-                      style:
-                          Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.black87),
-                    ),
-                  ),
-                  Center(
-                      child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: inverseColor, width: 2),
-                      foregroundColor: inverseColor,
-                      shadowColor: inverseColor,
-                    ),
-                    onPressed: gotoWebsite('https://google.com/'),
-                    child: const Padding(
-                      padding: EdgeInsets.fromLTRB(2.5, 5, 2.5, 10),
-                      child: Text('sign up', style: TextStyle(fontSize: 24)),
-                    ),
-                  )),
-                ]
-              : [
-                  Center(
-                      child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: inverseColor, width: 2),
-                      foregroundColor: inverseColor,
-                      shadowColor: inverseColor,
-                    ),
-                    onPressed: () => context.goto(Pages.ads),
-                    child: const Padding(
-                      padding: EdgeInsets.fromLTRB(24, 5, 24, 10),
-                      child: Text('ads', style: TextStyle(fontSize: 24)),
-                    ),
-                  ))
-                ],
+          if (Tutorials.ads) ...[
+            SuperContainer(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                'get notified when\nthe next game comes out!',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.black87),
+              ),
+            ),
+            Center(
+                child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: inverseColor, width: 2),
+                foregroundColor: inverseColor,
+                shadowColor: inverseColor,
+              ),
+              onPressed: gotoWebsite('https://google.com/'),
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(2.5, 5, 2.5, 10),
+                child: Text('sign up', style: TextStyle(fontSize: 24)),
+              ),
+            )),
+          ] else ...[
+            Center(
+                child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: inverseColor, width: 2),
+                foregroundColor: inverseColor,
+                shadowColor: inverseColor,
+              ),
+              onPressed: () => context.goto(Pages.ads),
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(24, 5, 24, 10),
+                child: Text('ads', style: TextStyle(fontSize: 24)),
+              ),
+            ))
+          ],
           const FixedSpacer(25),
           Center(
             child: OutlinedButton(
@@ -196,16 +193,14 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
           const FixedSpacer(33),
           NavigateButton(Pages.tenseVolatile, color: inverseColor),
           const FixedSpacer(20),
-          ...casualMode
-              ? []
-              : [
-                  const FixedSpacer(20),
-                  const Text(
-                    'you get a bonus when\nanswering correctly with\na full health bar!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                ],
+          if (!casualMode) ...[
+            const FixedSpacer(20),
+            const Text(
+              'you get a bonus when\nanswering correctly with\na full health bar!',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black54),
+            ),
+          ],
         ],
     };
 
@@ -297,14 +292,13 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
               ),
             ),
           ),
-          exists
-              ? Fader(
-                  visible,
-                  duration: const Duration(milliseconds: 600),
-                  curve: Curves.easeInOutQuad,
-                  child: const SuperContainer(color: SuperColors.lightBackground),
-                )
-              : empty,
+          if (exists)
+            Fader(
+              visible,
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeInOutQuad,
+              child: const SuperContainer(color: SuperColors.lightBackground),
+            ),
         ],
       ),
     );
