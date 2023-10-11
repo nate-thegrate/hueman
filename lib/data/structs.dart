@@ -12,8 +12,9 @@ import 'package:super_hueman/inverse_pages/menu.dart';
 import 'package:super_hueman/inverse_pages/sandbox.dart';
 import 'package:super_hueman/pages/menu.dart';
 import 'package:super_hueman/pages/sandbox.dart';
-import 'package:super_hueman/tutorial_pages/intro3.dart';
-import 'package:super_hueman/tutorial_pages/intro6.dart';
+import 'package:super_hueman/tutorial_pages/intro_3.dart';
+import 'package:super_hueman/tutorial_pages/intro_6.dart';
+import 'package:super_hueman/tutorial_pages/intro_c.dart';
 import 'package:super_hueman/tutorial_pages/start.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -40,7 +41,7 @@ enum Pages {
   mainMenu(MainMenu()),
   intro3(IntroMode(3)),
   intro6(IntroMode(6)),
-  intro12(IntroMode(12)),
+  introC(IntroMode(12)),
   intense(IntenseMode()),
   master(IntenseMode('master')),
   sandbox(Sandbox()),
@@ -60,6 +61,7 @@ enum Pages {
   Widget get widget => switch (this) {
         intro3 when !Tutorials.intro3 => const Intro3Tutorial(),
         intro6 when !Tutorials.intro6 => const Intro6Tutorial(),
+        introC when !Tutorials.introC => const IntroCTutorial(),
         _ => _widget,
       };
 
@@ -67,7 +69,9 @@ enum Pages {
         inverseMenu => 'invert!',
         inverseSandbox => 'sandbox',
         trueMastery => 'true\nmastery',
-        _ when name.contains('intro') => '${name.substring(5)} colors',
+        intro3 => '3 colors',
+        intro6 => '6 colors',
+        introC => '12 colors',
         _ when name.startsWith('tense') => name.substring(5).toLowerCase(),
         _ => name,
       };
@@ -88,7 +92,7 @@ enum Pages {
   String get gameMode => switch (this) {
         intro3 => 'intro  (3 colors)',
         intro6 => 'intro  (6 colors)',
-        intro12 => 'intro  (12 colors)',
+        introC => 'intro  (12 colors)',
         intense => 'Intense',
         master => 'Master',
         tenseVibrant => 'Tense (vibrant)',
@@ -149,7 +153,10 @@ class HueQueue {
 
   /// grabs the next hue to use and updates the queue.
   int get queuedHue {
-    print('choices: $choices\nmin choices: $minChoices');
+    // print('choices: $choices\nmin choices: $minChoices');
+    //   keeping this comment here,
+    //   since the issue stopped without me changing anything and I'm a little sus
+
     final hue = choices.removeAt(rng.nextInt(choices.length));
     if (choices.length < minChoices) choices.add(recentChoices.removeAt(0));
     recentChoices.add(hue);

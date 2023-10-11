@@ -43,7 +43,7 @@ class TutorialScoreKeeper implements ScoreKeeper {
   Pages get page => switch (numColors) {
         3 => Pages.intro3,
         6 => Pages.intro6,
-        12 => Pages.intro12,
+        12 => Pages.introC,
         _ => throw Error(),
       };
 
@@ -104,7 +104,7 @@ class IntroScoreKeeper implements ScoreKeeper {
   Pages get page => switch (numColors) {
         3 => Pages.intro3,
         6 => Pages.intro6,
-        12 => Pages.intro12,
+        12 => Pages.introC,
         _ => throw Error(),
       };
 }

@@ -860,7 +860,7 @@ class _Page6 extends StatefulWidget {
 
 class _Page6State extends SafeState<_Page6> {
   static const screenText = [
-    EasyText('You know what really grinds my gears?'),
+    EasyText('You know what really rustles my jimmies?'),
     Spacer(flex: 4),
     Text.rich(
       TextSpan(
@@ -934,7 +934,7 @@ class _FinalPage extends StatefulWidget {
   State<_FinalPage> createState() => _FinalPageState();
 }
 
-class _FinalPageState extends State<_FinalPage> with DelayedPress {
+class _FinalPageState extends SafeState<_FinalPage> with DelayedPress {
   late final Ticker epicHues;
   bool showButton = false;
 

@@ -72,8 +72,8 @@ class _ScoreScreenState extends State<ScoreScreen> {
                         color: color,
                         onPressed: () => context.goto(switch (page) {
                           Pages.intro3 => Pages.intro6,
-                          Pages.intro6 => Pages.intro12,
-                          Pages.intro12 => Pages.intense,
+                          Pages.intro6 => Pages.introC,
+                          Pages.introC => Pages.intense,
                           _ => throw Error(),
                         }),
                       ),

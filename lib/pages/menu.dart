@@ -225,7 +225,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
           const FixedSpacer(33),
           NavigateButton(Pages.intro6, color: epicColor),
           const FixedSpacer(33),
-          NavigateButton(Pages.intro12, color: epicColor),
+          NavigateButton(Pages.introC, color: epicColor),
           casualMode
               ? empty
               : const Padding(
