@@ -156,26 +156,14 @@ class _CMYKSlider extends StatelessWidget {
 }
 
 class _HSLScreen extends StatefulWidget {
-  const _HSLScreen();
+  const _HSLScreen(this.onChanged);
+  final ValueChanged<double> Function(int) onChanged;
 
   @override
   State<_HSLScreen> createState() => _HSLScreenState();
 }
 
 class _HSLScreenState extends State<_HSLScreen> {
-  final updateFuncs = [
-    (value) => _h = value,
-    (value) => _s = value,
-    (value) => _l = value,
-  ];
-  void Function(double) onChanged(int updateFunc) => (value) => setState(() {
-        updateFuncs[updateFunc](value);
-        final c = _color;
-        _r = c.red;
-        _g = c.green;
-        _b = c.blue;
-      });
-
   @override
   Widget build(BuildContext context) => Column(
         mainAxisSize: MainAxisSize.min,
@@ -200,7 +188,7 @@ class _HSLScreenState extends State<_HSLScreen> {
                           ),
                         ),
                       ),
-                      const DecoratedBox(
+                      const SuperContainer(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
@@ -209,12 +197,20 @@ class _HSLScreenState extends State<_HSLScreen> {
                           ),
                         ),
                       ),
-                      const DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Colors.transparent, Colors.black],
+                      GestureDetector(
+                        onPanUpdate: (details) {
+                          final offset = details.localPosition;
+                          double val(double position) => (position / 360).stayInRange(0, 1);
+                          widget.onChanged(1)(val(offset.dx));
+                          widget.onChanged(2)(1 - val(offset.dy));
+                        },
+                        child: const SuperContainer(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, Colors.transparent, Colors.black],
+                            ),
                           ),
                         ),
                       ),
@@ -236,19 +232,19 @@ class _HSLScreenState extends State<_HSLScreen> {
             'hue',
             _h,
             color: SuperColor.hue(_h),
-            onChanged: onChanged(0),
+            onChanged: widget.onChanged(0),
           ),
           _HSLSlider(
             'saturation',
             _s,
             color: SuperColor.hsl(_h, _s, 0.5),
-            onChanged: onChanged(1),
+            onChanged: widget.onChanged(1),
           ),
           _HSLSlider(
             'lightness',
             _l,
             color: SuperColor.hsl(_h, _s, _l),
-            onChanged: onChanged(2),
+            onChanged: widget.onChanged(2),
           ),
           const FixedSpacer(25),
           SuperContainer(width: 500, height: 100, color: _color),
@@ -515,6 +511,19 @@ class _InverseSandboxState extends State<InverseSandbox> {
         _l = hsl.lightness;
       });
 
+  final updateFuncs = [
+    (value) => _h = value,
+    (value) => _s = value,
+    (value) => _l = value,
+  ];
+  void Function(double) onChanged(int updateFunc) => (value) => setState(() {
+        updateFuncs[updateFunc](value);
+        final c = _color;
+        _r = c.red;
+        _g = c.green;
+        _b = c.blue;
+      });
+
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -534,7 +543,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
                 curve: Curves.easeInOutCubic,
                 child: switch (_colorPicker) {
                   _ColorPicker.cmyk => _CMYScreen(update: updateCMYKval),
-                  _ColorPicker.hsl => const _HSLScreen(),
+                  _ColorPicker.hsl => _HSLScreen(onChanged),
                   _ColorPicker.select => _ColorWheel(updateFromWheel),
                 },
               ),

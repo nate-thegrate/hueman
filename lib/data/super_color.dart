@@ -49,7 +49,7 @@ class SuperColor extends Color {
     double max = 1, min = 0;
     double mid() => (max + min) / 2;
     SuperColor color() => SuperColor.hsl(hue, 1, mid());
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 10; i++) {
       final double currentLuminance = color().computeLuminance();
       if (currentLuminance > luminance) {
         max = mid();

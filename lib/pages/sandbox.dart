@@ -293,7 +293,6 @@ class _SandboxState extends State<Sandbox> {
                     Padding(
                       padding: const EdgeInsets.all(20),
                       child: Stack(
-                        // TODO: add touch recognition
                         children: [
                           SuperContainer(
                             margin: const EdgeInsets.all(0.5),
@@ -305,12 +304,20 @@ class _SandboxState extends State<Sandbox> {
                               ),
                             ),
                           ),
-                          const SuperContainer(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [Colors.transparent, Colors.black],
+                          GestureDetector(
+                            onPanUpdate: (details) {
+                              final offset = details.localPosition;
+                              double val(double position) => (position / 360).stayInRange(0, 1);
+                              setState(() => _s = val(offset.dx));
+                              setState(() => _v = 1 - val(offset.dy));
+                            },
+                            child: const SuperContainer(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [Colors.transparent, Colors.black],
+                                ),
                               ),
                             ),
                           ),
