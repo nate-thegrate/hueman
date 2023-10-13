@@ -99,10 +99,12 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
           )
         ],
       );
-      content = ContinueButton(onPressed: () {
-        setState(() => showStuff = false);
-        sleep(2, then: () => context.noTransition(const _FirstLaunchMenu()));
-      });
+      content = Center(
+        child: ContinueButton(onPressed: () {
+          setState(() => showStuff = false);
+          sleep(2, then: () => context.noTransition(const _FirstLaunchMenu()));
+        }),
+      );
     });
     await sleepState(0.2, () => showStuff = true);
   }

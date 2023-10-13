@@ -696,17 +696,18 @@ class _Page6 extends StatefulWidget {
 
 class _Page6State extends SuperState<_Page6> with DelayedPress {
   bool wishVisible = false, tooBadVisible = false, justKidding = false, buttonVisible = false;
-  late final Ticker? epicHues;
+  late final Ticker epicHues;
 
   @override
   void initState() {
     super.initState();
+    epicHues = epicSetup(setState)..stop();
     animate();
   }
 
   @override
   void dispose() {
-    epicHues?.dispose();
+    epicHues.dispose();
     super.dispose();
   }
 
@@ -728,12 +729,14 @@ class _Page6State extends SuperState<_Page6> with DelayedPress {
     });
 
     await sleep(0.5);
-    epicHues = mounted ? epicSetup(setState) : null;
-    epicHue = 90;
+    if (mounted) {
+      epicHues.start();
+      epicHue = 90;
+    }
   }
 
   static const hsvWidth = 9, hsvHeight = 5;
-  static const duration = Duration(milliseconds: 250);
+  static const duration = quarterSec;
 
   final List<({Widget tile, double scale})> hsvGrid = [
     for (int value = hsvHeight; value > 0; value--)

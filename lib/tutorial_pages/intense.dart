@@ -190,7 +190,7 @@ class _ColorWave extends StatefulWidget {
 }
 
 class _ColorWaveState extends SuperState<_ColorWave> {
-  static const duration = Duration(milliseconds: 250);
+  static const duration = quarterSec;
 
   final List<_ColorDotData> colorWaveData = [
     for (int hue = 0; hue < 360; hue += 30) _ColorDotData(hue)

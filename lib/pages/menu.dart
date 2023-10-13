@@ -120,7 +120,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
           ),
         )),
         AnimatedSize(
-          duration: const Duration(milliseconds: 250),
+          duration: quarterSec,
           curve: curve,
           child: SuperContainer(
             padding: const EdgeInsets.only(top: 2),
@@ -169,8 +169,12 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
             ],
           ),
           const FixedSpacer(67),
-          SuperButton('intro',
-              color: epicColor, onPressed: () => setState(() => menuPage = MenuPage.introSelect)),
+          SuperButton(
+            'intro',
+            color: epicColor,
+            onPressed: () => setState(() => menuPage = MenuPage.introSelect),
+            noDelay: true,
+          ),
           const FixedSpacer(33),
           NavigateButton(Pages.intense, color: epicColor),
           if (hueMaster)
@@ -295,7 +299,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
                   width: 300,
                   padding: const EdgeInsets.all(50),
                   child: AnimatedSize(
-                    duration: const Duration(milliseconds: 250),
+                    duration: quarterSec,
                     curve: curve,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

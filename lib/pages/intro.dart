@@ -178,6 +178,25 @@ class _IntroModeState extends State<IntroMode> {
     if (hueQueue case TutorialQueue()) hueQueue.choices.shuffle();
     generateHue();
     hueFocusNode?.requestFocus();
+    if (scoreKeeper == null && !Tutorials.casual) {
+      sleep(
+        1,
+        then: () => showDialog(
+          context: context,
+          builder: (context) => const AlertDialog(
+            title: Text(
+              'playing in casual mode',
+              textAlign: TextAlign.center,
+            ),
+            content: Text(
+              'no timers or scorekeeping,\njust you and hue :)',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      );
+      Tutorials.casual = true;
+    }
   }
 
   @override

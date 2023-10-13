@@ -74,11 +74,11 @@ class SexyBox extends AnimatedSize {
 mixin DelayedPress {
   bool pressed = false;
 
-  delayed(void Function()? onPressed, {Duration delay = halfSec}) => () {
+  delayed(void Function()? onPressed, {bool noDelay = false}) => () {
         if (pressed) return;
 
         pressed = true;
-        Future.delayed(delay, onPressed);
+        Future.delayed(noDelay ? Duration.zero : halfSec, onPressed);
       };
 }
 
@@ -109,15 +109,17 @@ class _ContinueButtonState extends State<ContinueButton> with DelayedPress {
 class SuperButton extends StatefulWidget {
   const SuperButton(
     this.label, {
+    super.key,
     required this.color,
     required this.onPressed,
     this.padding,
-    super.key,
+    this.noDelay = false,
   });
   final String label;
   final void Function() onPressed;
   final Color color;
   final EdgeInsets? padding;
+  final bool noDelay;
 
   @override
   State<SuperButton> createState() => _SuperButtonState();
@@ -126,7 +128,7 @@ class SuperButton extends StatefulWidget {
 class _SuperButtonState extends State<SuperButton> with DelayedPress {
   @override
   Widget build(BuildContext context) => ElevatedButton(
-        onPressed: delayed(widget.onPressed),
+        onPressed: delayed(widget.onPressed, noDelay: widget.noDelay),
         style: ElevatedButton.styleFrom(
           backgroundColor: widget.color,
           foregroundColor: inverted ? Colors.white : Colors.black,

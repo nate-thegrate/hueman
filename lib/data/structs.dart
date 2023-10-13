@@ -19,8 +19,9 @@ Future<void> sleep(double seconds, {Function()? then}) =>
 
 void quickly(Function() function) => sleep(0.001, then: function);
 
-const halfSec = Duration(milliseconds: 500);
 const oneSec = Duration(seconds: 1);
+const halfSec = Duration(milliseconds: 500);
+const quarterSec = Duration(milliseconds: 250);
 const Curve curve = Curves.easeOutCubic;
 
 final rng = Random();

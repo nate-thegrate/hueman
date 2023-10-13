@@ -82,6 +82,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
             'tense',
             color: inverseColor,
             onPressed: () => setState(() => menuPage = MenuPage.tenseSelect),
+            noDelay: true,
           ),
           const FixedSpacer(33),
           ElevatedButton(
@@ -254,7 +255,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
                     width: 300,
                     padding: const EdgeInsets.all(50),
                     child: AnimatedSize(
-                      duration: const Duration(milliseconds: 250),
+                      duration: quarterSec,
                       curve: curve,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

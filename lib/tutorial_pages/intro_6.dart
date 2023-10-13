@@ -562,7 +562,8 @@ class _Page5State extends SuperState<_Page5> {
 
   void animate() async {
     await sleepState(2.5, () => slideIntoPlace = true);
-    await sleep(1.5, then: ticker.start);
+    await sleep(1.5);
+    ticker.start();
     await sleepState(5, () => showText = false);
     await sleepState(1, () => showArrows = true);
     await sleepState(3, () => showButton = true);
