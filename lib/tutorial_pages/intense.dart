@@ -20,13 +20,20 @@ class IntenseTutorial extends StatefulWidget {
 
 class _IntenseTutorialState extends SuperState<IntenseTutorial> {
   int textVisible = 0;
-  bool showAllRows = false, justKidding = false, makingTheJump = false, madeTheJump = false;
+  bool doTheWave = true,
+      showAllRows = false,
+      justKidding = false,
+      makingTheJump = false,
+      madeTheJump = false;
   late final Ticker epicHues;
 
   void animate() async {
-    await sleepState(3, () => textVisible++);
+    await sleepState(2.3, () => textVisible++);
     await sleepState(2, () => textVisible++);
-    await sleepState(4, () => textVisible++);
+    await sleepState(3, () {
+      doTheWave = false;
+      textVisible++;
+    });
     await sleepState(1, () => showAllRows = true);
     await sleepState(1, () => textVisible++);
   }
@@ -44,7 +51,7 @@ class _IntenseTutorialState extends SuperState<IntenseTutorial> {
           textVisible = 3;
         });
         await sleepState(3, () => textVisible = 0);
-        await sleepState(1, () {
+        await sleepState(1.25, () {
           textVisible = 2;
           makingTheJump = true;
         });
@@ -65,11 +72,7 @@ class _IntenseTutorialState extends SuperState<IntenseTutorial> {
   @override
   Widget build(BuildContext context) {
     final color = epicColor;
-    final double padMultiplier = showAllRows
-        ? justKidding
-            ? context.ballSpacing
-            : context.screenWidth / 12
-        : 0;
+
     return Scaffold(
       body: FadeIn(
         child: Center(
@@ -78,12 +81,14 @@ class _IntenseTutorialState extends SuperState<IntenseTutorial> {
               const Spacer(flex: 4),
               Stack(
                 children: [
-                  if (justKidding)
+                  if (doTheWave)
+                    const _ColorWave()
+                  else if (justKidding)
                     for (int startHue = 29; startHue >= 0; startHue -= 1)
-                      _ColorRow(startHue, topPadding: startHue * padMultiplier)
+                      _ColorRow(startHue, showAllRows ? context.ballSpacing : 0)
                   else
                     for (int startHue = 20; startHue >= 0; startHue -= 10)
-                      _ColorRow(startHue, topPadding: startHue * padMultiplier / 10),
+                      _ColorRow(startHue, showAllRows ? context.screenWidth / 120 : 0)
                 ],
               ),
               const Spacer(flex: 2),
@@ -177,11 +182,83 @@ class _ColorDot extends StatelessWidget {
   }
 }
 
-// TODO: class _ColorWave
+class _ColorWave extends StatefulWidget {
+  const _ColorWave();
+
+  @override
+  State<_ColorWave> createState() => _ColorWaveState();
+}
+
+class _ColorWaveState extends SuperState<_ColorWave> {
+  static const duration = Duration(milliseconds: 250);
+
+  final List<_ColorDotData> colorWaveData = [
+    for (int hue = 0; hue < 360; hue += 30) _ColorDotData(hue)
+  ];
+
+  void doTheWave(_ColorDotData dotData) async {
+    final List<VoidCallback> actions = [
+      () {
+        dotData.dy = -1.5;
+      },
+      () {
+        dotData.curve = Curves.easeInOutQuad;
+        dotData.dy = 1;
+      },
+      () {
+        dotData.dy = -0.5;
+      },
+      () {
+        dotData.curve = Curves.easeInQuad;
+        dotData.dy = 0;
+      },
+    ];
+
+    for (final action in actions) {
+      await Future.delayed(duration);
+      setState(action);
+    }
+  }
+
+  void animate() async {
+    for (final dotData in colorWaveData) {
+      await sleep(0.08);
+      doTheWave(dotData);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    sleep(1, then: animate);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        for (final _ColorDotData(:hue, :dy, :curve) in colorWaveData)
+          AnimatedSlide(
+            offset: Offset(0, dy),
+            duration: duration,
+            curve: curve,
+            child: _ColorDot(hue),
+          )
+      ],
+    );
+  }
+}
+
+class _ColorDotData {
+  _ColorDotData(this.hue);
+  final int hue;
+  double dy = 0;
+  Curve curve = Curves.easeOutQuad;
+}
 
 class _ColorRow extends StatelessWidget {
-  // ignore: unused_element
-  const _ColorRow(this.startHue, {this.topPadding = 0});
+  const _ColorRow(this.startHue, this.topPadding);
   final int startHue;
   final double topPadding;
 
@@ -190,7 +267,7 @@ class _ColorRow extends StatelessWidget {
     return AnimatedPadding(
       duration: oneSec,
       curve: Curves.easeInOutQuart,
-      padding: EdgeInsets.only(top: topPadding),
+      padding: EdgeInsets.only(top: topPadding * startHue),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [for (int hue = startHue; hue < 360; hue += 30) _ColorDot(hue)],
