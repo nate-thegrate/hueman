@@ -18,7 +18,7 @@ class IntroCTutorial extends StatefulWidget {
   State<IntroCTutorial> createState() => _IntroCTutorialState();
 }
 
-class _IntroCTutorialState extends State<IntroCTutorial> {
+class _IntroCTutorialState extends SuperState<IntroCTutorial> {
   bool visible = false;
   late final pages = [
     _Page1(nextPage),
@@ -31,11 +31,14 @@ class _IntroCTutorialState extends State<IntroCTutorial> {
   Duration duration = oneSec;
 
   void nextPage() async {
-    setState(() => duration = halfSec);
-    setState(() => visible = false);
-    await sleep(1);
-    setState(() => page++);
-    setState(() => visible = true);
+    setState(() {
+      duration = halfSec;
+      visible = false;
+    });
+    await sleepState(1, () {
+      page++;
+      visible = true;
+    });
   }
 
   @override
@@ -67,7 +70,7 @@ class _Page1 extends StatefulWidget {
   State<_Page1> createState() => _Page1State();
 }
 
-class _Page1State extends SafeState<_Page1> with DelayedPress {
+class _Page1State extends SuperState<_Page1> with DelayedPress {
   int progress = 0;
   void advance() => setState(() => progress++);
 
@@ -80,12 +83,13 @@ class _Page1State extends SafeState<_Page1> with DelayedPress {
   late VoidCallback trickQuestion = delayed(() async {
     advance(); // hide everything
 
-    await sleep(1);
-    setState(() => funkyText = const EasyText('Yeah sorry, that was a trick question.'));
+    await sleepState(
+      1,
+      () => funkyText = const EasyText('Yeah sorry, that was a trick question.'),
+    );
     advance();
 
-    await sleep(2);
-    setState(() => questionText = const EasyText("Here's the RGB:"));
+    await sleepState(2, () => questionText = const EasyText("Here's the RGB:"));
     advance();
 
     await sleep(1, then: advance); // show RGB
@@ -95,8 +99,7 @@ class _Page1State extends SafeState<_Page1> with DelayedPress {
   void tryAgain() async {
     advance(); // overlay
 
-    await sleep(1.5);
-    setState(() {
+    await sleepState(1.5, () {
       funkyText = empty;
       questionText = empty;
     });
@@ -343,7 +346,7 @@ class _Page2 extends StatefulWidget {
   State<_Page2> createState() => _Page2State();
 }
 
-class _Page2State extends SafeState<_Page2> {
+class _Page2State extends SuperState<_Page2> {
   bool showBlue = false, showNames = false;
   int numVisible = 1;
   void advance() => setState(() => numVisible++);
@@ -353,11 +356,8 @@ class _Page2State extends SafeState<_Page2> {
     await sleep(7, then: advance);
     await sleep(7, then: advance);
 
-    await sleep(3);
-    setState(() => numVisible = 0);
-
-    await sleep(1);
-    setState(() => showBlue = true);
+    await sleepState(3, () => numVisible = 0);
+    await sleepState(1, () => showBlue = true);
 
     await sleep(3, then: advance);
     await sleep(5, then: advance);
@@ -501,7 +501,7 @@ class _Page3 extends StatefulWidget {
   State<_Page3> createState() => _Page3State();
 }
 
-class _Page3State extends SafeState<_Page3> {
+class _Page3State extends SuperState<_Page3> {
   bool showLeftDesc = false,
       expandLeft = false,
       showLeftLabels = false,
@@ -510,32 +510,22 @@ class _Page3State extends SafeState<_Page3> {
   int rightLinesExpanded = 0, rightLabelsShown = 0;
 
   void animate() async {
-    await sleep(3);
-    setState(() => showLeftDesc = true);
-
-    await sleep(3);
-    setState(() => expandLeft = true);
-
-    await sleep(2);
-    setState(() => showLeftLabels = true);
-
-    await sleep(8);
-    setState(() => showRightDesc = true);
+    await sleepState(3, () => showLeftDesc = true);
+    await sleepState(3, () => expandLeft = true);
+    await sleepState(2, () => showLeftLabels = true);
+    await sleepState(8, () => showRightDesc = true);
 
     await sleep(1);
     for (int i = 0; i < 12; i++) {
-      await sleep(0.1);
-      setState(() => rightLinesExpanded++);
+      await sleepState(0.1, () => rightLinesExpanded++);
     }
 
     await sleep(1);
     for (int i = 0; i < 12; i++) {
-      await sleep(0.5);
-      setState(() => rightLabelsShown++);
+      await sleepState(0.5, () => rightLabelsShown++);
     }
 
-    await sleep(2);
-    setState(() => showButton = true);
+    await sleepState(2, () => showButton = true);
   }
 
   @override
@@ -719,7 +709,7 @@ class _FinalPage extends StatefulWidget {
   State<_FinalPage> createState() => _FinalPageState();
 }
 
-class _FinalPageState extends SafeState<_FinalPage> with DelayedPress {
+class _FinalPageState extends SuperState<_FinalPage> with DelayedPress {
   bool superDifficult = false, letsDoIt = false, expandButton = false;
   late final Ticker? epicHues;
 
@@ -728,11 +718,8 @@ class _FinalPageState extends SafeState<_FinalPage> with DelayedPress {
     epicHues = epicSetup(setState);
     setState(() => superDifficult = true);
 
-    await sleep(3);
-    setState(() => letsDoIt = true);
-
-    await sleep(1 / 3);
-    setState(() => expandButton = true);
+    await sleepState(3, () => letsDoIt = true);
+    await sleepState(1 / 3, () => expandButton = true);
   }
 
   @override

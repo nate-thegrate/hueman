@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
@@ -230,6 +231,15 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
               padding: EdgeInsets.only(top: 33),
               child: Text(
                 "during 'intro' games,\nquick answers score higher!",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white60),
+              ),
+            )
+          else if (!Tutorials.casual)
+            const Padding(
+              padding: EdgeInsets.only(top: 33),
+              child: Text(
+                'tap a completed intro level\nto play in casual mode',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white60),
               ),

@@ -2,20 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:super_hueman/inverse_pages/tense.dart';
-import 'package:super_hueman/inverse_pages/trivial.dart';
-import 'package:super_hueman/inverse_pages/ads.dart';
-import 'package:super_hueman/inverse_pages/true_mastery.dart';
-import 'package:super_hueman/pages/intense_master.dart';
-import 'package:super_hueman/pages/intro.dart';
+import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/inverse_pages/menu.dart';
-import 'package:super_hueman/inverse_pages/sandbox.dart';
 import 'package:super_hueman/pages/menu.dart';
-import 'package:super_hueman/pages/sandbox.dart';
-import 'package:super_hueman/tutorial_pages/intro_3.dart';
-import 'package:super_hueman/tutorial_pages/intro_6.dart';
-import 'package:super_hueman/tutorial_pages/intro_c.dart';
-import 'package:super_hueman/tutorial_pages/start.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -35,72 +24,6 @@ const oneSec = Duration(seconds: 1);
 const Curve curve = Curves.easeOutCubic;
 
 final rng = Random();
-
-enum Pages {
-  start(StartScreen()),
-  mainMenu(MainMenu()),
-  intro3(IntroMode(3)),
-  intro6(IntroMode(6)),
-  introC(IntroMode(12)),
-  intense(IntenseMode()),
-  master(IntenseMode('master')),
-  sandbox(Sandbox()),
-  ads(Ads()),
-
-  inverseMenu(InverseMenu()),
-  trivial(TriviaMode()),
-  tenseVibrant(TenseMode('vibrant')),
-  tenseVolatile(TenseMode('volatile')),
-  trueMastery(TrueMastery()),
-  inverseSandbox(InverseSandbox()),
-  ;
-
-  const Pages(this._widget);
-  final Widget _widget;
-
-  Widget get widget => switch (this) {
-        intro3 when !Tutorials.intro3 => const Intro3Tutorial(),
-        intro6 when !Tutorials.intro6 => const Intro6Tutorial(),
-        introC when !Tutorials.introC => const IntroCTutorial(),
-        _ => _widget,
-      };
-
-  String call() => switch (this) {
-        inverseMenu => 'invert!',
-        inverseSandbox => 'sandbox',
-        trueMastery => 'true\nmastery',
-        intro3 => '3 colors',
-        intro6 => '6 colors',
-        introC => '12 colors',
-        _ when name.startsWith('tense') => name.substring(5).toLowerCase(),
-        _ => name,
-      };
-
-  static Map<String, WidgetBuilder> routes = {
-    for (final page in values) page.name: (context) => page.widget
-  };
-
-  static String get initialRoute {
-    final route = !Tutorials.intro
-        ? start
-        : inverted
-            ? inverseMenu
-            : mainMenu;
-    return route.name;
-  }
-
-  String get gameMode => switch (this) {
-        intro3 => 'intro  (3 colors)',
-        intro6 => 'intro  (6 colors)',
-        introC => 'intro  (12 colors)',
-        intense => 'Intense',
-        master => 'Master',
-        tenseVibrant => 'Tense (vibrant)',
-        tenseVolatile => 'Tense (volatile!)',
-        trueMastery => 'True Mastery',
-        _ => "lol this shouldn't pop up",
-      };
-}
 
 abstract interface class ScoreKeeper {
   Pages get page;
@@ -135,21 +58,32 @@ extension ContextStuff on BuildContext {
   }
 }
 
-/// prevents all [setState] calls from working once it's disposed.
-abstract class SafeState<T extends StatefulWidget> extends State<T> {
+/// Prevents all [setState] calls from working once it's disposed,
+/// and adds a handy [sleepState] function.
+abstract class SuperState<T extends StatefulWidget> extends State<T> {
   @override
   void setState(fn) => mounted ? super.setState(fn) : null;
+
+  /// [sleep], then [setState].
+  Future<void> sleepState(double seconds, VoidCallback fn) =>
+      sleep(seconds, then: () => setState(fn));
 }
 
 void Function() gotoWebsite(String url) => () => launchUrl(Uri.parse(url));
 
-void addListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.addListener(func);
-void yeetListener(ValueChanged<RawKeyEvent> func) => RawKeyboard.instance.removeListener(func);
+typedef KeyFunc = ValueChanged<RawKeyEvent>;
+void addListener(KeyFunc func) => RawKeyboard.instance.addListener(func);
+void yeetListener(KeyFunc func) => RawKeyboard.instance.removeListener(func);
 
 class HueQueue {
-  HueQueue(this.choices);
-  final List<int> choices, recentChoices = [];
-  late final int minChoices = choices.length == 3 ? 2 : 3;
+  HueQueue(this.numColors) {
+    choices = [for (int hue = 0; hue < 360; hue += 360 ~/ numColors) hue];
+    recentChoices = [];
+    minChoices = numColors == 3 ? 2 : 3;
+  }
+  final int numColors;
+  late final List<int> choices, recentChoices;
+  late final int minChoices;
 
   /// grabs the next hue to use and updates the queue.
   int get queuedHue {

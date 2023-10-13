@@ -72,7 +72,7 @@ class _Page1 extends StatefulWidget {
   State<_Page1> createState() => _Page1State();
 }
 
-class _Page1State extends SafeState<_Page1> {
+class _Page1State extends SuperState<_Page1> {
   bool visible = false, buttonVisible = false;
 
   @override
@@ -113,7 +113,7 @@ class _Page2 extends StatefulWidget {
   State<_Page2> createState() => _Page2State();
 }
 
-class _Page2State extends SafeState<_Page2> {
+class _Page2State extends SuperState<_Page2> {
   bool visible = false, buttonVisible = false;
 
   final Map<SuperColor, bool> colorVisible = {
@@ -121,25 +121,22 @@ class _Page2State extends SafeState<_Page2> {
   };
 
   void startTransition() async {
-    await sleep(6);
-    setState(() => visible = true);
+    await sleepState(6, () => visible = true);
 
-    await sleep(4);
+    await sleep(3);
     for (final color in SuperColors.primaries) {
-      setState(() => colorVisible[color] = true);
-      await sleep(1);
+      await sleepState(1, () => colorVisible[color] = true);
     }
-    setState(() => buttonVisible = true);
+    await sleepState(1, () => buttonVisible = true);
   }
 
   void endTransition() async {
     setState(() => visible = false);
+    final secs = duration.inMilliseconds / 1000;
 
-    await Future.delayed(duration);
-    setState(() => expanded = true);
+    await sleepState(secs, () => expanded = true);
 
-    await Future.delayed(duration);
-    setState(() => squeezed = true);
+    await sleepState(secs, () => squeezed = true);
 
     await Future.delayed(squeezeDuration);
     widget.nextPage();
@@ -303,7 +300,7 @@ class _Page3 extends StatefulWidget {
   State<_Page3> createState() => _Page3State();
 }
 
-class _Page3State extends SafeState<_Page3> {
+class _Page3State extends SuperState<_Page3> {
   bool visible = false, eachPixelVisible = false, unleashTheOrb = false, buttonVisible = false;
 
   void animate() async {
@@ -315,8 +312,7 @@ class _Page3State extends SafeState<_Page3> {
     ];
 
     for (final (sleepFor, action) in animation) {
-      await sleep(sleepFor);
-      setState(action);
+      await sleepState(sleepFor, action);
     }
   }
 
@@ -469,7 +465,7 @@ class _Page4 extends StatefulWidget {
   State<_Page4> createState() => _Page4State();
 }
 
-class _Page4State extends SafeState<_Page4> {
+class _Page4State extends SuperState<_Page4> {
   bool showScreenshot = false, sometimesUgotta = false, showButton = false;
 
   void animate() async {
@@ -480,8 +476,7 @@ class _Page4State extends SafeState<_Page4> {
     ];
 
     for (final action in steps) {
-      await sleep(3);
-      setState(action);
+      await sleepState(3, action);
     }
   }
 
@@ -534,16 +529,14 @@ class _Page5 extends StatefulWidget {
   State<_Page5> createState() => _Page5State();
 }
 
-class _Page5State extends SafeState<_Page5> {
+class _Page5State extends SuperState<_Page5> {
   int textProgress = 0;
 
   void animate() async {
     for (final (_, sleepyTime) in text) {
-      await sleep(sleepyTime);
-      setState(() => textProgress++);
+      await sleepState(sleepyTime, () => textProgress++);
     }
-    await sleep(2.5);
-    setState(() => textProgress++);
+    await sleepState(2.5, () => textProgress++);
   }
 
   @override
@@ -701,7 +694,7 @@ class _Page6 extends StatefulWidget {
   State<_Page6> createState() => _Page6State();
 }
 
-class _Page6State extends SafeState<_Page6> with DelayedPress {
+class _Page6State extends SuperState<_Page6> with DelayedPress {
   bool wishVisible = false, tooBadVisible = false, justKidding = false, buttonVisible = false;
   late final Ticker? epicHues;
 
@@ -718,32 +711,25 @@ class _Page6State extends SafeState<_Page6> with DelayedPress {
   }
 
   void animate() async {
-    await sleep(0.75);
-    setState(() => wishVisible = true);
+    await sleepState(0.75, () => wishVisible = true);
 
     await sleep(0.5);
     for (int i = 0; i < hsvWidth * hsvHeight; i++) {
-      await sleep(0.05);
-      setState(() => hsvGrid[i] = (tile: hsvGrid[i].tile, scale: 17 / 16));
+      await sleepState(0.05, () => hsvGrid[i] = (tile: hsvGrid[i].tile, scale: 17 / 16));
     }
 
-    await sleep(2);
-    setState(() => tooBadVisible = true);
+    await sleepState(2, () => tooBadVisible = true);
 
-    await sleep(4.5);
-    setState(() => justKidding = true);
+    await sleepState(4.5, () => justKidding = true);
 
-    await sleep(2);
-    setState(() {
+    await sleepState(2, () {
       epicHue = 90;
       buttonVisible = true;
     });
 
     await sleep(0.5);
-    if (mounted) {
-      epicHues = epicSetup(setState);
-      epicHue = 90;
-    }
+    epicHues = mounted ? epicSetup(setState) : null;
+    epicHue = 90;
   }
 
   static const hsvWidth = 9, hsvHeight = 5;
@@ -879,7 +865,7 @@ class _Page7 extends StatefulWidget {
   State<_Page7> createState() => _Page7State();
 }
 
-class _Page7State extends State<_Page7> {
+class _Page7State extends SuperState<_Page7> {
   Widget overlay = const SuperContainer(
     color: Colors.black,
     alignment: Alignment.center,
@@ -904,24 +890,20 @@ class _Page7State extends State<_Page7> {
   }
 
   void animate() async {
-    await sleep(3);
-    setState(() => showOverlay2 = true);
+    await sleepState(3, () => showOverlay2 = true);
 
-    await sleep(1);
-    setState(() {
+    await sleepState(1, () {
       overlay = empty;
       showOverlay2 = false;
     });
 
     const List<double> sleepyTime = [3, 3, 1, 5, 3, 1];
     for (final time in sleepyTime) {
-      await sleep(time);
-      setState(() => step++);
+      await sleepState(time, () => step++);
       if (step == 4) animateHue = Ticker(smoothHue)..start();
     }
 
-    await sleep(4.5);
-    widget.nextPage();
+    await sleep(4.5, then: widget.nextPage);
   }
 
   @override
@@ -1045,7 +1027,7 @@ class _FinalPage extends StatefulWidget {
   State<_FinalPage> createState() => _FinalPageState();
 }
 
-class _FinalPageState extends SafeState<_FinalPage> with DelayedPress {
+class _FinalPageState extends SuperState<_FinalPage> with DelayedPress {
   late final Ticker epicHues;
   bool visible = false, buttonVisible = false, expanded = false;
   double width = 0;
@@ -1059,8 +1041,7 @@ class _FinalPageState extends SafeState<_FinalPage> with DelayedPress {
     ];
 
     for (final action in animation) {
-      await sleep(1);
-      setState(action);
+      await sleepState(1, action);
     }
   }
 

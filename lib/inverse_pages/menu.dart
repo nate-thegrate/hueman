@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
@@ -164,7 +165,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
           Center(
             child: OutlinedButton(
               onPressed: () {
-                Future animate() async {
+                Future<void> animate() async {
                   controller.forward();
                   await sleep(0.5);
                   setState(() => inverting = true);

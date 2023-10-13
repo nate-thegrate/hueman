@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
@@ -222,6 +223,13 @@ enum _HSV {
 }
 
 class _SandboxState extends State<Sandbox> {
+  void touchRecognition(details) {
+    final Offset offset = details.localPosition;
+    double val(double position) => (position / 360).stayInRange(0, 1);
+    setState(() => _s = val(offset.dx));
+    setState(() => _v = 1 - val(offset.dy));
+  }
+
   void colorPickerPicker(int index) => setState(() {
         switch (_colorPicker) {
           case _ColorPicker.rgb:
@@ -305,12 +313,8 @@ class _SandboxState extends State<Sandbox> {
                             ),
                           ),
                           GestureDetector(
-                            onPanUpdate: (details) {
-                              final offset = details.localPosition;
-                              double val(double position) => (position / 360).stayInRange(0, 1);
-                              setState(() => _s = val(offset.dx));
-                              setState(() => _v = 1 - val(offset.dy));
-                            },
+                            onPanStart: touchRecognition,
+                            onPanUpdate: touchRecognition,
                             child: const SuperContainer(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(

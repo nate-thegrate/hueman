@@ -1,3 +1,4 @@
+import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/hue_typing_game.dart';
@@ -15,23 +16,32 @@ class IntroMode extends StatefulWidget {
   State<IntroMode> createState() => _IntroModeState();
 }
 
+class TutorialQueue extends HueQueue {
+  TutorialQueue(super.numColors);
+
+  @override
+  int get queuedHue => choices.isEmpty ? 0 : choices.removeAt(0);
+}
+
 class TutorialScoreKeeper implements ScoreKeeper {
-  TutorialScoreKeeper({required this.numColors});
+  TutorialScoreKeeper(this.numColors, {required this.scoring});
   final int numColors;
-  int round = 0;
+  int round = 0, numCorrect = 0;
+  final VoidCallback scoring;
 
   @override
-  void roundCheck(BuildContext context) => round == totalRounds
-      ? Navigator.pushReplacement(
-          context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)))
-      : null;
+  void roundCheck(BuildContext context) {
+    if (numCorrect == numColors) {
+      final scoreScreen = MaterialPageRoute<void>(builder: (context) => ScoreScreen(this));
+      Navigator.pushReplacement(context, scoreScreen);
+    }
+  }
 
   @override
-  void scoreTheRound() => round++;
+  void scoreTheRound() => scoring();
 
   @override
-  Widget get midRoundDisplay =>
-      Text('round ${round + 1} / $totalRounds', style: const TextStyle(fontSize: 24));
+  Widget get midRoundDisplay => EasyText('hues found: $numCorrect / $numColors');
 
   @override
   Widget get finalScore => empty;
@@ -46,24 +56,16 @@ class TutorialScoreKeeper implements ScoreKeeper {
         12 => Pages.introC,
         _ => throw Error(),
       };
-
-  late final int totalRounds = switch (numColors) {
-    3 => 10,
-    6 => 20,
-    12 => 30,
-    _ => throw Error(),
-  };
 }
 
 class IntroScoreKeeper implements ScoreKeeper {
   IntroScoreKeeper({required this.numColors, required this.scoring});
-  int round = 0;
-  int numCorrect = 0;
+  int round = 0, numCorrect = 0;
 
   final Stopwatch stopwatch = Stopwatch();
 
   final int numColors;
-  final Function scoring;
+  final VoidCallback scoring;
 
   @override
   void scoreTheRound() => scoring();
@@ -79,10 +81,9 @@ class IntroScoreKeeper implements ScoreKeeper {
 
   @override
   Widget get midRoundDisplay {
-    const TextStyle style = TextStyle(fontSize: 24);
-    final Widget roundLabel = Text('round ${round + 1} / 30', style: style);
+    final Widget roundLabel = EasyText('round ${round + 1} / 30');
     if (round == 0) return roundLabel;
-    final Widget accuracyDesc = Text('accuracy: ${accuracy.round()}%', style: style);
+    final Widget accuracyDesc = EasyText('accuracy: ${accuracy.round()}%');
 
     return Column(children: [roundLabel, accuracyDesc]);
   }
@@ -121,9 +122,16 @@ class _IntroModeState extends State<IntroMode> {
 
   late final ScoreKeeper? scoreKeeper;
   void giveScore() {
-    if (scoreKeeper case final IntroScoreKeeper sk) {
-      if (guess == hue) sk.numCorrect++;
-      sk.round++;
+    switch (scoreKeeper) {
+      case IntroScoreKeeper():
+        if (guess == hue) (scoreKeeper as IntroScoreKeeper).numCorrect++;
+        (scoreKeeper as IntroScoreKeeper).round++;
+      case TutorialScoreKeeper():
+        if (guess == hue) {
+          (scoreKeeper as TutorialScoreKeeper).numCorrect++;
+        } else {
+          hueQueue.choices.add(hue);
+        }
     }
   }
 
@@ -150,13 +158,13 @@ class _IntroModeState extends State<IntroMode> {
 
     switch (widget.numColors) {
       case 3 when !Tutorials.intro3:
-        scoreKeeper = TutorialScoreKeeper(numColors: 3);
+        scoreKeeper = TutorialScoreKeeper(3, scoring: giveScore);
         Tutorials.intro3 = true;
       case 6 when !Tutorials.intro6:
-        scoreKeeper = TutorialScoreKeeper(numColors: 6);
+        scoreKeeper = TutorialScoreKeeper(6, scoring: giveScore);
         Tutorials.intro6 = true;
       case 0xC when !Tutorials.introC:
-        scoreKeeper = TutorialScoreKeeper(numColors: 0xC);
+        scoreKeeper = TutorialScoreKeeper(0xC, scoring: giveScore);
         Tutorials.introC = true;
       default:
         scoreKeeper =
@@ -164,7 +172,10 @@ class _IntroModeState extends State<IntroMode> {
     }
 
     if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.start();
-    hueQueue = HueQueue([for (int hue = 0; hue < 360; hue += 360 ~/ widget.numColors) hue]);
+    hueQueue = scoreKeeper is TutorialScoreKeeper
+        ? TutorialQueue(widget.numColors)
+        : HueQueue(widget.numColors);
+    if (hueQueue case TutorialQueue()) hueQueue.choices.shuffle();
     generateHue();
     hueFocusNode?.requestFocus();
   }

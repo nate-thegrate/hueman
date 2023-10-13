@@ -17,7 +17,7 @@ class Intro6Tutorial extends StatefulWidget {
   State<Intro6Tutorial> createState() => _Intro6TutorialState();
 }
 
-class _Intro6TutorialState extends State<Intro6Tutorial> {
+class _Intro6TutorialState extends SuperState<Intro6Tutorial> {
   bool visible = false;
   late final pages = [
     _Page1(nextPage),
@@ -35,8 +35,7 @@ class _Intro6TutorialState extends State<Intro6Tutorial> {
   void nextPage() async {
     setState(() => duration = halfSec);
     setState(() => visible = false);
-    await sleep(1);
-    setState(() {
+    await sleepState(1, () {
       page++;
       duration = oneSec;
     });
@@ -69,7 +68,7 @@ class _Page1 extends StatefulWidget {
   State<_Page1> createState() => _Page1State();
 }
 
-class _Page1State extends State<_Page1> {
+class _Page1State extends SuperState<_Page1> {
   final controllers = [
     rive.SimpleAnimation('spin'),
     rive.OneShotAnimation('combine', autoplay: false),
@@ -96,11 +95,9 @@ class _Page1State extends State<_Page1> {
                 const Spacer(flex: 4),
                 ContinueButton(onPressed: () async {
                   setState(weBallin);
-                  await sleep(5);
-                  setState(noSpins);
+                  await sleepState(5, noSpins);
                   setState(bestPart);
-                  await sleep(8);
-                  widget.nextPage();
+                  await sleep(8, then: widget.nextPage);
                 }),
                 const Spacer(),
               ],
@@ -120,7 +117,7 @@ class _Page2 extends StatefulWidget {
   State<_Page2> createState() => _Page2State();
 }
 
-class _Page2State extends SafeState<_Page2> {
+class _Page2State extends SuperState<_Page2> {
   bool showPrinter = false, showButton = false;
 
   @override
@@ -183,18 +180,14 @@ class _Page3 extends StatefulWidget {
   State<_Page3> createState() => _Page3State();
 }
 
-class _Page3State extends SafeState<_Page3> with DelayedPress {
+class _Page3State extends SuperState<_Page3> with DelayedPress {
   bool showQuestion = false, showcase = false, printing = false, showButton = false;
 
   void animate() async {
-    await sleep(4);
-    setState(() => showQuestion = true);
-    await sleep(4);
-    setState(() => showcase = true);
-    await sleep(1.5);
-    setState(() => printing = true);
-    await sleep(2.5);
-    setState(() => showButton = true);
+    await sleepState(4, () => showQuestion = true);
+    await sleepState(4, () => showcase = true);
+    await sleepState(1.5, () => printing = true);
+    await sleepState(2.5, () => showButton = true);
   }
 
   @override
@@ -326,43 +319,29 @@ class _Page4 extends StatefulWidget {
   State<_Page4> createState() => _Page4State();
 }
 
-class _Page4State extends State<_Page4> {
+class _Page4State extends SuperState<_Page4> {
   bool showThanks = true, expanded = false, showText = true, lightBars = true;
 
   void animate() async {
-    await sleep(2.5);
-    setState(() => showThanks = false);
-
-    await sleep(2);
-    setState(() => expanded = true);
+    await sleepState(2.5, () => showThanks = false);
+    await sleepState(2, () => expanded = true);
 
     await sleep(1);
     for (int i = 0; i < 3; i++) {
-      await sleep(0.5);
-      setState(() => children[i] = _NeonRGB(SuperColors.primaries[i]));
+      await sleepState(0.5, () => children[i] = _NeonRGB(SuperColors.primaries[i]));
     }
 
-    await sleep(3);
-    setState(() => showText = false);
-
-    await sleep(2);
-    setState(() {
+    await sleepState(3, () => showText = false);
+    await sleepState(2, () {
       lightBars = false;
       showText = true;
       children = List.filled(5, const Spacer());
     });
+    await sleepState(1.5, () => children[2] = const _SplashCMY(SuperColors.cyan));
+    await sleepState(0.25, () => children[1] = const _SplashCMY(SuperColors.magenta));
+    await sleepState(0.25, () => children[3] = const _SplashCMY(SuperColors.yellow));
 
-    await sleep(1.5);
-    setState(() => children[2] = const _SplashCMY(SuperColors.cyan));
-
-    await sleep(0.25);
-    setState(() => children[1] = const _SplashCMY(SuperColors.magenta));
-
-    await sleep(0.25);
-    setState(() => children[3] = const _SplashCMY(SuperColors.yellow));
-
-    await sleep(7.5);
-    widget.nextPage();
+    await sleep(7.5, then: widget.nextPage);
   }
 
   @override
@@ -576,26 +555,17 @@ class _Page5 extends StatefulWidget {
   State<_Page5> createState() => _Page5State();
 }
 
-class _Page5State extends SafeState<_Page5> {
+class _Page5State extends SuperState<_Page5> {
   bool slideIntoPlace = false, showText = true, showArrows = false, showButton = false;
   int counter = 0;
   late final Ticker ticker;
 
   void animate() async {
-    await sleep(2.5);
-    setState(() => slideIntoPlace = true);
-
-    await sleep(1.5);
-    ticker.start();
-
-    await sleep(5);
-    setState(() => showText = false);
-
-    await sleep(1);
-    setState(() => showArrows = true);
-
-    await sleep(3);
-    setState(() => showButton = true);
+    await sleepState(2.5, () => slideIntoPlace = true);
+    await sleep(1.5, then: ticker.start);
+    await sleepState(5, () => showText = false);
+    await sleepState(1, () => showArrows = true);
+    await sleepState(3, () => showButton = true);
   }
 
   @override
@@ -855,7 +825,7 @@ class _Page6 extends StatefulWidget {
   State<_Page6> createState() => _Page6State();
 }
 
-class _Page6State extends SafeState<_Page6> {
+class _Page6State extends SuperState<_Page6> {
   static const screenText = [
     EasyText('You know what really rustles my jimmies?'),
     Spacer(flex: 4),
@@ -892,7 +862,7 @@ class _Page6State extends SafeState<_Page6> {
   void initState() {
     super.initState();
     timer = Timer.periodic(
-      const Duration(milliseconds: 3000),
+      const Duration(seconds: 3),
       (_) => setState(() => textProgress++),
     );
   }
@@ -931,7 +901,7 @@ class _FinalPage extends StatefulWidget {
   State<_FinalPage> createState() => _FinalPageState();
 }
 
-class _FinalPageState extends SafeState<_FinalPage> with DelayedPress {
+class _FinalPageState extends SuperState<_FinalPage> with DelayedPress {
   late final Ticker epicHues;
   bool showButton = false;
 

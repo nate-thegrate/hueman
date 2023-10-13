@@ -164,92 +164,97 @@ class _HSLScreen extends StatefulWidget {
 }
 
 class _HSLScreenState extends State<_HSLScreen> {
+  void touchRecognition(details) {
+    final Offset offset = details.localPosition;
+    double val(double position) => (position / 360).stayInRange(0, 1);
+    widget.onChanged(1)(val(offset.dx));
+    widget.onChanged(2)(1 - val(offset.dy));
+  }
+
   @override
-  Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SuperContainer(
-            width: 400,
-            height: 400,
-            alignment: Alignment.center,
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Stack(
-                    children: [
-                      SuperContainer(
-                        margin: const EdgeInsets.all(0.5),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [SuperColors.gray, SuperColor.hue(_h)],
-                          ),
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SuperContainer(
+          width: 400,
+          height: 400,
+          alignment: Alignment.center,
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Stack(
+                  children: [
+                    SuperContainer(
+                      margin: const EdgeInsets.all(0.5),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [SuperColors.gray, SuperColor.hue(_h)],
                         ),
                       ),
-                      const SuperContainer(
+                    ),
+                    const SuperContainer(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.white, Color(0x00FFFFFF), Color(0x00FFFFFF)],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onPanStart: touchRecognition,
+                      onPanUpdate: touchRecognition,
+                      child: const SuperContainer(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [Colors.white, Color(0x00FFFFFF), Color(0x00FFFFFF)],
+                            colors: [Colors.transparent, Colors.transparent, Colors.black],
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onPanUpdate: (details) {
-                          final offset = details.localPosition;
-                          double val(double position) => (position / 360).stayInRange(0, 1);
-                          widget.onChanged(1)(val(offset.dx));
-                          widget.onChanged(2)(1 - val(offset.dy));
-                        },
-                        child: const SuperContainer(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.transparent, Colors.transparent, Colors.black],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Align(
-                  alignment: Alignment(2 * _s - 1, 1 - 2 * _l),
-                  child: Icon(
-                    Icons.add,
-                    color: contrastWith(_color),
-                    size: 40,
-                  ),
+              ),
+              Align(
+                alignment: Alignment(2 * _s - 1, 1 - 2 * _l),
+                child: Icon(
+                  Icons.add,
+                  color: contrastWith(_color),
+                  size: 40,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          _HSLSlider(
-            'hue',
-            _h,
-            color: SuperColor.hue(_h),
-            onChanged: widget.onChanged(0),
-          ),
-          _HSLSlider(
-            'saturation',
-            _s,
-            color: SuperColor.hsl(_h, _s, 0.5),
-            onChanged: widget.onChanged(1),
-          ),
-          _HSLSlider(
-            'lightness',
-            _l,
-            color: SuperColor.hsl(_h, _s, _l),
-            onChanged: widget.onChanged(2),
-          ),
-          const FixedSpacer(25),
-          SuperContainer(width: 500, height: 100, color: _color),
-        ],
-      );
+        ),
+        _HSLSlider(
+          'hue',
+          _h,
+          color: SuperColor.hue(_h),
+          onChanged: widget.onChanged(0),
+        ),
+        _HSLSlider(
+          'saturation',
+          _s,
+          color: SuperColor.hsl(_h, _s, 0.5),
+          onChanged: widget.onChanged(1),
+        ),
+        _HSLSlider(
+          'lightness',
+          _l,
+          color: SuperColor.hsl(_h, _s, _l),
+          onChanged: widget.onChanged(2),
+        ),
+        const FixedSpacer(25),
+        SuperContainer(width: 500, height: 100, color: _color),
+      ],
+    );
+  }
 }
 
 class _HSLSlider extends StatelessWidget {
@@ -500,7 +505,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
         updateRGB();
       });
 
-  void updateFromWheel(rgb) => setState(() {
+  void updateFromWheel(Color rgb) => setState(() {
         _r = rgb.red;
         _g = rgb.green;
         _b = rgb.blue;
@@ -511,13 +516,14 @@ class _InverseSandboxState extends State<InverseSandbox> {
         _l = hsl.lightness;
       });
 
-  final updateFuncs = [
+  final hslUpdateFuncs = [
     (value) => _h = value,
     (value) => _s = value,
     (value) => _l = value,
   ];
-  void Function(double) onChanged(int updateFunc) => (value) => setState(() {
-        updateFuncs[updateFunc](value);
+
+  void Function(double) onChangedHSL(int updateFunc) => (value) => setState(() {
+        hslUpdateFuncs[updateFunc](value);
         final c = _color;
         _r = c.red;
         _g = c.green;
@@ -543,7 +549,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
                 curve: Curves.easeInOutCubic,
                 child: switch (_colorPicker) {
                   _ColorPicker.cmyk => _CMYScreen(update: updateCMYKval),
-                  _ColorPicker.hsl => _HSLScreen(onChanged),
+                  _ColorPicker.hsl => _HSLScreen(onChangedHSL),
                   _ColorPicker.select => _ColorWheel(updateFromWheel),
                 },
               ),

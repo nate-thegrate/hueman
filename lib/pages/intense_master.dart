@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/gestures.dart';
+import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/photo_colors.dart';
 import 'package:super_hueman/data/super_container.dart';

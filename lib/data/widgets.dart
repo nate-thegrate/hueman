@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rive/rive.dart' as rive;
+import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
@@ -444,7 +445,7 @@ class ColorTextSpan extends TextSpan {
   String get text => color.name;
 
   @override
-  TextStyle get style => TextStyle(color: color, fontWeight: FontWeight.w600);
+  TextStyle get style => TextStyle(color: color, fontWeight: fontWeight);
 }
 
 class Rive extends StatelessWidget {

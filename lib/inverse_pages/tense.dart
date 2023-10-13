@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/pages/score.dart';
@@ -140,7 +141,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
       : TenseScoreKeeper(page: widget.volatile ? Pages.tenseVolatile : Pages.tenseVibrant);
 
   late int hue;
-  final HueQueue hueQueue = HueQueue([for (int i = 0; i < 360; i += 30) i]);
+  final HueQueue hueQueue = HueQueue(12);
   int? selectedHue;
 
   static const animationTime = 25;
@@ -254,9 +255,9 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
       );
 
   void Function() _select(int j) => () async {
+        final bool correct = buttonData[j].hue == hue;
         buttonData[j].controller.forward(from: 1);
         await sleep(.1);
-        final bool correct = buttonData[j].hue == hue;
         setState(() {
           selectedHue = buttonData[j].hue;
           showReaction = true;

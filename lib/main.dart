@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:super_hueman/data/structs.dart';
+import 'package:super_hueman/data/page_data.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

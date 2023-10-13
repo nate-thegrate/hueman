@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:rive/rive.dart' as rive;
+import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
@@ -15,10 +16,9 @@ class StartScreen extends StatefulWidget {
   State<StartScreen> createState() => _StartScreenState();
 }
 
-class _StartScreenState extends State<StartScreen> {
+class _StartScreenState extends SuperState<StartScreen> {
   void Function() onStop({required double sleepFor, required int controllerIndex}) =>
-      () => sleep(sleepFor - 0.1,
-          then: () => setState(() => controllers[controllerIndex].isActive = true));
+      () => sleepState(sleepFor - 0.1, () => controllers[controllerIndex].isActive = true);
 
   late final List<rive.RiveAnimationController> controllers = [
     rive.SimpleAnimation('button spin'),
@@ -75,26 +75,21 @@ class _CallOutTheLie extends StatefulWidget {
   State<_CallOutTheLie> createState() => _CallOutTheLieState();
 }
 
-class _CallOutTheLieState extends State<_CallOutTheLie> {
+class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
   @override
   void initState() {
     super.initState();
-    sleep(
-      3,
-      then: () => setState(() {
-        content = _TruthButton(onPressed: seeTheTruth);
-        showButton = true;
-      }),
-    );
+    sleepState(3, () {
+      content = _TruthButton(onPressed: seeTheTruth);
+      showButton = true;
+    });
   }
 
-  bool showStuff = true;
-  bool showButton = false;
+  bool showStuff = true, showButton = false;
 
   void seeTheTruth() async {
     setState(() => showStuff = false);
-    await sleep(2);
-    setState(() {
+    await sleepState(2, () {
       title = const Column(
         children: [
           Icon(Icons.headphones_outlined, size: 300),
@@ -109,8 +104,7 @@ class _CallOutTheLieState extends State<_CallOutTheLie> {
         sleep(2, then: () => context.noTransition(const _FirstLaunchMenu()));
       });
     });
-    await sleep(0.2);
-    setState(() => showStuff = true);
+    await sleepState(0.2, () => showStuff = true);
   }
 
   Widget title = const Text(
