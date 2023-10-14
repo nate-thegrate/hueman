@@ -26,6 +26,9 @@ const Curve curve = Curves.easeOutCubic;
 
 final rng = Random();
 
+Color contrastWith(Color c, {double threshold = .2}) =>
+    (c.computeLuminance() > threshold) ? Colors.black : Colors.white;
+
 abstract interface class ScoreKeeper {
   Pages get page;
   Widget get midRoundDisplay;
@@ -37,6 +40,7 @@ abstract interface class ScoreKeeper {
 
 extension ContextStuff on BuildContext {
   void goto(Pages page) => Navigator.pushReplacementNamed(this, page.name);
+  void menu() => goto(Pages.mainMenu);
 
   void noTransition(Widget screen) => Navigator.pushReplacement<void, void>(
         this,
@@ -57,17 +61,6 @@ extension ContextStuff on BuildContext {
     final size = screenSize;
     return widthHeight(size.width, size.height);
   }
-}
-
-/// Prevents all [setState] calls from working once it's disposed,
-/// and adds a handy [sleepState] function.
-abstract class SuperState<T extends StatefulWidget> extends State<T> {
-  @override
-  void setState(fn) => mounted ? super.setState(fn) : null;
-
-  /// [sleep], then [setState].
-  Future<void> sleepState(double seconds, VoidCallback fn) =>
-      sleep(seconds, then: () => setState(fn));
 }
 
 void Function() gotoWebsite(String url) => () => launchUrl(Uri.parse(url));

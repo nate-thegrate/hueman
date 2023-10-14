@@ -7,6 +7,7 @@ import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class StartScreen extends StatefulWidget {

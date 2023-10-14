@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:super_hueman/data/save_data.dart';
-import 'package:super_hueman/inverse_pages/ads.dart';
 import 'package:super_hueman/inverse_pages/menu.dart';
 import 'package:super_hueman/inverse_pages/sandbox.dart';
 import 'package:super_hueman/inverse_pages/tense.dart';
@@ -14,6 +13,7 @@ import 'package:super_hueman/tutorial_pages/intense.dart';
 import 'package:super_hueman/tutorial_pages/intro_3.dart';
 import 'package:super_hueman/tutorial_pages/intro_6.dart';
 import 'package:super_hueman/tutorial_pages/intro_c.dart';
+import 'package:super_hueman/tutorial_pages/sandbox.dart';
 import 'package:super_hueman/tutorial_pages/start.dart';
 
 enum Pages {
@@ -25,14 +25,11 @@ enum Pages {
   intense(IntenseMode()),
   master(IntenseMode('master')),
   sandbox(Sandbox()),
-  ads(Ads()),
 
-  inverseMenu(InverseMenu()),
   trivial(TriviaMode()),
   tenseVibrant(TenseMode('vibrant')),
   tenseVolatile(TenseMode('volatile')),
   trueMastery(TrueMastery()),
-  inverseSandbox(InverseSandbox()),
   ;
 
   const Pages(this._widget);
@@ -43,13 +40,14 @@ enum Pages {
         intro6 when !Tutorials.intro6 => const Intro6Tutorial(),
         introC when !Tutorials.introC => const IntroCTutorial(),
         intense when !Tutorials.intense => const IntenseTutorial(),
+        sandbox when !Tutorials.compSci => const SandboxTutorial(),
+        sandbox when inverted => const InverseSandbox(),
+        mainMenu when inverted => const InverseMenu(),
         _ => _widget,
       };
 
   /// button text
   String call() => switch (this) {
-        inverseMenu => 'invert!',
-        inverseSandbox => 'sandbox',
         trueMastery => 'true\nmastery',
         intro3 => '3 colors',
         intro6 => '6 colors',
@@ -74,8 +72,5 @@ enum Pages {
     for (final page in values) page.name: (context) => page.widget
   };
 
-  static String get initialRoute {
-    if (!Tutorials.intro) return start.name;
-    return (inverted ? inverseMenu : mainMenu).name;
-  }
+  static String get initialRoute => (Tutorials.intro ? mainMenu : start).name;
 }

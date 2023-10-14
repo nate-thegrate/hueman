@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
@@ -246,7 +245,7 @@ class _SandboxState extends State<Sandbox> {
           foregroundColor: Colors.white70,
           backgroundColor: Colors.black12,
         ),
-        onPressed: () => context.goto(Pages.mainMenu),
+        onPressed: context.menu,
         child: const Padding(
           padding: EdgeInsets.all(8),
           child: Text(

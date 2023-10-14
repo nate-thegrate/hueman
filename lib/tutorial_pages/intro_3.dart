@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/pages/intro.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/widgets.dart';
@@ -76,10 +77,9 @@ class _Page1State extends SuperState<_Page1> {
   bool visible = false, buttonVisible = false;
 
   @override
-  void initState() {
-    super.initState();
-    sleep(4, then: () => setState(() => visible = true));
-    sleep(6, then: () => setState(() => buttonVisible = true));
+  void animate() async {
+    await sleepState(4, () => visible = true);
+    await sleepState(2, () => buttonVisible = true);
   }
 
   @override
@@ -120,7 +120,8 @@ class _Page2State extends SuperState<_Page2> {
     for (final color in SuperColors.primaries) color: false
   };
 
-  void startTransition() async {
+  @override
+  void animate() async {
     await sleepState(6, () => visible = true);
 
     await sleep(3);
@@ -140,12 +141,6 @@ class _Page2State extends SuperState<_Page2> {
 
     await Future.delayed(squeezeDuration);
     widget.nextPage();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    startTransition();
   }
 
   static const duration = Duration(milliseconds: 1500);
@@ -303,6 +298,7 @@ class _Page3 extends StatefulWidget {
 class _Page3State extends SuperState<_Page3> {
   bool visible = false, eachPixelVisible = false, unleashTheOrb = false, buttonVisible = false;
 
+  @override
   void animate() async {
     final List<(double, void Function())> animation = [
       (5, () => eachPixelVisible = true),
@@ -314,12 +310,6 @@ class _Page3State extends SuperState<_Page3> {
     for (final (sleepFor, action) in animation) {
       await sleepState(sleepFor, action);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    animate();
   }
 
   @override
@@ -341,11 +331,11 @@ class _Page3State extends SuperState<_Page3> {
           visible,
           child: const EasyRichText([
             TextSpan(text: 'With 256 different levels for '),
-            ColorTextSpan(SuperColors.red),
+            ColorTextSpan.red,
             TextSpan(text: ', '),
-            ColorTextSpan(SuperColors.green),
+            ColorTextSpan.green,
             TextSpan(text: ', and '),
-            ColorTextSpan(SuperColors.visibleBlue),
+            ColorTextSpan.visibleBlue,
             TextSpan(text: ',\nthis device is able to display'),
           ]),
         ),
@@ -468,6 +458,7 @@ class _Page4 extends StatefulWidget {
 class _Page4State extends SuperState<_Page4> {
   bool showScreenshot = false, sometimesUgotta = false, showButton = false;
 
+  @override
   void animate() async {
     final List<VoidCallback> steps = [
       () => showScreenshot = true,
@@ -478,12 +469,6 @@ class _Page4State extends SuperState<_Page4> {
     for (final action in steps) {
       await sleepState(3, action);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    animate();
   }
 
   @override
@@ -532,6 +517,7 @@ class _Page5 extends StatefulWidget {
 class _Page5State extends SuperState<_Page5> {
   int textProgress = 0;
 
+  @override
   void animate() async {
     for (final (_, sleepyTime) in text) {
       await sleepState(sleepyTime, () => textProgress++);
@@ -539,24 +525,18 @@ class _Page5State extends SuperState<_Page5> {
     await sleepState(2.5, () => textProgress++);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    animate();
-  }
-
   static const List<(Widget line, double timeToRead)> text = [
     (
       EasyRichText([
         TextSpan(text: "Let's take "),
-        ColorTextSpan(SuperColors.green),
+        ColorTextSpan.green,
       ]),
       2.5
     ),
     (
       EasyRichText([
         TextSpan(text: 'and make it just a little bit '),
-        ColorTextSpan(SuperColors.yellow),
+        ColorTextSpan.yellow,
         TextSpan(text: '.'),
       ]),
       2
@@ -694,7 +674,7 @@ class _Page6 extends StatefulWidget {
   State<_Page6> createState() => _Page6State();
 }
 
-class _Page6State extends SuperState<_Page6> with DelayedPress {
+class _Page6State extends SuperState<_Page6> with SinglePress {
   bool wishVisible = false, tooBadVisible = false, justKidding = false, buttonVisible = false;
   late final Ticker epicHues;
 
@@ -702,7 +682,6 @@ class _Page6State extends SuperState<_Page6> with DelayedPress {
   void initState() {
     super.initState();
     epicHues = epicSetup(setState)..stop();
-    animate();
   }
 
   @override
@@ -711,6 +690,7 @@ class _Page6State extends SuperState<_Page6> with DelayedPress {
     super.dispose();
   }
 
+  @override
   void animate() async {
     await sleepState(0.75, () => wishVisible = true);
 
@@ -795,7 +775,7 @@ class _Page6State extends SuperState<_Page6> with DelayedPress {
             duration: duration,
             buttonVisible: buttonVisible,
             color: epicColor,
-            nextPage: delayed(widget.nextPage),
+            nextPage: singlePress(widget.nextPage),
           ),
       ],
     );
@@ -892,6 +872,7 @@ class _Page7State extends SuperState<_Page7> {
     setState(() => _hue = newHue);
   }
 
+  @override
   void animate() async {
     await sleepState(3, () => showOverlay2 = true);
 
@@ -907,12 +888,6 @@ class _Page7State extends SuperState<_Page7> {
     }
 
     await sleep(4.5, then: widget.nextPage);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    animate();
   }
 
   static const step1 = 'Step 1: Find a color wheel.';
@@ -1030,11 +1005,12 @@ class _FinalPage extends StatefulWidget {
   State<_FinalPage> createState() => _FinalPageState();
 }
 
-class _FinalPageState extends SuperState<_FinalPage> with DelayedPress {
+class _FinalPageState extends SuperState<_FinalPage> with SinglePress {
   late final Ticker epicHues;
   bool visible = false, buttonVisible = false, expanded = false;
   double width = 0;
 
+  @override
   void animate() async {
     final List<void Function()> animation = [
       () => visible = true,
@@ -1048,7 +1024,7 @@ class _FinalPageState extends SuperState<_FinalPage> with DelayedPress {
     }
   }
 
-  late VoidCallback onPressed = delayed(() => Navigator.pushReplacement<void, void>(
+  late VoidCallback onPressed = singlePress(() => Navigator.pushReplacement<void, void>(
         context,
         MaterialPageRoute<void>(builder: (context) => const IntroMode(3)),
       ));
@@ -1057,7 +1033,6 @@ class _FinalPageState extends SuperState<_FinalPage> with DelayedPress {
   void initState() {
     super.initState();
     epicHues = epicSetup(setState);
-    animate();
   }
 
   @override

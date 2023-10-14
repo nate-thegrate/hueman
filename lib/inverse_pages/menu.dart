@@ -101,7 +101,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
             ),
           ),
           const FixedSpacer(67),
-          NavigateButton(Pages.inverseSandbox, color: inverseColor),
+          NavigateButton(Pages.sandbox, color: inverseColor),
         ],
       MenuPage.settings => [
           MenuCheckbox(
@@ -124,57 +124,15 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
             toggle: (value) => setState(() => casualMode = value),
           ),
           const FixedSpacer(67),
-          if (Tutorials.ads) ...[
-            SuperContainer(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(
-                'get notified when\nthe next game comes out!',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.black87),
-              ),
-            ),
-            Center(
-                child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: inverseColor, width: 2),
-                foregroundColor: inverseColor,
-                shadowColor: inverseColor,
-              ),
-              onPressed: gotoWebsite('https://google.com/'),
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(2.5, 5, 2.5, 10),
-                child: Text('sign up', style: TextStyle(fontSize: 24)),
-              ),
-            )),
-          ] else ...[
-            Center(
-                child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: inverseColor, width: 2),
-                foregroundColor: inverseColor,
-                shadowColor: inverseColor,
-              ),
-              onPressed: () => context.goto(Pages.ads),
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(24, 5, 24, 10),
-                child: Text('ads', style: TextStyle(fontSize: 24)),
-              ),
-            ))
-          ],
-          const FixedSpacer(25),
           Center(
             child: OutlinedButton(
-              onPressed: () {
-                Future<void> animate() async {
-                  controller.forward();
-                  await sleep(0.5);
-                  setState(() => inverting = true);
-                  await sleep(0.6);
-                }
-
-                animate().then((_) => context.invert());
-              },
+              onPressed: () => () async {
+                controller.forward();
+                await sleep(0.5);
+                setState(() => inverting = true);
+                await sleep(0.6);
+              }()
+                  .then((_) => context.invert()),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: inverseColor, width: 2),
                 foregroundColor: inverseColor,

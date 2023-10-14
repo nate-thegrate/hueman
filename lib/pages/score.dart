@@ -67,23 +67,23 @@ class _ScoreScreenState extends State<ScoreScreen> {
               ),
               const Spacer(flex: 2),
               if (tutorial) ...[
-                SuperButton(
-                  'continue',
-                  color: color,
-                  onPressed: () => context.goto(switch (page) {
-                    Pages.intro3 => Pages.intro6,
-                    Pages.intro6 => Pages.introC,
-                    Pages.introC => Pages.intense,
-                    _ => throw Error(),
-                  }),
-                ),
+                if (page != Pages.introC)
+                  SuperButton(
+                    'continue',
+                    color: color,
+                    onPressed: () => context.goto(switch (page) {
+                      Pages.intro3 => Pages.intro6,
+                      Pages.intro6 => Pages.introC,
+                      _ => throw Error(),
+                    }),
+                  ),
                 const FixedSpacer(33),
                 SuperButton('play again', color: color, onPressed: () => context.goto(page)),
                 const FixedSpacer(33),
                 SuperButton(
                   'main menu',
                   color: color,
-                  onPressed: () => context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
+                  onPressed: context.menu,
                 ),
               ] else ...[
                 Row(
@@ -110,7 +110,7 @@ class _ScoreScreenState extends State<ScoreScreen> {
                 SuperButton(
                   'main menu',
                   color: color,
-                  onPressed: () => context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
+                  onPressed: context.menu,
                 ),
               ],
               const Expanded(flex: 4, child: empty),

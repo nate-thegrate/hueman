@@ -7,6 +7,7 @@ import 'package:rive/rive.dart' as rive;
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/data/widgets.dart';
 import 'package:super_hueman/pages/intro.dart';
 
@@ -180,20 +181,15 @@ class _Page3 extends StatefulWidget {
   State<_Page3> createState() => _Page3State();
 }
 
-class _Page3State extends SuperState<_Page3> with DelayedPress {
+class _Page3State extends SuperState<_Page3> with SinglePress {
   bool showQuestion = false, showcase = false, printing = false, showButton = false;
 
+  @override
   void animate() async {
     await sleepState(4, () => showQuestion = true);
     await sleepState(4, () => showcase = true);
     await sleepState(1.5, () => printing = true);
     await sleepState(2.5, () => showButton = true);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    animate();
   }
 
   static const shouldntPrintersUse = Text.rich(
@@ -202,11 +198,11 @@ class _Page3State extends SuperState<_Page3> with DelayedPress {
     TextSpan(
       children: [
         TextSpan(text: "But shouldn't they use "),
-        ColorTextSpan(SuperColors.red),
+        ColorTextSpan.red,
         TextSpan(text: '/'),
-        ColorTextSpan(SuperColors.green),
+        ColorTextSpan.green,
         TextSpan(text: '/'),
-        ColorTextSpan(SuperColors.blue),
+        ColorTextSpan.blue,
         TextSpan(text: " ink\nif that's what our eyes are built for?"),
       ],
     ),
@@ -227,7 +223,7 @@ class _Page3State extends SuperState<_Page3> with DelayedPress {
             TextSpan(
               children: [
                 TextSpan(text: 'How do you print '),
-                ColorTextSpan(SuperColors.red),
+                ColorTextSpan.red,
                 TextSpan(text: ', a primary color,\nwithout any red ink?'),
               ],
             ),
@@ -239,7 +235,7 @@ class _Page3State extends SuperState<_Page3> with DelayedPress {
         Fader(
           showButton,
           child: OutlinedButton(
-              onPressed: delayed(widget.nextPage),
+              onPressed: singlePress(widget.nextPage),
               child: const Padding(
                 padding: EdgeInsets.only(top: 10, bottom: 13),
                 child: Text(
@@ -322,6 +318,7 @@ class _Page4 extends StatefulWidget {
 class _Page4State extends SuperState<_Page4> {
   bool showThanks = true, expanded = false, showText = true, lightBars = true;
 
+  @override
   void animate() async {
     await sleepState(2.5, () => showThanks = false);
     await sleepState(2, () => expanded = true);
@@ -342,12 +339,6 @@ class _Page4State extends SuperState<_Page4> {
     await sleepState(0.25, () => children[3] = const _SplashCMY(SuperColors.yellow));
 
     await sleep(7.5, then: widget.nextPage);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    animate();
   }
 
   List<Widget> children = List.filled(3, const Spacer());
@@ -560,6 +551,7 @@ class _Page5State extends SuperState<_Page5> {
   int counter = 0;
   late final Ticker ticker;
 
+  @override
   void animate() async {
     await sleepState(2.5, () => slideIntoPlace = true);
     await sleep(1.5);
@@ -573,7 +565,6 @@ class _Page5State extends SuperState<_Page5> {
   void initState() {
     super.initState();
     ticker = Ticker((elapsed) => setState(() => counter++));
-    animate();
   }
 
   @override
@@ -837,11 +828,11 @@ class _Page6State extends SuperState<_Page6> {
               text: 'People who design printers know\n'
                   'that the only way to access the full range of colors\n'
                   'is to use '),
-          ColorTextSpan(SuperColors.cyan),
+          ColorTextSpan.cyan,
           TextSpan(text: '/'),
-          ColorTextSpan(SuperColors.magenta),
+          ColorTextSpan.magenta,
           TextSpan(text: '/'),
-          ColorTextSpan(SuperColors.yellow),
+          ColorTextSpan.yellow,
           TextSpan(text: ','),
         ],
       ),
@@ -902,7 +893,7 @@ class _FinalPage extends StatefulWidget {
   State<_FinalPage> createState() => _FinalPageState();
 }
 
-class _FinalPageState extends SuperState<_FinalPage> with DelayedPress {
+class _FinalPageState extends SuperState<_FinalPage> with SinglePress {
   late final Ticker epicHues;
   bool showButton = false;
 
@@ -948,7 +939,7 @@ class _FinalPageState extends SuperState<_FinalPage> with DelayedPress {
         Fader(
           showButton,
           child: OutlinedButton(
-            onPressed: delayed(() => Navigator.pushReplacement<void, void>(
+            onPressed: singlePress(() => Navigator.pushReplacement<void, void>(
                   context,
                   MaterialPageRoute<void>(
                     builder: (context) => const IntroMode(6),

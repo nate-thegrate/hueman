@@ -5,6 +5,7 @@ import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 extension _BallSpacing on BuildContext {
@@ -27,6 +28,7 @@ class _IntenseTutorialState extends SuperState<IntenseTutorial> {
       madeTheJump = false;
   late final Ticker epicHues;
 
+  @override
   void animate() async {
     await sleepState(2.3, () => textVisible++);
     await sleepState(2, () => textVisible++);
@@ -66,7 +68,6 @@ class _IntenseTutorialState extends SuperState<IntenseTutorial> {
   void initState() {
     super.initState();
     epicHues = epicSetup(setState);
-    animate();
   }
 
   @override
@@ -220,17 +221,13 @@ class _ColorWaveState extends SuperState<_ColorWave> {
     }
   }
 
+  @override
   void animate() async {
+    await sleep(1);
     for (final dotData in colorWaveData) {
       await sleep(0.08);
       doTheWave(dotData);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    sleep(1, then: animate);
   }
 
   @override

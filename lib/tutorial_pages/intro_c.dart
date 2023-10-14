@@ -7,6 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/data/widgets.dart';
 import 'package:super_hueman/pages/intro.dart';
 
@@ -70,17 +71,18 @@ class _Page1 extends StatefulWidget {
   State<_Page1> createState() => _Page1State();
 }
 
-class _Page1State extends SuperState<_Page1> with DelayedPress {
+class _Page1State extends SuperState<_Page1> with SinglePress {
   int progress = 0;
   void advance() => setState(() => progress++);
 
+  @override
   void animate() async {
     await sleep(7, then: advance); // somethin funky
     await sleep(4, then: advance); // show questions
     await sleep(2, then: advance); // show buttons
   }
 
-  late VoidCallback trickQuestion = delayed(() async {
+  late VoidCallback trickQuestion = singlePress(() async {
     advance(); // hide everything
 
     await sleepState(
@@ -119,7 +121,6 @@ class _Page1State extends SuperState<_Page1> with DelayedPress {
   void initState() {
     super.initState();
     ticker = Ticker((elapsed) => setState(() => counter = (counter + 1) % _cycleLength))..start();
-    animate();
   }
 
   @override
@@ -220,9 +221,9 @@ class _SecondTry extends StatelessWidget {
                 progress > 9 && progress < 12,
                 child: const EasyRichText([
                   TextSpan(text: 'The '),
-                  ColorTextSpan(SuperColors.red),
+                  ColorTextSpan.red,
                   TextSpan(text: ' was just getting lighter and darker,\nbut the '),
-                  ColorTextSpan(SuperColors.visibleBlue),
+                  ColorTextSpan.visibleBlue,
                   TextSpan(text: ' was changing hue.'),
                 ]),
               ),
@@ -351,6 +352,7 @@ class _Page2State extends SuperState<_Page2> {
   int numVisible = 1;
   void advance() => setState(() => numVisible++);
 
+  @override
   Future<void> animate() async {
     await sleep(7, then: advance);
     await sleep(7, then: advance);
@@ -367,12 +369,6 @@ class _Page2State extends SuperState<_Page2> {
     setState(() => showNames = true);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    animate();
-  }
-
   static const List<Widget> text = [
     EasyText(
       'Back in the 1400s,\n'
@@ -386,9 +382,9 @@ class _Page2State extends SuperState<_Page2> {
     ),
     EasyRichText([
       TextSpan(text: 'And now that '),
-      ColorTextSpan(SuperColors.orange),
+      ColorTextSpan.orange,
       TextSpan(text: ' is in our color vocabulary,\ndistinguishing it from '),
-      ColorTextSpan(SuperColors.red),
+      ColorTextSpan.red,
       TextSpan(text: ' is second-nature.'),
     ]),
     empty,
@@ -398,9 +394,9 @@ class _Page2State extends SuperState<_Page2> {
     const EasyText('These "shades of blue"\nare really two different colors.'),
     const EasyRichText([
       TextSpan(text: 'And just like with '),
-      ColorTextSpan(SuperColors.red),
+      ColorTextSpan.red,
       TextSpan(text: ' & '),
-      ColorTextSpan(SuperColors.orange),
+      ColorTextSpan.orange,
       TextSpan(text: ',\nour brains can be trained to distinguish them.'),
     ]),
     const EasyText('We just need a better color vocabulary.'),
@@ -509,6 +505,7 @@ class _Page3State extends SuperState<_Page3> {
       showButton = false;
   int rightLinesExpanded = 0, rightLabelsShown = 0;
 
+  @override
   void animate() async {
     await sleepState(3, () => showLeftDesc = true);
     await sleepState(3, () => expandLeft = true);
@@ -526,12 +523,6 @@ class _Page3State extends SuperState<_Page3> {
     }
 
     await sleepState(2, () => showButton = true);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    animate();
   }
 
   @override
@@ -709,13 +700,13 @@ class _FinalPage extends StatefulWidget {
   State<_FinalPage> createState() => _FinalPageState();
 }
 
-class _FinalPageState extends SuperState<_FinalPage> with DelayedPress {
+class _FinalPageState extends SuperState<_FinalPage> with SinglePress {
   bool superDifficult = false, letsDoIt = false, expandButton = false;
-  late final Ticker? epicHues;
+  late final Ticker epicHues;
 
+  @override
   void animate() async {
     await sleep(3);
-    epicHues = epicSetup(setState);
     setState(() => superDifficult = true);
 
     await sleepState(3, () => letsDoIt = true);
@@ -725,12 +716,12 @@ class _FinalPageState extends SuperState<_FinalPage> with DelayedPress {
   @override
   void initState() {
     super.initState();
-    animate();
+    epicHues = epicSetup(setState);
   }
 
   @override
   void dispose() {
-    epicHues?.dispose();
+    epicHues.dispose();
     super.dispose();
   }
 
@@ -777,7 +768,7 @@ class _FinalPageState extends SuperState<_FinalPage> with DelayedPress {
           Fader(
             letsDoIt,
             child: ElevatedButton(
-              onPressed: delayed(() => Navigator.pushReplacement<void, void>(
+              onPressed: singlePress(() => Navigator.pushReplacement<void, void>(
                     context,
                     MaterialPageRoute<void>(builder: (context) => const IntroMode(12)),
                   )),

@@ -73,19 +73,16 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
         ),
         const FixedSpacer(33),
         OutlinedButton(
-          onPressed: () {
-            Future animate() async {
-              setState(() => inverting = true);
-              controller.forward();
-              await sleep(0.7);
-              setState(() => darkBackground = false);
-              await sleep(0.1);
-              setState(() => visible = true);
-              await sleep(0.5);
-            }
-
-            animate().then((_) => context.invert());
-          },
+          onPressed: () => () async {
+            setState(() => inverting = true);
+            controller.forward();
+            await sleep(0.7);
+            setState(() => darkBackground = false);
+            await sleep(0.1);
+            setState(() => visible = true);
+            await sleep(0.5);
+          }()
+              .then((_) => context.invert()),
           style: OutlinedButton.styleFrom(
             side: BorderSide(color: epicColor, width: 2),
             foregroundColor: epicColor,
@@ -93,9 +90,9 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
             shadowColor: epicColor,
             elevation: epicSine * 5,
           ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 14),
-            child: Text(Pages.inverseMenu(), style: const TextStyle(fontSize: 24)),
+          child: const Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 14),
+            child: Text('invert!', style: TextStyle(fontSize: 24)),
           ),
         ),
       ];

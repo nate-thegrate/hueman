@@ -71,10 +71,10 @@ class SexyBox extends AnimatedSize {
   const SexyBox({super.child, super.key}) : super(duration: oneSec, curve: Curves.easeInOutQuart);
 }
 
-mixin DelayedPress {
+mixin SinglePress {
   bool pressed = false;
 
-  delayed(void Function()? onPressed, {bool noDelay = false}) => () {
+  singlePress(void Function()? onPressed, {bool noDelay = false}) => () {
         if (pressed) return;
 
         pressed = true;
@@ -90,7 +90,7 @@ class ContinueButton extends StatefulWidget {
   State<ContinueButton> createState() => _ContinueButtonState();
 }
 
-class _ContinueButtonState extends State<ContinueButton> with DelayedPress {
+class _ContinueButtonState extends State<ContinueButton> with SinglePress {
   @override
   Widget build(BuildContext context) => SizedBox(
         width: 50,
@@ -99,7 +99,7 @@ class _ContinueButtonState extends State<ContinueButton> with DelayedPress {
           children: [
             const Center(child: Icon(Icons.arrow_forward)),
             SizedBox.expand(
-              child: OutlinedButton(onPressed: delayed(widget.onPressed), child: empty),
+              child: OutlinedButton(onPressed: singlePress(widget.onPressed), child: empty),
             ),
           ],
         ),
@@ -125,10 +125,10 @@ class SuperButton extends StatefulWidget {
   State<SuperButton> createState() => _SuperButtonState();
 }
 
-class _SuperButtonState extends State<SuperButton> with DelayedPress {
+class _SuperButtonState extends State<SuperButton> with SinglePress {
   @override
   Widget build(BuildContext context) => ElevatedButton(
-        onPressed: delayed(widget.onPressed, noDelay: widget.noDelay),
+        onPressed: singlePress(widget.onPressed, noDelay: widget.noDelay),
         style: ElevatedButton.styleFrom(
           backgroundColor: widget.color,
           foregroundColor: inverted ? Colors.white : Colors.black,
@@ -217,7 +217,7 @@ class GoBack extends StatelessWidget {
         foregroundColor: inverted ? SuperColors.black80 : Colors.white60,
         backgroundColor: inverted ? Colors.white54 : Colors.black26,
       ),
-      onPressed: () => context.goto(inverted ? Pages.inverseMenu : Pages.mainMenu),
+      onPressed: context.menu,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 6, 8, 9),
         child: Text(text, style: _style),
@@ -448,6 +448,17 @@ class ColorTextSpan extends TextSpan {
 
   @override
   TextStyle get style => TextStyle(color: color, fontWeight: fontWeight);
+
+  static const red = ColorTextSpan(SuperColors.red);
+  static const green = ColorTextSpan(SuperColors.green);
+  static const blue = ColorTextSpan(SuperColors.blue);
+  static const visibleBlue = ColorTextSpan(SuperColors.visibleBlue);
+  static ColorTextSpan get flexibleBlue => inverted ? blue : visibleBlue;
+
+  static const cyan = ColorTextSpan(SuperColors.cyan);
+  static const magenta = ColorTextSpan(SuperColors.magenta);
+  static const yellow = ColorTextSpan(SuperColors.yellow);
+  static const orange = ColorTextSpan(SuperColors.orange);
 }
 
 class Rive extends StatelessWidget {

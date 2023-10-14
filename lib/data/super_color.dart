@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/structs.dart';
 
-Color contrastWith(Color c, {double threshold = .2}) =>
-    (c.computeLuminance() > threshold) ? Colors.black : Colors.white;
-
 class SuperColor extends Color {
   const SuperColor(this.colorCode)
       : name = '[none]',
@@ -967,7 +964,8 @@ double get epicSine => sin(6 * 2 * pi * (epicHue) / 360) + 1;
 /// It also cycles the reverse way through the hues.
 SuperColor get inverseColor => SuperColors.inverse[inverseHue];
 
-Ticker epicSetup(StateSetter setState) {
+Ticker epicSetup(Function setState) {
+  epicHue = rng.nextInt(360);
   int lastEpicChange = 0;
   const int hueChangeDelay = 60;
   void epicCycle(Duration elapsed) {
@@ -977,18 +975,12 @@ Ticker epicSetup(StateSetter setState) {
     }
   }
 
-  epicHue = rng.nextInt(360);
-  lastEpicChange = 0;
-  final Ticker epicHues = Ticker(epicCycle)..start();
-
-  return epicHues;
+  return Ticker(epicCycle)..start();
 }
 
-Ticker inverseSetup(StateSetter setState) {
-  void inverseCycle(Duration elapsed) => setState(() => inverseHue = --inverseHue % 360);
-
+Ticker inverseSetup(Function setState) {
   inverseHue = rng.nextInt(360);
-  final Ticker inverseHues = Ticker(inverseCycle)..start();
+  void inverseCycle(_) => setState(() => inverseHue = --inverseHue % 360);
 
-  return inverseHues;
+  return Ticker(inverseCycle)..start();
 }
