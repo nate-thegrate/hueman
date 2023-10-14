@@ -5,6 +5,7 @@ import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 enum MenuPage { main, settings, tenseSelect }
@@ -16,11 +17,10 @@ class InverseMenu extends StatefulWidget {
   State<InverseMenu> createState() => _InverseMenuState();
 }
 
-class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStateMixin {
+class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProviderStateMixin {
   late final Ticker inverseHues;
   late final AnimationController controller = AnimationController(duration: oneSec, vsync: this);
-  bool inverting = false;
-  List<Widget> children = [];
+  bool inverting = false, visible = true, exists = true, showButtons = true;
   MenuPage menuPage = MenuPage.main;
   bool get mainMenu => menuPage == MenuPage.main;
 
@@ -31,10 +31,15 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
     if (inverted) {
       visible = false;
       exists = false;
+      if (!booted) {
+        booted = true;
+        showButtons = false;
+        sleepState(1, () => showButtons = true);
+      }
     } else {
       inverted = true;
       quickly(() => setState(() => visible = false));
-      sleep(0.6, then: () => setState(() => exists = false));
+      sleepState(0.6, () => exists = false);
     }
   }
 
@@ -57,12 +62,9 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
         height: 1.5,
       );
 
-  bool visible = true;
-  bool exists = true;
-
   @override
   Widget build(BuildContext context) {
-    children = switch (menuPage) {
+    final children = switch (menuPage) {
       MenuPage.main => [
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -75,33 +77,44 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
               const Text('man', style: titleStyle),
             ],
           ),
-          const FixedSpacer(67),
-          NavigateButton(Pages.trivial, color: inverseColor),
-          const FixedSpacer(33),
-          SuperButton(
-            'tense',
-            color: inverseColor,
-            onPressed: () => setState(() => menuPage = MenuPage.tenseSelect),
-            noDelay: true,
-          ),
-          const FixedSpacer(33),
-          ElevatedButton(
-            onPressed: () => context.goto(Pages.trueMastery),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: inverseColor,
-              foregroundColor: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 8, 0, 15),
-              child: Text(
-                Pages.trueMastery(),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 24, height: 0.95),
-              ),
-            ),
-          ),
-          const FixedSpacer(67),
-          NavigateButton(Pages.sandbox, color: inverseColor),
+          AnimatedSize(
+            duration: oneSec,
+            curve: curve,
+            child: showButtons
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const FixedSpacer(67),
+                      NavigateButton(Pages.trivial, color: inverseColor),
+                      const FixedSpacer(33),
+                      SuperButton(
+                        'tense',
+                        color: inverseColor,
+                        onPressed: () => setState(() => menuPage = MenuPage.tenseSelect),
+                        noDelay: true,
+                      ),
+                      const FixedSpacer(33),
+                      ElevatedButton(
+                        onPressed: () => context.goto(Pages.trueMastery),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: inverseColor,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 15),
+                          child: Text(
+                            Pages.trueMastery(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 24, height: 0.95),
+                          ),
+                        ),
+                      ),
+                      const FixedSpacer(67),
+                      NavigateButton(Pages.sandbox, color: inverseColor),
+                    ],
+                  )
+                : empty,
+          )
         ],
       MenuPage.settings => [
           MenuCheckbox(
@@ -128,8 +141,7 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
             child: OutlinedButton(
               onPressed: () => () async {
                 controller.forward();
-                await sleep(0.5);
-                setState(() => inverting = true);
+                await sleepState(0.5, () => inverting = true);
                 await sleep(0.6);
               }()
                   .then((_) => context.invert()),
@@ -176,33 +188,36 @@ class _InverseMenuState extends State<InverseMenu> with SingleTickerProviderStat
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: inverseColor,
-                        backgroundColor: mainMenu ? Colors.white : Colors.white54,
-                      ),
-                      onPressed: () => setState(
-                        () => menuPage = (mainMenu) ? MenuPage.settings : MenuPage.main,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: mainMenu
-                            ? const Padding(
-                                padding: EdgeInsets.only(bottom: 2),
-                                child: Text(
-                                  'settings',
-                                  style: TextStyle(fontSize: 16, letterSpacing: 0.5),
+                  Fader(
+                    showButtons,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 30),
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: inverseColor,
+                          backgroundColor: mainMenu ? Colors.white : Colors.white54,
+                        ),
+                        onPressed: () => setState(
+                          () => menuPage = (mainMenu) ? MenuPage.settings : MenuPage.main,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: mainMenu
+                              ? const Padding(
+                                  padding: EdgeInsets.only(bottom: 2),
+                                  child: Text(
+                                    'settings',
+                                    style: TextStyle(fontSize: 16, letterSpacing: 0.5),
+                                  ),
+                                )
+                              : const Text(
+                                  'back',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 16,
+                                      letterSpacing: 0.5),
                                 ),
-                              )
-                            : const Text(
-                                'back',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 16,
-                                    letterSpacing: 0.5),
-                              ),
+                        ),
                       ),
                     ),
                   ),

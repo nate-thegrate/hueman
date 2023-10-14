@@ -1,3 +1,6 @@
+/// do an animation on boot :)
+bool booted = false;
+
 // settings
 bool casualMode = true;
 bool autoSubmit = true;

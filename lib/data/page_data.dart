@@ -18,7 +18,7 @@ import 'package:super_hueman/tutorial_pages/start.dart';
 
 enum Pages {
   start(StartScreen()),
-  mainMenu(MainMenu()),
+  menu(MainMenu()),
   intro3(IntroMode(3)),
   intro6(IntroMode(6)),
   introC(IntroMode(12)),
@@ -42,7 +42,7 @@ enum Pages {
         intense when !Tutorials.intense => const IntenseTutorial(),
         sandbox when !Tutorials.compSci => const SandboxTutorial(),
         sandbox when inverted => const InverseSandbox(),
-        mainMenu when inverted => const InverseMenu(),
+        menu when inverted => const InverseMenu(),
         _ => _widget,
       };
 
@@ -72,5 +72,5 @@ enum Pages {
     for (final page in values) page.name: (context) => page.widget
   };
 
-  static String get initialRoute => (Tutorials.intro ? mainMenu : start).name;
+  static String get initialRoute => (Tutorials.intro ? menu : start).name;
 }

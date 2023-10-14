@@ -276,7 +276,7 @@ class _Page3State extends SuperState<_Page3> {
         const Spacer(flex: 5),
         const EasyText('"bits" is a really fun name.'),
         const Spacer(),
-        Fader(funDontStop, child: const EasyText("But the fun doesn't stop there:")),
+        Fader(funDontStop, child: const EasyText("And the fun doesn't stop there:")),
         const Spacer(),
         Column(
           mainAxisSize: MainAxisSize.min,
@@ -360,11 +360,12 @@ class _Page4State extends SuperState<_Page4> {
       showButton = false,
       consolidating = false,
       kindaHard = false,
-      collapsed = false,
+      collapsed = true,
       heckaSmart = false;
 
   @override
   void animate() async {
+    await sleepState(1, () => collapsed = false);
     await sleepState(5, () => showBTS = true);
     await sleepState(2, () => showBinary = true);
     await sleepState(5, () => showButton = true);
@@ -417,9 +418,8 @@ class _ColorCard extends StatefulWidget {
   const _ColorCard(this.collapsed, this.consolidating, this.showBTS, this.showBinary)
       : showHex = null,
         haveFun = false;
-  const _ColorCard.hex(this.showHex, this.showBTS, this.consolidating)
-      : collapsed = false,
-        showBinary = true,
+  const _ColorCard.hex(this.showHex, this.showBTS, this.consolidating, this.collapsed)
+      : showBinary = true,
         haveFun = true;
   final bool collapsed, consolidating, showBTS, showBinary, haveFun;
   final bool? showHex;
@@ -736,16 +736,14 @@ class _FinalPage extends StatefulWidget {
 class _FinalPageState extends SuperState<_FinalPage> {
   bool visible = true,
       showBTS = true,
-      showBinary = true,
       showButton = false,
       consolidating = true,
-      kindaHard = false,
-      collapsed = false,
-      heckaSmart = false,
+      collapsed = true,
       showHex = false;
 
   @override
   void animate() async {
+    await sleepState(1, () => collapsed = false);
     await sleepState(5, () => showHex = true);
     await sleepState(4, () => showButton = true);
   }
@@ -768,7 +766,7 @@ class _FinalPageState extends SuperState<_FinalPage> {
         const Spacer(flex: 2),
         Fader(
           visible,
-          child: _ColorCard.hex(showHex, showBTS, consolidating),
+          child: _ColorCard.hex(showHex, showBTS, consolidating, collapsed),
         ),
         const Spacer(),
         Fader(showButton, child: ContinueButton(onPressed: leave)),

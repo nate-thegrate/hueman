@@ -40,7 +40,7 @@ abstract interface class ScoreKeeper {
 
 extension ContextStuff on BuildContext {
   void goto(Pages page) => Navigator.pushReplacementNamed(this, page.name);
-  void menu() => goto(Pages.mainMenu);
+  void menu() => goto(Pages.menu);
 
   void noTransition(Widget screen) => Navigator.pushReplacement<void, void>(
         this,

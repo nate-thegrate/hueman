@@ -5,6 +5,7 @@ import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class MainMenu extends StatefulWidget {
@@ -16,12 +17,13 @@ class MainMenu extends StatefulWidget {
 
 enum MenuPage { main, settings, introSelect }
 
-class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin {
+class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderStateMixin {
   late final AnimationController controller;
   late final Ticker epicHues;
-  List<Widget> children = [];
   MenuPage menuPage = MenuPage.main;
   bool get mainMenu => menuPage == MenuPage.main;
+  bool showMasteryText = false, inverting = false, visible = true, showButtons = true;
+  bool? darkBackground = true;
 
   @override
   void initState() {
@@ -31,10 +33,15 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
     if (inverted) {
       inverted = false;
       quickly(() => setState(() => visible = false));
-      sleep(0.5, then: () => setState(() => darkBackground = null));
+      sleepState(0.5, () => darkBackground = null);
     } else {
       visible = false;
       darkBackground = null;
+      if (!booted) {
+        booted = true;
+        showButtons = false;
+        sleepState(1, () => showButtons = true);
+      }
     }
   }
 
@@ -43,11 +50,6 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
     epicHues.dispose();
     super.dispose();
   }
-
-  bool showMasteryText = false;
-  bool inverting = false;
-  bool visible = true;
-  bool? darkBackground = true;
 
   List<Widget> get masterSettings => [
         MenuCheckbox(
@@ -76,10 +78,8 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
           onPressed: () => () async {
             setState(() => inverting = true);
             controller.forward();
-            await sleep(0.7);
-            setState(() => darkBackground = false);
-            await sleep(0.1);
-            setState(() => visible = true);
+            await sleepState(0.7, () => darkBackground = false);
+            await sleepState(0.1, () => visible = true);
             await sleep(0.5);
           }()
               .then((_) => context.invert()),
@@ -135,7 +135,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    children = switch (menuPage) {
+    final children = switch (menuPage) {
       MenuPage.main => [
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -165,22 +165,33 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
               ),
             ],
           ),
-          const FixedSpacer(67),
-          SuperButton(
-            'intro',
-            color: epicColor,
-            onPressed: () => setState(() => menuPage = MenuPage.introSelect),
-            noDelay: true,
+          AnimatedSize(
+            duration: oneSec,
+            curve: curve,
+            child: showButtons
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const FixedSpacer(67),
+                      SuperButton(
+                        'intro',
+                        color: epicColor,
+                        onPressed: () => setState(() => menuPage = MenuPage.introSelect),
+                        noDelay: true,
+                      ),
+                      const FixedSpacer(33),
+                      NavigateButton(Pages.intense, color: epicColor),
+                      if (hueMaster)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 33),
+                          child: NavigateButton(Pages.master, color: epicColor),
+                        ),
+                      const FixedSpacer(67),
+                      NavigateButton(Pages.sandbox, color: epicColor),
+                    ],
+                  )
+                : empty,
           ),
-          const FixedSpacer(33),
-          NavigateButton(Pages.intense, color: epicColor),
-          if (hueMaster)
-            Padding(
-              padding: const EdgeInsets.only(top: 33),
-              child: NavigateButton(Pages.master, color: epicColor),
-            ),
-          const FixedSpacer(67),
-          NavigateButton(Pages.sandbox, color: epicColor),
         ],
       MenuPage.settings => [
           MenuCheckbox(
@@ -255,39 +266,42 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 30),
-                  child: TextButton(
-                    style: mainMenu
-                        ? TextButton.styleFrom(
-                            foregroundColor: epicColor,
-                            backgroundColor: Colors.black,
-                          )
-                        : TextButton.styleFrom(
-                            foregroundColor: Colors.white70,
-                            backgroundColor: Colors.black26,
-                          ),
-                    onPressed: () {
-                      if (mainMenu) {
-                        setState(() => menuPage = MenuPage.settings);
-                      } else {
-                        setState(() => menuPage = MenuPage.main);
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: mainMenu
-                          ? const Padding(
-                              padding: EdgeInsets.only(bottom: 2),
-                              child: Text(
-                                'settings',
-                                style: TextStyle(fontSize: 16),
-                              ),
+                Fader(
+                  showButtons,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: TextButton(
+                      style: mainMenu
+                          ? TextButton.styleFrom(
+                              foregroundColor: epicColor,
+                              backgroundColor: Colors.black,
                             )
-                          : const Text(
-                              'back',
-                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                          : TextButton.styleFrom(
+                              foregroundColor: Colors.white70,
+                              backgroundColor: Colors.black26,
                             ),
+                      onPressed: () {
+                        if (mainMenu) {
+                          setState(() => menuPage = MenuPage.settings);
+                        } else {
+                          setState(() => menuPage = MenuPage.main);
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: mainMenu
+                            ? const Padding(
+                                padding: EdgeInsets.only(bottom: 2),
+                                child: Text(
+                                  'settings',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              )
+                            : const Text(
+                                'back',
+                                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                              ),
+                      ),
                     ),
                   ),
                 ),
