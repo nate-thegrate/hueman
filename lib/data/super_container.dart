@@ -13,32 +13,34 @@ class _DynamicBox extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => switch (config) {
-        null || (null, null) || (null, null, null) || (null, Clip.none) => child,
-        final EdgeInsets p => Padding(padding: p, child: child),
-        (final double? w, final double? h, null) => SizedBox(width: w, height: h, child: child),
-        (final double? w, final double? h, final BoxConstraints c) => ConstrainedBox(
-            constraints: (w != null || h != null) ? c.tighten(width: w, height: h) : c,
+  Widget build(BuildContext context) {
+    return switch (config) {
+      null || (null, null) || (null, null, null) || (null, Clip.none) => child,
+      final EdgeInsets p => Padding(padding: p, child: child),
+      (final double? w, final double? h, null) => SizedBox(width: w, height: h, child: child),
+      (final double? w, final double? h, final BoxConstraints c) => ConstrainedBox(
+          constraints: (w != null || h != null) ? c.tighten(width: w, height: h) : c,
+          child: child,
+        ),
+      final Color c => ColoredBox(color: c, child: child),
+      (final Decoration d, Clip.none) => DecoratedBox(decoration: d, child: child),
+      (final Decoration d, final Clip c) => DecoratedBox(
+          decoration: d,
+          child: ClipPath(
+            clipper: _DecorationClipper(
+              textDirection: Directionality.maybeOf(context),
+              decoration: d,
+            ),
+            clipBehavior: c,
             child: child,
           ),
-        final Color c => ColoredBox(color: c, child: child),
-        (final Decoration d, Clip.none) => DecoratedBox(decoration: d, child: child),
-        (final Decoration d, final Clip c) => DecoratedBox(
-            decoration: d,
-            child: ClipPath(
-              clipper: _DecorationClipper(
-                textDirection: Directionality.maybeOf(context),
-                decoration: d,
-              ),
-              clipBehavior: c,
-              child: child,
-            ),
-          ),
-        final Alignment a => Align(alignment: a, child: child),
-        (final Matrix4 t, final AlignmentGeometry? a) =>
-          Transform(transform: t, alignment: a, child: child),
-        _ => throw Exception('problem with config type ${config.runtimeType}'),
-      };
+        ),
+      final Alignment a => Align(alignment: a, child: child),
+      (final Matrix4 t, final AlignmentGeometry? a) =>
+        Transform(transform: t, alignment: a, child: child),
+      _ => throw Exception('problem with config type ${config.runtimeType}'),
+    };
+  }
 }
 
 class SuperContainer extends StatelessWidget {

@@ -50,15 +50,17 @@ class _Intro6TutorialState extends SuperState<Intro6Tutorial> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Center(
-          child: Fader(
-            visible,
-            duration: duration,
-            child: pages[page - 1],
-          ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Fader(
+          visible,
+          duration: duration,
+          child: pages[page - 1],
         ),
-      );
+      ),
+    );
+  }
 }
 
 class _Page1 extends StatefulWidget {

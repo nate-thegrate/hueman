@@ -144,48 +144,50 @@ class _ColorSelection extends StatelessWidget {
   final void Function(Color rgb, HSVColor hsv) updateColor;
 
   @override
-  Widget build(BuildContext context) => SuperContainer(
-        decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
-        padding: const EdgeInsets.symmetric(vertical: 50),
-        constraints: BoxConstraints.loose(Size(double.infinity, context.screenHeight - 400)),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final color in SuperColors.fullList)
-                SizedBox(
-                  width: 500,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      shape: const BeveledRectangleBorder(),
-                      foregroundColor: color,
-                      backgroundColor: _color == color ? Colors.black45 : null,
-                    ),
-                    onPressed: () => updateColor(color, HSVColor.fromColor(color)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          child: Text(
-                            color.name,
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                        ),
-                        SuperContainer(
-                          width: 150,
-                          height: 40,
-                          margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
-                          color: color,
-                        ),
-                      ],
-                    ),
+  Widget build(BuildContext context) {
+    return SuperContainer(
+      decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
+      padding: const EdgeInsets.symmetric(vertical: 50),
+      constraints: BoxConstraints.loose(Size(double.infinity, context.screenHeight - 400)),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final color in SuperColors.fullList)
+              SizedBox(
+                width: 500,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    shape: const BeveledRectangleBorder(),
+                    foregroundColor: color,
+                    backgroundColor: _color == color ? Colors.black45 : null,
                   ),
-                )
-            ],
-          ),
+                  onPressed: () => updateColor(color, HSVColor.fromColor(color)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        child: Text(
+                          color.name,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
+                      SuperContainer(
+                        width: 150,
+                        height: 40,
+                        margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
+                        color: color,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+          ],
         ),
-      );
+      ),
+    );
+  }
 }
 
 class Sandbox extends StatefulWidget {

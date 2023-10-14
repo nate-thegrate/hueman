@@ -14,7 +14,7 @@ int? superHue = 0;
 bool get hueMaster => superHue != null;
 
 abstract final class Tutorials {
-  static bool intro = true;
+  static bool intro = false;
   static bool intro3 = false;
   static bool intro6 = false;
   static bool introC = false;

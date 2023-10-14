@@ -52,17 +52,19 @@ class _NumberButton extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) => SuperContainer(
-        width: 125,
-        height: 100,
-        padding: const EdgeInsets.all(2),
-        child: TextButton(
-          style: style,
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          child: child,
-        ),
-      );
+  Widget build(BuildContext context) {
+    return SuperContainer(
+      width: 125,
+      height: 100,
+      padding: const EdgeInsets.all(2),
+      child: TextButton(
+        style: style,
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        child: child,
+      ),
+    );
+  }
 }
 
 class NumPad extends StatelessWidget {
@@ -71,19 +73,21 @@ class NumPad extends StatelessWidget {
   final void Function() submit;
 
   @override
-  Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (int row = 0; row < 4; row++)
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (int i = row * 3; i < row * 3 + 3; i++)
-                  _NumberButton(i, controller: numPadController, submit: submit),
-              ],
-            )
-        ],
-      );
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (int row = 0; row < 4; row++)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (int i = row * 3; i < row * 3 + 3; i++)
+                _NumberButton(i, controller: numPadController, submit: submit),
+            ],
+          )
+      ],
+    );
+  }
 }
 
 class NumPadController {
@@ -163,13 +167,17 @@ class _AnswerFeedback extends StatelessWidget {
   static const TextStyle style = TextStyle(fontSize: 16);
 
   @override
-  Widget build(BuildContext context) => Row(children: [
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
         const Spacer(),
         SizedBox(width: 130, child: Text(text, textAlign: TextAlign.end, style: style)),
         const FixedSpacer.horizontal(10),
         Text(val.toString(), style: style),
         const Spacer(flex: 3),
-      ]);
+      ],
+    );
+  }
 }
 
 class _PercentBar extends StatefulWidget {
@@ -190,13 +198,15 @@ class _PercentBarState extends State<_PercentBar> {
   }
 
   @override
-  Widget build(BuildContext context) => AnimatedContainer(
-        duration: const Duration(milliseconds: 600),
-        curve: curve,
-        color: widget.color,
-        width: width,
-        height: width / (widget.color == Colors.black ? 10 : 15),
-      );
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 600),
+      curve: curve,
+      color: widget.color,
+      width: width,
+      height: width / (widget.color == Colors.black ? 10 : 15),
+    );
+  }
 }
 
 class PercentGrade extends StatelessWidget {
@@ -343,51 +353,53 @@ class _HueDialogState extends State<HueDialog> {
   late bool unclickable = isSuper;
 
   @override
-  Widget build(BuildContext context) => Stack(
-        children: [
-          AlertDialog(
-            title: Text(
-              widget.text,
-              textAlign: TextAlign.center,
-              style: isSuper
-                  ? TextStyle(
-                      shadows: const [Shadow(blurRadius: 8)],
-                      fontSize: 42,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                      color: epicColor,
-                    )
-                  : null,
-            ),
-            elevation: isSuper ? epicSine * 10 : null,
-            shadowColor: isSuper ? epicColor : null,
-            surfaceTintColor: isSuper ? epicColor : null,
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                widget.graphic,
-                const FixedSpacer(20),
-                _AnswerFeedback(widget.guess, text: 'Your answer:'),
-                _AnswerFeedback(widget.hue, text: 'Correct answer:'),
-                if (!hueMaster && isSuper) ...[
-                  const FixedSpacer(20),
-                  Text(
-                    'all game modes\nunlocked!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: epicColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                      shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
-                    ),
-                  ),
-                ]
-              ],
-            ),
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        AlertDialog(
+          title: Text(
+            widget.text,
+            textAlign: TextAlign.center,
+            style: isSuper
+                ? TextStyle(
+                    shadows: const [Shadow(blurRadius: 8)],
+                    fontSize: 42,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: epicColor,
+                  )
+                : null,
           ),
-          if (unclickable) const SuperContainer(color: Colors.transparent),
-        ],
-      );
+          elevation: isSuper ? epicSine * 10 : null,
+          shadowColor: isSuper ? epicColor : null,
+          surfaceTintColor: isSuper ? epicColor : null,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              widget.graphic,
+              const FixedSpacer(20),
+              _AnswerFeedback(widget.guess, text: 'Your answer:'),
+              _AnswerFeedback(widget.hue, text: 'Correct answer:'),
+              if (!hueMaster && isSuper) ...[
+                const FixedSpacer(20),
+                Text(
+                  'all game modes\nunlocked!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: epicColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
+                  ),
+                ),
+              ]
+            ],
+          ),
+        ),
+        if (unclickable) const SuperContainer(color: Colors.transparent),
+      ],
+    );
+  }
 }
 
 class _GameScreen extends StatelessWidget {

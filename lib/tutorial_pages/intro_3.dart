@@ -53,16 +53,18 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
   Color? backgroundColor;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Center(
-          child: Fader(
-            visible,
-            duration: duration,
-            child: pages[page - 1],
-          ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Fader(
+          visible,
+          duration: duration,
+          child: pages[page - 1],
         ),
-        backgroundColor: backgroundColor,
-      );
+      ),
+      backgroundColor: backgroundColor,
+    );
+  }
 }
 
 class _Page1 extends StatefulWidget {
@@ -256,35 +258,37 @@ class _RGBAnimation extends StatelessWidget {
   final double margin;
 
   @override
-  Widget build(BuildContext context) => Expanded(
-        child: Fader(
-          colorVisible,
-          child: AnimatedContainer(
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Fader(
+        colorVisible,
+        child: AnimatedContainer(
+          duration: duration,
+          curve: curve,
+          color: color,
+          alignment: Alignment.center,
+          margin: EdgeInsets.only(left: margin),
+          child: Fader(
+            textVisible,
             duration: duration,
             curve: curve,
-            color: color,
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(left: margin),
-            child: Fader(
-              textVisible,
-              duration: duration,
-              curve: curve,
-              child: Text(
-                color.name,
-                style: const TextStyle(
-                  color: SuperColors.darkBackground,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w600,
-                  shadows: [
-                    Shadow(color: Colors.white12, blurRadius: 1),
-                    Shadow(color: Colors.white12, blurRadius: 4),
-                  ],
-                ),
+            child: Text(
+              color.name,
+              style: const TextStyle(
+                color: SuperColors.darkBackground,
+                fontSize: 32,
+                fontWeight: FontWeight.w600,
+                shadows: [
+                  Shadow(color: Colors.white12, blurRadius: 1),
+                  Shadow(color: Colors.white12, blurRadius: 4),
+                ],
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 }
 
 class _Page3 extends StatefulWidget {
@@ -432,19 +436,21 @@ class _OrbCenter extends StatelessWidget {
   final bool opaque;
 
   @override
-  Widget build(BuildContext context) => SuperContainer(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [
-              if (opaque) epicColor else epicColor.withAlpha(0x80),
-              epicColor.withAlpha(0),
-            ],
-          ),
+  Widget build(BuildContext context) {
+    return SuperContainer(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [
+            if (opaque) epicColor else epicColor.withAlpha(0x80),
+            epicColor.withAlpha(0),
+          ],
         ),
-        width: width,
-        height: width,
-      );
+      ),
+      width: width,
+      height: width,
+    );
+  }
 }
 
 class _Page4 extends StatefulWidget {

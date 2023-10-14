@@ -51,16 +51,18 @@ class _IntroCTutorialState extends SuperState<IntroCTutorial> {
   Color? backgroundColor;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Center(
-          child: Fader(
-            visible,
-            duration: duration,
-            child: pages[page - 1],
-          ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Fader(
+          visible,
+          duration: duration,
+          child: pages[page - 1],
         ),
-        backgroundColor: backgroundColor,
-      );
+      ),
+      backgroundColor: backgroundColor,
+    );
+  }
 }
 
 class _Page1 extends StatefulWidget {

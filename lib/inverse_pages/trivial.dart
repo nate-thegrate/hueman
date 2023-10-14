@@ -16,45 +16,47 @@ class TriviaButton extends StatelessWidget {
   bool get selected => buttonData[color]!;
 
   @override
-  Widget build(BuildContext context) => SuperContainer(
-        width: 215,
-        height: 75,
-        margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-        decoration: selected
-            ? BoxDecoration(
-                border: Border.all(color: color, width: 10),
-                boxShadow: const [BoxShadow(color: Colors.black, blurRadius: 10)],
-              )
-            : null,
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: selected ? SuperColors.darkBackground : color,
-            shape: const BeveledRectangleBorder(),
-          ),
-          child: Text(
-            color.name,
-            style: selected
-                ? TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                    height: -0.1,
-                  )
-                : const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                    shadows: [
-                      Shadow(color: Colors.white24, blurRadius: 1),
-                      Shadow(color: Colors.white30, blurRadius: 25),
-                    ],
-                    height: -0.1,
-                  ),
-          ),
+  Widget build(BuildContext context) {
+    return SuperContainer(
+      width: 215,
+      height: 75,
+      margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+      decoration: selected
+          ? BoxDecoration(
+              border: Border.all(color: color, width: 10),
+              boxShadow: const [BoxShadow(color: Colors.black, blurRadius: 10)],
+            )
+          : null,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: selected ? SuperColors.darkBackground : color,
+          shape: const BeveledRectangleBorder(),
         ),
-      );
+        child: Text(
+          color.name,
+          style: selected
+              ? TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                  height: -0.1,
+                )
+              : const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                  shadows: [
+                    Shadow(color: Colors.white24, blurRadius: 1),
+                    Shadow(color: Colors.white30, blurRadius: 25),
+                  ],
+                  height: -0.1,
+                ),
+        ),
+      ),
+    );
+  }
 }
 
 class TriviaQuestion {
@@ -210,33 +212,35 @@ class AnsweredEveryQuestion extends StatelessWidget {
   final String scoreDesc;
 
   @override
-  Widget build(BuildContext context) => Theme(
-        data: ThemeData(useMaterial3: true, dialogBackgroundColor: SuperColors.lightBackground),
-        child: AlertDialog(
-          title: const Text('Congrats!'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const Text(
-                "You've answered each trivia question!",
-                style: TextStyle(fontSize: 16),
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData(useMaterial3: true, dialogBackgroundColor: SuperColors.lightBackground),
+      child: AlertDialog(
+        title: const Text('Congrats!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const Text(
+              "You've answered each trivia question!",
+              style: TextStyle(fontSize: 16),
+            ),
+            if (!casualMode) ...[
+              const FixedSpacer(8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('score: ', style: TextStyle(height: 0)),
+                  Text(scoreDesc, style: const TextStyle(fontSize: 12)),
+                ],
               ),
-              if (!casualMode) ...[
-                const FixedSpacer(8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('score: ', style: TextStyle(height: 0)),
-                    Text(scoreDesc, style: const TextStyle(fontSize: 12)),
-                  ],
-                ),
-              ],
             ],
-          ),
-          actions: const [Center(child: GoBack(text: 'back to menu'))],
+          ],
         ),
-      );
+        actions: const [Center(child: GoBack(text: 'back to menu'))],
+      ),
+    );
+  }
 }
 
 late Map<SuperColor, bool> buttonData;

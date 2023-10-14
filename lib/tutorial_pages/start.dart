@@ -56,17 +56,19 @@ class _StartScreenState extends SuperState<StartScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: GestureDetector(
-          onTap: start,
-          child: Rive(
-            name: 'color_bs',
-            artboard: artboard,
-            controllers: controllers,
-          ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        onTap: start,
+        child: Rive(
+          name: 'color_bs',
+          artboard: artboard,
+          controllers: controllers,
         ),
-        backgroundColor: backgroundColor,
-      );
+      ),
+      backgroundColor: backgroundColor,
+    );
+  }
 }
 
 class _CallOutTheLie extends StatefulWidget {
@@ -119,26 +121,28 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
   Widget content = empty;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Center(
-          child: Fader(
-            showStuff,
-            duration: const Duration(milliseconds: 600),
-            child: Column(
-              children: [
-                const Spacer(flex: 2),
-                title,
-                const Spacer(),
-                Fader(
-                  showButton,
-                  child: SizedBox(height: 80, child: content),
-                ),
-                const Spacer(),
-              ],
-            ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Fader(
+          showStuff,
+          duration: const Duration(milliseconds: 600),
+          child: Column(
+            children: [
+              const Spacer(flex: 2),
+              title,
+              const Spacer(),
+              Fader(
+                showButton,
+                child: SizedBox(height: 80, child: content),
+              ),
+              const Spacer(),
+            ],
           ),
         ),
-      );
+      ),
+    );
+  }
 }
 
 class _TruthButton extends StatefulWidget {
@@ -166,21 +170,23 @@ class _TruthButtonState extends State<_TruthButton> {
   }
 
   @override
-  Widget build(BuildContext context) => OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          backgroundColor: SuperColors.darkBackground,
-          elevation: epicSine * 6,
-          shadowColor: Colors.white,
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        backgroundColor: SuperColors.darkBackground,
+        elevation: epicSine * 6,
+        shadowColor: Colors.white,
+      ),
+      onPressed: widget.onPressed,
+      child: const Padding(
+        padding: EdgeInsets.only(bottom: 5),
+        child: Text(
+          'see the truth',
+          style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400),
         ),
-        onPressed: widget.onPressed,
-        child: const Padding(
-          padding: EdgeInsets.only(bottom: 5),
-          child: Text(
-            'see the truth',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400),
-          ),
-        ),
-      );
+      ),
+    );
+  }
 }
 
 class _FirstLaunchMenu extends StatefulWidget {
@@ -388,25 +394,27 @@ class _IntroButtonState extends State<_IntroButton> {
   }
 
   @override
-  Widget build(BuildContext context) => Center(
-        child: FadeIn(
-          duration: widget.duration,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'intro (3 colors)',
-                style: TextStyle(color: SuperColors.white80, fontSize: 20),
-              ),
-              const FixedSpacer(25),
-              SuperButton(
-                'start',
-                color: color,
-                onPressed: () => context.goto(Pages.intro3),
-              ),
-              const FixedSpacer(10),
-            ],
-          ),
+  Widget build(BuildContext context) {
+    return Center(
+      child: FadeIn(
+        duration: widget.duration,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'intro (3 colors)',
+              style: TextStyle(color: SuperColors.white80, fontSize: 20),
+            ),
+            const FixedSpacer(25),
+            SuperButton(
+              'start',
+              color: color,
+              onPressed: () => context.goto(Pages.intro3),
+            ),
+            const FixedSpacer(10),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }

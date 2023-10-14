@@ -93,13 +93,15 @@ class Target extends StatelessWidget {
   final dynamic value;
 
   @override
-  Widget build(BuildContext context) => Row(
-        children: [
-          Expanded(child: Text('$label:', textAlign: TextAlign.right)),
-          const FixedSpacer.horizontal(15),
-          Expanded(child: Text(value.toString())),
-        ],
-      );
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: Text('$label:', textAlign: TextAlign.right)),
+        const FixedSpacer.horizontal(15),
+        Expanded(child: Text(value.toString())),
+      ],
+    );
+  }
 }
 
 class TenseMode extends StatefulWidget {
@@ -450,58 +452,60 @@ class _SplendidState extends State<Splendid> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: widget.onTap,
-        child: SuperContainer(
-          color: Colors.transparent,
-          alignment: const Alignment(0, 0.72),
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: widget.correct
-                    ? Text(
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: SuperContainer(
+        color: Colors.transparent,
+        alignment: const Alignment(0, 0.72),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: widget.correct
+                  ? Text(
+                      'Splendid!',
+                      style: TextStyle(
+                        fontFamily: 'Consolas',
+                        fontSize: 50,
+                        shadows: [
+                          for (double i = 2; i <= 20; i += 2)
+                            Shadow(color: Colors.white, blurRadius: i),
+                          for (int i = 0; i < 10; i++) const Shadow(blurRadius: 1)
+                        ],
+                      ),
+                    )
+                  : Text(
+                      widget.correct ? 'Splendid!' : '[incorrect]',
+                      style: const TextStyle(
+                        color: SuperColors.darkBackground,
+                        fontFamily: 'Consolas',
+                      ),
+                    ),
+            ),
+            widget.correct
+                ? ShaderMask(
+                    blendMode: BlendMode.srcIn,
+                    shaderCallback: (bounds) => LinearGradient(colors: [
+                      for (int i = 0; i < 360; i += 10) SuperColor.hue((inverseHue + i) % 360)
+                    ]).createShader(
+                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
                         'Splendid!',
                         style: TextStyle(
                           fontFamily: 'Consolas',
                           fontSize: 50,
-                          shadows: [
-                            for (double i = 2; i <= 20; i += 2)
-                              Shadow(color: Colors.white, blurRadius: i),
-                            for (int i = 0; i < 10; i++) const Shadow(blurRadius: 1)
-                          ],
-                        ),
-                      )
-                    : Text(
-                        widget.correct ? 'Splendid!' : '[incorrect]',
-                        style: const TextStyle(
-                          color: SuperColors.darkBackground,
-                          fontFamily: 'Consolas',
                         ),
                       ),
-              ),
-              widget.correct
-                  ? ShaderMask(
-                      blendMode: BlendMode.srcIn,
-                      shaderCallback: (bounds) => LinearGradient(colors: [
-                        for (int i = 0; i < 360; i += 10) SuperColor.hue((inverseHue + i) % 360)
-                      ]).createShader(
-                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          'Splendid!',
-                          style: TextStyle(
-                            fontFamily: 'Consolas',
-                            fontSize: 50,
-                          ),
-                        ),
-                      ),
-                    )
-                  : empty,
-            ],
-          ),
+                    ),
+                  )
+                : empty,
+          ],
         ),
-      );
+      ),
+    );
+  }
 }

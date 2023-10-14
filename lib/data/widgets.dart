@@ -18,8 +18,10 @@ class FixedSpacer extends StatelessWidget {
   final bool horizontal;
 
   @override
-  Widget build(BuildContext context) =>
-      horizontal ? SizedBox(width: size) : SizedBox(height: size);
+  Widget build(BuildContext context) {
+    if (horizontal) return SizedBox(width: size);
+    return SizedBox(height: size);
+  }
 }
 
 class Fader extends AnimatedOpacity {
@@ -58,12 +60,14 @@ class _FadeInState extends State<FadeIn> {
   }
 
   @override
-  Widget build(BuildContext context) => Fader(
-        visible,
-        duration: widget.duration,
-        curve: widget.curve,
-        child: widget.child,
-      );
+  Widget build(BuildContext context) {
+    return Fader(
+      visible,
+      duration: widget.duration,
+      curve: widget.curve,
+      child: widget.child,
+    );
+  }
 }
 
 class SexyBox extends AnimatedSize {
@@ -92,18 +96,20 @@ class ContinueButton extends StatefulWidget {
 
 class _ContinueButtonState extends State<ContinueButton> with SinglePress {
   @override
-  Widget build(BuildContext context) => SizedBox(
-        width: 50,
-        height: 50,
-        child: Stack(
-          children: [
-            const Center(child: Icon(Icons.arrow_forward)),
-            SizedBox.expand(
-              child: OutlinedButton(onPressed: singlePress(widget.onPressed), child: empty),
-            ),
-          ],
-        ),
-      );
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 50,
+      height: 50,
+      child: Stack(
+        children: [
+          const Center(child: Icon(Icons.arrow_forward)),
+          SizedBox.expand(
+            child: OutlinedButton(onPressed: singlePress(widget.onPressed), child: empty),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class SuperButton extends StatefulWidget {
@@ -127,17 +133,19 @@ class SuperButton extends StatefulWidget {
 
 class _SuperButtonState extends State<SuperButton> with SinglePress {
   @override
-  Widget build(BuildContext context) => ElevatedButton(
-        onPressed: singlePress(widget.onPressed, noDelay: widget.noDelay),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: widget.color,
-          foregroundColor: inverted ? Colors.white : Colors.black,
-        ),
-        child: Padding(
-          padding: widget.padding ?? const EdgeInsets.only(bottom: 4),
-          child: Text(widget.label, style: const TextStyle(fontSize: 24)),
-        ),
-      );
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: singlePress(widget.onPressed, noDelay: widget.noDelay),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: widget.color,
+        foregroundColor: inverted ? Colors.white : Colors.black,
+      ),
+      child: Padding(
+        padding: widget.padding ?? const EdgeInsets.only(bottom: 4),
+        child: Text(widget.label, style: const TextStyle(fontSize: 24)),
+      ),
+    );
+  }
 }
 
 class NavigateButton extends StatelessWidget {
@@ -147,12 +155,14 @@ class NavigateButton extends StatelessWidget {
   final EdgeInsets? padding;
 
   @override
-  Widget build(BuildContext context) => SuperButton(
-        page(),
-        color: color,
-        onPressed: () => context.goto(page),
-        padding: padding,
-      );
+  Widget build(BuildContext context) {
+    return SuperButton(
+      page(),
+      color: color,
+      onPressed: () => context.goto(page),
+      padding: padding,
+    );
+  }
 }
 
 class MenuCheckbox extends StatelessWidget {
@@ -169,35 +179,37 @@ class MenuCheckbox extends StatelessWidget {
   final (String, String) description;
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: () => toggle(!value),
-        child: ColoredBox(
-          color: Colors.transparent,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Checkbox(
-                    value: value,
-                    onChanged: (_) => toggle(!value),
-                  ),
-                  const FixedSpacer.horizontal(10),
-                  Text(
-                    label,
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ],
-              ),
-              Text(
-                value ? description.$1 : description.$2,
-                style: Theme.of(context).textTheme.labelSmall,
-              ),
-            ],
-          ),
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => toggle(!value),
+      child: ColoredBox(
+        color: Colors.transparent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Checkbox(
+                  value: value,
+                  onChanged: (_) => toggle(!value),
+                ),
+                const FixedSpacer.horizontal(10),
+                Text(
+                  label,
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ],
+            ),
+            Text(
+              value ? description.$1 : description.$2,
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }
 
 class GoBack extends StatelessWidget {
@@ -235,17 +247,19 @@ class ColorNameBox extends StatelessWidget {
   final Color backgroundColor;
 
   @override
-  Widget build(BuildContext context) => SuperContainer(
-        decoration: BoxDecoration(
-          border: Border.all(color: color, width: 4),
-          color: backgroundColor,
-        ),
-        padding: const EdgeInsets.fromLTRB(10, 5, 10, 9),
-        child: Text(
-          color.name,
-          style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-      );
+  Widget build(BuildContext context) {
+    return SuperContainer(
+      decoration: BoxDecoration(
+        border: Border.all(color: color, width: 4),
+        color: backgroundColor,
+      ),
+      padding: const EdgeInsets.fromLTRB(10, 5, 10, 9),
+      child: Text(
+        color.name,
+        style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
+      ),
+    );
+  }
 }
 
 class ColorLabel extends StatelessWidget {
@@ -367,50 +381,52 @@ class _ManualColorCodeState extends State<ManualColorCode> {
   }
 
   @override
-  Widget build(BuildContext context) => Theme(
-        data: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme(
-            brightness: Brightness.light,
-            primary: widget.color,
-            onPrimary: widget.color,
-            secondary: widget.color,
-            onSecondary: widget.color,
-            error: widget.color,
-            onError: widget.color,
-            background: SuperColors.lightBackground,
-            onBackground: SuperColors.lightBackground,
-            surface: Colors.black,
-            onSurface: Colors.black,
-          ),
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme(
+          brightness: Brightness.light,
+          primary: widget.color,
+          onPrimary: widget.color,
+          secondary: widget.color,
+          onSecondary: widget.color,
+          error: widget.color,
+          onError: widget.color,
+          background: SuperColors.lightBackground,
+          onBackground: SuperColors.lightBackground,
+          surface: Colors.black,
+          onSurface: Colors.black,
         ),
-        child: AlertDialog(
-          surfaceTintColor: Colors.transparent,
-          title: const Text('enter color code'),
-          content: Row(
-            children: [
-              SuperContainer(
-                color: const Color(0x08000000),
-                width: 200,
-                child: TextField(
-                  focusNode: focusNode,
-                  style: const TextStyle(fontFamily: 'Consolas'),
-                  textAlign: TextAlign.center,
-                  cursorColor: Colors.black,
-                  controller: controller,
-                  onSubmitted: (_) => popText(),
-                  inputFormatters: [onlyHexChars, maxLength6],
-                ),
+      ),
+      child: AlertDialog(
+        surfaceTintColor: Colors.transparent,
+        title: const Text('enter color code'),
+        content: Row(
+          children: [
+            SuperContainer(
+              color: const Color(0x08000000),
+              width: 200,
+              child: TextField(
+                focusNode: focusNode,
+                style: const TextStyle(fontFamily: 'Consolas'),
+                textAlign: TextAlign.center,
+                cursorColor: Colors.black,
+                controller: controller,
+                onSubmitted: (_) => popText(),
+                inputFormatters: [onlyHexChars, maxLength6],
               ),
-              const FixedSpacer.horizontal(10),
-              IconButton(
-                onPressed: popText,
-                icon: const Icon(Icons.check),
-              ),
-            ],
-          ),
+            ),
+            const FixedSpacer.horizontal(10),
+            IconButton(
+              onPressed: popText,
+              icon: const Icon(Icons.check),
+            ),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }
 
 class EasyText extends StatelessWidget {
@@ -419,11 +435,13 @@ class EasyText extends StatelessWidget {
   final double size;
 
   @override
-  Widget build(BuildContext context) => Text(
-        data,
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: size),
-      );
+  Widget build(BuildContext context) {
+    return Text(
+      data,
+      textAlign: TextAlign.center,
+      style: TextStyle(fontSize: size),
+    );
+  }
 }
 
 class EasyRichText extends StatelessWidget {
@@ -431,11 +449,13 @@ class EasyRichText extends StatelessWidget {
   final List<TextSpan> children;
 
   @override
-  Widget build(BuildContext context) => Text.rich(
-        TextSpan(children: children),
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 24),
-      );
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(children: children),
+      textAlign: TextAlign.center,
+      style: const TextStyle(fontSize: 24),
+    );
+  }
 }
 
 class ColorTextSpan extends TextSpan {

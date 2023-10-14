@@ -119,106 +119,108 @@ class _TrueMasteryState extends State<TrueMastery> {
   bool giveHint = false;
 
   @override
-  Widget build(BuildContext context) => Theme(
-        data: ThemeData(useMaterial3: true),
-        child: Scaffold(
-          body: Center(
-            child: Column(
-              children: [
-                const Spacer(),
-                const GoBack(),
-                const Spacer(flex: 3),
-                SuperContainer(
-                  decoration: const BoxDecoration(
-                      color: SuperColors.lightBackground,
-                      borderRadius: BorderRadiusDirectional.only(
-                          topStart: Radius.circular(50), topEnd: Radius.circular(50))),
-                  padding: const EdgeInsets.fromLTRB(30, 60, 30, 40),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _RGBSlider(
-                            'red',
-                            r,
-                            giveHint ? color.red : r,
-                            onChanged: (value) => setState(() => r = value.toInt()),
-                          ),
-                          _RGBSlider(
-                            'green',
-                            g,
-                            giveHint ? color.green : g,
-                            onChanged: (value) => setState(() => g = value.toInt()),
-                          ),
-                          _RGBSlider(
-                            'blue',
-                            b,
-                            giveHint ? color.blue : b,
-                            onChanged: (value) => setState(() => b = value.toInt()),
-                          ),
-                        ],
-                      ),
-                      const FixedSpacer(50),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'color code:',
-                            style: TextStyle(fontFamily: 'Consolas', fontSize: 20),
-                          ),
-                          const FixedSpacer.horizontal(10),
-                          TextButton(
-                            style: TextButton.styleFrom(foregroundColor: Colors.black),
-                            onPressed: () {
-                              if (casualMode) setState(() => giveHint = true);
-                              ManualColorCode.run(
-                                context,
-                                color: color,
-                                updateColor: updateUserColor,
-                              ).then((_) {
-                                if (casualMode) setState(() => giveHint = false);
-                              });
-                            },
-                            child: Text(
-                              userColorCode,
-                              style: const TextStyle(fontFamily: 'Consolas', fontSize: 20),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const FixedSpacer(30),
-                      ElevatedButton(
-                        onPressed: () => showDialog(
-                          context: context,
-                          builder: (context) => TrueMasteryScore(guess: userColor, actual: color),
-                          barrierDismissible: userColor.colorCode != color.colorCode,
-                        ).then((_) {
-                          scoreKeeper?.scoreTheRound();
-                          scoreKeeper?.roundCheck(context);
-                          setState(nextColor);
-                        }),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: color,
-                          foregroundColor: contrastWith(color),
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData(useMaterial3: true),
+      child: Scaffold(
+        body: Center(
+          child: Column(
+            children: [
+              const Spacer(),
+              const GoBack(),
+              const Spacer(flex: 3),
+              SuperContainer(
+                decoration: const BoxDecoration(
+                    color: SuperColors.lightBackground,
+                    borderRadius: BorderRadiusDirectional.only(
+                        topStart: Radius.circular(50), topEnd: Radius.circular(50))),
+                padding: const EdgeInsets.fromLTRB(30, 60, 30, 40),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _RGBSlider(
+                          'red',
+                          r,
+                          giveHint ? color.red : r,
+                          onChanged: (value) => setState(() => r = value.toInt()),
                         ),
-                        child: const Padding(
-                          padding: EdgeInsets.only(bottom: 4),
-                          child: Text('submit', style: TextStyle(fontSize: 24)),
+                        _RGBSlider(
+                          'green',
+                          g,
+                          giveHint ? color.green : g,
+                          onChanged: (value) => setState(() => g = value.toInt()),
                         ),
+                        _RGBSlider(
+                          'blue',
+                          b,
+                          giveHint ? color.blue : b,
+                          onChanged: (value) => setState(() => b = value.toInt()),
+                        ),
+                      ],
+                    ),
+                    const FixedSpacer(50),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'color code:',
+                          style: TextStyle(fontFamily: 'Consolas', fontSize: 20),
+                        ),
+                        const FixedSpacer.horizontal(10),
+                        TextButton(
+                          style: TextButton.styleFrom(foregroundColor: Colors.black),
+                          onPressed: () {
+                            if (casualMode) setState(() => giveHint = true);
+                            ManualColorCode.run(
+                              context,
+                              color: color,
+                              updateColor: updateUserColor,
+                            ).then((_) {
+                              if (casualMode) setState(() => giveHint = false);
+                            });
+                          },
+                          child: Text(
+                            userColorCode,
+                            style: const TextStyle(fontFamily: 'Consolas', fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const FixedSpacer(30),
+                    ElevatedButton(
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => TrueMasteryScore(guess: userColor, actual: color),
+                        barrierDismissible: userColor.colorCode != color.colorCode,
+                      ).then((_) {
+                        scoreKeeper?.scoreTheRound();
+                        scoreKeeper?.roundCheck(context);
+                        setState(nextColor);
+                      }),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: color,
+                        foregroundColor: contrastWith(color),
                       ),
-                      scoreKeeper == null ? empty : scoreKeeper!.midRoundDisplay,
-                    ],
-                  ),
+                      child: const Padding(
+                        padding: EdgeInsets.only(bottom: 4),
+                        child: Text('submit', style: TextStyle(fontSize: 24)),
+                      ),
+                    ),
+                    scoreKeeper == null ? empty : scoreKeeper!.midRoundDisplay,
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          backgroundColor: color,
         ),
-      );
+        backgroundColor: color,
+      ),
+    );
+  }
 }
 
 class TrueMasteryScore extends StatefulWidget {
@@ -372,72 +374,73 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
   static const equals = Text(' = ', style: TextStyle(fontSize: 18, height: -0.2));
 
   @override
-  Widget build(BuildContext context) => Theme(
-        data: ThemeData(useMaterial3: true),
-        child: Stack(
-          children: [
-            AlertDialog(
-              surfaceTintColor: Colors.transparent,
-              backgroundColor: SuperColors.lightBackground,
-              title: Column(children: [
-                _ScoreTitle.guess(widget.guess),
-                _ScoreTitle.actual(widget.actual),
-              ]),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DataTable(
-                    columnSpacing: 35,
-                    columns: columns,
-                    rows: [
-                      ...rows,
-                      DataRow(cells: [
-                        const DataCell(Center(
-                            child:
-                                Text('match %', style: TextStyle(fontWeight: FontWeight.w600)))),
-                        matchPercent(redOffBy),
-                        matchPercent(greenOffBy),
-                        matchPercent(blueOffBy),
-                      ]),
-                    ],
-                  ),
-                  const FixedSpacer(30),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('score:', style: TextStyle(fontSize: 18)),
-                      const FixedSpacer.horizontal(10),
-                      scoreFormula,
-                      equals,
-                      Column(
-                        children: [
-                          const Text('765'),
-                          SuperContainer(
-                            decoration: const BoxDecoration(border: Border(top: BorderSide())),
-                            padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
-                            margin: const EdgeInsets.only(top: 3),
-                            child: Text('$redOffBy + $blueOffBy + $greenOffBy'),
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData(useMaterial3: true),
+      child: Stack(
+        children: [
+          AlertDialog(
+            surfaceTintColor: Colors.transparent,
+            backgroundColor: SuperColors.lightBackground,
+            title: Column(children: [
+              _ScoreTitle.guess(widget.guess),
+              _ScoreTitle.actual(widget.actual),
+            ]),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DataTable(
+                  columnSpacing: 35,
+                  columns: columns,
+                  rows: [
+                    ...rows,
+                    DataRow(cells: [
+                      const DataCell(Center(
+                          child: Text('match %', style: TextStyle(fontWeight: FontWeight.w600)))),
+                      matchPercent(redOffBy),
+                      matchPercent(greenOffBy),
+                      matchPercent(blueOffBy),
+                    ]),
+                  ],
+                ),
+                const FixedSpacer(30),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('score:', style: TextStyle(fontSize: 18)),
+                    const FixedSpacer.horizontal(10),
+                    scoreFormula,
+                    equals,
+                    Column(
+                      children: [
+                        const Text('765'),
+                        SuperContainer(
+                          decoration: const BoxDecoration(border: Border(top: BorderSide())),
+                          padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
+                          margin: const EdgeInsets.only(top: 3),
+                          child: Text('$redOffBy + $blueOffBy + $greenOffBy'),
+                        ),
+                      ],
+                    ),
+                    equals,
+                    offBy == 0
+                        ? empty
+                        : Text(
+                            thisRoundScore.toStringAsFixed(1),
+                            style: const TextStyle(fontSize: 18, height: -0.15),
                           ),
-                        ],
-                      ),
-                      equals,
-                      offBy == 0
-                          ? empty
-                          : Text(
-                              thisRoundScore.toStringAsFixed(1),
-                              style: const TextStyle(fontSize: 18, height: -0.15),
-                            ),
-                    ],
-                  ),
-                  const FixedSpacer(10),
-                ],
-              ),
+                  ],
+                ),
+                const FixedSpacer(10),
+              ],
             ),
-            perfectScoreOverlay,
-            showFlicker ? _Flicker(flickerValue, actual) : empty,
-          ],
-        ),
-      );
+          ),
+          perfectScoreOverlay,
+          showFlicker ? _Flicker(flickerValue, actual) : empty,
+        ],
+      ),
+    );
+  }
 }
 
 class _ScoreTitle extends StatefulWidget {
@@ -494,18 +497,20 @@ class _ScoreTitleState extends State<_ScoreTitle> {
   );
 
   @override
-  Widget build(BuildContext context) => SuperContainer(
-        width: 450,
-        alignment: widget.isGuess ? Alignment.centerLeft : Alignment.centerRight,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 600),
-          curve: curve,
-          width: expanded ? 407 : 0,
-          height: 50,
-          decoration: decoration,
-          child: text,
-        ),
-      );
+  Widget build(BuildContext context) {
+    return SuperContainer(
+      width: 450,
+      alignment: widget.isGuess ? Alignment.centerLeft : Alignment.centerRight,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 600),
+        curve: curve,
+        width: expanded ? 407 : 0,
+        height: 50,
+        decoration: decoration,
+        child: text,
+      ),
+    );
+  }
 }
 
 class _Flicker extends StatelessWidget {
@@ -514,52 +519,54 @@ class _Flicker extends StatelessWidget {
   final SuperColor color;
 
   @override
-  Widget build(BuildContext context) => SuperContainer(
-        alignment: const Alignment(1, -.4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            SuperContainer(width: context.screenWidth, height: 1, color: color),
-            SuperContainer(width: context.screenWidth * .75, height: 2, color: color),
-            const FixedSpacer(4),
-            SuperContainer(
-              width: context.screenWidth * 2 / 3,
-              height: 2,
-              color: flickerValue ? color : null,
-            ),
-            const FixedSpacer(3),
-            SuperContainer(width: context.screenWidth / 2, height: 2, color: color),
-            const FixedSpacer(10),
-            const SuperContainer(
-              height: 5,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                border: Border.symmetric(
-                  vertical: BorderSide(color: SuperColors.lightBackground, width: 300),
-                ),
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: const Alignment(1, -.4),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          SuperContainer(width: context.screenWidth, height: 1, color: color),
+          SuperContainer(width: context.screenWidth * .75, height: 2, color: color),
+          const FixedSpacer(4),
+          SuperContainer(
+            width: context.screenWidth * 2 / 3,
+            height: 2,
+            color: flickerValue ? color : null,
+          ),
+          const FixedSpacer(3),
+          SuperContainer(width: context.screenWidth / 2, height: 2, color: color),
+          const FixedSpacer(10),
+          const SuperContainer(
+            height: 5,
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              border: Border.symmetric(
+                vertical: BorderSide(color: SuperColors.lightBackground, width: 300),
               ),
-              child: empty,
             ),
-            SuperContainer(
-              width: context.screenWidth / 2,
-              height: 3,
-              color: SuperColors.lightBackground,
-            ),
-            const FixedSpacer(10),
-            const SuperContainer(
-              height: 3,
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              decoration: BoxDecoration(
-                border: Border.symmetric(
-                  vertical: BorderSide(color: SuperColors.lightBackground, width: 250),
-                ),
+            child: empty,
+          ),
+          SuperContainer(
+            width: context.screenWidth / 2,
+            height: 3,
+            color: SuperColors.lightBackground,
+          ),
+          const FixedSpacer(10),
+          const SuperContainer(
+            height: 3,
+            padding: EdgeInsets.symmetric(horizontal: 40),
+            decoration: BoxDecoration(
+              border: Border.symmetric(
+                vertical: BorderSide(color: SuperColors.lightBackground, width: 250),
               ),
-              child: empty,
             ),
-          ],
-        ),
-      );
+            child: empty,
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _TableHeader extends StatelessWidget {
@@ -567,7 +574,9 @@ class _TableHeader extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => SizedBox(width: 60, child: Center(child: Text(text)));
+  Widget build(BuildContext context) {
+    return SizedBox(width: 60, child: Center(child: Text(text)));
+  }
 }
 
 class _ErrorScreen extends StatelessWidget {
@@ -575,16 +584,18 @@ class _ErrorScreen extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: SuperColors.blue,
-        body: Padding(
-          padding: EdgeInsets.all(context.screenWidth / 16),
-          child: Text(
-            text,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: SuperColors.blue,
+      body: Padding(
+        padding: EdgeInsets.all(context.screenWidth / 16),
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
-      );
+      ),
+    );
+  }
 }
 
 class _Base10PlusHex extends StatelessWidget {
@@ -592,16 +603,18 @@ class _Base10PlusHex extends StatelessWidget {
   final int value;
 
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Text(value.toString()),
-          Text(
-            ' (0x${value.toRadixString(16).padLeft(2, "0").toUpperCase()})',
-            style: const TextStyle(fontFamily: 'Consolas', fontSize: 12),
-          ),
-        ],
-      );
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(value.toString()),
+        Text(
+          ' (0x${value.toRadixString(16).padLeft(2, "0").toUpperCase()})',
+          style: const TextStyle(fontFamily: 'Consolas', fontSize: 12),
+        ),
+      ],
+    );
+  }
 }
 
 class _RGBSlider extends StatelessWidget {

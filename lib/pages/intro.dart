@@ -213,23 +213,26 @@ class _IntroModeState extends State<IntroMode> {
       );
 
   @override
-  Widget build(BuildContext context) => externalKeyboard
-      ? KeyboardGame(
-          color: color,
-          hueFocusNode: hueFocusNode!,
-          hueController: textFieldController!,
-          hueDialogBuilder: hueDialogBuilder,
-          generateHue: () => setState(generateHue),
-          scoreKeeper: scoreKeeper,
-        )
-      : NumPadGame(
-          color: color,
-          numPad: (submit) => NumPad(numPadController!, submit: submit),
-          numPadVal: numPadController!.displayValue,
-          hueDialogBuilder: hueDialogBuilder,
-          scoreKeeper: scoreKeeper,
-          generateHue: () => setState(generateHue),
-        );
+  Widget build(BuildContext context) {
+    if (externalKeyboard) {
+      return KeyboardGame(
+        color: color,
+        hueFocusNode: hueFocusNode!,
+        hueController: textFieldController!,
+        hueDialogBuilder: hueDialogBuilder,
+        generateHue: () => setState(generateHue),
+        scoreKeeper: scoreKeeper,
+      );
+    }
+    return NumPadGame(
+      color: color,
+      numPad: (submit) => NumPad(numPadController!, submit: submit),
+      numPadVal: numPadController!.displayValue,
+      hueDialogBuilder: hueDialogBuilder,
+      scoreKeeper: scoreKeeper,
+      generateHue: () => setState(generateHue),
+    );
+  }
 }
 
 class IntroGraphic extends StatefulWidget {
