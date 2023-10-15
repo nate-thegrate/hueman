@@ -760,8 +760,9 @@ class _FinalPageState extends SuperState<_FinalPage> {
           showBTS = false;
         });
         await sleepState(1, () => consolidating = false);
+        await sleepState(3, () => collapsed = true);
         Tutorials.compSci = true;
-        await sleep(4);
+        await sleep(1);
       }()
           .then((_) => context.goto(Pages.sandbox));
 

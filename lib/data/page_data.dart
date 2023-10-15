@@ -13,6 +13,7 @@ import 'package:super_hueman/tutorial_pages/intense.dart';
 import 'package:super_hueman/tutorial_pages/intro_3.dart';
 import 'package:super_hueman/tutorial_pages/intro_6.dart';
 import 'package:super_hueman/tutorial_pages/intro_c.dart';
+import 'package:super_hueman/tutorial_pages/master.dart';
 import 'package:super_hueman/tutorial_pages/sandbox.dart';
 import 'package:super_hueman/tutorial_pages/start.dart';
 
@@ -40,6 +41,7 @@ enum Pages {
         intro6 when !Tutorials.intro6 => const Intro6Tutorial(),
         introC when !Tutorials.introC => const IntroCTutorial(),
         intense when !Tutorials.intense => const IntenseTutorial(),
+        master when !Tutorials.master => const MasterTutorial(),
         sandbox when !Tutorials.compSci => const SandboxTutorial(),
         sandbox when inverted => const InverseSandbox(),
         menu when inverted => const InverseMenu(),

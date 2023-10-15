@@ -268,6 +268,28 @@ class _TriviaModeState extends State<TriviaMode> {
     inverted = true;
     resetButtons();
     triviaQuestions.shuffle();
+    if (!Tutorials.trivial) {
+      Tutorials.trivial = true;
+      sleep(
+        0.5,
+        then: () => showDialog(
+          context: context,
+          builder: (context) => Theme(
+            data: ThemeData(
+              useMaterial3: true,
+              fontFamily: 'Roboto',
+              dialogBackgroundColor: SuperColors.lightBackground,
+            ),
+            child: AlertDialog(
+              title: const Text('Welcome to Trivial mode!'),
+              content: Text(
+                "It's literally just ${_allQuestions.length} color trivia questions.",
+              ),
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   void Function() submit(SuperColor color) => () {

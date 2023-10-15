@@ -31,10 +31,12 @@ class IntenseScoreKeeper implements ScoreKeeper {
   void scoreTheRound() => scoring();
 
   @override
-  void roundCheck(BuildContext context) => (round == 30)
-      ? Navigator.pushReplacement(
-          context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)))
-      : ();
+  void roundCheck(BuildContext context) {
+    if (round == 30) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)));
+    }
+  }
 
   @override
   Widget get midRoundDisplay {
@@ -90,7 +92,7 @@ class IntenseScoreKeeper implements ScoreKeeper {
   final Pages page = Pages.intense;
 }
 
-double screenHeight = 0;
+double screenHeight = 1200;
 
 class MasterScoreKeeper implements IntenseScoreKeeper {
   MasterScoreKeeper({required this.scoring});
@@ -374,9 +376,9 @@ class _IntenseModeState extends State<IntenseMode> {
   }
 
   static const List<Color> oranges = [
-    Color(0xffb78049),
-    Color(0xff96612b),
-    Color(0xffb57c43),
+    SuperColor(0xB78049),
+    SuperColor(0x96612B),
+    SuperColor(0xB57C43),
   ];
   bool get isOrange => showPics && oranges.contains(pics.first.$2);
 
@@ -385,7 +387,7 @@ class _IntenseModeState extends State<IntenseMode> {
           (hue == guess) ? 'Nice work!' : 'Incorrect…',
           guess,
           hue,
-          const ColorNameBox(SuperColors.orange),
+          IntroGraphic(hue: hue, guess: guess),
         )
       : HueDialog(
           text,

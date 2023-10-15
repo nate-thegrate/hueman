@@ -313,7 +313,7 @@ class _Page3State extends SuperState<_Page3> {
   @override
   void animate() async {
     final List<(double, void Function())> animation = [
-      (5, () => eachPixelVisible = true),
+      (4, () => eachPixelVisible = true),
       (8, () => visible = true),
       (5, () => unleashTheOrb = true),
       (3, () => buttonVisible = true),
@@ -1056,16 +1056,17 @@ class _FinalPageState extends SuperState<_FinalPage> with SinglePress {
 
   @override
   Widget build(BuildContext context) {
+    final color = epicColor;
     return SuperContainer(
       color: SuperColors.darkBackground,
       alignment: Alignment.center,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        _AreYouReady(color: epicColor),
+        _AreYouReady(color: color),
         const FixedSpacer(50),
         Fader(
           visible,
           child: DecoratedBox(
-            decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
+            decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
             child: SexyBox(
               child: expanded
                   ? SizedBox(
@@ -1073,7 +1074,7 @@ class _FinalPageState extends SuperState<_FinalPage> with SinglePress {
                       height: 250,
                       child: _PlayButton(
                         visible: buttonVisible,
-                        color: epicColor,
+                        color: color,
                         onPressed: onPressed,
                       ),
                     )
@@ -1092,33 +1093,15 @@ class _AreYouReady extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        const FixedSpacer.horizontal(5),
-        Text(
-          'are',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headlineLarge,
+    return EasyRichText(
+      style: const TextStyle(fontSize: 31),
+      [
+        const TextSpan(text: 'are'),
+        TextSpan(
+          text: 'ʏᴏᴜ',
+          style: TextStyle(color: color, fontSize: 32, fontWeight: FontWeight.w500),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 1),
-          child: Text(
-            'YOU',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 24,
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Text(
-          'ready?',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headlineLarge,
-        ),
+        const TextSpan(text: 'ready?'),
       ],
     );
   }

@@ -187,6 +187,30 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     super.initState();
     inverted = true;
     generateHue();
+    if (!Tutorials.tense) {
+      Tutorials.tense = true;
+      sleep(
+        0.5,
+        then: () => showDialog(
+          context: context,
+          builder: (context) => Theme(
+            data: ThemeData(
+                useMaterial3: true,
+                fontFamily: 'Roboto',
+                dialogBackgroundColor: SuperColors.lightBackground),
+            child: const AlertDialog(
+              title: Text('Tense mode'),
+              content: Text(
+                'Stretch your limits!\n\n'
+                "This mode's difficulty adjusts as you play,\n"
+                'based on your performance.\n\n'
+                'Good luck!',
+              ),
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   @override

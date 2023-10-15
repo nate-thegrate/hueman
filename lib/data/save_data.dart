@@ -21,7 +21,8 @@ abstract final class Tutorials {
   static bool casual = false;
   static bool intense = false;
   static bool master = false;
-
+  static bool trivial = false;
+  static bool tense = false;
   static bool compSci = false;
   static bool trueMastery = false;
 

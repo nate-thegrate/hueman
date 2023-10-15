@@ -467,14 +467,17 @@ class SuperHUEman extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EasyRichText(style: const TextStyle(fontSize: 31), [
-      const TextSpan(text: 'super'),
-      TextSpan(
-        text: 'ʜᴜᴇ',
-        style: TextStyle(color: color, fontSize: 32, fontWeight: FontWeight.w500),
-      ),
-      const TextSpan(text: 'man'),
-    ]);
+    return EasyRichText(
+      style: const TextStyle(fontSize: 31),
+      [
+        const TextSpan(text: 'super'),
+        TextSpan(
+          text: 'ʜᴜᴇ',
+          style: TextStyle(color: color, fontSize: 32, fontWeight: FontWeight.w500),
+        ),
+        const TextSpan(text: 'man'),
+      ],
+    );
   }
 }
 
