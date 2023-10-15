@@ -121,7 +121,16 @@ class _IntenseTutorialState extends SuperState<IntenseTutorial> {
                             curve: Curves.easeOutExpo,
                             child: EasyRichText([
                               const TextSpan(text: ' to '),
-                              TextSpan(text: 'superʜᴜᴇman', style: TextStyle(color: color)),
+                              TextSpan(text: 'super', style: TextStyle(color: color)),
+                              TextSpan(
+                                text: 'ʜᴜᴇ',
+                                style: TextStyle(
+                                  color: color,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 25,
+                                ),
+                              ),
+                              TextSpan(text: 'man', style: TextStyle(color: color)),
                               const TextSpan(text: '.'),
                             ]),
                           ),

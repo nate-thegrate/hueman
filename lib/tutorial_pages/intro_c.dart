@@ -109,7 +109,7 @@ class _Page1State extends SuperState<_Page1> with SinglePress {
     });
     advance(); // overlay desc
 
-    await sleep(4, then: advance); // overlay try again
+    await sleep(5, then: advance); // overlay try again
     await sleep(6, then: advance); // hide overlay text
     await sleep(1.5, then: advance); // show orange
     await sleep(7, then: advance); // finally done
@@ -226,7 +226,9 @@ class _SecondTry extends StatelessWidget {
                   ColorTextSpan.red,
                   TextSpan(text: ' was just getting lighter and darker,\nbut the '),
                   ColorTextSpan.visibleBlue,
-                  TextSpan(text: ' was changing hue.'),
+                  TextSpan(text: ' was changing hue,\nsince '),
+                  ColorTextSpan.green,
+                  TextSpan(text: ' was being mixed in.'),
                 ]),
               ),
               const Spacer(),
@@ -759,6 +761,7 @@ class _FinalPageState extends SuperState<_FinalPage> with SinglePress {
                       fontSize: 30,
                       color: color,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 2 / 3,
                     ),
                   ),
                 ),
@@ -781,7 +784,7 @@ class _FinalPageState extends SuperState<_FinalPage> with SinglePress {
               child: SexyBox(
                 child: expandButton
                     ? const Padding(
-                        padding: EdgeInsets.fromLTRB(10, 10, 10, 14),
+                        padding: EdgeInsets.all(10),
                         child: Text("let's do it", style: TextStyle(fontSize: 30)),
                       )
                     : empty,

@@ -58,15 +58,87 @@ class _StartScreenState extends SuperState<StartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: start,
-        child: Rive(
-          name: 'color_bs',
-          artboard: artboard,
-          controllers: controllers,
-        ),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          GestureDetector(
+            onTap: start,
+            child: Rive(
+              name: 'color_bs',
+              artboard: artboard,
+              controllers: controllers,
+            ),
+          ),
+          const _Logo(),
+        ],
       ),
       backgroundColor: backgroundColor,
+    );
+  }
+}
+
+class _Logo extends StatefulWidget {
+  const _Logo();
+
+  @override
+  State<_Logo> createState() => _LogoState();
+}
+
+class _LogoState extends SuperState<_Logo> {
+  static const List<(String, SuperColor)> letterData = [
+    ('H', SuperColors.red),
+    ('U', SuperColor(0xF0F000)),
+    ('E', SuperColor(0x0060FF)),
+    ('man', SuperColor(0x6C4B00)),
+  ];
+  int lettersVisible = 0;
+  double dy = 0;
+  Curve curve = Curves.easeInOutQuad;
+  Duration duration = halfSec;
+  bool exists = true, visible = true;
+
+  @override
+  void animate() async {
+    await sleep(1.5);
+    for (int i = 0; i < 4; i++) {
+      await sleepState(0.5, () => lettersVisible++);
+    }
+    await sleepState(1, () => dy = 0.5);
+    await sleepState(0.5, () {
+      curve = Curves.easeInQuad;
+      duration = oneSec;
+      dy = -8;
+    });
+    await sleepState(1, () => visible = false);
+    await sleepState(1, () => exists = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!exists) return empty;
+    return Fader(
+      visible,
+      child: SuperContainer(
+        color: SuperColors.lightBackground,
+        alignment: Alignment.center,
+        child: AnimatedSlide(
+          offset: Offset(0, dy),
+          duration: duration,
+          curve: curve,
+          child: EasyRichText(
+            style: const TextStyle(fontFamily: 'Gaegu', fontSize: 128),
+            [
+              for (int i = 0; i < 4; i++)
+                TextSpan(
+                  text: letterData[i].$1,
+                  style: TextStyle(
+                    color: lettersVisible > i ? letterData[i].$2 : Colors.transparent,
+                  ),
+                )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -213,16 +285,17 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
   void initState() {
     super.initState();
     epicHue = 0;
-    ticker = Ticker((elapsed) => setState(() {
-          if (++counter % 3 == 0) epicHue = (epicHue + 1) % 360;
-          return switch (counter) {
-            1400 => setState(() => showAll = true),
-            1600 => expand(),
-            1650 => setState(() => introButton = const _IntroButton(expandDuration)),
-            _ => (),
-          };
-        }))
-      ..start();
+    ticker = Ticker(
+      (elapsed) => setState(() {
+        if (++counter % 3 == 0) epicHue = (epicHue + 1) % 360;
+        return switch (counter) {
+          1400 => setState(() => showAll = true),
+          1600 => expand(),
+          1650 => setState(() => introButton = const _IntroButton(expandDuration)),
+          _ => null,
+        };
+      }),
+    )..start();
   }
 
   @override
@@ -250,35 +323,22 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
 
   @override
   Widget build(BuildContext context) {
-    final superHUEman = [
-      Text(
-        'super',
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headlineLarge,
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
-        child: Text(
-          'HUE',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 24,
-            color: epicColor,
-            fontWeight: FontWeight.bold,
+    final padding =
+        expanded ? const EdgeInsets.only(bottom: 34) : const EdgeInsets.only(right: 17);
+    final transparentHUEman = Padding(
+      padding: padding + const EdgeInsets.only(bottom: 5),
+      child: EasyRichText(
+        style: const TextStyle(fontSize: 31, color: Colors.transparent),
+        [
+          const TextSpan(text: 'super'),
+          TextSpan(
+            text: 'ʜᴜᴇ',
+            style: TextStyle(color: epicColor, fontSize: 32, fontWeight: FontWeight.w500),
           ),
-        ),
+          const TextSpan(text: 'man'),
+        ],
       ),
-      AnimatedContainer(
-        duration: expandDuration,
-        curve: curve,
-        padding: EdgeInsets.only(right: expanded ? 0 : 18),
-        child: Text(
-          'man',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headlineLarge,
-        ),
-      ),
-    ];
+    );
 
     return Scaffold(
       body: counter < 360 * 3
@@ -300,11 +360,11 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                         child: Stack(
                           children: [
                             Center(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: superHUEman,
+                              child: AnimatedPadding(
+                                duration: oneSec,
+                                curve: Curves.easeInOutQuart,
+                                padding: padding,
+                                child: SuperHUEman(epicColor),
                               ),
                             ),
                             Row(
@@ -322,10 +382,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                           ],
                         ),
                       ),
-                      AnimatedContainer(
-                        duration: expandDuration,
-                        curve: curve,
-                        margin: expanded ? const EdgeInsets.only(top: 34) : EdgeInsets.zero,
+                      SuperContainer(
                         decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
                         child: SexyBox(
                           child: SizedBox(
@@ -344,7 +401,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                     AnimatedSize(
                       duration: showAllDuration,
                       curve: curve,
-                      child: SizedBox(width: showAll ? context.screenWidth : 46),
+                      child: SizedBox(width: showAll ? context.screenWidth : 47),
                     ),
                     buffer,
                   ],
@@ -352,16 +409,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                 Fader(
                   !showAll,
                   duration: showAllDuration,
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Opacity(opacity: 0, child: superHUEman[0]),
-                        superHUEman[1],
-                        Opacity(opacity: 0, child: superHUEman[2]),
-                      ],
-                    ),
-                  ),
+                  child: Center(child: transparentHUEman),
                 ),
               ],
             ),

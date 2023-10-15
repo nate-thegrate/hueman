@@ -214,7 +214,11 @@ class AnsweredEveryQuestion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(useMaterial3: true, dialogBackgroundColor: SuperColors.lightBackground),
+      data: ThemeData(
+        useMaterial3: true,
+        fontFamily: 'Roboto',
+        dialogBackgroundColor: SuperColors.lightBackground,
+      ),
       child: AlertDialog(
         title: const Text('Congrats!'),
         content: Column(
@@ -280,8 +284,11 @@ class _TriviaModeState extends State<TriviaMode> {
         showDialog(
           context: context,
           builder: (context) => Theme(
-            data:
-                ThemeData(useMaterial3: true, dialogBackgroundColor: SuperColors.lightBackground),
+            data: ThemeData(
+              useMaterial3: true,
+              fontFamily: 'Roboto',
+              dialogBackgroundColor: SuperColors.lightBackground,
+            ),
             child: AlertDialog(
               title: Center(child: Text(correct ? 'Correct!' : 'Incorrect.')),
               content: Column(
@@ -387,7 +394,7 @@ class _TriviaModeState extends State<TriviaMode> {
     );
 
     return Theme(
-      data: ThemeData(useMaterial3: true),
+      data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
       child: Scaffold(
         body: Center(
           child: Column(

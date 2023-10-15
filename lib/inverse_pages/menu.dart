@@ -66,17 +66,7 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
   Widget build(BuildContext context) {
     final children = switch (menuPage) {
       MenuPage.main => [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const Text('super', style: titleStyle),
-              const FixedSpacer.horizontal(1),
-              Text('HUE', style: hueStyle),
-              const FixedSpacer.horizontal(1),
-              const Text('man', style: titleStyle),
-            ],
-          ),
+          SuperHUEman(inverseColor),
           AnimatedSize(
             duration: oneSec,
             curve: curve,
@@ -179,6 +169,7 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
     return Theme(
       data: ThemeData(
         useMaterial3: true,
+        fontFamily: 'Roboto',
         checkboxTheme: CheckboxThemeData(fillColor: MaterialStatePropertyAll(inverseColor)),
       ),
       child: Stack(

@@ -121,7 +121,7 @@ class _TrueMasteryState extends State<TrueMastery> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(useMaterial3: true),
+      data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
       child: Scaffold(
         body: Center(
           child: Column(
@@ -168,7 +168,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                       children: [
                         const Text(
                           'color code:',
-                          style: TextStyle(fontFamily: 'Consolas', fontSize: 20),
+                          style: TextStyle(fontFamily: 'Inconsolata', fontSize: 20),
                         ),
                         const FixedSpacer.horizontal(10),
                         TextButton(
@@ -185,7 +185,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                           },
                           child: Text(
                             userColorCode,
-                            style: const TextStyle(fontFamily: 'Consolas', fontSize: 20),
+                            style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 20),
                           ),
                         ),
                       ],
@@ -361,7 +361,7 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
     children: [
       Text(
         '3 \u00d7 0xFF',
-        style: TextStyle(fontFamily: 'Consolas', height: 0.5),
+        style: TextStyle(fontFamily: 'Inconsolata', height: 0.5),
       ),
       SuperContainer(width: double.infinity, height: 1, color: Colors.black),
       Text(
@@ -376,7 +376,7 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(useMaterial3: true),
+      data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
       child: Stack(
         children: [
           AlertDialog(
@@ -486,7 +486,7 @@ class _ScoreTitleState extends State<_ScoreTitle> {
           '$label: ${widget.color.hexCode}',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontFamily: 'Consolas',
+            fontFamily: 'Inconsolata',
             fontWeight: FontWeight.bold,
             fontSize: 20,
             color: contrastWith(widget.color).withAlpha(0xCC),
@@ -610,7 +610,7 @@ class _Base10PlusHex extends StatelessWidget {
         Text(value.toString()),
         Text(
           ' (0x${value.toRadixString(16).padLeft(2, "0").toUpperCase()})',
-          style: const TextStyle(fontFamily: 'Consolas', fontSize: 12),
+          style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 12),
         ),
       ],
     );

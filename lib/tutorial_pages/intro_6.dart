@@ -625,7 +625,7 @@ class _Page5State extends SuperState<_Page5> {
                   Fader(
                     showButton,
                     child: Theme(
-                        data: ThemeData(useMaterial3: true),
+                        data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
                         child: ContinueButton(onPressed: widget.nextPage)),
                   ),
                   const Spacer(),
@@ -821,7 +821,7 @@ class _Page6 extends StatefulWidget {
 
 class _Page6State extends SuperState<_Page6> {
   static const screenText = [
-    EasyText('You know what really rustles my jimmies?'),
+    EasyText('You know what rustles my jimmies?'),
     Spacer(flex: 4),
     Text.rich(
       TextSpan(

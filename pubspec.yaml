@@ -72,22 +72,61 @@ flutter:
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
 
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: Gaegu
+      fonts:
+        - asset: assets/fonts/Gaegu-Regular.ttf
+        - asset: assets/fonts/Gaegu-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Gaegu-Light.ttf
+          weight: 300
+    - family: Inconsolata
+      fonts:
+        - asset: assets/fonts/Inconsolata-ExtraLight.ttf
+          weight: 100
+        - asset: assets/fonts/Inconsolata-Light.ttf
+          weight: 200
+        - asset: assets/fonts/Inconsolata-Medium.ttf
+          weight: 300
+        - asset: assets/fonts/Inconsolata-Regular.ttf
+        - asset: assets/fonts/Inconsolata-SemiBold.ttf
+          weight: 500
+        - asset: assets/fonts/Inconsolata-Bold.ttf
+          weight: 600
+        - asset: assets/fonts/Inconsolata-ExtraBold.ttf
+          weight: 700
+        - asset: assets/fonts/Inconsolata-Black.ttf
+          weight: 900
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/Roboto-ThinItalic.ttf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/Roboto-Light.ttf
+          weight: 200
+        - asset: assets/fonts/Roboto-LightItalic.ttf
+          weight: 200
+          style: italic
+        - asset: assets/fonts/Roboto-Medium.ttf
+          weight: 300
+        - asset: assets/fonts/Roboto-MediumItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Italic.ttf
+          style: italic
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 600
+        - asset: assets/fonts/Roboto-BoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/Roboto-Black.ttf
+          weight: 900
+        - asset: assets/fonts/Roboto-BlackItalic.ttf
+          weight: 900
+          style: italic
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

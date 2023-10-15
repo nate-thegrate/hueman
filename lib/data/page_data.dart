@@ -72,5 +72,5 @@ enum Pages {
     for (final page in values) page.name: (context) => page.widget
   };
 
-  static String get initialRoute => (Tutorials.intro ? menu : start).name;
+  static String get initialRoute => (Tutorials.started ? menu : start).name;
 }

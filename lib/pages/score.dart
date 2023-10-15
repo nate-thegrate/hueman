@@ -39,12 +39,11 @@ class _ScoreScreenState extends State<ScoreScreen> {
     final Color color = inverted ? inverseColor : epicColor;
 
     return Theme(
-      data: inverted
-          ? ThemeData(useMaterial3: true)
-          : ThemeData(
-              useMaterial3: true,
-              colorScheme: const ColorScheme.dark(primary: Colors.white),
-            ),
+      data: ThemeData(
+        useMaterial3: true,
+        fontFamily: 'Roboto',
+        colorScheme: inverted ? null : const ColorScheme.dark(primary: Colors.white),
+      ),
       child: Scaffold(
         body: Center(
           child: Column(

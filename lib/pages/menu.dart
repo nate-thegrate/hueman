@@ -51,120 +51,94 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
     super.dispose();
   }
 
-  List<Widget> get masterSettings => [
-        MenuCheckbox(
-          'casual mode',
-          value: casualMode,
-          description: ('play without keeping score', 'keep score when you play'),
-          toggle: (value) => setState(() => casualMode = value),
-        ),
-        const FixedSpacer(50),
-        OutlinedButton(
-          onPressed: gotoWebsite('https://google.com/'),
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(color: epicColor, width: 2),
-            foregroundColor: epicColor,
-          ),
-          child: const Padding(
-            padding: EdgeInsets.only(top: 4, bottom: 10),
-            child: Text(
-              'report a bug',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
-            ),
-          ),
-        ),
-        const FixedSpacer(33),
-        OutlinedButton(
-          onPressed: () => () async {
-            setState(() => inverting = true);
-            controller.forward();
-            await sleepState(0.7, () => darkBackground = false);
-            await sleepState(0.1, () => visible = true);
-            await sleep(0.5);
-          }()
-              .then((_) => context.invert()),
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(color: epicColor, width: 2),
-            foregroundColor: epicColor,
-            backgroundColor: SuperColors.darkBackground,
-            shadowColor: epicColor,
-            elevation: epicSine * 5,
-          ),
-          child: const Padding(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 14),
-            child: Text('invert!', style: TextStyle(fontSize: 24)),
-          ),
-        ),
-      ];
-  List<Widget> get noviceSettings => [
-        Center(
-            child: OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(color: epicColor, width: 2),
-            foregroundColor: epicColor,
-            backgroundColor: SuperColors.darkBackground,
-            shadowColor: epicColor,
-          ),
-          onPressed: () {
-            if (!showMasteryText) {
-              setState(() => showMasteryText = true);
-              sleep(4, then: () => setState(() => showMasteryText = false));
-            }
-          },
-          child: const Padding(
-            padding: EdgeInsets.only(top: 5, bottom: 10),
-            child: Text('more options', style: TextStyle(fontSize: 18)),
-          ),
-        )),
-        AnimatedSize(
-          duration: quarterSec,
-          curve: curve,
-          child: SuperContainer(
-            padding: const EdgeInsets.only(top: 2),
-            width: double.infinity,
-            child: showMasteryText
-                ? const Text(
-                    'unlock more options\nby playing "intense" mode!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white70),
-                  )
-                : null,
-          ),
-        ),
-      ];
-
   @override
   Widget build(BuildContext context) {
+    final color = epicColor;
+    final List<Widget> masterSettings = [
+      MenuCheckbox(
+        'casual mode',
+        value: casualMode,
+        description: ('play without keeping score', 'keep score when you play'),
+        toggle: (value) => setState(() => casualMode = value),
+      ),
+      const FixedSpacer(50),
+      OutlinedButton(
+        onPressed: gotoWebsite('https://google.com/'),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: color, width: 2),
+          foregroundColor: color,
+        ),
+        child: const Padding(
+          padding: EdgeInsets.only(top: 5, bottom: 8),
+          child: Text(
+            'report a bug',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+          ),
+        ),
+      ),
+      const FixedSpacer(33),
+      OutlinedButton(
+        onPressed: () => () async {
+          setState(() => inverting = true);
+          controller.forward();
+          await sleepState(0.7, () => darkBackground = false);
+          await sleepState(0.1, () => visible = true);
+          await sleep(0.5);
+        }()
+            .then((_) => context.invert()),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: color, width: 2),
+          foregroundColor: color,
+          backgroundColor: SuperColors.darkBackground,
+          shadowColor: color,
+          elevation: epicSine * 5,
+        ),
+        child: const Padding(
+          padding: EdgeInsets.fromLTRB(20, 10, 20, 14),
+          child: Text('invert!', style: TextStyle(fontSize: 24)),
+        ),
+      ),
+    ];
+    final List<Widget> noviceSettings = [
+      Center(
+          child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: color, width: 2),
+          foregroundColor: color,
+          backgroundColor: SuperColors.darkBackground,
+          shadowColor: color,
+        ),
+        onPressed: () {
+          if (!showMasteryText) {
+            setState(() => showMasteryText = true);
+            sleep(4, then: () => setState(() => showMasteryText = false));
+          }
+        },
+        child: const Padding(
+          padding: EdgeInsets.only(top: 5, bottom: 10),
+          child: Text('more options', style: TextStyle(fontSize: 18)),
+        ),
+      )),
+      AnimatedSize(
+        duration: quarterSec,
+        curve: curve,
+        child: SuperContainer(
+          padding: const EdgeInsets.only(top: 2),
+          width: double.infinity,
+          child: showMasteryText
+              ? const Text(
+                  'unlock more options\nby playing "intense" mode!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white70),
+                )
+              : null,
+        ),
+      ),
+    ];
+
     final children = switch (menuPage) {
       MenuPage.main => [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                'super',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
-                child: Text(
-                  'HUE',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: epicColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Text(
-                'man',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-            ],
-          ),
+          SuperHUEman(color),
           AnimatedSize(
             duration: oneSec,
             curve: curve,
@@ -175,19 +149,19 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
                       const FixedSpacer(67),
                       SuperButton(
                         'intro',
-                        color: epicColor,
+                        color: color,
                         onPressed: () => setState(() => menuPage = MenuPage.introSelect),
                         noDelay: true,
                       ),
                       const FixedSpacer(33),
-                      NavigateButton(Pages.intense, color: epicColor),
+                      NavigateButton(Pages.intense, color: color),
                       if (hueMaster)
                         Padding(
                           padding: const EdgeInsets.only(top: 33),
-                          child: NavigateButton(Pages.master, color: epicColor),
+                          child: NavigateButton(Pages.master, color: color),
                         ),
                       const FixedSpacer(67),
-                      NavigateButton(Pages.sandbox, color: epicColor),
+                      NavigateButton(Pages.sandbox, color: color),
                     ],
                   )
                 : empty,
@@ -233,11 +207,11 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           const FixedSpacer(55),
-          NavigateButton(Pages.intro3, color: epicColor),
+          NavigateButton(Pages.intro3, color: color),
           const FixedSpacer(33),
-          NavigateButton(Pages.intro6, color: epicColor),
+          NavigateButton(Pages.intro6, color: color),
           const FixedSpacer(33),
-          NavigateButton(Pages.introC, color: epicColor),
+          NavigateButton(Pages.introC, color: color),
           if (!casualMode)
             const Padding(
               padding: EdgeInsets.only(top: 33),
@@ -273,7 +247,7 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
                     child: TextButton(
                       style: mainMenu
                           ? TextButton.styleFrom(
-                              foregroundColor: epicColor,
+                              foregroundColor: color,
                               backgroundColor: Colors.black,
                             )
                           : TextButton.styleFrom(
@@ -306,7 +280,7 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
                   ),
                 ),
                 SuperContainer(
-                  decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
+                  decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
                   width: 300,
                   padding: const EdgeInsets.all(50),
                   child: AnimatedSize(

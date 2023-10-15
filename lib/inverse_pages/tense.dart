@@ -198,7 +198,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   }
 
   static const style = TextStyle(
-    fontFamily: 'Consolas',
+    fontFamily: 'Inconsolata',
     color: SuperColors.white80,
     fontSize: 20,
     inherit: false,
@@ -298,7 +298,11 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(useMaterial3: true, textTheme: const TextTheme(bodyMedium: style)),
+      data: ThemeData(
+        useMaterial3: true,
+        fontFamily: 'Roboto',
+        textTheme: const TextTheme(bodyMedium: style),
+      ),
       child: Scaffold(
         body: Stack(
           children: [
@@ -322,7 +326,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(15),
                         child: Text(
                           showDetails ? '[hide details]' : '[show tension details]',
-                          style: const TextStyle(fontFamily: 'Consolas', fontSize: 16),
+                          style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 16),
                         ),
                       )),
                   const FixedSpacer(15),
@@ -466,7 +470,7 @@ class _SplendidState extends State<Splendid> {
                   ? Text(
                       'Splendid!',
                       style: TextStyle(
-                        fontFamily: 'Consolas',
+                        fontFamily: 'Inconsolata',
                         fontSize: 50,
                         shadows: [
                           for (double i = 2; i <= 20; i += 2)
@@ -479,7 +483,7 @@ class _SplendidState extends State<Splendid> {
                       widget.correct ? 'Splendid!' : '[incorrect]',
                       style: const TextStyle(
                         color: SuperColors.darkBackground,
-                        fontFamily: 'Consolas',
+                        fontFamily: 'Inconsolata',
                       ),
                     ),
             ),
@@ -496,7 +500,7 @@ class _SplendidState extends State<Splendid> {
                       child: Text(
                         'Splendid!',
                         style: TextStyle(
-                          fontFamily: 'Consolas',
+                          fontFamily: 'Inconsolata',
                           fontSize: 50,
                         ),
                       ),

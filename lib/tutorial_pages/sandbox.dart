@@ -62,7 +62,10 @@ class _SandboxTutorialState extends SuperState<SandboxTutorial> {
       backgroundColor: inverted ? SuperColors.lightBackground : null,
     );
     if (!inverted) return screen;
-    return Theme(data: ThemeData(useMaterial3: true), child: screen);
+    return Theme(
+      data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
+      child: screen,
+    );
   }
 }
 
@@ -220,7 +223,7 @@ class _NumberRowState extends SuperState<_NumberRow> {
                 child: binary
                     ? Text(
                         '$i',
-                        style: const TextStyle(fontFamily: 'consolas', fontSize: 48),
+                        style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 48),
                       )
                     : EasyText('$i', size: 30),
               ),
@@ -316,7 +319,7 @@ class _Page3State extends SuperState<_Page3> {
                           alignment: const Alignment(0.75, 0),
                           child: Text(
                             counter.toString(),
-                            style: const TextStyle(fontSize: 24, fontFamily: 'consolas'),
+                            style: const TextStyle(fontSize: 24, fontFamily: 'Inconsolata'),
                           ),
                         ),
                       ),
@@ -328,7 +331,7 @@ class _Page3State extends SuperState<_Page3> {
                                 .toRadixString(2)
                                 .padLeft(counter > 15 ? 8 : 4, '0')
                                 .padLeft(8),
-                            style: const TextStyle(fontSize: 24, fontFamily: 'consolas'),
+                            style: const TextStyle(fontSize: 24, fontFamily: 'Inconsolata'),
                           ),
                         ),
                       ),
@@ -519,13 +522,16 @@ class _BTS extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (showHex)
-                  const Text('#', style: TextStyle(fontFamily: 'consolas', fontSize: 18)),
+                SexyBox(
+                  child: showHex
+                      ? const Text('#', style: TextStyle(fontFamily: 'Inconsolata', fontSize: 18))
+                      : empty,
+                ),
                 for (final code in binary)
                   SexyBox(
                     child: Text(
                       code,
-                      style: const TextStyle(fontFamily: 'consolas', fontSize: 18),
+                      style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 18),
                     ),
                   )
               ],
@@ -536,12 +542,12 @@ class _BTS extends StatelessWidget {
             '    red: ${binary[0]}\n'
             '  green: ${binary[1]}\n'
             '   blue: ${binary[2]}',
-            style: const TextStyle(fontFamily: 'consolas', fontSize: 18),
+            style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 18),
           );
 
     return SuperContainer(
       decoration: BoxDecoration(
-        color: inverted ? SuperColors.white : SuperColors.black80,
+        color: inverted ? SuperColors.white80 : SuperColors.black80,
         borderRadius: BorderRadius.circular(5),
       ),
       padding: const EdgeInsets.all(25),
@@ -552,7 +558,7 @@ class _BTS extends StatelessWidget {
         children: [
           Text(
             btsDesc,
-            style: const TextStyle(fontFamily: 'consolas', fontSize: 18),
+            style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 18),
           ),
           SexyBox(
             child: showBinary ? colorCode : const SizedBox(width: 200),
@@ -617,7 +623,7 @@ class _Page5State extends SuperState<_Page5> {
             TextSpan(
               text: "'0x'",
               style: TextStyle(
-                fontFamily: 'consolas',
+                fontFamily: 'Inconsolata',
                 color: inverted ? SuperColors.black80 : SuperColors.white80,
                 backgroundColor: inverted ? Colors.white : Colors.black38,
               ),
@@ -628,11 +634,11 @@ class _Page5State extends SuperState<_Page5> {
         Fader(
           prefix2,
           child: EasyRichText([
-            const TextSpan(text: 'or you can use a '),
+            const TextSpan(text: 'or you can use '),
             TextSpan(
               text: "'#'",
               style: TextStyle(
-                fontFamily: 'consolas',
+                fontFamily: 'Inconsolata',
                 backgroundColor: inverted ? Colors.white : Colors.black38,
                 color: inverted ? SuperColors.black80 : SuperColors.white80,
               ),
@@ -690,10 +696,10 @@ class _HexRows extends StatelessWidget {
                         -1 => '-----------',
                         _ => '0x${i.toRadixString(16).toUpperCase()}'.padLeft(7),
                       },
-                      style: const TextStyle(fontFamily: 'consolas', fontSize: 24),
+                      style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 24),
                     ),
                   ),
-                  const Text('| ', style: TextStyle(fontFamily: 'consolas', fontSize: 24)),
+                  const Text('| ', style: TextStyle(fontFamily: 'Inconsolata', fontSize: 24)),
                   Expanded(
                     flex: 2,
                     child: Text(
@@ -702,10 +708,10 @@ class _HexRows extends StatelessWidget {
                         -1 => '-------',
                         _ => '$i'.padLeft(2, '0').padLeft(4),
                       },
-                      style: const TextStyle(fontFamily: 'consolas', fontSize: 24),
+                      style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 24),
                     ),
                   ),
-                  const Text('| ', style: TextStyle(fontFamily: 'consolas', fontSize: 24)),
+                  const Text('| ', style: TextStyle(fontFamily: 'Inconsolata', fontSize: 24)),
                   Expanded(
                     flex: 2,
                     child: Text(
@@ -714,7 +720,7 @@ class _HexRows extends StatelessWidget {
                         -1 => '------',
                         _ => i.toRadixString(2).padLeft(4, '0').padLeft(5),
                       },
-                      style: const TextStyle(fontFamily: 'consolas', fontSize: 24),
+                      style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 24),
                     ),
                   ),
                 ],

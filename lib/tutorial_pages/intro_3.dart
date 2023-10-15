@@ -76,11 +76,12 @@ class _Page1 extends StatefulWidget {
 }
 
 class _Page1State extends SuperState<_Page1> {
-  bool visible = false, buttonVisible = false;
+  bool weSee = false, imageVisible = false, buttonVisible = false;
 
   @override
   void animate() async {
-    await sleepState(4, () => visible = true);
+    await sleepState(3, () => weSee = true);
+    await sleepState(3, () => imageVisible = true);
     await sleepState(2, () => buttonVisible = true);
   }
 
@@ -90,13 +91,19 @@ class _Page1State extends SuperState<_Page1> {
       children: [
         const Spacer(flex: 2),
         const EasyText(
-          'Humans have color vision\n'
-          'because the retina has 3 types of cone cells.',
-          size: 26,
+          'Humans have trichromatic vision.',
         ),
         const Spacer(),
         Fader(
-          visible,
+          weSee,
+          child: const EasyText(
+            'We see colors because of\n'
+            '3 types of cone cells in the retina.',
+          ),
+        ),
+        const Spacer(),
+        Fader(
+          imageVisible,
           child: Image.asset('assets/retina_diagram.png', width: 500),
         ),
         const Spacer(flex: 2),
@@ -124,9 +131,9 @@ class _Page2State extends SuperState<_Page2> {
 
   @override
   void animate() async {
-    await sleepState(6, () => visible = true);
+    await sleepState(4, () => visible = true);
 
-    await sleep(3);
+    await sleep(4);
     for (final color in SuperColors.primaries) {
       await sleepState(1, () => colorVisible[color] = true);
     }
@@ -173,15 +180,16 @@ class _Page2State extends SuperState<_Page2> {
                         visible || !buttonVisible,
                         duration: duration,
                         child: const EasyText(
-                          'These 3 cone cell types can be stimulated separately\n'
-                          'using 3 different light frequencies.',
+                          'These 3 cone cell types\nreact to different light frequencies.',
                         ),
                       ),
                       const FixedSpacer(48),
                       Fader(
                         visible,
                         duration: duration,
-                        child: const EasyText('We perceive them as 3 colors.'),
+                        child: const EasyText(
+                          'They send signals to the brain,\nwhich we perceive as 3 colors.',
+                        ),
                       ),
                     ],
                   ),
@@ -321,13 +329,12 @@ class _Page3State extends SuperState<_Page3> {
     return Column(
       children: [
         const Spacer(flex: 3),
-        const EasyText('This screen uses the standard RGB color space.'),
+        const EasyText('This screen uses\nthe standard RGB color space.'),
         const FixedSpacer(25),
         Fader(
           eachPixelVisible,
           child: const EasyText(
-            'Each pixel has a number between 0 and 255\n'
-            'to represent how bright each color channel should be.',
+            'The brightness of each color channel\nis a value between 0 and 255.',
           ),
         ),
         const Spacer(flex: 2),
@@ -492,7 +499,7 @@ class _Page4State extends SuperState<_Page4> {
             TextSpan(text: 'or making '),
             TextSpan(
               text: 'code',
-              style: TextStyle(fontFamily: 'consolas', color: SuperColor(0x00FFEE)),
+              style: TextStyle(fontFamily: 'Inconsolata', color: SuperColor(0x00FFEE)),
             ),
             TextSpan(text: ' for a video game,'),
           ]),
@@ -502,7 +509,7 @@ class _Page4State extends SuperState<_Page4> {
         const Spacer(flex: 4),
         Fader(
           sometimesUgotta,
-          child: const EasyText('Sometimes you gotta tell a computer what color you want.'),
+          child: const EasyText('sometimes you gotta tell a computer\nwhat color you want.'),
         ),
         const Spacer(flex: 3),
         Fader(showButton, child: ContinueButton(onPressed: widget.nextPage)),
@@ -548,9 +555,9 @@ class _Page5State extends SuperState<_Page5> {
       2
     ),
     (Spacer(), 2),
-    (EasyText('How would you describe that color?'), 2),
+    (EasyText('How do we describe this color?'), 2),
     (Spacer(), 2),
-    (EasyText('You could call it by its RGB value,'), 3.5),
+    (EasyText('You could say its RGB value,'), 3.5),
     (EasyText('or just make up a name for it.'), 1.5),
   ];
 
@@ -574,7 +581,7 @@ class _Page5State extends SuperState<_Page5> {
           Text(
             desc,
             style: TextStyle(
-              fontFamily: 'Consolas',
+              fontFamily: 'Inconsolata',
               fontSize: 20,
               fontWeight: FontWeight.w900,
               color: color,
@@ -827,7 +834,7 @@ class _JustKidding extends StatelessWidget {
                 ),
                 onPressed: nextPage,
                 child: const Padding(
-                  padding: EdgeInsets.fromLTRB(25, 10, 25, 15),
+                  padding: EdgeInsets.fromLTRB(25, 10, 25, 12),
                   child: Text(
                     'HUE',
                     style: TextStyle(

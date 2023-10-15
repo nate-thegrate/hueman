@@ -141,7 +141,7 @@ class _SuperButtonState extends State<SuperButton> with SinglePress {
         foregroundColor: inverted ? Colors.white : Colors.black,
       ),
       child: Padding(
-        padding: widget.padding ?? const EdgeInsets.only(bottom: 4),
+        padding: widget.padding ?? const EdgeInsets.only(bottom: 2),
         child: Text(widget.label, style: const TextStyle(fontSize: 24)),
       ),
     );
@@ -309,7 +309,7 @@ class ColorLabel extends StatelessWidget {
                       ),
                       child: Text(
                         value,
-                        style: const TextStyle(fontFamily: 'Consolas', fontSize: 18),
+                        style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 18),
                       ),
                     ),
                   )
@@ -385,6 +385,7 @@ class _ManualColorCodeState extends State<ManualColorCode> {
     return Theme(
       data: ThemeData(
         useMaterial3: true,
+        fontFamily: 'Roboto',
         colorScheme: ColorScheme(
           brightness: Brightness.light,
           primary: widget.color,
@@ -409,7 +410,7 @@ class _ManualColorCodeState extends State<ManualColorCode> {
               width: 200,
               child: TextField(
                 focusNode: focusNode,
-                style: const TextStyle(fontFamily: 'Consolas'),
+                style: const TextStyle(fontFamily: 'Inconsolata'),
                 textAlign: TextAlign.center,
                 cursorColor: Colors.black,
                 controller: controller,
@@ -445,16 +446,35 @@ class EasyText extends StatelessWidget {
 }
 
 class EasyRichText extends StatelessWidget {
-  const EasyRichText(this.children, {super.key});
+  const EasyRichText(this.children, {super.key, this.style = const TextStyle(fontSize: 24)});
   final List<TextSpan> children;
+  final TextStyle style;
 
   @override
   Widget build(BuildContext context) {
     return Text.rich(
       TextSpan(children: children),
       textAlign: TextAlign.center,
-      style: const TextStyle(fontSize: 24),
+      style: style,
     );
+  }
+}
+
+class SuperHUEman extends StatelessWidget {
+  /// The magestic game logo.
+  const SuperHUEman(this.color, {super.key});
+  final SuperColor color;
+
+  @override
+  Widget build(BuildContext context) {
+    return EasyRichText(style: const TextStyle(fontSize: 31), [
+      const TextSpan(text: 'super'),
+      TextSpan(
+        text: 'ʜᴜᴇ',
+        style: TextStyle(color: color, fontSize: 32, fontWeight: FontWeight.w500),
+      ),
+      const TextSpan(text: 'man'),
+    ]);
   }
 }
 
