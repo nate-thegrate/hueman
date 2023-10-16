@@ -164,7 +164,7 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
                       NavigateButton(Pages.sandbox, color: color),
                     ],
                   )
-                : empty,
+                : const SizedBox(width: 150),
           ),
         ],
       MenuPage.settings => [

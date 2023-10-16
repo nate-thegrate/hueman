@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/thanks_for_playing.dart';
 import 'package:super_hueman/data/save_data.dart';
@@ -231,7 +232,7 @@ class TrueMasteryScore extends StatefulWidget {
   State<TrueMasteryScore> createState() => _TrueMasteryScoreState();
 }
 
-class _TrueMasteryScoreState extends State<TrueMasteryScore> {
+class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
   late final guess = widget.guess, actual = widget.actual;
 
   late final redOffBy = diff(guess.red, actual.red);
@@ -249,19 +250,19 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
   bool flickerValue = false;
 
   Future<void> perfectScore() async {
-    await sleep(4);
-    setState(() => perfectScoreOverlay = Text(
-          '9' * 10000,
-          style: const TextStyle(
-            color: Colors.black,
-            fontFamily: 'Segoe UI',
-            fontSize: 16.0,
-            fontWeight: FontWeight.w400,
-            decoration: TextDecoration.none,
-          ),
-        ));
-    await sleep(2);
-    setState(() => showFlicker = true);
+    await sleepState(
+        4,
+        () => perfectScoreOverlay = Text(
+              '9' * 10000,
+              style: const TextStyle(
+                color: Colors.black,
+                fontFamily: 'Roboto',
+                fontSize: 16.0,
+                fontWeight: FontWeight.w400,
+                decoration: TextDecoration.none,
+              ),
+            ));
+    await sleepState(2, () => showFlicker = true);
     ticker!.start();
     await sleep(3);
     ticker!.stop();
@@ -361,12 +362,12 @@ class _TrueMasteryScoreState extends State<TrueMasteryScore> {
     children: [
       Text(
         '3 \u00d7 0xFF',
-        style: TextStyle(fontFamily: 'Inconsolata', height: 0.5),
+        style: TextStyle(fontFamily: 'Inconsolata', height: null),
       ),
-      SuperContainer(width: double.infinity, height: 1, color: Colors.black),
+      SuperContainer(width: 105, height: 1, color: Colors.black),
       Text(
         'total difference',
-        style: TextStyle(height: 0.5, fontStyle: FontStyle.italic),
+        style: TextStyle(height: null, fontStyle: FontStyle.italic),
       ),
     ],
   );

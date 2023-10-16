@@ -7,8 +7,9 @@ import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/data/widgets.dart';
+import 'package:super_hueman/tutorial_pages/true_mastery.dart';
 
-enum MenuPage { main, settings, tenseSelect }
+enum MenuPage { main, settings, tenseSelect, howToWin }
 
 class InverseMenu extends StatefulWidget {
   const InverseMenu({super.key});
@@ -17,10 +18,12 @@ class InverseMenu extends StatefulWidget {
   State<InverseMenu> createState() => _InverseMenuState();
 }
 
-class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProviderStateMixin {
+class _InverseMenuState extends SuperState<InverseMenu>
+    with SingleTickerProviderStateMixin, SinglePress {
   late final Ticker inverseHues;
   late final AnimationController controller = AnimationController(duration: oneSec, vsync: this);
-  bool inverting = false, visible = true, exists = true, showButtons = true;
+  bool inverting = false, visible = true, exists = true, trueMastery = false, showButtons = true;
+  late int hintsVisible;
   MenuPage menuPage = MenuPage.main;
   bool get mainMenu => menuPage == MenuPage.main;
 
@@ -55,18 +58,21 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
     fontWeight: FontWeight.w400,
     height: 1.3,
   );
-  TextStyle get hueStyle => TextStyle(
-        fontSize: 24,
-        color: inverseColor,
-        fontWeight: FontWeight.bold,
-        height: 1.5,
-      );
+
+  static const hints = [
+    'make sure casual mode\nis  ☑ enabled.',
+    'go to "true mastery".',
+    'tap the color code button.',
+    'watch how the values for\nred/green/blue change\nwhen you tap the button.',
+    'convert each value to\nhexadecimal, then type\nthem in and "submit".',
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final color = inverseColor;
     final children = switch (menuPage) {
       MenuPage.main => [
-          SuperHUEman(inverseColor),
+          SuperHUEman(color),
           AnimatedSize(
             duration: oneSec,
             curve: curve,
@@ -75,23 +81,33 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const FixedSpacer(67),
-                      NavigateButton(Pages.trivial, color: inverseColor),
+                      NavigateButton(Pages.trivial, color: color),
                       const FixedSpacer(33),
                       SuperButton(
                         'tense',
-                        color: inverseColor,
+                        color: color,
                         onPressed: () => setState(() => menuPage = MenuPage.tenseSelect),
                         noDelay: true,
                       ),
                       const FixedSpacer(33),
                       ElevatedButton(
-                        onPressed: () => context.goto(Pages.trueMastery),
+                        onPressed: singlePress(() {
+                          if (!Tutorials.trueMastery) {
+                            setState(() => trueMastery = true);
+                            sleep(
+                              6,
+                              then: () => context.noTransition(const TrueMasteryTutorial()),
+                            );
+                          } else {
+                            context.goto(Pages.trueMastery);
+                          }
+                        }),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: inverseColor,
+                          backgroundColor: color,
                           foregroundColor: Colors.white,
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 15),
+                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 13),
                           child: Text(
                             Pages.trueMastery(),
                             textAlign: TextAlign.center,
@@ -100,10 +116,10 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
                         ),
                       ),
                       const FixedSpacer(67),
-                      NavigateButton(Pages.sandbox, color: inverseColor),
+                      NavigateButton(Pages.sandbox, color: color),
                     ],
                   )
-                : empty,
+                : const SizedBox(width: 150),
           )
         ],
       MenuPage.settings => [
@@ -129,6 +145,26 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
           const FixedSpacer(67),
           Center(
             child: OutlinedButton(
+              onPressed: () {
+                hintsVisible = 0;
+                setState(() => menuPage = MenuPage.howToWin);
+              },
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: color, width: 2),
+                foregroundColor: color,
+              ),
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(3, 6, 3, 7),
+                child: Text(
+                  'how to win',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          ),
+          const FixedSpacer(25),
+          Center(
+            child: OutlinedButton(
               onPressed: () => () async {
                 controller.forward();
                 await sleepState(0.5, () => inverting = true);
@@ -136,13 +172,11 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
               }()
                   .then((_) => context.invert()),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: inverseColor, width: 2),
-                foregroundColor: inverseColor,
-                backgroundColor: SuperColors.lightBackground,
-                shadowColor: inverseColor,
+                side: BorderSide(color: color, width: 2),
+                foregroundColor: color,
               ),
               child: const Padding(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 16),
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 14),
                 child: Text('revert', style: TextStyle(fontSize: 24)),
               ),
             ),
@@ -151,9 +185,9 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
       MenuPage.tenseSelect => [
           const Text('tense', textAlign: TextAlign.center, style: titleStyle),
           const FixedSpacer(50),
-          NavigateButton(Pages.tenseVibrant, color: inverseColor),
+          NavigateButton(Pages.tenseVibrant, color: color),
           const FixedSpacer(33),
-          NavigateButton(Pages.tenseVolatile, color: inverseColor),
+          NavigateButton(Pages.tenseVolatile, color: color),
           const FixedSpacer(20),
           if (!casualMode) ...[
             const FixedSpacer(20),
@@ -164,13 +198,52 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
             ),
           ],
         ],
+      MenuPage.howToWin => [
+          Text(
+            "If you're ready to finish the game, you can follow these steps:",
+            style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          for (int i = 1; i <= 5; i++)
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$i:  ',
+                    style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                  if (hintsVisible >= i)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 1),
+                      child: Text(hints[i - 1]),
+                    ),
+                ],
+              ),
+            ),
+          if (hintsVisible < 5) const FixedSpacer(33),
+          if (hintsVisible < 5)
+            Center(
+              child: OutlinedButton(
+                onPressed: () => setState(() => hintsVisible++),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: color, width: 2),
+                  foregroundColor: color,
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.fromLTRB(0, 8, 0, 10),
+                  child: Text('show next hint', style: TextStyle(fontSize: 18)),
+                ),
+              ),
+            ),
+        ],
     };
 
     return Theme(
       data: ThemeData(
         useMaterial3: true,
         fontFamily: 'Roboto',
-        checkboxTheme: CheckboxThemeData(fillColor: MaterialStatePropertyAll(inverseColor)),
+        checkboxTheme: CheckboxThemeData(fillColor: MaterialStatePropertyAll(color)),
       ),
       child: Stack(
         children: [
@@ -185,7 +258,7 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
                       padding: const EdgeInsets.only(bottom: 30),
                       child: TextButton(
                         style: TextButton.styleFrom(
-                          foregroundColor: inverseColor,
+                          foregroundColor: color,
                           backgroundColor: mainMenu ? Colors.white : Colors.white54,
                         ),
                         onPressed: () => setState(
@@ -214,7 +287,7 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
                   ),
                   SuperContainer(
                     decoration: BoxDecoration(
-                      border: Border.all(color: inverseColor, width: 2),
+                      border: Border.all(color: color, width: 2),
                     ),
                     width: 300,
                     padding: const EdgeInsets.all(50),
@@ -258,6 +331,7 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
               ),
             ),
           ),
+          trueMastery ? _TrueMasteryAnimation(color) : empty,
           if (exists)
             Fader(
               visible,
@@ -267,6 +341,55 @@ class _InverseMenuState extends SuperState<InverseMenu> with SingleTickerProvide
             ),
         ],
       ),
+    );
+  }
+}
+
+class _TrueMasteryAnimation extends StatefulWidget {
+  const _TrueMasteryAnimation(this.color);
+  final SuperColor color;
+
+  @override
+  State<_TrueMasteryAnimation> createState() => _TrueMasteryAnimationState();
+}
+
+class _TrueMasteryAnimationState extends SuperState<_TrueMasteryAnimation> {
+  bool showHues = false;
+  @override
+  void animate() => quickly(() => setState(() => showHues = true));
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Fader(
+          showHues,
+          duration: const Duration(seconds: 2),
+          curve: Curves.easeOutCubic,
+          child: SuperContainer(color: widget.color),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(top: 218),
+          child: Text(
+            'true\nmastery',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Roboto',
+              fontSize: 24,
+              fontWeight: FontWeight.w500,
+              decoration: TextDecoration.none,
+              height: 1,
+            ),
+          ),
+        ),
+        Fader(
+          showHues,
+          duration: const Duration(seconds: 6),
+          child: const SuperContainer(color: Colors.white),
+        ),
+      ],
     );
   }
 }

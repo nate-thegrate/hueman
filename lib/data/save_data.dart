@@ -5,7 +5,7 @@ bool booted = false;
 bool casualMode = true;
 bool autoSubmit = true;
 bool externalKeyboard = true;
-bool inverted = false;
+bool inverted = true;
 bool music = true;
 bool sounds = true;
 

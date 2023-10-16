@@ -966,13 +966,10 @@ SuperColor get inverseColor => SuperColors.inverse[inverseHue];
 
 Ticker epicSetup(Function setState) {
   epicHue = rng.nextInt(360);
-  int lastEpicChange = 0;
-  const int hueChangeDelay = 60;
-  void epicCycle(Duration elapsed) {
-    if (elapsed.inMilliseconds >= lastEpicChange + hueChangeDelay) {
-      lastEpicChange += hueChangeDelay;
-      setState(() => epicHue = ++epicHue % 360);
-    }
+  int cycle = 0;
+  void epicCycle(_) {
+    cycle = ++cycle % 4;
+    if (cycle == 0) setState(() => epicHue = ++epicHue % 360);
   }
 
   return Ticker(epicCycle)..start();
@@ -980,7 +977,11 @@ Ticker epicSetup(Function setState) {
 
 Ticker inverseSetup(Function setState) {
   inverseHue = rng.nextInt(360);
-  void inverseCycle(_) => setState(() => inverseHue = --inverseHue % 360);
+  bool cycle = false;
+  void inverseCycle(_) {
+    cycle = !cycle;
+    if (cycle) setState(() => inverseHue = --inverseHue % 360);
+  }
 
   return Ticker(inverseCycle)..start();
 }
