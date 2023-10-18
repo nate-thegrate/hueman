@@ -510,6 +510,7 @@ class KeyboardGame extends StatelessWidget {
 
     return _GameScreen(
       [
+        const FixedSpacer(20),
         SizedBox(
           width: 100,
           child: TextField(

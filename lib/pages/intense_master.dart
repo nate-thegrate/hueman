@@ -8,7 +8,6 @@ import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/hue_typing_game.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
-import 'package:super_hueman/data/widgets.dart';
 import 'package:collection/collection.dart';
 
 import 'package:flutter/material.dart';
@@ -184,34 +183,9 @@ class SawEveryPic extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Congrats!'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const Text(
-            "You've made it through every image!",
-            style: TextStyle(fontSize: 16),
-          ),
-          const FixedSpacer(16),
-          RichText(
-            text: TextSpan(children: [
-              const TextSpan(text: '(shoutout to'),
-              TextSpan(
-                text: '  Wikipedia  ',
-                style: const TextStyle(color: SuperColors.azure, height: 3),
-                recognizer: hyperlink('https://commons.wikimedia.org/w/index.php'
-                    '?title=Special:MediaSearch&type=image&haslicense=unrestricted'),
-              ),
-              const TextSpan(text: 'and'),
-              TextSpan(
-                text: '  rawpixel  ',
-                style: const TextStyle(color: SuperColors.azure, height: 3),
-                recognizer: hyperlink('https://www.rawpixel.com/public-domain'),
-              ),
-              const TextSpan(text: '\nfor hosting all those public domain images)'),
-            ]),
-          ),
-        ],
+      content: const Text(
+        "You've made it through every image!",
+        style: TextStyle(fontSize: 16),
       ),
       actions: [
         Center(

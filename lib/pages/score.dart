@@ -36,7 +36,7 @@ class _ScoreScreenState extends State<ScoreScreen> {
     final ScoreKeeper sk = widget.scoreKeeper;
     final Pages page = sk.page;
     final bool tutorial = sk is TutorialScoreKeeper;
-    final Color color = inverted ? inverseColor : epicColor;
+    final SuperColor color = inverted ? inverseColor : epicColor;
 
     return Theme(
       data: ThemeData(

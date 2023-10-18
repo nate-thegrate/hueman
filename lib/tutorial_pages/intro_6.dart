@@ -827,8 +827,8 @@ class _Page6State extends SuperState<_Page6> {
       TextSpan(
         children: [
           TextSpan(
-              text: 'People who design printers know\n'
-                  'that the only way to access the full range of colors\n'
+              text: 'People who design printers know that\n'
+                  'the only way to access the full range of colors\n'
                   'is to use '),
           ColorTextSpan.cyan,
           TextSpan(text: '/'),
@@ -846,7 +846,7 @@ class _Page6State extends SuperState<_Page6> {
         'including markers and watercolors,'),
     Spacer(),
     EasyText('but not once in elementary school art class\n'
-        'did I ever hear about cyan or magenta.'),
+        'did we ever learn about cyan or magenta.'),
   ];
 
   int textProgress = 0;

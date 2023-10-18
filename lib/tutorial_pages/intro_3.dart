@@ -772,7 +772,8 @@ class _Page6State extends SuperState<_Page6> with SinglePress {
             Fader(
               wishVisible,
               child: const EasyText(
-                'I wish I could describe every shade of this color\nwith a single name.',
+                'I wish I could describe every shade of this color\n'
+                'with a single name (that isn\'t "chartreuse").',
               ),
             ),
             const Spacer(),

@@ -1,4 +1,4 @@
-import 'package:super_hueman/data/structs.dart';
+// import 'package:super_hueman/data/structs.dart';
 
 /// do an animation on boot :)
 bool booted = false;
@@ -7,12 +7,13 @@ bool booted = false;
 bool casualMode = true;
 bool autoSubmit = true;
 bool externalKeyboard = true;
-bool inverted = true;
+bool inverted = false;
 bool music = true;
 bool sounds = true;
 
 // game progress
-int? superHue = rng.nextInt(360);
+int? superHue;
+// int? superHue = rng.nextInt(360);
 bool get hueMaster => superHue != null;
 
 abstract final class Tutorials {
@@ -26,7 +27,7 @@ abstract final class Tutorials {
   static bool trivial = false;
   static bool tense = false;
   static bool compSci = false;
-  static bool trueMastery = true;
+  static bool trueMastery = false;
 
-  static bool ads = false;
+  static bool sawInversion = false;
 }

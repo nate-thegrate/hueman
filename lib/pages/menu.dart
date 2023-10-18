@@ -76,27 +76,30 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
           ),
         ),
       ),
-      const FixedSpacer(33),
-      OutlinedButton(
-        onPressed: () async {
-          setState(() => inverting = true);
-          controller.forward();
-          await sleepState(0.7, () => darkBackground = false);
-          await sleepState(0.1, () => visible = true);
-          await sleep(0.5, then: context.invert);
-        },
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: color, width: 2),
-          foregroundColor: color,
-          backgroundColor: SuperColors.darkBackground,
-          shadowColor: color,
-          elevation: epicSine * 5,
+      if (Tutorials.master) ...[
+        const FixedSpacer(33),
+        OutlinedButton(
+          onPressed: () async {
+            Tutorials.sawInversion = true;
+            setState(() => inverting = true);
+            controller.forward();
+            await sleepState(0.7, () => darkBackground = false);
+            await sleepState(0.1, () => visible = true);
+            await sleep(0.5, then: context.invert);
+          },
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: color, width: 2),
+            foregroundColor: color,
+            backgroundColor: SuperColors.darkBackground,
+            shadowColor: color,
+            elevation: epicSine * 5,
+          ),
+          child: const Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 14),
+            child: Text('invert!', style: TextStyle(fontSize: 24)),
+          ),
         ),
-        child: const Padding(
-          padding: EdgeInsets.fromLTRB(20, 10, 20, 14),
-          child: Text('invert!', style: TextStyle(fontSize: 24)),
-        ),
-      ),
+      ],
     ];
     final List<Widget> noviceSettings = [
       Center(
@@ -114,7 +117,7 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
           }
         },
         child: const Padding(
-          padding: EdgeInsets.only(top: 5, bottom: 10),
+          padding: EdgeInsets.only(top: 7, bottom: 10),
           child: Text('more options', style: TextStyle(fontSize: 18)),
         ),
       )),
@@ -139,7 +142,7 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
       MenuPage.main => [
           SuperHUEman(color),
           AnimatedSize(
-            duration: oneSec,
+            duration: halfSec,
             curve: curve,
             child: showButtons
                 ? Column(
@@ -151,16 +154,27 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
                         color: color,
                         onPressed: () => setState(() => menuPage = MenuPage.introSelect),
                         noDelay: true,
+                        isNew: !Tutorials.introC,
                       ),
-                      const FixedSpacer(33),
-                      NavigateButton(Pages.intense, color: color),
-                      if (hueMaster)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 33),
-                          child: NavigateButton(Pages.master, color: color),
+                      if (Tutorials.introC) ...[
+                        const FixedSpacer(33),
+                        NavigateButton(Pages.intense, color: color, isNew: !Tutorials.intense),
+                        if (hueMaster)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 33),
+                            child: NavigateButton(
+                              Pages.master,
+                              color: color,
+                              isNew: !Tutorials.master,
+                            ),
+                          ),
+                        const FixedSpacer(67),
+                        NavigateButton(
+                          Pages.sandbox,
+                          color: color,
+                          isNew: !Tutorials.compSci,
                         ),
-                      const FixedSpacer(67),
-                      NavigateButton(Pages.sandbox, color: color),
+                      ],
                     ],
                   )
                 : const SizedBox(width: 150),
@@ -206,11 +220,15 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           const FixedSpacer(55),
-          NavigateButton(Pages.intro3, color: color),
-          const FixedSpacer(33),
-          NavigateButton(Pages.intro6, color: color),
-          const FixedSpacer(33),
-          NavigateButton(Pages.introC, color: color),
+          NavigateButton(Pages.intro3, color: color, isNew: !Tutorials.intro3),
+          if (Tutorials.intro3) ...[
+            const FixedSpacer(33),
+            NavigateButton(Pages.intro6, color: color, isNew: !Tutorials.intro6),
+          ],
+          if (Tutorials.intro6) ...[
+            const FixedSpacer(33),
+            NavigateButton(Pages.introC, color: color, isNew: !Tutorials.introC),
+          ],
           if (!casualMode)
             const Padding(
               padding: EdgeInsets.only(top: 33),
@@ -220,7 +238,7 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
                 style: TextStyle(color: Colors.white60),
               ),
             )
-          else if (!Tutorials.casual)
+          else if (Tutorials.intro3 && !Tutorials.casual)
             const Padding(
               padding: EdgeInsets.only(top: 33),
               child: Text(
@@ -231,6 +249,43 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
             ),
         ],
     };
+
+    Widget settingsButton = TextButton(
+      style: mainMenu
+          ? TextButton.styleFrom(
+              foregroundColor: color,
+              backgroundColor: Colors.black,
+            )
+          : TextButton.styleFrom(
+              foregroundColor: Colors.white70,
+              backgroundColor: Colors.black26,
+            ),
+      onPressed: () {
+        if (mainMenu) {
+          setState(() => menuPage = MenuPage.settings);
+        } else {
+          setState(() => menuPage = MenuPage.main);
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: mainMenu
+            ? const Padding(
+                padding: EdgeInsets.only(bottom: 2),
+                child: Text(
+                  'settings',
+                  style: TextStyle(fontSize: 16),
+                ),
+              )
+            : const Text(
+                'back',
+                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+              ),
+      ),
+    );
+    if (menuPage == MenuPage.main && Tutorials.master && !Tutorials.sawInversion) {
+      settingsButton = BrandNew(color: color, child: settingsButton);
+    }
 
     return Scaffold(
       body: Stack(
@@ -243,39 +298,7 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
                   showButtons,
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 30),
-                    child: TextButton(
-                      style: mainMenu
-                          ? TextButton.styleFrom(
-                              foregroundColor: color,
-                              backgroundColor: Colors.black,
-                            )
-                          : TextButton.styleFrom(
-                              foregroundColor: Colors.white70,
-                              backgroundColor: Colors.black26,
-                            ),
-                      onPressed: () {
-                        if (mainMenu) {
-                          setState(() => menuPage = MenuPage.settings);
-                        } else {
-                          setState(() => menuPage = MenuPage.main);
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: mainMenu
-                            ? const Padding(
-                                padding: EdgeInsets.only(bottom: 2),
-                                child: Text(
-                                  'settings',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              )
-                            : const Text(
-                                'back',
-                                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-                              ),
-                      ),
-                    ),
+                    child: settingsButton,
                   ),
                 ),
                 SuperContainer(

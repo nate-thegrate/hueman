@@ -83,42 +83,45 @@ class _InverseMenuState extends SuperState<InverseMenu>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const FixedSpacer(67),
-                      NavigateButton(Pages.trivial, color: color),
+                      NavigateButton(Pages.trivial, color: color, isNew: !Tutorials.trivial),
                       const FixedSpacer(33),
                       SuperButton(
                         'tense',
                         color: color,
                         onPressed: () => setState(() => menuPage = MenuPage.tenseSelect),
                         noDelay: true,
+                        isNew: !Tutorials.tense,
                       ),
-                      const FixedSpacer(33),
-                      ElevatedButton(
-                        onPressed: singlePress(() {
-                          if (!Tutorials.trueMastery) {
-                            setState(() => trueMastery = true);
-                            sleep(
-                              6,
-                              then: () => context.noTransition(const TrueMasteryTutorial()),
-                            );
-                          } else {
-                            context.goto(Pages.trueMastery);
-                          }
-                        }),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: color,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 13),
-                          child: Text(
-                            Pages.trueMastery(),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 24, height: 0.95),
+                      if (Tutorials.trivial && Tutorials.tense && Tutorials.compSci) ...[
+                        const FixedSpacer(33),
+                        ElevatedButton(
+                          onPressed: singlePress(() {
+                            if (!Tutorials.trueMastery) {
+                              setState(() => trueMastery = true);
+                              sleep(
+                                6,
+                                then: () => context.noTransition(const TrueMasteryTutorial()),
+                              );
+                            } else {
+                              context.goto(Pages.trueMastery);
+                            }
+                          }),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: color,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 8, 0, 13),
+                            child: Text(
+                              Pages.trueMastery(),
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 24, height: 0.95),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                       const FixedSpacer(67),
-                      NavigateButton(Pages.sandbox, color: color),
+                      NavigateButton(Pages.sandbox, color: color, isNew: !Tutorials.compSci),
                     ],
                   )
                 : const SizedBox(width: 150),

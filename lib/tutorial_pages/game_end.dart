@@ -118,8 +118,8 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
           const FixedSpacer(20),
           const FadeIn(
             child: EasyText(
-              'Just randomly start talking about color theory\n'
-              'the next time you have a conversation with your friends.',
+              'Just randomly bring up color theory\n'
+              'in your next conversation with your friends.',
             ),
           ),
         ],
@@ -142,8 +142,8 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       );
       showText = true;
     });
-    await sleepState(3, () => showText = false);
-    await sleep(3);
+    await sleepState(5, () => showText = false);
+    await sleep(1);
     context.noTransition(const _TheEnd());
   }
 

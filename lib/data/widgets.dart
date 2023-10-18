@@ -113,6 +113,36 @@ class _ContinueButtonState extends State<ContinueButton> with SinglePress {
   }
 }
 
+class BrandNew extends StatelessWidget {
+  const BrandNew({required this.child, required this.color, super.key});
+  final SuperColor color;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.centerRight,
+      children: [
+        child,
+        Transform.translate(
+          offset: const Offset(40, 0),
+          child: Text(
+            'new!',
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w500,
+              shadows: [
+                for (double i = 0; i < 5; i += 2)
+                  Shadow(color: inverted ? Colors.white : Colors.black, blurRadius: i),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class SuperButton extends StatefulWidget {
   const SuperButton(
     this.label, {
@@ -120,13 +150,14 @@ class SuperButton extends StatefulWidget {
     required this.color,
     required this.onPressed,
     this.padding,
+    this.isNew = false,
     this.noDelay = false,
   });
   final String label;
   final void Function() onPressed;
-  final Color color;
+  final SuperColor color;
   final EdgeInsets? padding;
-  final bool noDelay;
+  final bool isNew, noDelay;
 
   @override
   State<SuperButton> createState() => _SuperButtonState();
@@ -135,7 +166,7 @@ class SuperButton extends StatefulWidget {
 class _SuperButtonState extends State<SuperButton> with SinglePress {
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    final button = ElevatedButton(
       onPressed: singlePress(widget.onPressed, noDelay: widget.noDelay),
       style: ElevatedButton.styleFrom(
         backgroundColor: widget.color,
@@ -146,14 +177,24 @@ class _SuperButtonState extends State<SuperButton> with SinglePress {
         child: Text(widget.label, style: const TextStyle(fontSize: 24)),
       ),
     );
+    if (!widget.isNew) return button;
+    return BrandNew(color: widget.color, child: button);
   }
 }
 
 class NavigateButton extends StatelessWidget {
-  const NavigateButton(this.page, {required this.color, this.padding, super.key});
+  const NavigateButton(
+    this.page, {
+    super.key,
+    required this.color,
+    this.padding,
+    this.isNew = false,
+    this.noDelay = false,
+  });
   final Pages page;
-  final Color color;
+  final SuperColor color;
   final EdgeInsets? padding;
+  final bool isNew, noDelay;
 
   @override
   Widget build(BuildContext context) {
@@ -162,6 +203,8 @@ class NavigateButton extends StatelessWidget {
       color: color,
       onPressed: () => context.goto(page),
       padding: padding,
+      isNew: isNew,
+      noDelay: noDelay,
     );
   }
 }
