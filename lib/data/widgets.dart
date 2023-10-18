@@ -10,6 +10,7 @@ import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 
 const Widget empty = SizedBox.shrink();
+const Widget flat = SizedBox(width: double.infinity);
 
 class FixedSpacer extends StatelessWidget {
   const FixedSpacer(this.size, {super.key}) : horizontal = false;
@@ -231,7 +232,7 @@ class GoBack extends StatelessWidget {
       ),
       onPressed: context.menu,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 6, 8, 9),
+        padding: const EdgeInsets.fromLTRB(8, 6, 8, 7),
         child: Text(text, style: _style),
       ),
     );

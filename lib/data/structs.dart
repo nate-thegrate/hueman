@@ -63,7 +63,7 @@ extension ContextStuff on BuildContext {
   }
 }
 
-void Function() gotoWebsite(String url) => () => launchUrl(Uri.parse(url));
+void gotoWebsite(String url) => launchUrl(Uri.parse(url));
 
 typedef KeyFunc = ValueChanged<RawKeyEvent>;
 void addListener(KeyFunc func) => RawKeyboard.instance.addListener(func);

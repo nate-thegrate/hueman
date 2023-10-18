@@ -652,7 +652,7 @@ class _Page5State extends SuperState<_Page5> {
         const Spacer(flex: 4),
         SexyBox(
           child: hexRows == -3
-              ? const SizedBox(width: double.infinity)
+              ? flat
               : SuperContainer(
                   width: double.infinity,
                   height: 666,

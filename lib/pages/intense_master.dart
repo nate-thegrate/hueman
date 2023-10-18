@@ -177,7 +177,8 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
 class SawEveryPic extends StatelessWidget {
   const SawEveryPic({super.key});
 
-  GestureRecognizer hyperlink(String url) => TapGestureRecognizer()..onTap = gotoWebsite(url);
+  GestureRecognizer hyperlink(String url) =>
+      TapGestureRecognizer()..onTap = () => gotoWebsite(url);
 
   @override
   Widget build(BuildContext context) {

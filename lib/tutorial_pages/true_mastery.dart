@@ -134,7 +134,7 @@ class _ColorBallState extends SuperState<_ColorBall> {
     }
   }
 
-  late final color = SuperColor.hue(widget.hue, 0.01);
+  late final color = SuperColors.blobs[widget.hue];
   late final blob = Transform.scale(
     scale: 250,
     child: SuperContainer(

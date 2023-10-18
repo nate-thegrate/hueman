@@ -64,7 +64,9 @@ class _InverseMenuState extends SuperState<InverseMenu>
     'go to "true mastery".',
     'tap the color code button.',
     'watch how the values for\nred/green/blue change\nwhen you tap the button.',
-    'convert each value to\nhexadecimal, then type\nthem in and "submit".',
+    'convert each value to\nhexadecimal, then type\nthem in and "submit".\n\n'
+        'If you want to double-\ncheck, tap the button\nagain: '
+        "if the numbers\ndon't change, then\nyou're good to go!",
   ];
 
   @override
@@ -165,12 +167,11 @@ class _InverseMenuState extends SuperState<InverseMenu>
           const FixedSpacer(25),
           Center(
             child: OutlinedButton(
-              onPressed: () => () async {
+              onPressed: () async {
                 controller.forward();
                 await sleepState(0.5, () => inverting = true);
-                await sleep(0.6);
-              }()
-                  .then((_) => context.invert()),
+                await sleep(0.6, then: context.invert);
+              },
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: color, width: 2),
                 foregroundColor: color,

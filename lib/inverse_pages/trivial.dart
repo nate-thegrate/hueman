@@ -191,7 +191,7 @@ const List<TriviaQuestion> _allQuestions = [
   TriviaQuestion(
     'Morpheus offered Neo two pills.',
     [SuperColors.red, SuperColors.blue],
-    explanation: 'That was a fun movie.',
+    explanation: 'Even though its name was "the blue pill",\nits hue was much closer to cyan.',
   ),
   TriviaQuestion(
     "What are the colors of Jon Arbuckle's pets?",
@@ -281,7 +281,7 @@ class _TriviaModeState extends State<TriviaMode> {
               dialogBackgroundColor: SuperColors.lightBackground,
             ),
             child: AlertDialog(
-              title: const Text('Welcome to Trivial mode!'),
+              title: const Text('Welcome to trivial mode!'),
               content: Text(
                 "It's literally just ${_allQuestions.length} color trivia questions.",
               ),

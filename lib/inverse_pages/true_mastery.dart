@@ -5,7 +5,7 @@ import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/pages/score.dart';
-import 'package:super_hueman/pages/thanks_for_playing.dart';
+import 'package:super_hueman/tutorial_pages/game_end.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/widgets.dart';
@@ -121,6 +121,8 @@ class _TrueMasteryState extends State<TrueMastery> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: avoid_print
+    print(color);
     return Theme(
       data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
       child: Scaffold(
@@ -250,21 +252,9 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
   bool flickerValue = false;
 
   Future<void> perfectScore() async {
-    await sleepState(
-        4,
-        () => perfectScoreOverlay = Text(
-              '9' * 10000,
-              style: const TextStyle(
-                color: Colors.black,
-                fontFamily: 'Roboto',
-                fontSize: 16.0,
-                fontWeight: FontWeight.w400,
-                decoration: TextDecoration.none,
-              ),
-            ));
-    await sleepState(2, () => showFlicker = true);
+    await sleepState(0.5, () => showFlicker = true);
     ticker!.start();
-    await sleep(3);
+    await sleep(1.5);
     ticker!.stop();
     setState(() {
       showFlicker = false;
@@ -396,8 +386,11 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
                   rows: [
                     ...rows,
                     DataRow(cells: [
-                      const DataCell(Center(
-                          child: Text('match %', style: TextStyle(fontWeight: FontWeight.w600)))),
+                      const DataCell(
+                        Center(
+                          child: Text('match %', style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                      ),
                       matchPercent(redOffBy),
                       matchPercent(greenOffBy),
                       matchPercent(blueOffBy),
@@ -522,7 +515,7 @@ class _Flicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: const Alignment(1, -.4),
+      alignment: const Alignment(1, -0.25),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,

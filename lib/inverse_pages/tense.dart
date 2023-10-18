@@ -21,12 +21,12 @@ class TenseScoreKeeper implements ScoreKeeper {
   int round = 1, health = 13, overfills = 0;
   late String rank;
 
-  void updateHealth(bool gotItRight) {
+  void updateHealth(bool gotItRight, Function setState) {
     if (gotItRight) {
       if (health == maxHealth) {
         overfills++;
-        healthBarFlash = true;
-        sleep(1 / 3, then: () => healthBarFlash = false);
+        setState(() => healthBarFlash = true);
+        sleep(1 / 3, then: () => setState(() => healthBarFlash = false));
       } else {
         health = min(health + 3, maxHealth);
       }
@@ -202,8 +202,8 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
               title: Text('Tense mode'),
               content: Text(
                 'Stretch your limits!\n\n'
-                "This mode's difficulty adjusts as you play,\n"
-                'based on your performance.\n\n'
+                'The difficulty for each color adjusts as you play\n'
+                'to match your performance.\n\n'
                 'Good luck!',
               ),
             ),
@@ -256,7 +256,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   }
 
   Widget get target => SuperContainer(
-        width: 500,
+        width: 425,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
             color: SuperColors.darkBackground,
@@ -288,7 +288,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
           selectedHue = buttonData[j].hue;
           showReaction = true;
           tension[name] = (tension[name]! + (correct ? -1 : 1)).stayInRange(1, 90);
-          scoreKeeper?.updateHealth(correct);
+          scoreKeeper?.updateHealth(correct, setState);
         });
         buttonData[j].controller.reverse();
       };
@@ -356,9 +356,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                   const FixedSpacer(15),
                   AnimatedSize(
                     duration: const Duration(milliseconds: 100),
-                    child: casualMode || showDetails
-                        ? const SizedBox(width: double.infinity)
-                        : scoreKeeper!.midRoundDisplay,
+                    child: casualMode || showDetails ? flat : scoreKeeper!.midRoundDisplay,
                   ),
                   const FixedSpacer(15),
                 ],

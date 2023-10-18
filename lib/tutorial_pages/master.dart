@@ -168,12 +168,12 @@ class _Page3State extends SuperState<_Page3> {
   bool finalMessage = false, fadeAway = false;
 
   @override
-  void animate() {
-    sleepState(4, () => finalMessage = true);
-    sleepState(8, () => fadeAway = true).then((_) {
-      Tutorials.master = true;
-      sleep(1.5, then: () => context.goto(Pages.master));
-    });
+  void animate() async {
+    await sleepState(4, () => finalMessage = true);
+    await sleepState(4, () => fadeAway = true);
+    Tutorials.master = true;
+    await sleep(1.5);
+    context.goto(Pages.master);
   }
 
   @override

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:rive/rive.dart' as rive;
 import 'package:super_hueman/data/page_data.dart';
+import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
@@ -432,6 +433,7 @@ class _IntroButtonState extends State<_IntroButton> {
   @override
   void initState() {
     super.initState();
+    Tutorials.started = true;
     epicHues = Ticker((elapsed) => setState(() => color = epicColor))..start();
   }
 

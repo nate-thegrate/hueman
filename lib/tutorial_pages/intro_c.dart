@@ -313,9 +313,9 @@ class _Slider extends StatelessWidget {
       };
 
   SuperColor get bgColor => switch (rgb) {
-        _RGB.r => SuperColor.hsv(0, 0.25, 0.125),
-        _RGB.g => SuperColor.hsv(120, 0.25, 0.125),
-        _RGB.b => SuperColor.hsv(240, 0.25, 0.125),
+        _RGB.r => SuperColor.hsv(0, 0.2, 1 / 4),
+        _RGB.g => SuperColor.hsv(120, 0.2, 1 / 4),
+        _RGB.b => SuperColor.hsv(240, 0.2, 1 / 4),
       };
 
   @override
@@ -327,7 +327,6 @@ class _Slider extends StatelessWidget {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: const BorderRadius.all(Radius.circular(0x100)),
-          boxShadow: const [BoxShadow(offset: Offset(1, 3), blurRadius: 3)],
         ),
         clipBehavior: Clip.antiAlias,
         margin: EdgeInsets.only(left: context.screenWidth * 0.04),
@@ -509,7 +508,7 @@ class _Page3State extends SuperState<_Page3> {
 
   @override
   void animate() async {
-    await sleepState(3, () => showLeftDesc = true);
+    await sleepState(2, () => showLeftDesc = true);
     await sleepState(3, () => expandLeft = true);
     await sleepState(2, () => showLeftLabels = true);
     await sleepState(8, () => showRightDesc = true);

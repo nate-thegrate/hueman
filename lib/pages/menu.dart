@@ -63,7 +63,7 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
       ),
       const FixedSpacer(50),
       OutlinedButton(
-        onPressed: gotoWebsite('https://google.com/'),
+        onPressed: () => gotoWebsite('https://google.com/'),
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: color, width: 2),
           foregroundColor: color,
@@ -78,14 +78,13 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
       ),
       const FixedSpacer(33),
       OutlinedButton(
-        onPressed: () => () async {
+        onPressed: () async {
           setState(() => inverting = true);
           controller.forward();
           await sleepState(0.7, () => darkBackground = false);
           await sleepState(0.1, () => visible = true);
-          await sleep(0.5);
-        }()
-            .then((_) => context.invert()),
+          await sleep(0.5, then: context.invert);
+        },
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: color, width: 2),
           foregroundColor: color,
