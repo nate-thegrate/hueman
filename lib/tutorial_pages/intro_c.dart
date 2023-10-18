@@ -690,7 +690,7 @@ class _OldVocab {
     _OldVocab(25, SuperColor(0x00F8CC), 'turquoise'),
     _OldVocab(75, SuperColor(0x0060FF), 'blue'),
     _OldVocab(40, SuperColor(0xA000F0), 'purple'),
-    _OldVocab(50, SuperColor(0xFF30B0), 'pink'),
+    _OldVocab(50, SuperColor(0xFF20B0), 'pink'),
   ];
 }
 

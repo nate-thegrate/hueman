@@ -80,7 +80,7 @@ class _Page1State extends SuperState<_Page1> {
 
   @override
   void animate() async {
-    await sleepState(3, () => weSee = true);
+    await sleepState(4, () => weSee = true);
     await sleepState(3, () => imageVisible = true);
     await sleepState(2, () => buttonVisible = true);
   }

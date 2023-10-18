@@ -53,20 +53,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
         toggle: (value) => setState(() => casualMode = value),
       ),
       const FixedSpacer(50),
-      OutlinedButton(
-        onPressed: () => gotoWebsite('https://google.com/'),
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: color, width: 2),
-          foregroundColor: color,
-        ),
-        child: const Padding(
-          padding: EdgeInsets.only(top: 5, bottom: 8),
-          child: Text(
-            'report a bug',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
-          ),
-        ),
-      ),
+      _BugReport(color),
       if (Tutorials.master) ...[
         const FixedSpacer(33),
         OutlinedButton(
@@ -93,6 +80,9 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
       ],
     ];
     final List<Widget> noviceSettings = [
+      const FixedSpacer(10),
+      _BugReport(color),
+      const FixedSpacer(20),
       Center(
           child: OutlinedButton(
         style: OutlinedButton.styleFrom(
@@ -342,6 +332,27 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _BugReport extends StatelessWidget {
+  const _BugReport(this.color);
+  final SuperColor color;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: () => gotoWebsite('https://forms.gle/H9k2LhzJtWRfU1Q2A'),
+      style: OutlinedButton.styleFrom(
+          side: BorderSide(color: color, width: 2), foregroundColor: color),
+      child: const Padding(
+        padding: EdgeInsets.fromLTRB(4, 6, 4, 8),
+        child: Text(
+          'report a bug',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+        ),
       ),
     );
   }

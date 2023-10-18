@@ -146,7 +146,7 @@ const List<TriviaQuestion> _allQuestions = [
         'that no one seems to be talking about. '
         "Hopefully that's about to change!\n\n"
         '(P.S. if you want to know my least-favorite color, '
-        'it starts with a "c" and has a hue of 90°.)',
+        'it starts with a "c" and has a hue of 90 degrees.)',
   ),
   TriviaQuestion(
     'If you were born in August, what color would your birthstone be?',

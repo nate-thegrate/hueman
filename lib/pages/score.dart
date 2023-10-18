@@ -52,7 +52,17 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
               ),
               const Spacer(flex: 2),
               if (tutorial) ...[
-                if (page != Pages.introC)
+                if (page == Pages.introC) ...[
+                  BrandNew(
+                    color: color,
+                    text: 'casual\nmode',
+                    child: SuperButton(
+                      'play again',
+                      color: color,
+                      onPressed: () => context.goto(page),
+                    ),
+                  ),
+                ] else ...[
                   SuperButton(
                     'continue',
                     color: color,
@@ -62,16 +72,13 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
                       _ => throw Error(),
                     }),
                   ),
-                const FixedSpacer(33),
-                BrandNew(
-                  color: color,
-                  text: Tutorials.casual || page == Pages.intro3 ? '' : 'casual\nmode',
-                  child: SuperButton(
+                  const FixedSpacer(33),
+                  SuperButton(
                     'play again',
                     color: color,
                     onPressed: () => context.goto(page),
                   ),
-                ),
+                ],
                 const FixedSpacer(33),
                 SuperButton(
                   'main menu',

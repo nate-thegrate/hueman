@@ -23,6 +23,10 @@ rebuilding window
         ),
       );''';
 
+extension _HexByte on int {
+  String get hexByte => '0x${toRadixString(16).padLeft(2, "0").toUpperCase()}';
+}
+
 class TrueMasteryScoreKeeper implements ScoreKeeper {
   TrueMasteryScoreKeeper();
 
@@ -148,19 +152,19 @@ class _TrueMasteryState extends State<TrueMastery> {
                         _RGBSlider(
                           'red',
                           r,
-                          giveHint ? color.red : r,
+                          giveHint ? '${color.red}' : r.hexByte,
                           onChanged: (value) => setState(() => r = value.toInt()),
                         ),
                         _RGBSlider(
                           'green',
                           g,
-                          giveHint ? color.green : g,
+                          giveHint ? '${color.green}' : g.hexByte,
                           onChanged: (value) => setState(() => g = value.toInt()),
                         ),
                         _RGBSlider(
                           'blue',
                           b,
-                          giveHint ? color.blue : b,
+                          giveHint ? '${color.blue}' : b.hexByte,
                           onChanged: (value) => setState(() => b = value.toInt()),
                         ),
                       ],
@@ -603,7 +607,7 @@ class _Base10PlusHex extends StatelessWidget {
       children: [
         Text(value.toString()),
         Text(
-          ' (0x${value.toRadixString(16).padLeft(2, "0").toUpperCase()})',
+          ' (${value.hexByte})',
           style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 12),
         ),
       ],
@@ -613,8 +617,8 @@ class _Base10PlusHex extends StatelessWidget {
 
 class _RGBSlider extends StatelessWidget {
   const _RGBSlider(this.name, this.value, this.displayValue, {required this.onChanged});
-  final String name;
-  final int value, displayValue;
+  final String name, displayValue;
+  final int value;
   final ValueChanged<double> onChanged;
 
   @override
@@ -652,7 +656,14 @@ class _RGBSlider extends StatelessWidget {
         SuperContainer(
           width: 125,
           alignment: Alignment.center,
-          child: Text('$name:  $displayValue', style: Theme.of(context).textTheme.titleMedium),
+          child: Text(
+            '$name: $displayValue',
+            style: const TextStyle(
+              fontFamily: 'Inconsolata',
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ],
     );

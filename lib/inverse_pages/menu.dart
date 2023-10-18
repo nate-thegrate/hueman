@@ -55,9 +55,8 @@ class _InverseMenuState extends InverseState<InverseMenu>
     'go to "true mastery".',
     'tap the color code button.',
     'watch how the values for\nred/green/blue change\nwhen you tap the button.',
-    'convert each value to\nhexadecimal, then type\nthem in and "submit".\n\n'
-        'If you want to double-\ncheck, tap the button\nagain: '
-        "if the numbers\ndon't change, then\nyou're good to go!",
+    'convert each value to\nhexadecimal, then type\nthem in and "submit".',
+    'If you\'re stuck, you can\nGoogle "base 10 to base\n16" for some extra help.',
   ];
 
   @override
@@ -198,7 +197,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
             "If you're ready to finish the game, you can follow these steps:",
             style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w500),
           ),
-          for (int i = 1; i <= 5; i++)
+          for (int i = 1; i <= 6; i++)
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: Row(
@@ -216,8 +215,8 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 ],
               ),
             ),
-          if (hintsVisible < 5) const FixedSpacer(33),
-          if (hintsVisible < 5)
+          if (hintsVisible < 6) const FixedSpacer(33),
+          if (hintsVisible < 6)
             Center(
               child: OutlinedButton(
                 onPressed: () => setState(() => hintsVisible++),
