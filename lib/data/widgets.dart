@@ -114,9 +114,10 @@ class _ContinueButtonState extends State<ContinueButton> with SinglePress {
 }
 
 class BrandNew extends StatelessWidget {
-  const BrandNew({required this.child, required this.color, super.key});
+  const BrandNew({super.key, required this.child, required this.color, this.text = 'new!'});
   final SuperColor color;
   final Widget child;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -125,9 +126,10 @@ class BrandNew extends StatelessWidget {
       children: [
         child,
         Transform.translate(
-          offset: const Offset(40, 0),
+          offset: Offset(text == 'new!' ? 40 : 65, 0),
           child: Text(
-            'new!',
+            text,
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: color,
               fontWeight: FontWeight.w500,

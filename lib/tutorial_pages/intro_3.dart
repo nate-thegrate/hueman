@@ -711,16 +711,12 @@ class _Page6State extends SuperState<_Page6> with SinglePress {
     for (int i = 0; i < hsvWidth * hsvHeight; i++) {
       await sleepState(0.05, () => hsvGrid[i] = (tile: hsvGrid[i].tile, scale: 17 / 16));
     }
-
-    await sleepState(2, () => tooBadVisible = true);
-
-    await sleepState(4.5, () => justKidding = true);
-
+    await sleepState(3, () => tooBadVisible = true);
+    await sleepState(4, () => justKidding = true);
     await sleepState(2, () {
       epicHue = 90;
       buttonVisible = true;
     });
-
     await sleep(0.5);
     if (mounted) {
       epicHues.start();

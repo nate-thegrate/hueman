@@ -77,7 +77,15 @@ class _ScoreScreenState extends State<ScoreScreen> {
                     }),
                   ),
                 const FixedSpacer(33),
-                SuperButton('play again', color: color, onPressed: () => context.goto(page)),
+                BrandNew(
+                  color: color,
+                  text: Tutorials.casual || page == Pages.intro3 ? '' : 'casual\nmode',
+                  child: SuperButton(
+                    'play again',
+                    color: color,
+                    onPressed: () => context.goto(page),
+                  ),
+                ),
                 const FixedSpacer(33),
                 SuperButton(
                   'main menu',
