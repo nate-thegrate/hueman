@@ -687,20 +687,13 @@ class _Page6 extends StatefulWidget {
   State<_Page6> createState() => _Page6State();
 }
 
-class _Page6State extends SuperState<_Page6> with SinglePress {
+class _Page6State extends EpicState<_Page6> with SinglePress {
   bool wishVisible = false, tooBadVisible = false, justKidding = false, buttonVisible = false;
-  late final Ticker epicHues;
 
   @override
   void initState() {
     super.initState();
-    epicHues = epicSetup(setState)..stop();
-  }
-
-  @override
-  void dispose() {
-    epicHues.dispose();
-    super.dispose();
+    epicHues.stop();
   }
 
   @override
@@ -1015,8 +1008,7 @@ class _FinalPage extends StatefulWidget {
   State<_FinalPage> createState() => _FinalPageState();
 }
 
-class _FinalPageState extends SuperState<_FinalPage> with SinglePress {
-  late final Ticker epicHues;
+class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
   bool visible = false, buttonVisible = false, expanded = false;
   double width = 0;
 
@@ -1038,18 +1030,6 @@ class _FinalPageState extends SuperState<_FinalPage> with SinglePress {
         context,
         MaterialPageRoute<void>(builder: (context) => const IntroMode(3)),
       ));
-
-  @override
-  void initState() {
-    super.initState();
-    epicHues = epicSetup(setState);
-  }
-
-  @override
-  void dispose() {
-    epicHues.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

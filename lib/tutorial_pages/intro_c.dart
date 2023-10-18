@@ -701,29 +701,14 @@ class _FinalPage extends StatefulWidget {
   State<_FinalPage> createState() => _FinalPageState();
 }
 
-class _FinalPageState extends SuperState<_FinalPage> with SinglePress {
+class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
   bool superDifficult = false, letsDoIt = false, expandButton = false;
-  late final Ticker epicHues;
 
   @override
   void animate() async {
-    await sleep(3);
-    setState(() => superDifficult = true);
-
+    await sleepState(3, () => superDifficult = true);
     await sleepState(3, () => letsDoIt = true);
     await sleepState(1 / 3, () => expandButton = true);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    epicHues = epicSetup(setState);
-  }
-
-  @override
-  void dispose() {
-    epicHues.dispose();
-    super.dispose();
   }
 
   @override

@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
@@ -463,20 +463,7 @@ class Splendid extends StatefulWidget {
   State<Splendid> createState() => _SplendidState();
 }
 
-class _SplendidState extends State<Splendid> {
-  late final Ticker hues;
-  @override
-  void initState() {
-    super.initState();
-    hues = inverseSetup(setState);
-  }
-
-  @override
-  void dispose() {
-    hues.dispose();
-    super.dispose();
-  }
-
+class _SplendidState extends InverseState<Splendid> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

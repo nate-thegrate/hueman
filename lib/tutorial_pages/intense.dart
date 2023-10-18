@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
@@ -19,14 +18,13 @@ class IntenseTutorial extends StatefulWidget {
   State<IntenseTutorial> createState() => _IntenseTutorialState();
 }
 
-class _IntenseTutorialState extends SuperState<IntenseTutorial> {
+class _IntenseTutorialState extends EpicState<IntenseTutorial> {
   int textVisible = 0;
   bool doTheWave = true,
       showAllRows = false,
       justKidding = false,
       makingTheJump = false,
       madeTheJump = false;
-  late final Ticker epicHues;
 
   @override
   void animate() async {
@@ -63,12 +61,6 @@ class _IntenseTutorialState extends SuperState<IntenseTutorial> {
         Tutorials.intense = true;
       }()
           .then((_) => context.goto(Pages.intense));
-
-  @override
-  void initState() {
-    super.initState();
-    epicHues = epicSetup(setState);
-  }
 
   @override
   Widget build(BuildContext context) {

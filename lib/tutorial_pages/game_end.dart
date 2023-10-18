@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:super_hueman/data/save_data.dart';
@@ -947,21 +946,8 @@ class _TheEnd extends StatefulWidget {
   State<_TheEnd> createState() => _TheEndState();
 }
 
-class _TheEndState extends SuperState<_TheEnd> with SinglePress {
-  late final Ticker epicHues;
+class _TheEndState extends EpicState<_TheEnd> with SinglePress {
   bool seeYa = false, showQuit = false;
-
-  @override
-  void initState() {
-    super.initState();
-    epicHues = epicSetup(setState);
-  }
-
-  @override
-  void dispose() {
-    epicHues.dispose();
-    super.dispose();
-  }
 
   @override
   void animate() async {

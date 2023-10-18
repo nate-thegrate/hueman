@@ -431,21 +431,7 @@ class _ColorCard extends StatefulWidget {
   State<_ColorCard> createState() => _ColorCardState();
 }
 
-class _ColorCardState extends SuperState<_ColorCard> {
-  late final Ticker ticker;
-
-  @override
-  void initState() {
-    super.initState();
-    ticker = inverted ? inverseSetup(setState) : epicSetup(setState);
-  }
-
-  @override
-  void dispose() {
-    ticker.dispose();
-    super.dispose();
-  }
-
+class _ColorCardState extends DynamicState<_ColorCard> {
   @override
   Widget build(BuildContext context) {
     final color = inverted ? inverseColor : epicColor;

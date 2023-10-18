@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
@@ -17,9 +16,8 @@ class MainMenu extends StatefulWidget {
 
 enum MenuPage { main, settings, introSelect }
 
-class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderStateMixin {
+class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateMixin {
   late final AnimationController controller;
-  late final Ticker epicHues;
   MenuPage menuPage = MenuPage.main;
   bool get mainMenu => menuPage == MenuPage.main;
   bool showMasteryText = false, inverting = false, visible = true, showButtons = true;
@@ -29,7 +27,6 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
   void initState() {
     super.initState();
     controller = AnimationController(duration: oneSec, vsync: this);
-    epicHues = epicSetup(setState);
     if (inverted) {
       inverted = false;
       quickly(() => setState(() => visible = false));
@@ -43,12 +40,6 @@ class _MainMenuState extends SuperState<MainMenu> with SingleTickerProviderState
         sleepState(1, () => showButtons = true);
       }
     }
-  }
-
-  @override
-  void dispose() {
-    epicHues.dispose();
-    super.dispose();
   }
 
   @override

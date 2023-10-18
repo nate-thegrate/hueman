@@ -226,22 +226,7 @@ class _TruthButton extends StatefulWidget {
   State<_TruthButton> createState() => _TruthButtonState();
 }
 
-class _TruthButtonState extends State<_TruthButton> {
-  late final Ticker ticker;
-
-  @override
-  void initState() {
-    super.initState();
-    ticker = epicSetup(setState);
-    setState(() => epicHue = 0);
-  }
-
-  @override
-  void dispose() {
-    ticker.dispose();
-    super.dispose();
-  }
-
+class _TruthButtonState extends EpicState<_TruthButton> {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(

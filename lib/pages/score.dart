@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_state.dart';
 import 'package:super_hueman/data/widgets.dart';
 import 'package:super_hueman/pages/intro.dart';
 
@@ -16,21 +16,7 @@ class ScoreScreen extends StatefulWidget {
   State<ScoreScreen> createState() => _ScoreScreenState();
 }
 
-class _ScoreScreenState extends State<ScoreScreen> {
-  late final Ticker ticker;
-
-  @override
-  void initState() {
-    super.initState();
-    ticker = inverted ? inverseSetup(setState) : epicSetup(setState);
-  }
-
-  @override
-  void dispose() {
-    ticker.dispose();
-    super.dispose();
-  }
-
+class _ScoreScreenState extends DynamicState<ScoreScreen> {
   @override
   Widget build(BuildContext context) {
     final ScoreKeeper sk = widget.scoreKeeper;

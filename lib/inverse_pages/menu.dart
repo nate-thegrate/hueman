@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
@@ -18,9 +17,8 @@ class InverseMenu extends StatefulWidget {
   State<InverseMenu> createState() => _InverseMenuState();
 }
 
-class _InverseMenuState extends SuperState<InverseMenu>
+class _InverseMenuState extends InverseState<InverseMenu>
     with SingleTickerProviderStateMixin, SinglePress {
-  late final Ticker inverseHues;
   late final AnimationController controller = AnimationController(duration: oneSec, vsync: this);
   bool inverting = false, visible = true, exists = true, trueMastery = false, showButtons = true;
   late int hintsVisible;
@@ -30,7 +28,6 @@ class _InverseMenuState extends SuperState<InverseMenu>
   @override
   void initState() {
     super.initState();
-    inverseHues = inverseSetup(setState);
     if (inverted) {
       visible = false;
       exists = false;
@@ -44,12 +41,6 @@ class _InverseMenuState extends SuperState<InverseMenu>
       quickly(() => setState(() => visible = false));
       sleepState(0.6, () => exists = false);
     }
-  }
-
-  @override
-  void dispose() {
-    inverseHues.dispose();
-    super.dispose();
   }
 
   static const TextStyle titleStyle = TextStyle(
