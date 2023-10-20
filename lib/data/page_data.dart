@@ -42,7 +42,7 @@ enum Pages {
         introC when !Tutorials.introC => const IntroCTutorial(),
         intense when !Tutorials.intense => const IntenseTutorial(),
         master when !Tutorials.master => const MasterTutorial(),
-        sandbox when !Tutorials.compSci => const SandboxTutorial(),
+        sandbox when !Tutorials.sandbox => const SandboxTutorial(),
         sandbox when inverted => const InverseSandbox(),
         menu when inverted => const InverseMenu(),
         _ => _widget,

@@ -110,7 +110,7 @@ class _LogoState extends SuperState<_Logo> {
       duration = oneSec;
       dy = -8;
     });
-    await sleepState(1, () => visible = false);
+    await sleepState(1 / 3, () => visible = false);
     await sleepState(1, () => exists = false);
   }
 
@@ -127,7 +127,7 @@ class _LogoState extends SuperState<_Logo> {
           duration: duration,
           curve: curve,
           child: EasyRichText(
-            style: const TextStyle(fontFamily: 'Gaegu', fontSize: 128),
+            style: const TextStyle(fontFamily: 'Gaegu', fontSize: 64),
             [
               for (int i = 0; i < 4; i++)
                 TextSpan(
@@ -156,42 +156,19 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
   void initState() {
     super.initState();
     sleepState(3, () {
-      content = _TruthButton(onPressed: seeTheTruth);
       showButton = true;
     });
   }
 
-  bool showStuff = true, showButton = false;
+  bool showStuff = true, showButton = false, headphones = false;
 
   void seeTheTruth() async {
     setState(() => showStuff = false);
     await sleepState(2, () {
-      title = const Column(
-        children: [
-          Icon(Icons.headphones_outlined, size: 300),
-          Text(
-            '(headphones recommended)',
-            style: TextStyle(fontSize: 18, letterSpacing: 0.5),
-          )
-        ],
-      );
-      content = Center(
-        child: ContinueButton(onPressed: () {
-          setState(() => showStuff = false);
-          sleep(2, then: () => context.noTransition(const _FirstLaunchMenu()));
-        }),
-      );
+      headphones = true;
     });
     await sleepState(0.2, () => showStuff = true);
   }
-
-  Widget title = const Text(
-    'Except that was\na complete lie.',
-    textAlign: TextAlign.center,
-    style: TextStyle(fontSize: 48),
-  );
-
-  Widget content = empty;
 
   @override
   Widget build(BuildContext context) {
@@ -203,11 +180,35 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
           child: Column(
             children: [
               const Spacer(flex: 2),
-              title,
+              headphones
+                  ? const Column(
+                      children: [
+                        Icon(Icons.headphones_outlined, size: 300),
+                        Text(
+                          '(headphones recommended)',
+                          style: TextStyle(fontSize: 16, letterSpacing: 0.5),
+                        )
+                      ],
+                    )
+                  : const Text(
+                      'Except that was\na complete lie.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 32),
+                    ),
               const Spacer(),
               Fader(
                 showButton,
-                child: SizedBox(height: 80, child: content),
+                child: SizedBox(
+                    height: 60,
+                    child: headphones
+                        ? Center(
+                            child: ContinueButton(onPressed: () {
+                              setState(() => showStuff = false);
+                              sleep(2,
+                                  then: () => context.noTransition(const _FirstLaunchMenu()));
+                            }),
+                          )
+                        : _TruthButton(onPressed: seeTheTruth)),
               ),
               const Spacer(),
             ],
@@ -240,7 +241,7 @@ class _TruthButtonState extends EpicState<_TruthButton> {
         padding: EdgeInsets.only(bottom: 5),
         child: Text(
           'see the truth',
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
         ),
       ),
     );

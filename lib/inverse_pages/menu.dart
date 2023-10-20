@@ -82,7 +82,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                         noDelay: true,
                         isNew: !Tutorials.tense,
                       ),
-                      if (Tutorials.trivial && Tutorials.tense && Tutorials.compSci) ...[
+                      if (Tutorials.trivial && Tutorials.tense && Tutorials.sandbox) ...[
                         const FixedSpacer(33),
                         ElevatedButton(
                           onPressed: singlePress(() {
@@ -111,7 +111,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                         ),
                       ],
                       const FixedSpacer(67),
-                      NavigateButton(Pages.sandbox, color: color, isNew: !Tutorials.compSci),
+                      NavigateButton(Pages.sandbox, color: color, isNew: !Tutorials.sandbox),
                     ],
                   )
                 : const SizedBox(width: 150),

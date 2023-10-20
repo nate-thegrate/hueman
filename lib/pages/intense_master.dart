@@ -236,8 +236,11 @@ class _IntenseModeState extends State<IntenseMode> {
   double get saturation => pow(1 + difficulty / 1000 * (masterRNG - 1), 20).toDouble();
   double get value => pow(1 - difficulty / 700 * masterRNG, 20).toDouble();
 
-  int get guess =>
-      externalKeyboard ? hueController!.value.toInt() : int.parse(numPadController!.displayValue);
+  int get guess {
+    if (externalKeyboard) return hueController!.value.toInt();
+    final val = numPadController!.displayValue;
+    return val.isEmpty ? 0 : int.parse(val);
+  }
 
   int get offBy {
     final int hueDiff = diff(hue, guess);
@@ -257,12 +260,13 @@ class _IntenseModeState extends State<IntenseMode> {
     }
     pics.removeAt(0);
     setState(() => hue = HSVColor.fromColor(pics.first.$2).hue.round());
+    if (numPadController != null) setState(numPadController!.clear);
   }
 
   /// new random hue will be at least 30° away from previous.
   void generateHue() {
-    numPadController?.clear();
     if (!hueMaster && offBy == 0) superHue = hue;
+    if (numPadController != null) setState(numPadController!.clear);
     int newHue = rng.nextInt(300);
     if (newHue + 30 >= hue) newHue += 60;
 
@@ -339,11 +343,10 @@ class _IntenseModeState extends State<IntenseMode> {
     if (showPics) {
       final ogPics = allImages.toList();
       ogPics.shuffle();
-      final double width = screenHeight < 1200 ? screenHeight - 700 : 500;
       for (final ogPic in ogPics) {
         final randomColors = ogPic.randomColors;
-        pics.add((ogPic.image(width: width), randomColors.$1));
-        pics.add((ogPic.image(width: width), randomColors.$2));
+        pics.add((ogPic.image(), randomColors.$1));
+        pics.add((ogPic.image(), randomColors.$2));
       }
       hue = HSVColor.fromColor(pics.first.$2).hue.round();
     }
@@ -373,11 +376,13 @@ class _IntenseModeState extends State<IntenseMode> {
               : PercentGrade(accuracy: accuracy, color: color),
         );
 
-  bool get littleBitSquished => image != null && context.screenHeight < 1200;
+  bool get littleBitSquished => image != null && context.screenHeight < 1125;
   @override
   Widget build(BuildContext context) {
-    screenHeight = context.screenHeight;
-    final double width = screenHeight < 1200 ? screenHeight - 700 : 500;
+    final size = context.screenSize;
+    screenHeight = size.height;
+    final width = <double>[screenHeight - 625, 500, size.width - 80].min;
+
     return externalKeyboard
         ? KeyboardGame(
             color: color,
@@ -399,9 +404,9 @@ class _IntenseModeState extends State<IntenseMode> {
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SuperContainer(width: 100, height: width, color: color),
-                      image!,
-                      SuperContainer(width: 100, height: width, color: color),
+                      Expanded(child: SuperContainer(height: width, color: color)),
+                      SizedBox(height: width, child: image!),
+                      Expanded(child: SuperContainer(height: width, color: color)),
                     ],
                   )
                 : image,

@@ -96,6 +96,10 @@ extension ToInt on TextEditingValue {
   int toInt() => text.isEmpty ? 0 : int.parse(text);
 }
 
+extension HexByte on int {
+  String get hexByte => '0x${toRadixString(16).padLeft(2, "0").toUpperCase()}';
+}
+
 extension NumStuff<T extends num> on T {
   T get squared => this * this as T;
   T stayInRange(T lower, T upper) => min(max(this, lower), upper);

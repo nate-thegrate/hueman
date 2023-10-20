@@ -15,14 +15,7 @@ class PhotoColors {
     return (imageColor(index1), imageColor(index2));
   }
 
-  Widget image({double width = 500}) => SizedBox(
-        width: width,
-        height: width,
-        child: Image.asset(
-          'assets/public_domain_photos/$filename.jpg',
-          width: width,
-        ),
-      );
+  Widget image({double width = 500}) => Image.asset('assets/public_domain_photos/$filename.jpg');
 }
 
 const List<PhotoColors> allImages = [

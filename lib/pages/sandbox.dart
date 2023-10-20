@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
@@ -37,7 +39,7 @@ class _RGBSlider extends StatelessWidget {
         RotatedBox(
           quarterTurns: horizontal ? 0 : 3,
           child: SizedBox(
-            width: 384,
+            width: min(384, horizontal ? context.screenWidth - 115 : double.infinity),
             child: SliderTheme(
               data: const SliderThemeData(
                 trackHeight: 15,
@@ -55,9 +57,17 @@ class _RGBSlider extends StatelessWidget {
           ),
         ),
         SuperContainer(
-          width: 125,
-          alignment: Alignment.center,
-          child: Text('$name:  $value', style: Theme.of(context).textTheme.titleMedium),
+          width: 100,
+          margin: const EdgeInsets.only(right: 15),
+          alignment: horizontal ? Alignment.centerRight : Alignment.center,
+          child: Text(
+            '$name: ${value.hexByte}',
+            style: const TextStyle(
+              fontFamily: 'Inconsolata',
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ],
     );
@@ -81,12 +91,12 @@ class _HSVSlider extends StatelessWidget {
           width: 80,
           child: Text(
             hsv.name,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge,
+            textAlign: TextAlign.right,
+            style: const TextStyle(fontSize: 14),
           ),
         ),
         SizedBox(
-          width: 370,
+          width: context.screenWidth - 160,
           child: SliderTheme(
             data: const SliderThemeData(
               trackHeight: 10,
@@ -224,13 +234,6 @@ enum _HSV {
 }
 
 class _SandboxState extends State<Sandbox> {
-  void touchRecognition(details) {
-    final Offset offset = details.localPosition;
-    double val(double position) => (position / 360).stayInRange(0, 1);
-    setState(() => _s = val(offset.dx));
-    setState(() => _v = 1 - val(offset.dy));
-  }
-
   void colorPickerPicker(int index) => setState(() {
         switch (_colorPicker) {
           case _ColorPicker.rgb:
@@ -257,120 +260,113 @@ class _SandboxState extends State<Sandbox> {
         ),
       );
 
-  Widget get title => Text(_colorPicker.desc, style: Theme.of(context).textTheme.headlineMedium);
-  Widget get colorName => ColorLabel(
-        'color name',
-        _color.rounded.name,
-        textStyle: TextStyle(color: _color, fontSize: 20, fontWeight: FontWeight.bold, shadows: [
-          Shadow(color: contrastWith(_color, threshold: 0.01).withAlpha(64), blurRadius: 3)
-        ]),
-      );
-  Widget get hue => ColorLabel('hue', _color.hue.round().toString());
-  Widget get colorCode => ColorLabel.colorCode(
-        'color code',
-        _color.hexCode,
-        updateColorCode: (color) => setState(() => updateColor(color)),
-      );
-
-  Widget get colorPicker => switch (_colorPicker) {
-        _ColorPicker.rgb => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SuperContainer(width: 300, height: 300, color: _color),
-              const FixedSpacer(30),
-              Flex(
-                direction: context.squished ? Axis.vertical : Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _RGBSlider('red', _r, (value) => setState(() => _r = value.round())),
-                  _RGBSlider('green', _g, (value) => setState(() => _g = value.round())),
-                  _RGBSlider('blue', _b, (value) => setState(() => _b = value.round())),
-                ],
-              ),
-            ],
-          ),
-        _ColorPicker.hsv => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SuperContainer(
-                width: 400,
-                height: 400,
-                alignment: Alignment.center,
-                child: Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Stack(
-                        children: [
-                          SuperContainer(
-                            margin: const EdgeInsets.all(0.5),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                                colors: [Colors.white, SuperColor.hue(_h)],
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onPanStart: touchRecognition,
-                            onPanUpdate: touchRecognition,
-                            child: const SuperContainer(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [Colors.transparent, Colors.black],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment(2 * _s - 1, 1 - 2 * _v),
-                      child: Icon(
-                        Icons.add,
-                        color: contrastWith(_color),
-                        size: 40,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              _HSVSlider(_HSV.hue, (value) => setState(() => _h = value)),
-              _HSVSlider(_HSV.saturation, (value) => setState(() => _s = value)),
-              _HSVSlider(_HSV.value, (value) => setState(() => _v = value)),
-              const FixedSpacer(25),
-              SuperContainer(width: 500, height: 100, color: _color),
-            ],
-          ),
-        _ColorPicker.select => _ColorSelection(
-            updateColor: (rgb, hsv) => setState(() {
-              _r = rgb.red;
-              _g = rgb.green;
-              _b = rgb.blue;
-
-              _h = hsv.hue;
-              _s = hsv.saturation;
-              _v = hsv.value;
-            }),
-          ),
-      };
-
   @override
   Widget build(BuildContext context) {
+    final Size size = context.screenSize;
+    final double planeSize = min(size.width - 50, size.height - 600);
+    void touchRecognition(details) {
+      final Offset offset = details.localPosition;
+      double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);
+      setState(() => _s = val(offset.dx));
+      setState(() => _v = 1 - val(offset.dy));
+    }
+
+    final colorPicker = switch (_colorPicker) {
+      _ColorPicker.rgb => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SuperContainer(width: 300, height: 300, color: _color),
+            const FixedSpacer(30),
+            Flex(
+              direction: context.squished ? Axis.vertical : Axis.horizontal,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _RGBSlider('red', _r, (value) => setState(() => _r = value.round())),
+                _RGBSlider('green', _g, (value) => setState(() => _g = value.round())),
+                _RGBSlider('blue', _b, (value) => setState(() => _b = value.round())),
+              ],
+            ),
+          ],
+        ),
+      _ColorPicker.hsv => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: planeSize,
+              height: planeSize,
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Stack(
+                      children: [
+                        SuperContainer(
+                          margin: const EdgeInsets.all(0.5),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [Colors.white, SuperColor.hue(_h)],
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onPanStart: touchRecognition,
+                          onPanUpdate: touchRecognition,
+                          child: const SuperContainer(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Colors.transparent, Colors.black],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SuperContainer(
+                    margin: const EdgeInsets.fromLTRB(1, 0, 0, 1),
+                    alignment: Alignment(2 * _s - 1, 1 - 2 * _v),
+                    child: Icon(
+                      Icons.add,
+                      color: contrastWith(_color),
+                      size: 40,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            _HSVSlider(_HSV.hue, (value) => setState(() => _h = value)),
+            _HSVSlider(_HSV.saturation, (value) => setState(() => _s = value)),
+            _HSVSlider(_HSV.value, (value) => setState(() => _v = value)),
+            const FixedSpacer(25),
+            SuperContainer(width: size.width, height: planeSize / 3.5, color: _color),
+          ],
+        ),
+      _ColorPicker.select => _ColorSelection(
+          updateColor: (rgb, hsv) => setState(() {
+            _r = rgb.red;
+            _g = rgb.green;
+            _b = rgb.blue;
+
+            _h = hsv.hue;
+            _s = hsv.saturation;
+            _v = hsv.value;
+          }),
+        ),
+    };
+
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
             const Spacer(),
             backButton,
             const Spacer(),
-            title,
+            Text(_colorPicker.desc, style: const TextStyle(fontSize: 24)),
             const Spacer(),
             AnimatedSize(
               duration: const Duration(milliseconds: 100),
@@ -378,9 +374,20 @@ class _SandboxState extends State<Sandbox> {
               child: colorPicker,
             ),
             const Spacer(flex: 2),
-            hue,
-            colorName,
-            colorCode,
+            ColorLabel('hue', _color.hue.round().toString()),
+            ColorLabel(
+              'color name',
+              _color.rounded.name,
+              textStyle:
+                  TextStyle(color: _color, fontSize: 20, fontWeight: FontWeight.bold, shadows: [
+                Shadow(color: contrastWith(_color, threshold: 0.01).withAlpha(64), blurRadius: 3)
+              ]),
+            ),
+            ColorLabel.colorCode(
+              'color code',
+              _color.hexCode,
+              updateColorCode: (color) => setState(() => updateColor(color)),
+            ),
             const Spacer(flex: 2),
           ],
         ),

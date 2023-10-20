@@ -153,7 +153,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
                         NavigateButton(
                           Pages.sandbox,
                           color: color,
-                          isNew: !Tutorials.compSci,
+                          isNew: !Tutorials.sandbox,
                         ),
                       ],
                     ],
@@ -219,7 +219,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
                 style: TextStyle(color: Colors.white60),
               ),
             )
-          else if (Tutorials.intro3 && !Tutorials.casual)
+          else if (Tutorials.intro3)
             const Padding(
               padding: EdgeInsets.only(top: 33),
               child: Text(

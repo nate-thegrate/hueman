@@ -27,7 +27,7 @@ abstract class SuperState<T extends StatefulWidget> extends State<T> {
       sleep(seconds, then: () => setState(fn));
 }
 
-int epicHue = 0, inverseHue = 0;
+int epicHue = rng.nextInt(360), inverseHue = rng.nextInt(360);
 
 /// a [Color] with [epicHue] as its hue.
 ///
@@ -47,7 +47,6 @@ double get epicSine => sin(6 * 2 * pi * (epicHue) / 360) + 1;
 SuperColor get inverseColor => SuperColors.inverse[inverseHue];
 
 Ticker epicSetup(Function setState) {
-  epicHue = rng.nextInt(360);
   int cycle = 0;
   void epicCycle(_) {
     cycle = ++cycle % 4;
@@ -58,7 +57,6 @@ Ticker epicSetup(Function setState) {
 }
 
 Ticker inverseSetup(Function setState) {
-  inverseHue = rng.nextInt(360);
   bool cycle = false;
   void inverseCycle(_) {
     cycle = !cycle;

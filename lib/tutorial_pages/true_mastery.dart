@@ -23,30 +23,31 @@ class _TrueMasteryTutorialState extends SuperState<TrueMasteryTutorial> {
   final List<Widget> balls = [];
 
   @override
-  void animate() {
+  void animate() async {
     () async {
+      await sleep(0.1);
+      final size = context.screenSize;
+      final ballScale = (size.height + size.width) / 8;
       for (int i = 0; i < _balls; i++) {
         setState(() {
           balls.insert(
             rng.nextInt(balls.length + 1),
-            _ColorBall((360 * i) ~/ _balls, key: ObjectKey(i)),
+            _ColorBall((360 * i) ~/ _balls, ballScale, key: ObjectKey(i)),
           );
         });
         await sleep(_cycleSeconds / _balls);
       }
     }();
-    () async {
-      for (final (readTime, sentence) in dialogue) {
-        await sleepState(readTime, () => visible = false);
-        await sleepState(1, () {
-          visible = true;
-          text = sentence;
-        });
-      }
-      await sleep(10);
-      Tutorials.trueMastery = true;
-    }()
-        .then((_) => context.goto(Pages.trueMastery));
+    for (final (readTime, sentence) in dialogue) {
+      await sleepState(readTime, () => visible = false);
+      await sleepState(1, () {
+        visible = true;
+        text = sentence;
+      });
+    }
+    await sleep(10);
+    Tutorials.trueMastery = true;
+    context.goto(Pages.trueMastery);
   }
 
   static const List<(double, String)> dialogue = [
@@ -86,10 +87,13 @@ class _TrueMasteryTutorialState extends SuperState<TrueMasteryTutorial> {
                 const Spacer(),
                 Fader(
                   visible,
-                  child: Text(
-                    text,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 32, shadows: shadows),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      text,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 24, shadows: shadows),
+                    ),
                   ),
                 ),
                 const Spacer(),
@@ -104,8 +108,9 @@ class _TrueMasteryTutorialState extends SuperState<TrueMasteryTutorial> {
 }
 
 class _ColorBall extends StatefulWidget {
-  const _ColorBall(this.hue, {super.key});
+  const _ColorBall(this.hue, this.scale, {super.key});
   final int hue;
+  final double scale;
 
   @override
   State<_ColorBall> createState() => _ColorBallState();
@@ -136,7 +141,7 @@ class _ColorBallState extends SuperState<_ColorBall> {
 
   late final color = SuperColors.blobs[widget.hue];
   late final blob = Transform.scale(
-    scale: 250,
+    scale: widget.scale,
     child: SuperContainer(
       width: 1,
       height: 1,

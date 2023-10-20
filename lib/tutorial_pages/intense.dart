@@ -38,29 +38,28 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
     await sleepState(1, () => textVisible++);
   }
 
-  void ready() => () async {
-        setState(() => textVisible = 0);
-
-        await sleepState(1, () {
-          showAllRows = false;
-          justKidding = true;
-          textVisible = 2;
-        });
-        await sleepState(2, () {
-          showAllRows = true;
-          textVisible = 3;
-        });
-        await sleepState(3, () => textVisible = 0);
-        await sleepState(1.25, () {
-          textVisible = 2;
-          makingTheJump = true;
-        });
-        await sleepState(2, () => madeTheJump = true);
-        await sleepState(4 / 3, () => textVisible = 3);
-        await sleep(3);
-        Tutorials.intense = true;
-      }()
-          .then((_) => context.goto(Pages.intense));
+  void ready() async {
+    setState(() => textVisible = 0);
+    await sleepState(1, () {
+      showAllRows = false;
+      justKidding = true;
+      textVisible = 2;
+    });
+    await sleepState(2, () {
+      showAllRows = true;
+      textVisible = 3;
+    });
+    await sleepState(3, () => textVisible = 0);
+    await sleepState(1.25, () {
+      textVisible = 2;
+      makingTheJump = true;
+    });
+    await sleepState(2, () => madeTheJump = true);
+    await sleepState(4 / 3, () => textVisible = 3);
+    await sleep(3);
+    Tutorials.intense = true;
+    context.goto(Pages.intense);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,8 +98,9 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
                 child: makingTheJump
                     ? Row(
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          EasyRichText([
+                          EasyRichText(pad: false, [
                             const TextSpan(text: 'this is the jump from '),
                             TextSpan(
                               text: 'sharp',
@@ -108,18 +108,18 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
                             ),
                           ]),
                           AnimatedSlide(
-                            offset: Offset(madeTheJump ? 0 : 3, 0),
-                            duration: halfSec,
+                            offset: Offset(madeTheJump ? 0 : 10, 0),
+                            duration: const Duration(milliseconds: 750),
                             curve: Curves.easeOutExpo,
-                            child: EasyRichText([
+                            child: EasyRichText(pad: false, [
                               const TextSpan(text: ' to '),
                               TextSpan(text: 'super', style: TextStyle(color: color)),
                               TextSpan(
-                                text: 'ʜᴜᴇ',
+                                text: 'HUE',
                                 style: TextStyle(
                                   color: color,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 25,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 14.5,
                                 ),
                               ),
                               TextSpan(text: 'man', style: TextStyle(color: color)),

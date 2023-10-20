@@ -24,7 +24,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       hideSuperHue = true,
       showHueVal = false,
       showText = true;
-  final superColor = SuperColor.hue(superHue!);
+  final superColor = SuperColor.hue(superHue);
   Widget text = const EasyText('Thanks for playing!');
 
   @override
@@ -213,7 +213,7 @@ const Map<String, List<_CreditsButton>> _credits = {
     _CreditsButton(
       name: 'Nate Wilson',
       label: 'github',
-      website: 'https://github.com/nate-thegrate/super_hueman',
+      website: 'https://github.com/nate-thegrate/hueman',
       color: SuperColor(0x80FFF8),
     ),
   ],
@@ -227,7 +227,7 @@ const Map<String, List<_CreditsButton>> _credits = {
           SuperColor(0x0060C0),
           SuperColor(0x0060C0),
         ],
-        stops: [0.36, 0.365, 0.45, 1],
+        stops: [0.37, 0.375, 0.45, 1],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
@@ -264,7 +264,7 @@ const Map<String, List<_CreditsButton>> _credits = {
       label: 'youtube',
       gradient: LinearGradient(
         colors: [SuperColors.red, SuperColors.black],
-        stops: [0.31, 0.315],
+        stops: [0.325, 0.33],
         begin: Alignment(-1, 0.5),
         end: Alignment(1, -0.5),
       ),
@@ -324,22 +324,22 @@ class _CreditsButton extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const FixedSpacer.horizontal(25),
+              const FixedSpacer.horizontal(16),
               SuperContainer(
-                width: 40,
+                width: 30,
                 alignment: Alignment.center,
                 child: SvgPicture.asset(
-                  height: 33,
+                  height: 25,
                   'assets/end_credits_icons/$logo.svg',
                 ),
               ),
               SizedBox(
-                width: 200,
+                width: 125,
                 child: Text(
                   name,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 16,
                     height: 0,
                     fontWeight: FontWeight.normal,
                     color: white ? const Color(0xF0FFFFFF) : Colors.black,
@@ -450,88 +450,87 @@ class _CreditsState extends SuperState<_Credits> {
         const Spacer(),
         const Text(
           'Credits',
-          style: TextStyle(fontSize: 48, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, height: 1),
         ),
-        const EasyText('(tap on a button to go check it out!)', size: 14),
+        const EasyText('(tap on a button to go check it out!)', size: 11),
         const Spacer(),
         for (final MapEntry(key: label, value: buttons) in _credits.entries) ...[
-          SuperContainer(
-            height: buttons.length * 90,
-            margin: const EdgeInsets.symmetric(horizontal: 25),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Spacer(),
-                Fader(
-                  lineData[label]!.$3,
-                  child: SizedBox(
-                    child: SuperContainer(
-                      width: 175,
-                      margin: const EdgeInsets.only(right: 25),
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        label,
-                        textAlign: TextAlign.right,
-                        style: const TextStyle(fontSize: 24),
+          Transform.translate(
+            offset: const Offset(-45, 0),
+            child: SuperContainer(
+              height: buttons.length * 60,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Fader(
+                    lineData[label]!.$3,
+                    child: SizedBox(
+                      child: SuperContainer(
+                        width: 145,
+                        margin: const EdgeInsets.only(left: 25, right: 20),
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          label,
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(fontSize: 18),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                AnimatedSlide(
-                  duration: halfSec,
-                  curve: Curves.easeOutCubic,
-                  offset: lineData[label]!.$2,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 100),
-                    width: 8,
-                    margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: lineData[label]!.$1,
-                      borderRadius: BorderRadius.circular(0xFF),
+                  AnimatedSlide(
+                    duration: halfSec,
+                    curve: Curves.easeOutCubic,
+                    offset: lineData[label]!.$2,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 100),
+                      width: 8,
+                      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: lineData[label]!.$1,
+                        borderRadius: BorderRadius.circular(0xFF),
+                      ),
+                      child: SexyBox(child: lineData[label]!.$3 ? const SizedBox.expand() : flat),
                     ),
-                    child: SexyBox(child: lineData[label]!.$3 ? const SizedBox.expand() : flat),
-                    // child: const SizedBox.expand(),
                   ),
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    for (final _CreditsButton(
-                          :name,
-                          :website,
-                          :gradient,
-                          :color,
-                          label: buttonLabel,
-                          :white
-                        ) in buttons)
-                      Expanded(
-                        child: Fader(
-                          lineData[label]!.$3,
-                          child: AnimatedSlide(
-                            duration: halfSec,
-                            offset: lineData[label]!.$3 ? Offset.zero : const Offset(0.5, 0),
-                            curve: curve,
-                            child: _CreditsButton(
-                              name: name,
-                              website: website,
-                              gradient: gradient,
-                              color: color,
-                              label: buttonLabel,
-                              white: white,
-                              onPressed: onPressed(
-                                context,
-                                color ?? gradient!.colors[0],
-                                label,
-                                website,
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final _CreditsButton(
+                            :name,
+                            :website,
+                            :gradient,
+                            :color,
+                            label: buttonLabel,
+                            :white
+                          ) in buttons)
+                        Expanded(
+                          child: Fader(
+                            lineData[label]!.$3,
+                            child: AnimatedSlide(
+                              duration: halfSec,
+                              offset: lineData[label]!.$3 ? Offset.zero : const Offset(0.5, 0),
+                              curve: curve,
+                              child: _CreditsButton(
+                                name: name,
+                                website: website,
+                                gradient: gradient,
+                                color: color,
+                                label: buttonLabel,
+                                white: white,
+                                onPressed: onPressed(
+                                  context,
+                                  color ?? gradient!.colors[0],
+                                  label,
+                                  website,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                  ],
-                ),
-                const Spacer(flex: 2),
-              ],
+                        )
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           const Spacer(),
@@ -544,7 +543,7 @@ class _CreditsState extends SuperState<_Credits> {
 }
 
 String get hueDescription {
-  final (int i, int mix) = (superHue! ~/ 30, superHue! % 30);
+  final (int i, int mix) = (superHue ~/ 30, superHue % 30);
   final (SuperColor start, SuperColor end) =
       (SuperColors.twelveHues[i], SuperColors.twelveHues[(i + 1) % 12]);
   final String between = 'between ${start.name} and ${end.name}';

@@ -224,7 +224,8 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   static const style = TextStyle(
     fontFamily: 'Inconsolata',
     color: SuperColors.white80,
-    fontSize: 20,
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
     inherit: false,
     height: 5 / 3,
   );
@@ -240,8 +241,8 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
           const Padding(
             padding: EdgeInsets.fromLTRB(20, 50, 20, 20),
             child: Text(
-              ' tension value = Δ hue between options\n'
-              ' smaller value = higher difficulty\n\n'
+              'tension value = Δ hue between options\n'
+              'smaller value = higher difficulty\n\n'
               'Each answer alters the respective color tension value by ±1.\n'
               'Current values are listed below.\n',
             ),
@@ -256,7 +257,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   }
 
   Widget get target => SuperContainer(
-        width: 425,
+        width: 340,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
             color: SuperColors.darkBackground,
@@ -266,7 +267,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                   blurRadius: 10,
                   offset: const Offset(0, 10))
             ]),
-        padding: const EdgeInsets.symmetric(vertical: 50),
+        padding: const EdgeInsets.symmetric(vertical: 33),
         child: Align(
           alignment: Alignment.topCenter,
           child: Column(children: [

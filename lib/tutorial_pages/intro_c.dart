@@ -1,4 +1,5 @@
 /// intro `0xC`
+library;
 
 import 'dart:math';
 
@@ -131,7 +132,7 @@ class _Page1State extends SuperState<_Page1> with SinglePress {
     super.dispose();
   }
 
-  Widget funkyText = const EasyText('Something funky is going on with these colors…');
+  Widget funkyText = const EasyText('Something funky is going on\nwith these colors…');
   Widget questionText = const EasyText("What's changing?");
   Widget tryAgainBody = empty;
   @override
@@ -288,10 +289,10 @@ class _TrickButton extends StatelessWidget {
               ),
               onPressed: onPressed,
               child: Padding(
-                padding: const EdgeInsets.only(top: 5, bottom: 9),
+                padding: const EdgeInsets.only(top: 6, bottom: 9),
                 child: Text(
                   label,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w100),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
                 ),
               ),
             ),
@@ -440,7 +441,7 @@ class _Page2State extends SuperState<_Page2> {
                           child: Text(
                             'blue',
                             style: TextStyle(
-                              fontSize: 40,
+                              fontSize: 36,
                               fontWeight: FontWeight.bold,
                               color: SuperColors.darkBackground,
                             ),
@@ -464,7 +465,7 @@ class _Page2State extends SuperState<_Page2> {
                           child: Text(
                             'azure',
                             style: TextStyle(
-                              fontSize: 40,
+                              fontSize: 36,
                               fontWeight: FontWeight.bold,
                               color: SuperColors.darkBackground,
                             ),
@@ -558,14 +559,14 @@ class _Page3State extends SuperState<_Page3> {
                 showLeftDesc,
                 child: const Text(
                   'on the left: the color vocabulary I grew up with',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w100),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
                 ),
               ),
               Fader(
                 showRightDesc,
                 child: const Text(
                   'on the right: my color vocabulary now',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w100),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
                 ),
               ),
             ],
@@ -733,21 +734,21 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const EasyText('super', size: 30),
+                const EasyText('super', size: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
                   child: Text(
                     'ᴅɪғғɪᴄᴜʟᴛ',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 24,
                       color: color,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2 / 3,
                     ),
                   ),
                 ),
-                const EasyText('.', size: 30),
+                const EasyText('.', size: 24),
               ],
             ),
           ),
@@ -766,8 +767,8 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
               child: SexyBox(
                 child: expandButton
                     ? const Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Text("let's do it", style: TextStyle(fontSize: 30)),
+                        padding: EdgeInsets.all(8),
+                        child: Text("let's do it", style: TextStyle(fontSize: 24)),
                       )
                     : empty,
               ),

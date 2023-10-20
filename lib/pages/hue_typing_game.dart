@@ -1,4 +1,5 @@
 /// Contains resources used in `intro.dart` and `intense.dart`
+library;
 
 import 'dart:math';
 
@@ -56,7 +57,7 @@ class _NumberButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SuperContainer(
       width: 125,
-      height: 100,
+      height: 75,
       padding: const EdgeInsets.all(2),
       child: TextButton(
         style: style,
@@ -111,7 +112,7 @@ class NumPadController {
         }
       });
 
-  void clear() => setState(() => displayValue = '');
+  void clear() => displayValue = '';
 }
 
 class _RankBars extends StatelessWidget {
@@ -415,7 +416,7 @@ class _GameScreen extends StatelessWidget {
     final sk = scoreKeeper;
     final bars = (sk is MasterScoreKeeper) ? _RankBars(sk.rank, color: color) : empty;
 
-    final double colorBoxWidth = context.screenWidth * 2 / 3;
+    final double colorBoxWidth = context.screenWidth * 0.75;
     final bool littleBitSquished =
         image != null && context.screenHeight < 1200 && !externalKeyboard;
 
@@ -433,7 +434,7 @@ class _GameScreen extends StatelessWidget {
                 if (image == null) ...[
                   SuperContainer(
                     width: colorBoxWidth,
-                    height: min(colorBoxWidth, context.screenHeight - 700),
+                    height: min(colorBoxWidth, context.screenHeight - 600),
                     color: color,
                   )
                 ] else ...[
@@ -454,6 +455,7 @@ class _GameScreen extends StatelessWidget {
                   ),
                 ),
                 ...userInput,
+                const Spacer(),
                 scoreKeeper?.midRoundDisplay ?? empty,
                 const Spacer(),
               ],

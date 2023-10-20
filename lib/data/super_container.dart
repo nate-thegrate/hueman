@@ -3,6 +3,7 @@
 /// I made a pull request to update the official Container, sadly it did not go well lol
 ///
 /// https://github.com/flutter/flutter/pull/134605
+library;
 
 import 'package:flutter/material.dart';
 

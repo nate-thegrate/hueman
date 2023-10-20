@@ -130,29 +130,21 @@ class _Page2State extends SuperState<_Page2> {
     sleep(4.5, then: () => setState(() => showButton = true));
   }
 
-  static const colorText = Text.rich(
-    textAlign: TextAlign.center,
-    TextSpan(
-      style: TextStyle(fontSize: 24),
-      children: [
-        ColorTextSpan(SuperColors.cyan, fontWeight: FontWeight.bold),
-        TextSpan(text: ', '),
-        ColorTextSpan(SuperColors.magenta, fontWeight: FontWeight.bold),
-        TextSpan(text: ', and '),
-        ColorTextSpan(SuperColors.yellow, fontWeight: FontWeight.bold),
-        TextSpan(text: '.'),
-      ],
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     final screenSize = context.screenSize;
-    final imgSize = min(screenSize.width * .8, screenSize.height - 120 * .8);
+    final imgSize = min(screenSize.width * .8, (screenSize.height - 120) * .6);
     return Column(
       children: [
         const Spacer(flex: 2),
-        colorText,
+        const EasyRichText([
+          ColorTextSpan(SuperColors.cyan, fontWeight: FontWeight.bold),
+          TextSpan(text: ', '),
+          ColorTextSpan(SuperColors.magenta, fontWeight: FontWeight.bold),
+          TextSpan(text: ', and '),
+          ColorTextSpan(SuperColors.yellow, fontWeight: FontWeight.bold),
+          TextSpan(text: '.'),
+        ]),
         const Spacer(),
         Fader(
           showPrinter,
@@ -194,22 +186,6 @@ class _Page3State extends SuperState<_Page3> with SinglePress {
     await sleepState(2.5, () => showButton = true);
   }
 
-  static const shouldntPrintersUse = Text.rich(
-    textAlign: TextAlign.center,
-    style: TextStyle(fontSize: 24),
-    TextSpan(
-      children: [
-        TextSpan(text: "But shouldn't they use "),
-        ColorTextSpan.red,
-        TextSpan(text: '/'),
-        ColorTextSpan.green,
-        TextSpan(text: '/'),
-        ColorTextSpan.blue,
-        TextSpan(text: " ink\nif that's what our eyes are built for?"),
-      ],
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -217,22 +193,21 @@ class _Page3State extends SuperState<_Page3> with SinglePress {
         const Spacer(flex: 2),
         _PrinterAnimation(showcase, printing),
         const Spacer(),
-        shouldntPrintersUse,
+        const EasyRichText([
+          TextSpan(text: "But shouldn't they use "),
+          ColorTextSpan.red,
+          TextSpan(text: '/'),
+          ColorTextSpan.green,
+          TextSpan(text: '/'),
+          ColorTextSpan.blue,
+          TextSpan(text: "\nif that's what human eyes are built for?"),
+        ]),
         const Spacer(flex: 2),
-        Fader(
-          showQuestion,
-          child: const Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(text: 'How do you print '),
-                ColorTextSpan.red,
-                TextSpan(text: ', a primary color,\nwithout any red ink?'),
-              ],
-            ),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
+        const EasyRichText([
+          TextSpan(text: 'How do you print '),
+          ColorTextSpan.red,
+          TextSpan(text: ', a primary color,\nwithout any red ink?'),
+        ]),
         const Spacer(flex: 2),
         Fader(
           showButton,
@@ -823,24 +798,18 @@ class _Page6State extends SuperState<_Page6> {
   static const screenText = [
     EasyText('You know what rustles my jimmies?'),
     Spacer(flex: 4),
-    Text.rich(
+    EasyRichText([
       TextSpan(
-        children: [
-          TextSpan(
-              text: 'People who design printers know that\n'
-                  'the only way to access the full range of colors\n'
-                  'is to use '),
-          ColorTextSpan.cyan,
-          TextSpan(text: '/'),
-          ColorTextSpan.magenta,
-          TextSpan(text: '/'),
-          ColorTextSpan.yellow,
-          TextSpan(text: ','),
-        ],
-      ),
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: 24),
-    ),
+          text: 'People who design printers know that\n'
+              'the only way to access the full range of colors\n'
+              'is to use '),
+      ColorTextSpan.cyan,
+      TextSpan(text: '/'),
+      ColorTextSpan.magenta,
+      TextSpan(text: '/'),
+      ColorTextSpan.yellow,
+      TextSpan(text: ','),
+    ]),
     Spacer(),
     EasyText('and subtractive mixing applies to all pigments,\n'
         'including markers and watercolors,'),
@@ -908,24 +877,18 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
         const Spacer(flex: 6),
         const EasyText('But this knowledge gap ends now.'),
         const Spacer(),
-        Text.rich(
+        EasyRichText([
+          const TextSpan(text: "It's time to learn "),
           TextSpan(
-            children: [
-              const TextSpan(text: "It's time to learn "),
-              TextSpan(
-                text: 'ᴀʟʟ',
-                style: TextStyle(
-                  color: epicColor,
-                  fontSize: 26,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const TextSpan(text: ' of the primary color hues.'),
-            ],
+            text: 'ᴀʟʟ',
+            style: TextStyle(
+              color: epicColor,
+              fontSize: 21,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 24),
-        ),
+          const TextSpan(text: '\nof the primary color hues.'),
+        ]),
         const Spacer(flex: 5),
         Fader(
           showButton,

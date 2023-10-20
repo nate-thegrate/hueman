@@ -104,7 +104,10 @@ class _Page1State extends SuperState<_Page1> {
         const Spacer(),
         Fader(
           imageVisible,
-          child: Image.asset('assets/retina_diagram.png', width: 500),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Image.asset('assets/retina_diagram.png', width: 500),
+          ),
         ),
         const Spacer(flex: 2),
         Fader(buttonVisible, child: ContinueButton(onPressed: widget.nextPage)),
@@ -347,11 +350,11 @@ class _Page3State extends SuperState<_Page3> {
             ColorTextSpan.green,
             TextSpan(text: ', and '),
             ColorTextSpan.visibleBlue,
-            TextSpan(text: ',\nthis device is able to display'),
+            TextSpan(text: ', this device can display'),
           ]),
         ),
         const Spacer(),
-        SizedBox(height: 415, child: unleashTheOrb ? const _ColorOrb() : empty),
+        SizedBox(height: 345, child: unleashTheOrb ? const _ColorOrb() : empty),
         const Spacer(flex: 3),
         Fader(
           buttonVisible,
@@ -400,7 +403,7 @@ class _ColorOrbState extends State<_ColorOrb> {
     textAlign: TextAlign.center,
     style: TextStyle(
       color: SuperColors.darkBackground,
-      fontSize: 56,
+      fontSize: 48,
       fontWeight: FontWeight.bold,
       height: 1.5,
     ),
@@ -408,13 +411,13 @@ class _ColorOrbState extends State<_ColorOrb> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = min(counter, 100) * 4;
+    final double width = min(counter, 80) * 4;
     final SuperColor epic = epicColor;
 
     return Align(
       alignment: Alignment(0, sin((epicHue) / 360 * 2 * pi * 3)),
       child: SizedBox(
-        height: 410,
+        height: 330,
         child: SizedBox(
           height: width,
           child: Stack(
@@ -491,7 +494,9 @@ class _Page4State extends SuperState<_Page4> {
         const Spacer(flex: 4),
         const EasyText("Whether you're making wedding invitations"),
         const Spacer(),
-        Image.asset('assets/wedding_invite.png', width: context.screenWidth * 2 / 3),
+        Expanded(
+            flex: 16,
+            child: Image.asset('assets/wedding_invite.png', width: context.screenWidth * 2 / 3)),
         const Spacer(flex: 4),
         Fader(
           showScreenshot,
@@ -499,21 +504,26 @@ class _Page4State extends SuperState<_Page4> {
             TextSpan(text: 'or making '),
             TextSpan(
               text: 'code',
-              style: TextStyle(fontFamily: 'Inconsolata', color: SuperColor(0x00FFEE)),
+              style: TextStyle(
+                fontFamily: 'Inconsolata',
+                color: SuperColor(0x00FFEE),
+                fontWeight: FontWeight.w600,
+                fontSize: 22,
+              ),
             ),
             TextSpan(text: ' for a video game,'),
           ]),
         ),
         const Spacer(),
-        Fader(showScreenshot, child: Image.asset('assets/picture_of_itself.png')),
+        Fader(showScreenshot, child: Image.asset('assets/picture_of_itself.png', width: 1000)),
         const Spacer(flex: 4),
         Fader(
           sometimesUgotta,
           child: const EasyText('sometimes you gotta tell a computer\nwhat color you want.'),
         ),
-        const Spacer(flex: 3),
+        const Spacer(flex: 4),
         Fader(showButton, child: ContinueButton(onPressed: widget.nextPage)),
-        const Spacer(flex: 3),
+        const Spacer(flex: 4),
       ],
     );
   }
@@ -557,14 +567,14 @@ class _Page5State extends SuperState<_Page5> {
     (Spacer(), 2),
     (EasyText('How do we describe this color?'), 2),
     (Spacer(), 2),
-    (EasyText('You could say its RGB value,'), 3.5),
+    (EasyText('You could say its RGB values,'), 3.5),
     (EasyText('or just make up a name for it.'), 1.5),
   ];
 
   static const List<(String, SuperColor)> colorCode = [
-    ('red: 128', SuperColor(0x800000)),
-    ('green: 255', SuperColor(0x00FF00)),
-    ('blue: 0', SuperColor(0x000000)),
+    ('128', SuperColor(0x800000)),
+    ('255', SuperColor(0x00FF00)),
+    ('0', SuperColor(0x000000)),
   ];
 
   late final colorCodeBox = SuperContainer(
@@ -598,18 +608,19 @@ class _Page5State extends SuperState<_Page5> {
       Text(
         '"chartreuse"',
         style: TextStyle(
-          fontSize: 48,
+          fontSize: 32,
           fontWeight: FontWeight.bold,
           color: SuperColors.darkBackground,
-          height: 1.25,
+          height: 1,
         ),
       ),
       Text(
-        '(not a great name tbh)',
+        '(not a good name tbh)',
         style: TextStyle(
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: SuperColors.darkBackground,
           letterSpacing: 0,
+          fontSize: 11,
         ),
       ),
     ],
@@ -704,7 +715,7 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
     for (int i = 0; i < hsvWidth * hsvHeight; i++) {
       await sleepState(0.05, () => hsvGrid[i] = (tile: hsvGrid[i].tile, scale: 17 / 16));
     }
-    await sleepState(3, () => tooBadVisible = true);
+    await sleepState(4, () => tooBadVisible = true);
     await sleepState(4, () => justKidding = true);
     await sleepState(2, () {
       epicHue = 90;
@@ -761,7 +772,7 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
             Fader(
               wishVisible,
               child: const EasyText(
-                'I wish I could describe every shade of this color\n'
+                'I just wish I could describe every shade\n'
                 'with a single name (that isn\'t "chartreuse").',
               ),
             ),
@@ -809,7 +820,7 @@ class _JustKidding extends StatelessWidget {
             const Spacer(),
             const Text(
               'just kidding  :)',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w100),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w100),
             ),
             const Spacer(flex: 3),
             Fader(
@@ -855,7 +866,7 @@ class _Page7State extends SuperState<_Page7> {
   Widget overlay = const SuperContainer(
     color: Colors.black,
     alignment: Alignment.center,
-    child: EasyText('finding a hue\ncan be done in two steps.', size: 36),
+    child: EasyText('finding a hue\ncan be done in two steps.', size: 32),
   );
   static const overlay2 = SuperContainer(color: Colors.black);
   bool showOverlay2 = false;
@@ -956,7 +967,7 @@ class _HueBox extends StatelessWidget {
           child: SuperContainer(
             width: step < 2 ? 20 : width,
             color: color,
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(5),
             child: SexyBox(
               child: step < 3
                   ? empty

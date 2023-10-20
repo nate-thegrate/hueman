@@ -46,11 +46,14 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Game mode:  ', style: TextStyle(fontSize: 24, color: color)),
-                  Text(page.gameMode, style: const TextStyle(fontSize: 24)),
+                  Text('Game mode:  ', style: TextStyle(fontSize: 22, color: color)),
+                  Text(
+                    page.gameMode,
+                    style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w200),
+                  ),
                 ],
               ),
-              const Spacer(flex: 2),
+              const Spacer(flex: 3),
               if (tutorial) ...[
                 if (page == Pages.introC) ...[
                   BrandNew(
@@ -113,7 +116,7 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
                   onPressed: context.menu,
                 ),
               ],
-              const Expanded(flex: 4, child: empty),
+              const Expanded(flex: 3, child: empty),
             ],
           ),
         ),

@@ -477,31 +477,41 @@ class _ManualColorCodeState extends State<ManualColorCode> {
 }
 
 class EasyText extends StatelessWidget {
-  const EasyText(this.data, {super.key, this.size = 24});
+  const EasyText(this.data, {super.key, this.size = 20});
   final String data;
   final double size;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: size),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Text(
+        data,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: size),
+      ),
     );
   }
 }
 
 class EasyRichText extends StatelessWidget {
-  const EasyRichText(this.children, {super.key, this.style = const TextStyle(fontSize: 24)});
+  const EasyRichText(this.children,
+      {super.key, this.style = const TextStyle(fontSize: 20), this.pad = true});
   final List<TextSpan> children;
   final TextStyle style;
+  final bool pad;
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(
+    final text = Text.rich(
       TextSpan(children: children),
       textAlign: TextAlign.center,
       style: style,
+    );
+    if (!pad) return text;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: text,
     );
   }
 }
@@ -514,12 +524,12 @@ class SuperHUEman extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EasyRichText(
-      style: const TextStyle(fontSize: 31),
+      style: const TextStyle(fontSize: 29),
       [
         const TextSpan(text: 'super'),
         TextSpan(
           text: 'ʜᴜᴇ',
-          style: TextStyle(color: color, fontSize: 32, fontWeight: FontWeight.w500),
+          style: TextStyle(color: color, fontSize: 30, fontWeight: FontWeight.w500),
         ),
         const TextSpan(text: 'man'),
       ],
@@ -558,16 +568,17 @@ class Rive extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperContainer(
-      alignment: Alignment.center,
-      constraints: BoxConstraints.loose(
-        Size(context.screenHeight * 2 / 3, double.infinity),
-      ),
-      child: rive.RiveAnimation.asset(
-        'assets/animations/$name.riv',
-        fit: BoxFit.cover,
-        artboard: artboard,
-        controllers: controllers,
+    return Center(
+      child: SuperContainer(
+        constraints: BoxConstraints.loose(
+          Size(context.screenHeight * 2 / 3, double.infinity),
+        ),
+        child: rive.RiveAnimation.asset(
+          'assets/animations/$name.riv',
+          fit: BoxFit.cover,
+          artboard: artboard,
+          controllers: controllers,
+        ),
       ),
     );
   }
@@ -659,11 +670,11 @@ class MeasuringOrb extends StatelessWidget {
             Fader(
               showRightAngle,
               child: Align(
-                alignment: const Alignment(0.2, -0.2),
+                alignment: const Alignment(0.25, -0.25),
                 child: Text(
                   '$hue°',
                   style: const TextStyle(
-                    fontSize: 28,
+                    fontSize: 24,
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),

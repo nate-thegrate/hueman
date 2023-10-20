@@ -17,37 +17,38 @@ class TriviaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final buttonWidth = min(context.screenWidth / 2 - 20, context.screenHeight / 2 - 250);
     return SuperContainer(
-      width: 215,
-      height: 75,
+      width: buttonWidth,
+      height: buttonWidth / 3,
       margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
       decoration: selected
           ? BoxDecoration(
-              border: Border.all(color: color, width: 10),
+              border: Border.all(color: color, width: buttonWidth / 20),
               boxShadow: const [BoxShadow(color: Colors.black, blurRadius: 10)],
             )
           : null,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white,
-          backgroundColor: selected ? SuperColors.darkBackground : color,
-          shape: const BeveledRectangleBorder(),
-        ),
+            foregroundColor: Colors.white,
+            backgroundColor: selected ? SuperColors.darkBackground : color,
+            shape: const BeveledRectangleBorder(),
+            padding: EdgeInsets.zero),
         child: Text(
           color.name,
           style: selected
               ? TextStyle(
-                  fontSize: 28,
+                  fontSize: buttonWidth / 8,
                   fontWeight: FontWeight.bold,
                   color: color,
                   height: -0.1,
                 )
-              : const TextStyle(
-                  fontSize: 28,
+              : TextStyle(
+                  fontSize: buttonWidth / 8,
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
-                  shadows: [
+                  shadows: const [
                     Shadow(color: Colors.white24, blurRadius: 1),
                     Shadow(color: Colors.white30, blurRadius: 25),
                   ],
@@ -95,7 +96,7 @@ const List<TriviaQuestion> _allQuestions = [
     'Only 1 of those 3 colors is correct—which is it?',
     [SuperColors.yellow],
     explanation: 'The subtractive primary colors are cyan, magenta and yellow.\n\n'
-        'Subtractive mixing rules apply when mixing pigments\n(e.g. dyes and inks).',
+        'Subtractive mixing rules apply when mixing pigments (e.g. dyes and inks).',
   ),
   TriviaQuestion(
     'Complementary colors are 180° apart on the color wheel. '
@@ -103,9 +104,9 @@ const List<TriviaQuestion> _allQuestions = [
     [SuperColors.spring],
     explanation: 'Spring & rose are "complementary colors" '
         'because they can combine to make white.\n\n'
-        'You can find the complement of any color by flipping its RGB values upside down: '
-        'for example, rose is 100% red / 0% green / 50% blue, '
-        'and its complement spring is 0% red / 100% green / 50% blue.',
+        'You can find the complement of any color by flipping its RGB values upside down; for example:\n\n'
+        'rose – 100% red / 0% green / 50% blue\n'
+        'spring – 0% red / 100% green / 50% blue',
   ),
   TriviaQuestion(
     'Which color caused CMYK to have a "K"?',
@@ -120,20 +121,16 @@ const List<TriviaQuestion> _allQuestions = [
   TriviaQuestion(
     'Which color is also the name of a cloud computing platform?',
     [SuperColors.azure],
-    explanation: 'You can use Microsoft Azure to make websites\nand virtual machines.\n\n'
+    explanation: 'You can use Microsoft Azure to make websites and virtual machines.\n\n'
         'And as you would expect, it has an azure logo.',
-  ),
-  TriviaQuestion(
-    'The official color of the Dutch royal family:',
-    [SuperColors.orange],
-    explanation: 'The Netherlands national football team wears orange\nbecause of this.',
   ),
   TriviaQuestion(
     "Which 2 color names are different from the names on Wikipedia's color wheel?",
     [SuperColors.chartreuse, SuperColors.spring],
     explanation: "On Wikipedia's color wheel, "
         'chartreuse and spring show up as "chartreuse green" and "spring green" respectively.\n\n'
-        'Maybe they thought that not enough people know what "chartreuse" means '
+        'Maybe they thought that "chartreuse" by itself isn\'t a great color name '
+        '(which, to be fair, is a valid point) '
         'and that everyone refers to "spring" as a season rather than a color.\n\n'
         'But back in the 1500s, people got used to "orange" being both a color and a fruit, '
         "so I don't think it'll be too hard for us to do something similar right now.",
@@ -158,7 +155,7 @@ const List<TriviaQuestion> _allQuestions = [
   TriviaQuestion(
     'The color "brown" is really just a darker shade of:',
     [SuperColors.orange],
-    explanation: "This is why there's no such thing as a brown light bulb—\n"
+    explanation: "This is why there's no such thing as a brown light bulb—"
         'if a brown color is vibrant enough, it becomes orange.',
   ),
   TriviaQuestion(
@@ -192,11 +189,16 @@ const List<TriviaQuestion> _allQuestions = [
     [SuperColors.red, SuperColors.blue],
     explanation: 'Even though its name was "the blue pill",\nits hue was much closer to cyan.',
   ),
-  TriviaQuestion(
-    "What are the colors of Jon Arbuckle's pets?",
-    [SuperColors.orange, SuperColors.yellow],
-    explanation: 'Jon is a cartoonist with an orange cat and a yellow dog.',
-  ),
+  // TriviaQuestion(
+  //   'The official color of the Dutch royal family:',
+  //   [SuperColors.orange],
+  //   explanation: 'The Netherlands national football team wears orange because of this.',
+  // ),
+  // TriviaQuestion(
+  //   "What are the colors of Jon Arbuckle's pets?",
+  //   [SuperColors.orange, SuperColors.yellow],
+  //   explanation: 'Jon is a cartoonist with an orange cat and a yellow dog.',
+  // ),
 ];
 
 class TriviaMode extends StatefulWidget {
@@ -319,18 +321,11 @@ class _TriviaModeState extends State<TriviaMode> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Spacer(),
-                      correct
-                          ? empty
-                          : const Text(
-                              'correct answer:  ',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                            ),
                       for (final color in correctAnswers)
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: ColorNameBox.trivial(color),
                         ),
-                      correct ? empty : const FixedSpacer.horizontal(100),
                       const Spacer(),
                     ],
                   ),

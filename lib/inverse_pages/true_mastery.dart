@@ -23,10 +23,6 @@ rebuilding window
         ),
       );''';
 
-extension _HexByte on int {
-  String get hexByte => '0x${toRadixString(16).padLeft(2, "0").toUpperCase()}';
-}
-
 class TrueMasteryScoreKeeper implements ScoreKeeper {
   TrueMasteryScoreKeeper();
 
@@ -312,18 +308,16 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
       DataCell(_Base10PlusHex(guess.blue)),
     ]),
     DataRow(cells: [
-      const DataCell(
-          Center(child: Text('actual', style: TextStyle(fontWeight: FontWeight.w600)))),
+      const DataCell(Center(child: Text('true', style: TextStyle(fontWeight: FontWeight.w600)))),
       DataCell(_Base10PlusHex(actual.red)),
       DataCell(_Base10PlusHex(actual.green)),
       DataCell(_Base10PlusHex(actual.blue)),
     ]),
     DataRow(cells: [
-      const DataCell(
-          Center(child: Text('difference', style: TextStyle(fontWeight: FontWeight.w600)))),
-      DataCell(Text(redOffBy.toString())),
-      DataCell(Text(greenOffBy.toString())),
-      DataCell(Text(blueOffBy.toString())),
+      const DataCell(Center(child: Text('diff', style: TextStyle(fontWeight: FontWeight.w600)))),
+      DataCell(Center(child: Text(redOffBy.toString()))),
+      DataCell(Center(child: Text(greenOffBy.toString()))),
+      DataCell(Center(child: Text(blueOffBy.toString()))),
     ]),
   ];
 
@@ -335,36 +329,23 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
   ];
 
   DataCell matchPercent(int offBy) => DataCell(
-        offBy == 0
-            ? Text(
-                '100%',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: inverseColor,
-                  fontSize: 18,
-                  shadows: [
-                    for (double i = 0.5; i <= 3; i += 0.5)
-                      Shadow(blurRadius: i, color: Colors.white),
-                  ],
-                ),
-              )
-            : Text('${(100 * (1 - offBy / 256)).toStringAsFixed(2)}%'),
+        Center(
+          child: offBy == 0
+              ? Text(
+                  '100%',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: inverseColor,
+                    fontSize: 18,
+                    shadows: [
+                      for (double i = 0.5; i <= 3; i += 0.5)
+                        Shadow(blurRadius: i, color: Colors.white),
+                    ],
+                  ),
+                )
+              : Text((100 * (1 - offBy / 256)).toStringAsFixed(1)),
+        ),
       );
-
-  static const scoreFormula = Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Text(
-        '3 \u00d7 0xFF',
-        style: TextStyle(fontFamily: 'Inconsolata', height: null),
-      ),
-      SuperContainer(width: 105, height: 1, color: Colors.black),
-      Text(
-        'total difference',
-        style: TextStyle(height: null, fontStyle: FontStyle.italic),
-      ),
-    ],
-  );
 
   static const equals = Text(' = ', style: TextStyle(fontSize: 18, height: -0.2));
 
@@ -385,14 +366,18 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 DataTable(
-                  columnSpacing: 35,
+                  columnSpacing: 10,
                   columns: columns,
                   rows: [
                     ...rows,
                     DataRow(cells: [
                       const DataCell(
                         Center(
-                          child: Text('match %', style: TextStyle(fontWeight: FontWeight.w600)),
+                          child: Text(
+                            'match %',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
                         ),
                       ),
                       matchPercent(redOffBy),
@@ -407,16 +392,21 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
                   children: [
                     const Text('score:', style: TextStyle(fontSize: 18)),
                     const FixedSpacer.horizontal(10),
-                    scoreFormula,
-                    equals,
                     Column(
                       children: [
-                        const Text('765'),
+                        const Text(
+                          '0xFF \u00d7 3',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Inconsolata',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         SuperContainer(
                           decoration: const BoxDecoration(border: Border(top: BorderSide())),
                           padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
                           margin: const EdgeInsets.only(top: 3),
-                          child: Text('$redOffBy + $blueOffBy + $greenOffBy'),
+                          child: Text('$redOffBy + $greenOffBy + $blueOffBy'),
                         ),
                       ],
                     ),
@@ -602,15 +592,15 @@ class _Base10PlusHex extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Text(value.toString()),
-        Text(
-          ' (${value.hexByte})',
-          style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 12),
+    return Center(
+      child: Text(
+        value.hexByte,
+        style: const TextStyle(
+          fontFamily: 'Inconsolata',
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
         ),
-      ],
+      ),
     );
   }
 }
@@ -654,10 +644,11 @@ class _RGBSlider extends StatelessWidget {
           ),
         ),
         SuperContainer(
-          width: 125,
+          width: 100,
           alignment: Alignment.center,
           child: Text(
-            '$name: $displayValue',
+            displayValue,
+            textAlign: TextAlign.center,
             style: const TextStyle(
               fontFamily: 'Inconsolata',
               fontSize: 16,
