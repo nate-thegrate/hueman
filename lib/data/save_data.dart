@@ -12,9 +12,9 @@ bool music = true;
 bool sounds = true;
 
 // game progress
-int? superHue;
-// int? superHue = rng.nextInt(360);
-bool get hueMaster => superHue != null;
+int superHue = -1;
+// int superHue = rng.nextInt(360);
+bool get hueMaster => superHue != -1;
 
 abstract final class Tutorials {
   static bool started = true;
@@ -26,7 +26,7 @@ abstract final class Tutorials {
   static bool master = false;
   static bool trivial = false;
   static bool tense = false;
-  static bool compSci = false;
+  static bool sandbox = false;
   static bool trueMastery = false;
 
   static bool sawInversion = false;
