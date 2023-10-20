@@ -53,8 +53,8 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       text = SuperRichText([
         const TextSpan(text: 'Your super'),
         TextSpan(
-          text: 'ʜᴜᴇ',
-          style: SuperStyle.sans(color: superColor, weight: 600, size: 25),
+          text: 'HUE',
+          style: SuperStyle.sans(color: superColor, weight: 800, size: 15),
         ),
         const TextSpan(text: '.'),
       ]);
@@ -71,8 +71,8 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       text = SuperRichText([
         const TextSpan(text: 'Fun fact: your super'),
         TextSpan(
-          text: 'ʜᴜᴇ',
-          style: SuperStyle.sans(color: superColor, weight: 600, size: 25),
+          text: 'HUE',
+          style: SuperStyle.sans(color: superColor, weight: 600, size: 15),
         ),
         const TextSpan(text: ' actually says a lot about you,\njust like a zodiac sign.'),
       ]);

@@ -56,8 +56,8 @@ class IntenseScoreKeeper implements ScoreKeeper {
         text: TextSpan(
           children: [
             TextSpan(
-                text: 's\u1d1cᴘᴇʀ',
-                style: style.copyWith(color: SuperColors.epic[hue], fontWeight: FontWeight.w600)),
+                text: 'SUPER',
+                style: SuperStyle.sans(color: SuperColors.epic[hue], weight: 600, size: 18)),
             const TextSpan(text: 'score ', style: style),
             TextSpan(
                 text: 'count:   $superCount',
@@ -80,7 +80,7 @@ class IntenseScoreKeeper implements ScoreKeeper {
     String scoreDesc = '30 colors, ${scores.average.toStringAsFixed(2)}% accuracy';
     if (superCount > 0) {
       scoreDesc += '\n\u00d7${superCount + 1} bonus! '
-          '($superCount s\u1d1cᴘᴇʀscore${superCount > 1 ? "s" : ""})';
+          '($superCount superscore${superCount > 1 ? "s" : ""})';
     }
     return Text(
       scoreDesc,
@@ -161,7 +161,7 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
     }
     if (superCount > 0) {
       finalDesc +=
-          '\n\u00d7${superCount + 1} ($superCount s\u1d1cᴘᴇʀscore${superCount > 1 ? "s" : ""}!)';
+          '\n\u00d7${superCount + 1} ($superCount superscore${superCount > 1 ? "s" : ""}!)';
     }
     return Text(
       finalDesc,

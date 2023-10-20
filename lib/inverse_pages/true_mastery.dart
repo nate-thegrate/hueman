@@ -49,7 +49,7 @@ class TrueMasteryScoreKeeper implements ScoreKeeper {
     String scoreDesc = '$_maxRounds rounds, total score = ${score.toStringAsFixed(1)}';
     if (superCount > 0) {
       scoreDesc += '\n\u00d7${superCount + 1} bonus! '
-          '($superCount s\u1d1cᴘᴇʀscore${superCount > 1 ? "s" : ""})';
+          '($superCount superscore${superCount > 1 ? "s" : ""})';
     }
     return Text(
       scoreDesc,
@@ -67,7 +67,7 @@ class TrueMasteryScoreKeeper implements ScoreKeeper {
   @override
   Widget get midRoundDisplay {
     String text = 'round ${round + 1}/$_maxRounds\nscore: ${score.toStringAsFixed(1)}';
-    if (superCount > 0) text += ', $superCount sᴜᴘᴇʀscore${superCount > 1 ? 's' : ''}!';
+    if (superCount > 0) text += ', $superCount superscore${superCount > 1 ? 's' : ''}!';
 
     return Padding(
       padding: const EdgeInsets.only(top: 10),
