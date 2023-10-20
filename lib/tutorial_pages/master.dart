@@ -4,6 +4,7 @@ import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class MasterTutorial extends StatefulWidget {
@@ -75,13 +76,13 @@ class _Page1State extends SuperState<_Page1> {
     return Column(
       children: [
         const Spacer(flex: 2),
-        const EasyText(
+        const SuperText(
           "By finding the right hue out of 360,\nyou've proven your mettle.",
         ),
         const Spacer(),
         Fader(
           finalStep,
-          child: const EasyText(
+          child: const SuperText(
             "But there's one final step on the path\nto fully unlocking this superpower.",
           ),
         ),
@@ -123,7 +124,7 @@ class _Page2State extends SuperState<_Page2> {
     return Column(
       children: [
         const Spacer(flex: 2),
-        const EasyText("Thus far, we've only worked with vibrant,\nfully saturated colors."),
+        const SuperText("Thus far, we've only worked with vibrant,\nfully saturated colors."),
         const Spacer(),
         Expanded(
           flex: 4,
@@ -146,7 +147,7 @@ class _Page2State extends SuperState<_Page2> {
         const Spacer(),
         Fader(
           timeToChange,
-          child: const EasyText("It's time to change that."),
+          child: const SuperText("It's time to change that."),
         ),
         const Spacer(flex: 2),
         Fader(buttonVisible, child: ContinueButton(onPressed: widget.nextPage)),
@@ -184,14 +185,14 @@ class _Page3State extends SuperState<_Page3> {
         child: Column(
           children: [
             const Spacer(flex: 5),
-            const EasyText(
-              "Master this skill, and you'll have full dominion\n"
+            const SuperText(
+              "Master this skill, and you'll have full dominion "
               'over your visual experience.',
             ),
             const Spacer(),
             Fader(
               finalMessage,
-              child: const EasyText("You'll see every color for what it is."),
+              child: const SuperText("You'll see every color for what it is."),
             ),
             const Spacer(flex: 6),
           ],

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 int _r = 0xFF, _g = 0xFF, _b = 0xFF;
@@ -39,7 +40,7 @@ class _RGBSlider extends StatelessWidget {
         RotatedBox(
           quarterTurns: horizontal ? 0 : 3,
           child: SizedBox(
-            width: min(384, horizontal ? context.screenWidth - 115 : double.infinity),
+            width: min(384, horizontal ? context.screenWidth - 65 : double.infinity),
             child: SliderTheme(
               data: const SliderThemeData(
                 trackHeight: 15,
@@ -57,16 +58,12 @@ class _RGBSlider extends StatelessWidget {
           ),
         ),
         SuperContainer(
-          width: 100,
+          width: 50,
           margin: const EdgeInsets.only(right: 15),
           alignment: horizontal ? Alignment.centerRight : Alignment.center,
           child: Text(
-            '$name: ${value.hexByte}',
-            style: const TextStyle(
-              fontFamily: 'Inconsolata',
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+            value.hexByte,
+            style: const SuperStyle.mono(size: 18, weight: 500),
           ),
         ),
       ],
@@ -92,7 +89,7 @@ class _HSVSlider extends StatelessWidget {
           child: Text(
             hsv.name,
             textAlign: TextAlign.right,
-            style: const TextStyle(fontSize: 14),
+            style: const SuperStyle.sans(size: 14),
           ),
         ),
         SizedBox(
@@ -117,7 +114,7 @@ class _HSVSlider extends StatelessWidget {
           child: Text(
             isHue ? hsv.val.round().toString() : hsv.val.toStringAsFixed(2),
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: const SuperStyle.sans(size: 16),
           ),
         ),
       ],
@@ -173,23 +170,28 @@ class _ColorSelection extends StatelessWidget {
                     backgroundColor: _color == color ? Colors.black45 : null,
                   ),
                   onPressed: () => updateColor(color, HSVColor.fromColor(color)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 150,
-                        child: Text(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints.loose(const Size.fromWidth(400)),
+                    child: Row(
+                      children: [
+                        const FixedSpacer.horizontal(12),
+                        Text(
                           color.name,
-                          style: Theme.of(context).textTheme.headlineSmall,
+                          style: const SuperStyle.sans(
+                            weight: 100,
+                            size: 24,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      SuperContainer(
-                        width: 150,
-                        height: 40,
-                        margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
-                        color: color,
-                      ),
-                    ],
+                        const Spacer(),
+                        SuperContainer(
+                          width: 150,
+                          height: 40,
+                          margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
+                          color: color,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               )
@@ -253,10 +255,7 @@ class _SandboxState extends State<Sandbox> {
         onPressed: context.menu,
         child: const Padding(
           padding: EdgeInsets.all(8),
-          child: Text(
-            'back',
-            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-          ),
+          child: Text('back', style: SuperStyle.sans(size: 16)),
         ),
       );
 
@@ -366,7 +365,7 @@ class _SandboxState extends State<Sandbox> {
             const Spacer(),
             backButton,
             const Spacer(),
-            Text(_colorPicker.desc, style: const TextStyle(fontSize: 24)),
+            Text(_colorPicker.desc, style: const SuperStyle.sans(size: 24)),
             const Spacer(),
             AnimatedSize(
               duration: const Duration(milliseconds: 100),
@@ -378,8 +377,7 @@ class _SandboxState extends State<Sandbox> {
             ColorLabel(
               'color name',
               _color.rounded.name,
-              textStyle:
-                  TextStyle(color: _color, fontSize: 20, fontWeight: FontWeight.bold, shadows: [
+              style: SuperStyle.sans(color: _color, size: 20, weight: 900, shadows: [
                 Shadow(color: contrastWith(_color, threshold: 0.01).withAlpha(64), blurRadius: 3)
               ]),
             ),

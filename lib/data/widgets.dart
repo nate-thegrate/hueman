@@ -8,6 +8,7 @@ import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_text.dart';
 
 const Widget empty = SizedBox.shrink();
 const Widget flat = SizedBox(width: double.infinity);
@@ -79,7 +80,7 @@ class SexyBox extends AnimatedSize {
 mixin SinglePress {
   bool pressed = false;
 
-  singlePress(void Function()? onPressed, {bool noDelay = false}) => () {
+  VoidCallback singlePress(VoidCallback? onPressed, {bool noDelay = false}) => () {
         if (pressed) return;
 
         pressed = true;
@@ -130,11 +131,12 @@ class BrandNew extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: SuperStyle.sans(
               color: color,
-              fontWeight: FontWeight.w500,
+              lowercaseHeight: 540,
+              height: 0,
               shadows: [
-                for (double i = 0; i < 5; i += 2)
+                for (double i = 0; i < 5; i++)
                   Shadow(color: inverted ? Colors.white : Colors.black, blurRadius: i),
               ],
             ),
@@ -176,7 +178,15 @@ class _SuperButtonState extends State<SuperButton> with SinglePress {
       ),
       child: Padding(
         padding: widget.padding ?? const EdgeInsets.only(bottom: 2),
-        child: Text(widget.label, style: const TextStyle(fontSize: 24)),
+        child: Text(
+          widget.label,
+          style: const SuperStyle.sans(
+            size: 24,
+            weight: 350,
+            extraBold: true,
+            letterSpacing: 0.5,
+          ),
+        ),
       ),
     );
     if (!widget.isNew) return button;
@@ -243,13 +253,13 @@ class MenuCheckbox extends StatelessWidget {
                 const FixedSpacer.horizontal(10),
                 Text(
                   label,
-                  style: const TextStyle(fontSize: 18),
+                  style: const SuperStyle.sans(size: 18),
                 ),
               ],
             ),
             Text(
               value ? description.$1 : description.$2,
-              style: Theme.of(context).textTheme.labelSmall,
+              style: const SuperStyle.sans(size: 11),
             ),
           ],
         ),
@@ -262,12 +272,6 @@ class GoBack extends StatelessWidget {
   const GoBack({this.text = 'back', super.key});
   final String text;
 
-  static const _style = TextStyle(
-    fontWeight: FontWeight.normal,
-    fontSize: 16,
-    letterSpacing: 0.5,
-  );
-
   @override
   Widget build(BuildContext context) {
     final Widget button = TextButton(
@@ -278,7 +282,13 @@ class GoBack extends StatelessWidget {
       onPressed: context.menu,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 6, 8, 7),
-        child: Text(text, style: _style),
+        child: Text(text,
+            style: SuperStyle.sans(
+              weight: inverted ? 300 : 100,
+              width: 96,
+              size: 16,
+              letterSpacing: 0.5,
+            )),
       ),
     );
     return button;
@@ -302,64 +312,58 @@ class ColorNameBox extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 9),
       child: Text(
         color.name,
-        style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
+        style: SuperStyle.sans(color: color, weight: 800, size: 16),
       ),
     );
   }
 }
 
 class ColorLabel extends StatelessWidget {
-  const ColorLabel(this.property, this.value, {this.textStyle, super.key})
+  const ColorLabel(this.property, this.value, {this.style, super.key})
       : colorCode = false,
         update = null;
 
   const ColorLabel.colorCode(this.property, this.value,
       {required ValueChanged<SuperColor> updateColorCode, super.key})
-      : textStyle = null,
+      : style = null,
         colorCode = true,
         update = updateColorCode;
   final String property, value;
-  final TextStyle? textStyle;
+  final SuperStyle? style;
   final ValueChanged<SuperColor>? update;
   final bool colorCode;
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle? defaultStyle = Theme.of(context).textTheme.bodyLarge;
+    const SuperStyle defaultStyle = SuperStyle.sans(size: 16);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-              width: 200,
-              child: Text(
-                '$property:',
-                style: defaultStyle,
-                textAlign: TextAlign.right,
-              )),
+            width: 100,
+            child: Text('$property:', style: defaultStyle, textAlign: TextAlign.right),
+          ),
           if (!colorCode) const FixedSpacer.horizontal(15),
           SizedBox(
-            width: colorCode ? 200 : 190,
             child: colorCode
                 ? Align(
                     alignment: Alignment.bottomLeft,
                     child: TextButton(
                       style: TextButton.styleFrom(
-                          foregroundColor: inverted ? Colors.black : Colors.white),
+                        foregroundColor: inverted ? Colors.black : Colors.white,
+                      ),
                       onPressed: () => ManualColorCode.run(
                         context,
                         color: SuperColor(int.parse(value.substring(1), radix: 16)),
                         updateColor: update!,
                       ),
-                      child: Text(
-                        value,
-                        style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 18),
-                      ),
+                      child: Text(value, style: const SuperStyle.mono(size: 18)),
                     ),
                   )
-                : Text(value, style: textStyle ?? defaultStyle),
+                : Text(value, style: style ?? defaultStyle),
           ),
         ],
       ),
@@ -431,7 +435,7 @@ class _ManualColorCodeState extends State<ManualColorCode> {
     return Theme(
       data: ThemeData(
         useMaterial3: true,
-        fontFamily: 'Roboto',
+        fontFamily: 'nunito sans',
         colorScheme: ColorScheme(
           brightness: Brightness.light,
           primary: widget.color,
@@ -456,7 +460,7 @@ class _ManualColorCodeState extends State<ManualColorCode> {
               width: 200,
               child: TextField(
                 focusNode: focusNode,
-                style: const TextStyle(fontFamily: 'Inconsolata'),
+                style: const SuperStyle.mono(),
                 textAlign: TextAlign.center,
                 cursorColor: Colors.black,
                 controller: controller,
@@ -476,77 +480,16 @@ class _ManualColorCodeState extends State<ManualColorCode> {
   }
 }
 
-class EasyText extends StatelessWidget {
-  const EasyText(this.data, {super.key, this.size = 20});
-  final String data;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Text(
-        data,
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: size),
-      ),
-    );
-  }
-}
-
-class EasyRichText extends StatelessWidget {
-  const EasyRichText(this.children,
-      {super.key, this.style = const TextStyle(fontSize: 20), this.pad = true});
-  final List<TextSpan> children;
-  final TextStyle style;
-  final bool pad;
-
-  @override
-  Widget build(BuildContext context) {
-    final text = Text.rich(
-      TextSpan(children: children),
-      textAlign: TextAlign.center,
-      style: style,
-    );
-    if (!pad) return text;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: text,
-    );
-  }
-}
-
-class SuperHUEman extends StatelessWidget {
-  /// The magestic game logo.
-  const SuperHUEman(this.color, {super.key});
-  final SuperColor color;
-
-  @override
-  Widget build(BuildContext context) {
-    return EasyRichText(
-      style: const TextStyle(fontSize: 29),
-      [
-        const TextSpan(text: 'super'),
-        TextSpan(
-          text: 'ʜᴜᴇ',
-          style: TextStyle(color: color, fontSize: 30, fontWeight: FontWeight.w500),
-        ),
-        const TextSpan(text: 'man'),
-      ],
-    );
-  }
-}
-
 class ColorTextSpan extends TextSpan {
-  const ColorTextSpan(this.color, {this.fontWeight = FontWeight.w600});
+  const ColorTextSpan(this.color, {this.fontWeight = 600});
   final SuperColor color;
-  final FontWeight fontWeight;
+  final double fontWeight;
 
   @override
   String get text => color.name;
 
   @override
-  TextStyle get style => TextStyle(color: color, fontWeight: fontWeight);
+  SuperStyle get style => SuperStyle.sans(color: color, weight: fontWeight);
 
   static const red = ColorTextSpan(SuperColors.red);
   static const green = ColorTextSpan(SuperColors.green);
@@ -673,10 +616,10 @@ class MeasuringOrb extends StatelessWidget {
                 alignment: const Alignment(0.25, -0.25),
                 child: Text(
                   '$hue°',
-                  style: const TextStyle(
-                    fontSize: 24,
+                  style: const SuperStyle.sans(
+                    size: 24,
                     color: Colors.black,
-                    fontWeight: FontWeight.bold,
+                    weight: 800,
                   ),
                 ),
               ),

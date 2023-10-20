@@ -5,6 +5,7 @@ import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class TriviaButton extends StatelessWidget {
@@ -38,15 +39,15 @@ class TriviaButton extends StatelessWidget {
         child: Text(
           color.name,
           style: selected
-              ? TextStyle(
-                  fontSize: buttonWidth / 8,
-                  fontWeight: FontWeight.bold,
+              ? SuperStyle.sans(
+                  size: buttonWidth / 8,
+                  weight: 800,
                   color: color,
                   height: -0.1,
                 )
-              : TextStyle(
-                  fontSize: buttonWidth / 8,
-                  fontWeight: FontWeight.w600,
+              : SuperStyle.sans(
+                  size: buttonWidth / 8,
+                  weight: 700,
                   color: Colors.black,
                   shadows: const [
                     Shadow(color: Colors.white24, blurRadius: 1),
@@ -217,26 +218,30 @@ class AnsweredEveryQuestion extends StatelessWidget {
     return Theme(
       data: ThemeData(
         useMaterial3: true,
-        fontFamily: 'Roboto',
+        fontFamily: 'nunito sans',
         dialogBackgroundColor: SuperColors.lightBackground,
       ),
       child: AlertDialog(
-        title: const Text('Congrats!'),
+        title: const Text(
+          'Congrats!',
+          textAlign: TextAlign.center,
+          style: SuperStyle.sans(weight: 600, width: 87.5),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const Text(
               "You've answered each trivia question!",
-              style: TextStyle(fontSize: 16),
+              style: SuperStyle.sans(),
             ),
             if (!casualMode) ...[
               const FixedSpacer(8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('score: ', style: TextStyle(height: 0)),
-                  Text(scoreDesc, style: const TextStyle(fontSize: 12)),
+                  const Text('score: ', style: SuperStyle.sans(height: 0)),
+                  Text(scoreDesc, style: const SuperStyle.sans(size: 12)),
                 ],
               ),
             ],
@@ -278,13 +283,17 @@ class _TriviaModeState extends State<TriviaMode> {
           builder: (context) => Theme(
             data: ThemeData(
               useMaterial3: true,
-              fontFamily: 'Roboto',
+              fontFamily: 'nunito sans',
               dialogBackgroundColor: SuperColors.lightBackground,
             ),
             child: AlertDialog(
-              title: const Text('Welcome to trivial mode!'),
+              title: const Text(
+                'Welcome to trivial mode!',
+                style: SuperStyle.sans(weight: 600, width: 87.5),
+              ),
               content: Text(
                 "It's literally just ${_allQuestions.length} color trivia questions.",
+                style: const SuperStyle.sans(),
               ),
             ),
           ),
@@ -309,11 +318,16 @@ class _TriviaModeState extends State<TriviaMode> {
           builder: (context) => Theme(
             data: ThemeData(
               useMaterial3: true,
-              fontFamily: 'Roboto',
+              fontFamily: 'nunito sans',
               dialogBackgroundColor: SuperColors.lightBackground,
             ),
             child: AlertDialog(
-              title: Center(child: Text(correct ? 'Correct!' : 'Incorrect.')),
+              title: Center(
+                child: Text(
+                  correct ? 'Correct!' : 'Incorrect.',
+                  style: const SuperStyle.sans(weight: 600, width: 87.5),
+                ),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -334,7 +348,7 @@ class _TriviaModeState extends State<TriviaMode> {
                       constraints: BoxConstraints.loose(const Size.fromWidth(500)),
                       child: Text(
                         triviaQuestions.first.explanation ?? '',
-                        style: const TextStyle(fontSize: 16),
+                        style: const SuperStyle.sans(size: 16),
                       )),
                 ],
               ),
@@ -384,10 +398,10 @@ class _TriviaModeState extends State<TriviaMode> {
       child: Text(
         triviaQuestions.first.question,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: SuperStyle.sans(
           color: Colors.black,
-          fontSize: min(context.screenHeight / 2, context.screenWidth) / 20,
-          fontWeight: FontWeight.w600,
+          size: min(context.screenHeight / 2, context.screenWidth) / 20,
+          weight: 600,
         ),
       ),
     );
@@ -399,18 +413,18 @@ class _TriviaModeState extends State<TriviaMode> {
               selected.isNotEmpty
                   ? 'Select ${correctAnswers.length - selected.length} more.'
                   : 'Select ${correctAnswers.length} colors.',
-              style: const TextStyle(fontSize: 20),
+              style: const SuperStyle.sans(size: 20),
             )
           : empty,
     );
 
     final Widget score = Text(
       (casualMode || totalAnswers == 0) ? '' : 'Score: $totalCorrect / $totalAnswers correct',
-      style: const TextStyle(fontSize: 18),
+      style: const SuperStyle.sans(size: 18),
     );
 
     return Theme(
-      data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
+      data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
         body: Center(
           child: Column(

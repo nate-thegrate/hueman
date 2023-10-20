@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 int _r = 0x80, _g = 0x80, _b = 0x80;
@@ -65,19 +68,23 @@ SuperColor get _color => switch (_colorPicker) {
       _ColorPicker.hsl => SuperColor.hsl(_h, _s, _l),
     };
 
-class _CMYScreen extends StatelessWidget {
-  const _CMYScreen({required this.update});
+class _CMYKScreen extends StatelessWidget {
+  const _CMYKScreen({required this.update});
   final dynamic update;
 
   @override
   Widget build(BuildContext context) {
+    final size = context.screenSize;
+    final horizontal = context.squished;
+    final double width = min(size.width - 50, 500);
+    final double height = min(size.height - (horizontal ? 600 : 750), 500);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SuperContainer(width: 300, height: 300, color: _color),
+        SuperContainer(width: width, height: height, color: _color),
         const FixedSpacer(30),
         Flex(
-          direction: context.squished ? Axis.vertical : Axis.horizontal,
+          direction: horizontal ? Axis.vertical : Axis.horizontal,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -128,7 +135,7 @@ class _CMYKSlider extends StatelessWidget {
         RotatedBox(
           quarterTurns: horizontal ? 0 : 3,
           child: SizedBox(
-            width: 384,
+            width: min(384, horizontal ? context.screenWidth - 80 : double.infinity),
             child: SliderTheme(
               data: const SliderThemeData(
                 trackHeight: 15,
@@ -145,11 +152,11 @@ class _CMYKSlider extends StatelessWidget {
           ),
         ),
         SuperContainer(
-          width: 125,
+          width: 50,
           alignment: Alignment.center,
           child: Text(
-            '$name:  ${(value * 100).toStringAsFixed(0)}%',
-            style: Theme.of(context).textTheme.titleMedium,
+            '${(value * 100).toStringAsFixed(0).padLeft(3)}%',
+            style: const SuperStyle.mono(size: 16),
           ),
         ),
       ],
@@ -166,21 +173,23 @@ class _HSLScreen extends StatefulWidget {
 }
 
 class _HSLScreenState extends State<_HSLScreen> {
-  void touchRecognition(details) {
-    final Offset offset = details.localPosition;
-    double val(double position) => (position / 360).stayInRange(0, 1);
-    widget.onChanged(1)(val(offset.dx));
-    widget.onChanged(2)(1 - val(offset.dy));
-  }
-
   @override
   Widget build(BuildContext context) {
+    final Size size = context.screenSize;
+    final double planeSize = min(size.width - 50, size.height - 600);
+    void touchRecognition(details) {
+      final Offset offset = details.localPosition;
+      double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);
+      widget.onChanged(1)(val(offset.dx));
+      widget.onChanged(2)(1 - val(offset.dy));
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         SuperContainer(
-          width: 400,
-          height: 400,
+          width: planeSize,
+          height: planeSize,
           alignment: Alignment.center,
           child: Stack(
             children: [
@@ -272,14 +281,15 @@ class _HSLSlider extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-            width: 80,
-            child: Text(
-              name,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge,
-            )),
+          width: 70,
+          child: Text(
+            name,
+            textAlign: TextAlign.right,
+            style: const SuperStyle.sans(size: 14),
+          ),
+        ),
         SizedBox(
-          width: 370,
+          width: context.screenWidth - 150,
           child: SliderTheme(
             data: const SliderThemeData(
               trackHeight: 10,
@@ -296,11 +306,11 @@ class _HSLSlider extends StatelessWidget {
           ),
         ),
         SizedBox(
-          width: 50,
+          width: 33,
           child: Text(
             name == 'hue' ? value.round().toString() : value.toStringAsFixed(2),
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: const SuperStyle.sans(),
           ),
         ),
       ],
@@ -334,6 +344,7 @@ class _ColorWheelState extends State<_ColorWheel> {
 
   @override
   Widget build(BuildContext context) {
+    final double width = min(context.screenWidth - 50, 400);
     return Column(
       children: [
         SuperContainer(
@@ -343,8 +354,8 @@ class _ColorWheelState extends State<_ColorWheel> {
           ),
           padding: const EdgeInsets.all(10),
           child: SuperContainer(
-            width: 400,
-            height: 400,
+            width: width,
+            height: width,
             padding: const EdgeInsets.all(16),
             decoration: SuperColors.colorWheel,
             child: Stack(
@@ -428,22 +439,22 @@ class _ColorWheelSlider extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text('center:  ', style: TextStyle(fontSize: 16)),
+        const Text('center:  ', style: SuperStyle.sans(size: 16)),
         SizedBox(
           width: 66,
           child: Text(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: SuperStyle.sans(
               color: index == 0 ? Colors.black38 : centerColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
+              weight: 800,
+              size: 18,
               shadows: index == 3 ? [const Shadow(blurRadius: 1)] : [],
             ),
           ),
         ),
         SizedBox(
-          width: 240,
+          width: min(240, context.screenWidth - 175),
           child: SliderTheme(
             data: const SliderThemeData(
               trackHeight: 12,
@@ -497,11 +508,11 @@ class _InverseSandboxState extends State<InverseSandbox> {
         updateHSL();
       });
 
-  static const titleStyle = TextStyle(fontSize: 28.0, letterSpacing: 0.0, height: 1.3);
-  TextStyle get colorNameStyle => TextStyle(
+  static const titleStyle = SuperStyle.sans(size: 28.0, letterSpacing: 0.0, height: 1.3);
+  SuperStyle get colorNameStyle => SuperStyle.sans(
         color: _color,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
+        size: 20,
+        weight: 800,
         shadows: [
           Shadow(color: contrastWith(_color, threshold: 0.8).withAlpha(128), blurRadius: 3)
         ],
@@ -541,7 +552,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
+      data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
         body: Center(
           child: Column(
@@ -556,16 +567,22 @@ class _InverseSandboxState extends State<InverseSandbox> {
                 duration: const Duration(milliseconds: 100),
                 curve: Curves.easeInOutCubic,
                 child: switch (_colorPicker) {
-                  _ColorPicker.cmyk => _CMYScreen(update: updateCMYKval),
+                  _ColorPicker.cmyk => _CMYKScreen(update: updateCMYKval),
                   _ColorPicker.hsl => _HSLScreen(onChangedHSL),
                   _ColorPicker.select => _ColorWheel(updateFromWheel),
                 },
               ),
               const Spacer(flex: 2),
-              ColorLabel('hue', hue),
-              ColorLabel('color name', _color.rounded.name, textStyle: colorNameStyle),
-              ColorLabel.colorCode('color code', _color.hexCode,
-                  updateColorCode: updateColorCode),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ColorLabel('hue', hue),
+                  ColorLabel('color name', _color.rounded.name, style: colorNameStyle),
+                  ColorLabel.colorCode('color code', _color.hexCode,
+                      updateColorCode: updateColorCode),
+                ],
+              ),
               const Spacer(flex: 2),
             ],
           ),

@@ -9,6 +9,7 @@ import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class StartScreen extends StatefulWidget {
@@ -126,13 +127,13 @@ class _LogoState extends SuperState<_Logo> {
           offset: Offset(0, dy),
           duration: duration,
           curve: curve,
-          child: EasyRichText(
-            style: const TextStyle(fontFamily: 'Gaegu', fontSize: 64),
+          child: SuperRichText(
+            style: const SuperStyle.gaegu(size: 64),
             [
               for (int i = 0; i < 4; i++)
                 TextSpan(
                   text: letterData[i].$1,
-                  style: TextStyle(
+                  style: SuperStyle.gaegu(
                     color: lettersVisible > i ? letterData[i].$2 : Colors.transparent,
                   ),
                 )
@@ -186,29 +187,30 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
                         Icon(Icons.headphones_outlined, size: 300),
                         Text(
                           '(headphones recommended)',
-                          style: TextStyle(fontSize: 16, letterSpacing: 0.5),
+                          style: SuperStyle.sans(size: 16, letterSpacing: 0.5),
                         )
                       ],
                     )
                   : const Text(
                       'Except that was\na complete lie.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 32),
+                      style: SuperStyle.sans(size: 32),
                     ),
               const Spacer(),
               Fader(
                 showButton,
                 child: SizedBox(
                     height: 60,
-                    child: headphones
-                        ? Center(
-                            child: ContinueButton(onPressed: () {
-                              setState(() => showStuff = false);
-                              sleep(2,
-                                  then: () => context.noTransition(const _FirstLaunchMenu()));
-                            }),
-                          )
-                        : _TruthButton(onPressed: seeTheTruth)),
+                    child:
+                        // headphones ?
+                        Center(
+                      child: ContinueButton(onPressed: () {
+                        setState(() => showStuff = false);
+                        sleep(2, then: () => context.noTransition(const _FirstLaunchMenu()));
+                      }),
+                    )
+                    // : _TruthButton(onPressed: seeTheTruth),
+                    ),
               ),
               const Spacer(),
             ],
@@ -238,10 +240,10 @@ class _TruthButtonState extends EpicState<_TruthButton> {
       ),
       onPressed: widget.onPressed,
       child: const Padding(
-        padding: EdgeInsets.only(bottom: 5),
+        padding: EdgeInsets.only(bottom: 4),
         child: Text(
           'see the truth',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
+          style: SuperStyle.sans(size: 24, weight: 400),
         ),
       ),
     );
@@ -312,17 +314,35 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
   Widget build(BuildContext context) {
     final padding =
         expanded ? const EdgeInsets.only(bottom: 34) : const EdgeInsets.only(right: 17);
+    const double size = 30;
+    const space = TextSpan(text: ' ', style: SuperStyle.sans(size: 1));
     final transparentHUEman = Padding(
       padding: padding + const EdgeInsets.only(bottom: 5),
-      child: EasyRichText(
-        style: const TextStyle(fontSize: 31, color: Colors.transparent),
+      child: SuperRichText(
+        style: const SuperStyle.sans(size: size, weight: 250),
         [
-          const TextSpan(text: 'super'),
-          TextSpan(
-            text: 'ʜᴜᴇ',
-            style: TextStyle(color: epicColor, fontSize: 32, fontWeight: FontWeight.w500),
+          const TextSpan(
+            text: 'super',
+            style: SuperStyle.sans(
+              size: size,
+              weight: 250,
+              color: Colors.transparent,
+            ),
           ),
-          const TextSpan(text: 'man'),
+          space,
+          TextSpan(
+            text: 'HUE',
+            style: SuperStyle.sans(size: size * 0.7, color: epicColor, weight: 800),
+          ),
+          space,
+          const TextSpan(
+            text: 'man',
+            style: SuperStyle.sans(
+              size: size,
+              weight: 250,
+              color: Colors.transparent,
+            ),
+          ),
         ],
       ),
     );
@@ -388,7 +408,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                     AnimatedSize(
                       duration: showAllDuration,
                       curve: curve,
-                      child: SizedBox(width: showAll ? context.screenWidth : 47),
+                      child: SizedBox(width: showAll ? context.screenWidth : 45),
                     ),
                     buffer,
                   ],
@@ -439,7 +459,7 @@ class _IntroButtonState extends State<_IntroButton> {
           children: [
             const Text(
               'intro (3 colors)',
-              style: TextStyle(color: SuperColors.white80, fontSize: 20),
+              style: SuperStyle.sans(color: SuperColors.white80, size: 20),
             ),
             const FixedSpacer(25),
             SuperButton(

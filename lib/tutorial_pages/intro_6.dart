@@ -8,6 +8,7 @@ import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 import 'package:super_hueman/pages/intro.dart';
 
@@ -94,7 +95,7 @@ class _Page1State extends SuperState<_Page1> {
             child: Column(
               children: [
                 const Spacer(),
-                const EasyText("Let's combine the primary colors,\nfor real this time."),
+                const SuperText("Let's combine the primary colors,\nfor real this time."),
                 const Spacer(flex: 4),
                 ContinueButton(onPressed: () async {
                   setState(weBallin);
@@ -137,18 +138,18 @@ class _Page2State extends SuperState<_Page2> {
     return Column(
       children: [
         const Spacer(flex: 2),
-        const EasyRichText([
-          ColorTextSpan(SuperColors.cyan, fontWeight: FontWeight.bold),
+        const SuperRichText([
+          ColorTextSpan(SuperColors.cyan, fontWeight: 900),
           TextSpan(text: ', '),
-          ColorTextSpan(SuperColors.magenta, fontWeight: FontWeight.bold),
+          ColorTextSpan(SuperColors.magenta, fontWeight: 900),
           TextSpan(text: ', and '),
-          ColorTextSpan(SuperColors.yellow, fontWeight: FontWeight.bold),
+          ColorTextSpan(SuperColors.yellow, fontWeight: 900),
           TextSpan(text: '.'),
         ]),
         const Spacer(),
         Fader(
           showPrinter,
-          child: const EasyText("That's what printers use!"),
+          child: const SuperText("That's what printers use!"),
         ),
         const Spacer(),
         Fader(
@@ -193,7 +194,7 @@ class _Page3State extends SuperState<_Page3> with SinglePress {
         const Spacer(flex: 2),
         _PrinterAnimation(showcase, printing),
         const Spacer(),
-        const EasyRichText([
+        const SuperRichText([
           TextSpan(text: "But shouldn't they use "),
           ColorTextSpan.red,
           TextSpan(text: '/'),
@@ -203,7 +204,7 @@ class _Page3State extends SuperState<_Page3> with SinglePress {
           TextSpan(text: "\nif that's what human eyes are built for?"),
         ]),
         const Spacer(flex: 2),
-        const EasyRichText([
+        const SuperRichText([
           TextSpan(text: 'How do you print '),
           ColorTextSpan.red,
           TextSpan(text: ', a primary color,\nwithout any red ink?'),
@@ -217,7 +218,7 @@ class _Page3State extends SuperState<_Page3> with SinglePress {
                 padding: EdgeInsets.only(top: 10, bottom: 13),
                 child: Text(
                   'wow, good question!',
-                  style: TextStyle(fontSize: 18),
+                  style: SuperStyle.sans(size: 18),
                 ),
               )),
         ),
@@ -272,11 +273,7 @@ class _PrinterAnimation extends StatelessWidget {
             padding: EdgeInsets.only(top: 175),
             child: Text(
               '?',
-              style: TextStyle(
-                color: SuperColors.black,
-                fontSize: 42,
-                fontWeight: FontWeight.bold,
-              ),
+              style: SuperStyle.sans(color: SuperColors.black, size: 42, weight: 800),
             ),
           ),
       ],
@@ -330,7 +327,7 @@ class _Page4State extends SuperState<_Page4> {
             const Spacer(flex: 2),
             Fader(
               showText,
-              child: EasyText(
+              child: SuperText(
                 lightBars
                     ? 'A screen starts as black,\nand then adds red/green/blue light.'
                     : 'But printers start with a white paper,\n'
@@ -380,9 +377,9 @@ class _Page4State extends SuperState<_Page4> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                EasyText('Thanks!'),
+                SuperText('Thanks!'),
                 FixedSpacer(30),
-                EasyText("Here's the answer…"),
+                SuperText("Here's the answer…"),
               ],
             ),
           ),
@@ -572,7 +569,7 @@ class _Page5State extends SuperState<_Page5> {
         Align(
           alignment: const Alignment(0, -7 / 8),
           child: Fader(showText,
-              child: const EasyText("There isn't just one set of primary colors:")),
+              child: const SuperText("There isn't just one set of primary colors:")),
         ),
         Align(
           alignment: Alignment.bottomCenter,
@@ -586,21 +583,22 @@ class _Page5State extends SuperState<_Page5> {
               alignment: Alignment.center,
               child: Column(
                 children: [
-                  const Spacer(flex: 2),
-                  Fader(
-                    showText,
-                    child: const Text(
-                      "There's two!",
-                      style: TextStyle(fontSize: 24, color: Colors.black),
+                  const Spacer(flex: 3),
+                  if (!showArrows)
+                    Fader(
+                      showText,
+                      child: const Text(
+                        "There's two!",
+                        style: SuperStyle.sans(size: 24, color: Colors.black),
+                      ),
                     ),
-                  ),
                   const Spacer(),
-                  _ColorBubbles.subtractive(counter, showArrows),
+                  SuperContainer(child: _ColorBubbles.subtractive(counter, showArrows)),
                   const Spacer(),
                   Fader(
                     showButton,
                     child: Theme(
-                        data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
+                        data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
                         child: ContinueButton(onPressed: widget.nextPage)),
                   ),
                   const Spacer(),
@@ -691,7 +689,7 @@ class _ColorBubbles extends StatelessWidget {
           showArrows,
           child: Text(
             subtract ? 'Subtractive primary colors' : 'Additive primary colors',
-            style: TextStyle(fontSize: 24, color: subtract ? Colors.black : null),
+            style: SuperStyle.sans(size: 24, color: subtract ? Colors.black : null),
           ),
         ),
         Stack(
@@ -736,11 +734,7 @@ class _ColorArrows extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(
               subtract ? 'white' : 'black',
-              style: TextStyle(
-                color: contrastColor,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: SuperStyle.sans(color: contrastColor, size: 18, weight: 800),
             ),
           ),
           Stack(
@@ -750,7 +744,7 @@ class _ColorArrows extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 75),
                 child: Text(
                   subtract ? 'absorb ${color.complement.name}' : 'add ${color.name}',
-                  style: subtract ? const TextStyle(color: Colors.black) : null,
+                  style: subtract ? const SuperStyle.sans(color: Colors.black) : null,
                 ),
               ),
               Padding(
@@ -767,7 +761,7 @@ class _ColorArrows extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 75),
                 child: Text(
                   subtract ? 'reflect ${reflectedColors[0]} + ${reflectedColors[1]}' : '',
-                  style: const TextStyle(color: Colors.black),
+                  style: const SuperStyle.sans(color: Colors.black),
                 ),
               )
             ],
@@ -796,9 +790,9 @@ class _Page6 extends StatefulWidget {
 
 class _Page6State extends SuperState<_Page6> {
   static const screenText = [
-    EasyText('You know what rustles my jimmies?'),
+    SuperText('You know what rustles my jimmies?'),
     Spacer(flex: 4),
-    EasyRichText([
+    SuperRichText([
       TextSpan(
           text: 'People who design printers know that\n'
               'the only way to access the full range of colors\n'
@@ -811,10 +805,10 @@ class _Page6State extends SuperState<_Page6> {
       TextSpan(text: ','),
     ]),
     Spacer(),
-    EasyText('and subtractive mixing applies to all pigments,\n'
+    SuperText('and subtractive mixing applies to all pigments,\n'
         'including markers and watercolors,'),
     Spacer(),
-    EasyText('but not once in elementary school art class\n'
+    SuperText('but not once in elementary school art class\n'
         'did we ever learn about cyan or magenta.'),
   ];
 
@@ -875,17 +869,13 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
     return Column(
       children: [
         const Spacer(flex: 6),
-        const EasyText('But this knowledge gap ends now.'),
+        const SuperText('But this knowledge gap ends now.'),
         const Spacer(),
-        EasyRichText([
+        SuperRichText([
           const TextSpan(text: "It's time to learn "),
           TextSpan(
-            text: 'ᴀʟʟ',
-            style: TextStyle(
-              color: epicColor,
-              fontSize: 21,
-              fontWeight: FontWeight.w600,
-            ),
+            text: 'ALL',
+            style: SuperStyle.sans(color: epicColor, size: 16, weight: 800, width: 87.5),
           ),
           const TextSpan(text: '\nof the primary color hues.'),
         ]),
@@ -908,7 +898,7 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
             ),
             child: const Padding(
               padding: EdgeInsets.fromLTRB(20, 10, 20, 14),
-              child: Text("let's do it", style: TextStyle(fontSize: 24)),
+              child: Text("let's do it", style: SuperStyle.sans(size: 24)),
             ),
           ),
         ),

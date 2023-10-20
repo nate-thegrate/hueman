@@ -4,6 +4,7 @@ import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/photo_colors.dart';
 import 'package:super_hueman/data/super_container.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/hue_typing_game.dart';
 import 'package:super_hueman/data/save_data.dart';
@@ -39,8 +40,8 @@ class IntenseScoreKeeper implements ScoreKeeper {
 
   @override
   Widget get midRoundDisplay {
-    const TextStyle style = TextStyle(fontSize: 24);
-    final Widget roundLabel = Text('round ${round + 1} / 30', style: style);
+    const style = SuperStyle.sans(size: 24);
+    final roundLabel = Text('round ${round + 1} / 30', style: style);
     if (round == 0) return roundLabel;
 
     final Widget accuracyDesc =
@@ -71,7 +72,7 @@ class IntenseScoreKeeper implements ScoreKeeper {
   @override
   Widget get finalScore => Text(
         (30 * scores.average * (superCount + 1)).round().toString(),
-        style: const TextStyle(fontSize: 32),
+        style: const SuperStyle.sans(size: 32),
       );
 
   @override
@@ -83,7 +84,7 @@ class IntenseScoreKeeper implements ScoreKeeper {
     }
     return Text(
       scoreDesc,
-      style: const TextStyle(fontSize: 18, color: Colors.white54),
+      style: const SuperStyle.sans(size: 18, color: Colors.white54),
     );
   }
 
@@ -123,7 +124,7 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
 
   @override
   Widget get midRoundDisplay {
-    const TextStyle style = TextStyle(fontSize: 24);
+    const style = SuperStyle.sans(size: 24);
     final Color? cardColor = Color.lerp(c, Colors.white, pow(c.computeLuminance(), 2).toDouble());
 
     final Widget roundLabel = Text('round ${round + 1} / 30', style: style);
@@ -132,7 +133,7 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
       child: Text(
         'rank: $rank',
         style: rank == 100
-            ? const TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold)
+            ? const SuperStyle.sans(size: 30, color: Colors.black, weight: 800)
             : style,
       ),
     );
@@ -149,7 +150,7 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
   @override
   Widget get finalScore => Text(
         (rank * max(1, turnsAtRank100) * (superCount + 1)).toString(),
-        style: const TextStyle(fontSize: 32),
+        style: const SuperStyle.sans(size: 32),
       );
 
   @override
@@ -165,7 +166,7 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
     return Text(
       finalDesc,
       textAlign: TextAlign.center,
-      style: const TextStyle(fontSize: 18, color: Colors.white54),
+      style: const SuperStyle.sans(size: 18, color: Colors.white54),
     );
   }
 
@@ -185,7 +186,7 @@ class SawEveryPic extends StatelessWidget {
       title: const Text('Congrats!'),
       content: const Text(
         "You've made it through every image!",
-        style: TextStyle(fontSize: 16),
+        style: SuperStyle.sans(size: 16),
       ),
       actions: [
         Center(
@@ -196,7 +197,7 @@ class SawEveryPic extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
               child: Text(
                 'back to menu',
-                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                style: SuperStyle.sans(size: 16),
               ),
             ),
           ),

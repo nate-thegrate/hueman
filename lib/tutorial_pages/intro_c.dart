@@ -9,6 +9,7 @@ import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 import 'package:super_hueman/pages/intro.dart';
 
@@ -90,11 +91,11 @@ class _Page1State extends SuperState<_Page1> with SinglePress {
 
     await sleepState(
       1,
-      () => funkyText = const EasyText('Yeah sorry, that was a trick question.'),
+      () => funkyText = const SuperText('Yeah sorry, that was a trick question.'),
     );
     advance();
 
-    await sleepState(2, () => questionText = const EasyText("Here's the RGB:"));
+    await sleepState(2, () => questionText = const SuperText("Here's the RGB:"));
     advance();
 
     await sleep(1, then: advance); // show RGB
@@ -132,8 +133,8 @@ class _Page1State extends SuperState<_Page1> with SinglePress {
     super.dispose();
   }
 
-  Widget funkyText = const EasyText('Something funky is going on\nwith these colors…');
-  Widget questionText = const EasyText("What's changing?");
+  Widget funkyText = const SuperText('Something funky is going on\nwith these colors…');
+  Widget questionText = const SuperText("What's changing?");
   Widget tryAgainBody = empty;
   @override
   Widget build(BuildContext context) {
@@ -222,7 +223,7 @@ class _SecondTry extends StatelessWidget {
               const Spacer(flex: 4),
               Fader(
                 progress > 9 && progress < 12,
-                child: const EasyRichText([
+                child: const SuperRichText([
                   TextSpan(text: 'The '),
                   ColorTextSpan.red,
                   TextSpan(text: ' was just getting lighter and darker,\nbut the '),
@@ -233,7 +234,7 @@ class _SecondTry extends StatelessWidget {
               const Spacer(),
               Fader(
                 progress > 10 && progress < 12,
-                child: const EasyText(
+                child: const SuperText(
                     "Let's try it again:\nthis time, both colors are gonna act the same way."),
               ),
               const Spacer(flex: 4),
@@ -278,7 +279,7 @@ class _TrickButton extends StatelessWidget {
                   ],
                 ),
                 const FixedSpacer(5),
-                EasyText('hue: ${funColor.hue.round()}°'),
+                SuperText('hue: ${funColor.hue.round()}°'),
               ],
             )
           : OutlinedButton(
@@ -292,7 +293,7 @@ class _TrickButton extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 6, bottom: 9),
                 child: Text(
                   label,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
+                  style: const SuperStyle.sans(size: 20, weight: 100),
                 ),
               ),
             ),
@@ -372,17 +373,17 @@ class _Page2State extends SuperState<_Page2> {
   }
 
   static const List<Widget> text = [
-    EasyText(
+    SuperText(
       'Back in the 1400s,\n'
       'both of these colors were called "red",\n'
       'and people had trouble telling them apart.',
     ),
-    EasyText(
+    SuperText(
       'But then in the 1500s,\n'
       'somebody decided that orange (the fruit)\n'
       'should also be a color name.',
     ),
-    EasyRichText([
+    SuperRichText([
       TextSpan(text: 'And now that '),
       ColorTextSpan.orange,
       TextSpan(text: ' is in our color vocabulary,\ndistinguishing it from '),
@@ -393,15 +394,15 @@ class _Page2State extends SuperState<_Page2> {
   ];
 
   late final List<Widget> text2 = [
-    const EasyText('These "shades of blue"\nare really two different colors.'),
-    const EasyRichText([
+    const SuperText('These "shades of blue"\nare really two different colors.'),
+    const SuperRichText([
       TextSpan(text: 'And just like with '),
       ColorTextSpan.red,
       TextSpan(text: ' & '),
       ColorTextSpan.orange,
       TextSpan(text: ',\nour brains can be trained to distinguish them.'),
     ]),
-    const EasyText('We just need a better color vocabulary.'),
+    const SuperText('We just need a better color vocabulary.'),
     ContinueButton(onPressed: widget.nextPage),
   ];
 
@@ -440,9 +441,9 @@ class _Page2State extends SuperState<_Page2> {
                       ? const FadeIn(
                           child: Text(
                             'blue',
-                            style: TextStyle(
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold,
+                            style: SuperStyle.sans(
+                              size: 36,
+                              weight: 800,
                               color: SuperColors.darkBackground,
                             ),
                           ),
@@ -464,9 +465,9 @@ class _Page2State extends SuperState<_Page2> {
                       ? const FadeIn(
                           child: Text(
                             'azure',
-                            style: TextStyle(
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold,
+                            style: SuperStyle.sans(
+                              size: 36,
+                              weight: 800,
                               color: SuperColors.darkBackground,
                             ),
                           ),
@@ -559,14 +560,14 @@ class _Page3State extends SuperState<_Page3> {
                 showLeftDesc,
                 child: const Text(
                   'on the left: the color vocabulary I grew up with',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
+                  style: SuperStyle.sans(size: 20, weight: 100),
                 ),
               ),
               Fader(
                 showRightDesc,
                 child: const Text(
                   'on the right: my color vocabulary now',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
+                  style: SuperStyle.sans(size: 20, weight: 100),
                 ),
               ),
             ],
@@ -622,9 +623,9 @@ class _VocabLine extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 2),
         child: Text(
           label ?? color.name,
-          style: TextStyle(
-            fontSize: (context.screenHeight - 0x80) / 0x20,
-            fontWeight: FontWeight.w100,
+          style: SuperStyle.sans(
+            size: (context.screenHeight - 0x80) / 0x20,
+            weight: 100,
             height: -1 / 3,
           ),
         ),
@@ -715,7 +716,8 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
   @override
   Widget build(BuildContext context) {
     final SuperColor color = epicColor;
-
+    const double size = 30;
+    const space = TextSpan(text: ' ', style: SuperStyle.sans(size: 1));
     return AnimatedContainer(
       duration: oneSec,
       width: 400,
@@ -726,29 +728,21 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
       child: Column(
         children: [
           const Spacer(),
-          const EasyText('6 new hues at once.'),
+          const SuperText('6 new hues at once.'),
           const FixedSpacer(25),
           Fader(
             superDifficult,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const EasyText('super', size: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
-                  child: Text(
-                    'ᴅɪғғɪᴄᴜʟᴛ',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: color,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2 / 3,
-                    ),
-                  ),
+            child: SuperRichText(
+              style: const SuperStyle.sans(size: size, weight: 250),
+              [
+                const TextSpan(text: 'super'),
+                space,
+                TextSpan(
+                  text: 'DIFFICULT',
+                  style: SuperStyle.sans(size: size * 0.7, color: color, weight: 800),
                 ),
-                const EasyText('.', size: 24),
+                space,
+                const TextSpan(text: '.'),
               ],
             ),
           ),
@@ -768,7 +762,15 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
                 child: expandButton
                     ? const Padding(
                         padding: EdgeInsets.all(8),
-                        child: Text("let's do it", style: TextStyle(fontSize: 24)),
+                        child: Text(
+                          "let's do it",
+                          style: SuperStyle.sans(
+                            size: 24,
+                            weight: 350,
+                            extraBold: true,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
                       )
                     : empty,
               ),

@@ -72,8 +72,8 @@ class SuperColor extends Color {
 
   SuperColor get complement => SuperColor.rgb(0xFF - red, 0xFF - green, 0xFF - blue).rounded;
   SuperColor get rounded {
-    const easterEgg = SuperColor.named('Kali 🙂', 0x8080FF);
-    if (colorCode == 0x8080FF) return easterEgg;
+    // const easterEgg = SuperColor.named('Kali 🙂', 0x8080FF);
+    // if (colorCode == 0x8080FF) return easterEgg;
 
     int snapToVals(int rgbVal) {
       const int tolerance = 0x0F;

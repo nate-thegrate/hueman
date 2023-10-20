@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/pages/intense_master.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
@@ -30,7 +31,7 @@ class _NumberButton extends StatelessWidget {
         12 => const Icon(Icons.done, color: color, size: 36),
         _ => Text(
             number.toString(),
-            style: const TextStyle(fontSize: 32, color: color),
+            style: const SuperStyle.sans(size: 32, color: color),
           ),
       };
 
@@ -166,7 +167,7 @@ class _AnswerFeedback extends StatelessWidget {
   const _AnswerFeedback(this.val, {required this.text});
   final int val;
   final String text; //, super.key});
-  static const TextStyle style = TextStyle(fontSize: 16);
+  static const SuperStyle style = SuperStyle.sans(size: 16);
 
   @override
   Widget build(BuildContext context) {
@@ -224,8 +225,8 @@ class PercentGrade extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget line = _PercentBar(accuracy * 2, color);
     final Widget fullLine = Row(children: [line, const Spacer(), line]);
-    const TextStyle style = TextStyle(
-      fontSize: 18,
+    const style = SuperStyle.sans(
+      size: 18,
       shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
     );
     return SuperContainer(
@@ -278,13 +279,9 @@ class _HundredPercentGradeState extends State<HundredPercentGrade> {
 
   @override
   Widget build(BuildContext context) {
-    const Widget line = _PercentBar();
-    const Widget fullLine = Row(children: [line, Spacer(), line]);
-    const TextStyle style = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 30,
-      color: Colors.black,
-    );
+    const line = _PercentBar();
+    const fullLine = Row(children: [line, Spacer(), line]);
+    const style = SuperStyle.sans(weight: 800, size: 30, color: Colors.black);
 
     return SuperContainer(
       margin: const EdgeInsets.all(20),
@@ -363,11 +360,11 @@ class _HueDialogState extends State<HueDialog> {
             widget.text,
             textAlign: TextAlign.center,
             style: isSuper
-                ? TextStyle(
+                ? SuperStyle.sans(
                     shadows: const [Shadow(blurRadius: 8)],
-                    fontSize: 42,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.bold,
+                    size: 42,
+                    italic: true,
+                    weight: 800,
                     color: epicColor,
                   )
                 : null,
@@ -387,10 +384,10 @@ class _HueDialogState extends State<HueDialog> {
                 Text(
                   'all game modes\nunlocked!',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: SuperStyle.sans(
                     color: epicColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
+                    weight: 800,
+                    size: 24,
                     shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
                   ),
                 ),
@@ -448,11 +445,7 @@ class _GameScreen extends StatelessWidget {
                 const Text(
                   'What\'s the hue?',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Segoe UI',
-                    fontSize: 28,
-                    letterSpacing: 0,
-                  ),
+                  style: SuperStyle.sans(size: 28, letterSpacing: 0),
                 ),
                 ...userInput,
                 const Spacer(),
@@ -536,7 +529,7 @@ class KeyboardGame extends StatelessWidget {
             ),
             child: const Padding(
               padding: EdgeInsets.fromLTRB(0, 8, 0, 10),
-              child: Text('submit', style: TextStyle(fontSize: 16)),
+              child: Text('submit', style: SuperStyle.sans(size: 16)),
             )),
         const Spacer(flex: 2),
       ],
@@ -577,7 +570,7 @@ class NumPadGame extends StatelessWidget {
     return _GameScreen(
       [
         const Spacer(),
-        Center(child: Text(numPadVal, style: const TextStyle(fontSize: 32))),
+        Center(child: Text(numPadVal, style: const SuperStyle.sans(size: 32))),
         const Spacer(),
         numPad(submit),
       ],

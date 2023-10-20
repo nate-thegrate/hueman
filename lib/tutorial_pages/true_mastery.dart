@@ -7,6 +7,7 @@ import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 const _balls = 75;
@@ -92,7 +93,7 @@ class _TrueMasteryTutorialState extends SuperState<TrueMasteryTutorial> {
                     child: Text(
                       text,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 24, shadows: shadows),
+                      style: const SuperStyle.sans(size: 24, shadows: shadows),
                     ),
                   ),
                 ),

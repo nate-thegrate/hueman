@@ -5,6 +5,7 @@ import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class MainMenu extends StatefulWidget {
@@ -74,7 +75,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
           ),
           child: const Padding(
             padding: EdgeInsets.fromLTRB(20, 10, 20, 14),
-            child: Text('invert!', style: TextStyle(fontSize: 24)),
+            child: Text('invert!', style: SuperStyle.sans(size: 24)),
           ),
         ),
       ],
@@ -99,7 +100,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
         },
         child: const Padding(
           padding: EdgeInsets.only(top: 7, bottom: 10),
-          child: Text('more options', style: TextStyle(fontSize: 18)),
+          child: Text('more options', style: SuperStyle.sans(size: 18)),
         ),
       )),
       AnimatedSize(
@@ -112,7 +113,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
               ? const Text(
                   'unlock more options\nby playing "intense" mode!',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white70),
+                  style: SuperStyle.sans(color: Colors.white70),
                 )
               : null,
         ),
@@ -123,42 +124,46 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
       MenuPage.main => [
           SuperHUEman(color),
           AnimatedSize(
+            key: const ObjectKey(MenuPage.main),
             duration: halfSec,
             curve: curve,
             child: showButtons
-                ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const FixedSpacer(67),
-                      SuperButton(
-                        'intro',
-                        color: color,
-                        onPressed: () => setState(() => menuPage = MenuPage.introSelect),
-                        noDelay: true,
-                        isNew: !Tutorials.introC,
-                      ),
-                      if (Tutorials.introC) ...[
-                        const FixedSpacer(33),
-                        NavigateButton(Pages.intense, color: color, isNew: !Tutorials.intense),
-                        if (hueMaster)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 33),
-                            child: NavigateButton(
-                              Pages.master,
-                              color: color,
-                              isNew: !Tutorials.master,
-                            ),
-                          ),
+                ? SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
                         const FixedSpacer(67),
-                        NavigateButton(
-                          Pages.sandbox,
+                        SuperButton(
+                          'intro',
                           color: color,
-                          isNew: !Tutorials.sandbox,
+                          onPressed: () => setState(() => menuPage = MenuPage.introSelect),
+                          noDelay: true,
+                          isNew: !Tutorials.introC,
                         ),
+                        if (Tutorials.introC) ...[
+                          const FixedSpacer(33),
+                          NavigateButton(Pages.intense, color: color, isNew: !Tutorials.intense),
+                          if (hueMaster)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 33),
+                              child: NavigateButton(
+                                Pages.master,
+                                color: color,
+                                isNew: !Tutorials.master,
+                              ),
+                            ),
+                          const FixedSpacer(67),
+                          NavigateButton(
+                            Pages.sandbox,
+                            color: color,
+                            isNew: !Tutorials.sandbox,
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   )
-                : const SizedBox(width: 150),
+                : flat,
           ),
         ],
       MenuPage.settings => [
@@ -195,10 +200,10 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
           ...hueMaster ? masterSettings : noviceSettings,
         ],
       MenuPage.introSelect => [
-          Text(
+          const Text(
             'intro',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineLarge,
+            style: SuperStyle.sans(size: 32, weight: 100),
           ),
           const FixedSpacer(55),
           NavigateButton(Pages.intro3, color: color, isNew: !Tutorials.intro3),
@@ -216,7 +221,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
               child: Text(
                 "during 'intro' games,\nquick answers score higher!",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white60),
+                style: SuperStyle.sans(color: Colors.white60),
               ),
             )
           else if (Tutorials.intro3)
@@ -225,47 +230,40 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
               child: Text(
                 'tap a completed intro level\nto play in casual mode',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white60),
+                style: SuperStyle.sans(color: Colors.white60),
               ),
             ),
         ],
     };
 
-    Widget settingsButton = TextButton(
-      style: mainMenu
-          ? TextButton.styleFrom(
-              foregroundColor: color,
-              backgroundColor: Colors.black,
-            )
-          : TextButton.styleFrom(
-              foregroundColor: Colors.white70,
-              backgroundColor: Colors.black26,
-            ),
-      onPressed: () {
-        if (mainMenu) {
-          setState(() => menuPage = MenuPage.settings);
-        } else {
-          setState(() => menuPage = MenuPage.main);
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: mainMenu
-            ? const Padding(
-                padding: EdgeInsets.only(bottom: 2),
-                child: Text(
-                  'settings',
-                  style: TextStyle(fontSize: 16),
-                ),
-              )
-            : const Text(
-                'back',
-                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-              ),
-      ),
-    );
-    if (menuPage == MenuPage.main && Tutorials.master && !Tutorials.sawInversion) {
-      settingsButton = BrandNew(color: color, child: settingsButton);
+    Widget settingsButton;
+    if (mainMenu) {
+      settingsButton = TextButton(
+        style: TextButton.styleFrom(
+          foregroundColor: color,
+          backgroundColor: Colors.black,
+        ),
+        onPressed: () => setState(() => menuPage = MenuPage.settings),
+        child: const Padding(
+          padding: EdgeInsets.fromLTRB(8, 7, 8, 10),
+          child: Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
+        ),
+      );
+      if (Tutorials.master && !Tutorials.sawInversion) {
+        settingsButton = BrandNew(color: color, child: settingsButton);
+      }
+    } else {
+      settingsButton = TextButton(
+        style: TextButton.styleFrom(
+          foregroundColor: Colors.white70,
+          backgroundColor: Colors.black26,
+        ),
+        onPressed: () => setState(() => menuPage = MenuPage.main),
+        child: const Padding(
+          padding: EdgeInsets.fromLTRB(8, 7, 8, 8),
+          child: Text('back', style: SuperStyle.sans(size: 16, weight: 100)),
+        ),
+      );
     }
 
     return Scaffold(
@@ -275,13 +273,8 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Fader(
-                  showButtons,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: settingsButton,
-                  ),
-                ),
+                Fader(showButtons, child: settingsButton),
+                const FixedSpacer(30),
                 SuperContainer(
                   decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
                   width: 300,
@@ -289,11 +282,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
                   child: AnimatedSize(
                     duration: quarterSec,
                     curve: curve,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: children,
-                    ),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: children),
                   ),
                 ),
               ],
@@ -346,13 +335,12 @@ class _BugReport extends StatelessWidget {
     return OutlinedButton(
       onPressed: () => gotoWebsite('https://forms.gle/H9k2LhzJtWRfU1Q2A'),
       style: OutlinedButton.styleFrom(
-          side: BorderSide(color: color, width: 2), foregroundColor: color),
+        side: BorderSide(color: color, width: 2),
+        foregroundColor: color,
+      ),
       child: const Padding(
         padding: EdgeInsets.fromLTRB(4, 6, 4, 8),
-        child: Text(
-          'report a bug',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
-        ),
+        child: Text('report a bug', style: SuperStyle.sans(size: 18)),
       ),
     );
   }

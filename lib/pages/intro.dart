@@ -1,5 +1,6 @@
 import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/super_color.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/pages/hue_typing_game.dart';
 import 'package:super_hueman/data/save_data.dart';
@@ -41,7 +42,7 @@ class TutorialScoreKeeper implements ScoreKeeper {
   void scoreTheRound() => scoring();
 
   @override
-  Widget get midRoundDisplay => EasyText('hues found: $numCorrect / $numColors');
+  Widget get midRoundDisplay => SuperText('hues found: $numCorrect / $numColors');
 
   @override
   Widget get finalScore => empty;
@@ -81,9 +82,9 @@ class IntroScoreKeeper implements ScoreKeeper {
 
   @override
   Widget get midRoundDisplay {
-    final Widget roundLabel = EasyText('round ${round + 1} / 30');
+    final Widget roundLabel = SuperText('round ${round + 1} / 30');
     if (round == 0) return roundLabel;
-    final Widget accuracyDesc = EasyText('accuracy: ${accuracy.round()}%');
+    final Widget accuracyDesc = SuperText('accuracy: ${accuracy.round()}%');
 
     return Column(children: [roundLabel, accuracyDesc]);
   }
@@ -92,13 +93,13 @@ class IntroScoreKeeper implements ScoreKeeper {
   Widget get finalDetails => Text(
         '(${colorsPerMinute.toStringAsFixed(1)} colors per minute) '
         '\u00d7 (${accuracy.round()}% accuracy)',
-        style: const TextStyle(fontSize: 18, color: Colors.white54),
+        style: const SuperStyle.sans(size: 18, color: Colors.white54),
       );
 
   @override
   Widget get finalScore => Text(
         (colorsPerMinute * accuracy).round().toString(),
-        style: const TextStyle(fontSize: 32),
+        style: const SuperStyle.sans(size: 32),
       );
 
   @override

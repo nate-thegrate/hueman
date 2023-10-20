@@ -4,6 +4,7 @@ import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/tutorial_pages/game_end.dart';
 import 'package:super_hueman/data/save_data.dart';
@@ -53,14 +54,14 @@ class TrueMasteryScoreKeeper implements ScoreKeeper {
     return Text(
       scoreDesc,
       textAlign: TextAlign.center,
-      style: const TextStyle(fontSize: 18, color: Colors.black54),
+      style: const SuperStyle.sans(size: 18, color: Colors.black54),
     );
   }
 
   @override
   Widget get finalScore => Text(
         (score * (superCount + 1)).toStringAsFixed(1),
-        style: const TextStyle(fontSize: 32),
+        style: const SuperStyle.sans(size: 32),
       );
 
   @override
@@ -124,7 +125,7 @@ class _TrueMasteryState extends State<TrueMastery> {
     // ignore: avoid_print
     print(color);
     return Theme(
-      data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
+      data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
         body: Center(
           child: Column(
@@ -171,7 +172,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                       children: [
                         const Text(
                           'color code:',
-                          style: TextStyle(fontFamily: 'Inconsolata', fontSize: 20),
+                          style: SuperStyle.mono(size: 20),
                         ),
                         const FixedSpacer.horizontal(10),
                         TextButton(
@@ -188,7 +189,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                           },
                           child: Text(
                             userColorCode,
-                            style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 20),
+                            style: const SuperStyle.mono(size: 20),
                           ),
                         ),
                       ],
@@ -210,7 +211,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                       ),
                       child: const Padding(
                         padding: EdgeInsets.only(bottom: 4),
-                        child: Text('submit', style: TextStyle(fontSize: 24)),
+                        child: Text('submit', style: SuperStyle.sans(size: 24)),
                       ),
                     ),
                     scoreKeeper == null ? empty : scoreKeeper!.midRoundDisplay,
@@ -302,19 +303,19 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
 
   late final List<DataRow> rows = [
     DataRow(cells: [
-      const DataCell(Center(child: Text('guess', style: TextStyle(fontWeight: FontWeight.w600)))),
-      DataCell(_Base10PlusHex(guess.red)),
-      DataCell(_Base10PlusHex(guess.green)),
-      DataCell(_Base10PlusHex(guess.blue)),
+      const DataCell(Center(child: Text('guess', style: SuperStyle.sans(weight: 600)))),
+      DataCell(_HexText(guess.red)),
+      DataCell(_HexText(guess.green)),
+      DataCell(_HexText(guess.blue)),
     ]),
     DataRow(cells: [
-      const DataCell(Center(child: Text('true', style: TextStyle(fontWeight: FontWeight.w600)))),
-      DataCell(_Base10PlusHex(actual.red)),
-      DataCell(_Base10PlusHex(actual.green)),
-      DataCell(_Base10PlusHex(actual.blue)),
+      const DataCell(Center(child: Text('true', style: SuperStyle.sans(weight: 600)))),
+      DataCell(_HexText(actual.red)),
+      DataCell(_HexText(actual.green)),
+      DataCell(_HexText(actual.blue)),
     ]),
     DataRow(cells: [
-      const DataCell(Center(child: Text('diff', style: TextStyle(fontWeight: FontWeight.w600)))),
+      const DataCell(Center(child: Text('diff', style: SuperStyle.sans(weight: 600)))),
       DataCell(Center(child: Text(redOffBy.toString()))),
       DataCell(Center(child: Text(greenOffBy.toString()))),
       DataCell(Center(child: Text(blueOffBy.toString()))),
@@ -333,10 +334,10 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
           child: offBy == 0
               ? Text(
                   '100%',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                  style: SuperStyle.sans(
+                    weight: 800,
                     color: inverseColor,
-                    fontSize: 18,
+                    size: 18,
                     shadows: [
                       for (double i = 0.5; i <= 3; i += 0.5)
                         Shadow(blurRadius: i, color: Colors.white),
@@ -347,12 +348,12 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
         ),
       );
 
-  static const equals = Text(' = ', style: TextStyle(fontSize: 18, height: -0.2));
+  static const equals = Text(' = ', style: SuperStyle.sans(size: 18, height: -0.2));
 
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
+      data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Stack(
         children: [
           AlertDialog(
@@ -376,7 +377,7 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
                           child: Text(
                             'match %',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontWeight: FontWeight.w600),
+                            style: SuperStyle.sans(weight: 600),
                           ),
                         ),
                       ),
@@ -390,17 +391,13 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('score:', style: TextStyle(fontSize: 18)),
+                    const Text('score:', style: SuperStyle.sans(size: 18)),
                     const FixedSpacer.horizontal(10),
                     Column(
                       children: [
                         const Text(
                           '0xFF \u00d7 3',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'Inconsolata',
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: SuperStyle.mono(size: 16, weight: 600),
                         ),
                         SuperContainer(
                           decoration: const BoxDecoration(border: Border(top: BorderSide())),
@@ -415,7 +412,7 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
                         ? empty
                         : Text(
                             thisRoundScore.toStringAsFixed(1),
-                            style: const TextStyle(fontSize: 18, height: -0.15),
+                            style: const SuperStyle.sans(size: 18, height: -0.15),
                           ),
                   ],
                 ),
@@ -473,10 +470,9 @@ class _ScoreTitleState extends State<_ScoreTitle> {
         child: Text(
           '$label: ${widget.color.hexCode}',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Inconsolata',
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+          style: SuperStyle.mono(
+            weight: 800,
+            size: 20,
             color: contrastWith(widget.color).withAlpha(0xCC),
           ),
         ),
@@ -579,15 +575,15 @@ class _ErrorScreen extends StatelessWidget {
         padding: EdgeInsets.all(context.screenWidth / 16),
         child: Text(
           text,
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: const SuperStyle.sans(color: Colors.white, size: 16),
         ),
       ),
     );
   }
 }
 
-class _Base10PlusHex extends StatelessWidget {
-  const _Base10PlusHex(this.value);
+class _HexText extends StatelessWidget {
+  const _HexText(this.value);
   final int value;
 
   @override
@@ -595,11 +591,7 @@ class _Base10PlusHex extends StatelessWidget {
     return Center(
       child: Text(
         value.hexByte,
-        style: const TextStyle(
-          fontFamily: 'Inconsolata',
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        ),
+        style: const SuperStyle.mono(size: 16, weight: 600),
       ),
     );
   }
@@ -649,11 +641,7 @@ class _RGBSlider extends StatelessWidget {
           child: Text(
             displayValue,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: 'Inconsolata',
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const SuperStyle.mono(size: 16, weight: 600),
           ),
         ),
       ],

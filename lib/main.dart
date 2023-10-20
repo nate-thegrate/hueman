@@ -10,7 +10,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: const ColorScheme.dark(primary: Colors.white),
-        fontFamily: 'Roboto',
+        fontFamily: 'nunito sans',
       ),
       routes: Pages.routes,
       initialRoute: Pages.initialRoute,

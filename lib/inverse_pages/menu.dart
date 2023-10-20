@@ -5,6 +5,7 @@ import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 import 'package:super_hueman/tutorial_pages/true_mastery.dart';
 
@@ -43,10 +44,9 @@ class _InverseMenuState extends InverseState<InverseMenu>
     }
   }
 
-  static const TextStyle titleStyle = TextStyle(
+  static const SuperStyle titleStyle = SuperStyle.sans(
     color: Colors.black,
-    fontSize: 32,
-    fontWeight: FontWeight.w400,
+    size: 32,
     height: 1.3,
   );
 
@@ -100,12 +100,18 @@ class _InverseMenuState extends InverseState<InverseMenu>
                             backgroundColor: color,
                             foregroundColor: Colors.white,
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 8, 0, 13),
+                          child: const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 8, 0, 13),
                             child: Text(
-                              Pages.trueMastery(),
+                              'true\nmastery',
                               textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 24, height: 0.95),
+                              style: SuperStyle.sans(
+                                size: 24,
+                                weight: 350,
+                                extraBold: true,
+                                letterSpacing: 0.5,
+                                height: 0.95,
+                              ),
                             ),
                           ),
                         ),
@@ -152,7 +158,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 padding: EdgeInsets.fromLTRB(3, 6, 3, 7),
                 child: Text(
                   'how to win',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: SuperStyle.sans(size: 16, weight: 600),
                 ),
               ),
             ),
@@ -171,7 +177,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
               ),
               child: const Padding(
                 padding: EdgeInsets.fromLTRB(10, 10, 10, 14),
-                child: Text('revert', style: TextStyle(fontSize: 24)),
+                child: Text('revert', style: SuperStyle.sans(size: 24)),
               ),
             ),
           ),
@@ -188,14 +194,14 @@ class _InverseMenuState extends InverseState<InverseMenu>
             const Text(
               'you get a bonus when\nanswering correctly with\na full health bar!',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black54),
+              style: SuperStyle.sans(color: Colors.black54),
             ),
           ],
         ],
       MenuPage.howToWin => [
           Text(
             "If you're ready to finish the game, you can follow these steps:",
-            style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w500),
+            style: SuperStyle.sans(color: color, size: 16, weight: 500),
           ),
           for (int i = 1; i <= 6; i++)
             Padding(
@@ -205,12 +211,12 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 children: [
                   Text(
                     '$i:  ',
-                    style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w500),
+                    style: SuperStyle.sans(color: color, size: 16, weight: 500),
                   ),
                   if (hintsVisible >= i)
                     Padding(
                       padding: const EdgeInsets.only(top: 1),
-                      child: Text(hints[i - 1]),
+                      child: Text(hints[i - 1], style: const SuperStyle.sans(width: 96)),
                     ),
                 ],
               ),
@@ -226,17 +232,47 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 ),
                 child: const Padding(
                   padding: EdgeInsets.fromLTRB(0, 8, 0, 10),
-                  child: Text('show next hint', style: TextStyle(fontSize: 18)),
+                  child: Text('show next hint', style: SuperStyle.sans(size: 18)),
                 ),
               ),
             ),
         ],
     };
 
+    Widget settingsButton;
+    if (mainMenu) {
+      settingsButton = TextButton(
+        style: TextButton.styleFrom(
+          foregroundColor: color,
+          backgroundColor: Colors.white,
+        ),
+        onPressed: () => setState(() => menuPage = MenuPage.settings),
+        child: const Padding(
+          padding: EdgeInsets.fromLTRB(8, 7, 8, 10),
+          child: Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
+        ),
+      );
+      if (Tutorials.master && !Tutorials.sawInversion) {
+        settingsButton = BrandNew(color: color, child: settingsButton);
+      }
+    } else {
+      settingsButton = TextButton(
+        style: TextButton.styleFrom(
+          foregroundColor: color,
+          backgroundColor: Colors.white54,
+        ),
+        onPressed: () => setState(() => menuPage = MenuPage.main),
+        child: const Padding(
+          padding: EdgeInsets.fromLTRB(8, 7, 8, 8),
+          child: Text('back', style: SuperStyle.sans(size: 16, weight: 100)),
+        ),
+      );
+    }
+
     return Theme(
       data: ThemeData(
         useMaterial3: true,
-        fontFamily: 'Roboto',
+        fontFamily: 'nunito sans',
         checkboxTheme: CheckboxThemeData(fillColor: MaterialStatePropertyAll(color)),
       ),
       child: Stack(
@@ -246,43 +282,10 @@ class _InverseMenuState extends InverseState<InverseMenu>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Fader(
-                    showButtons,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 30),
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: color,
-                          backgroundColor: mainMenu ? Colors.white : Colors.white54,
-                        ),
-                        onPressed: () => setState(
-                          () => menuPage = (mainMenu) ? MenuPage.settings : MenuPage.main,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: mainMenu
-                              ? const Padding(
-                                  padding: EdgeInsets.only(bottom: 2),
-                                  child: Text(
-                                    'settings',
-                                    style: TextStyle(fontSize: 16, letterSpacing: 0.5),
-                                  ),
-                                )
-                              : const Text(
-                                  'back',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 16,
-                                      letterSpacing: 0.5),
-                                ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  Fader(showButtons, child: settingsButton),
+                  const FixedSpacer(30),
                   SuperContainer(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: color, width: 2),
-                    ),
+                    decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
                     width: 300,
                     padding: const EdgeInsets.all(50),
                     child: AnimatedSize(
@@ -364,17 +367,18 @@ class _TrueMasteryAnimationState extends SuperState<_TrueMasteryAnimation> {
           child: SuperContainer(color: widget.color),
         ),
         const Padding(
-          padding: EdgeInsets.only(top: 218),
+          padding: EdgeInsets.only(top: 210),
           child: Text(
             'true\nmastery',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: SuperStyle.sans(
+              size: 24,
+              weight: 350,
+              extraBold: true,
+              letterSpacing: 0.5,
+              height: 0.95,
               color: Colors.white,
-              fontFamily: 'Roboto',
-              fontSize: 24,
-              fontWeight: FontWeight.w500,
               decoration: TextDecoration.none,
-              height: 1,
             ),
           ),
         ),

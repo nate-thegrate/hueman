@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/pages/intro.dart';
 import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/widgets.dart';
@@ -90,13 +91,13 @@ class _Page1State extends SuperState<_Page1> {
     return Column(
       children: [
         const Spacer(flex: 2),
-        const EasyText(
+        const SuperText(
           'Humans have trichromatic vision.',
         ),
         const Spacer(),
         Fader(
           weSee,
-          child: const EasyText(
+          child: const SuperText(
             'We see colors because of\n'
             '3 types of cone cells in the retina.',
           ),
@@ -182,7 +183,7 @@ class _Page2State extends SuperState<_Page2> {
                       Fader(
                         visible || !buttonVisible,
                         duration: duration,
-                        child: const EasyText(
+                        child: const SuperText(
                           'These 3 cone cell types\nreact to different light frequencies.',
                         ),
                       ),
@@ -190,7 +191,7 @@ class _Page2State extends SuperState<_Page2> {
                       Fader(
                         visible,
                         duration: duration,
-                        child: const EasyText(
+                        child: const SuperText(
                           'They send signals to the brain,\nwhich we perceive as 3 colors.',
                         ),
                       ),
@@ -285,10 +286,12 @@ class _RGBAnimation extends StatelessWidget {
             curve: curve,
             child: Text(
               color.name,
-              style: const TextStyle(
+              style: const SuperStyle.sans(
                 color: SuperColors.darkBackground,
-                fontSize: 32,
-                fontWeight: FontWeight.w600,
+                size: 32,
+                weight: 600,
+                extraBold: true,
+                width: 96,
                 shadows: [
                   Shadow(color: Colors.white12, blurRadius: 1),
                   Shadow(color: Colors.white12, blurRadius: 4),
@@ -332,18 +335,18 @@ class _Page3State extends SuperState<_Page3> {
     return Column(
       children: [
         const Spacer(flex: 3),
-        const EasyText('This screen uses\nthe standard RGB color space.'),
+        const SuperText('This screen uses\nthe standard RGB color space.'),
         const FixedSpacer(25),
         Fader(
           eachPixelVisible,
-          child: const EasyText(
+          child: const SuperText(
             'The brightness of each color channel\nis a value between 0 and 255.',
           ),
         ),
         const Spacer(flex: 2),
         Fader(
           visible,
-          child: const EasyRichText([
+          child: const SuperRichText([
             TextSpan(text: 'With 256 different levels for '),
             ColorTextSpan.red,
             TextSpan(text: ', '),
@@ -401,10 +404,10 @@ class _ColorOrbState extends State<_ColorOrb> {
   static const over16mil = Text(
     'over\n16 million\ncolors',
     textAlign: TextAlign.center,
-    style: TextStyle(
+    style: SuperStyle.sans(
       color: SuperColors.darkBackground,
-      fontSize: 48,
-      fontWeight: FontWeight.bold,
+      size: 48,
+      weight: 800,
       height: 1.5,
     ),
   );
@@ -492,7 +495,7 @@ class _Page4State extends SuperState<_Page4> {
     return Column(
       children: [
         const Spacer(flex: 4),
-        const EasyText("Whether you're making wedding invitations"),
+        const SuperText("Whether you're making wedding invitations"),
         const Spacer(),
         Expanded(
             flex: 16,
@@ -500,16 +503,11 @@ class _Page4State extends SuperState<_Page4> {
         const Spacer(flex: 4),
         Fader(
           showScreenshot,
-          child: const EasyRichText([
+          child: const SuperRichText([
             TextSpan(text: 'or making '),
             TextSpan(
               text: 'code',
-              style: TextStyle(
-                fontFamily: 'Inconsolata',
-                color: SuperColor(0x00FFEE),
-                fontWeight: FontWeight.w600,
-                fontSize: 22,
-              ),
+              style: SuperStyle.mono(color: SuperColor(0x00FFEE), weight: 600, size: 22),
             ),
             TextSpan(text: ' for a video game,'),
           ]),
@@ -519,7 +517,7 @@ class _Page4State extends SuperState<_Page4> {
         const Spacer(flex: 4),
         Fader(
           sometimesUgotta,
-          child: const EasyText('sometimes you gotta tell a computer\nwhat color you want.'),
+          child: const SuperText('sometimes you gotta tell a computer\nwhat color you want.'),
         ),
         const Spacer(flex: 4),
         Fader(showButton, child: ContinueButton(onPressed: widget.nextPage)),
@@ -550,14 +548,14 @@ class _Page5State extends SuperState<_Page5> {
 
   static const List<(Widget line, double timeToRead)> text = [
     (
-      EasyRichText([
+      SuperRichText([
         TextSpan(text: "Let's take "),
         ColorTextSpan.green,
       ]),
       2.5
     ),
     (
-      EasyRichText([
+      SuperRichText([
         TextSpan(text: 'and make it just a little bit '),
         ColorTextSpan.yellow,
         TextSpan(text: '.'),
@@ -565,10 +563,10 @@ class _Page5State extends SuperState<_Page5> {
       2
     ),
     (Spacer(), 2),
-    (EasyText('How do we describe this color?'), 2),
+    (SuperText('How do we describe this color?'), 2),
     (Spacer(), 2),
-    (EasyText('You could say its RGB values,'), 3.5),
-    (EasyText('or just make up a name for it.'), 1.5),
+    (SuperText('You could say its RGB values,'), 3.5),
+    (SuperText('or just make up a name for it.'), 1.5),
   ];
 
   static const List<(String, SuperColor)> colorCode = [
@@ -590,12 +588,7 @@ class _Page5State extends SuperState<_Page5> {
         for (final (desc, color) in colorCode) ...[
           Text(
             desc,
-            style: TextStyle(
-              fontFamily: 'Inconsolata',
-              fontSize: 20,
-              fontWeight: FontWeight.w900,
-              color: color,
-            ),
+            style: SuperStyle.mono(size: 20, weight: 900, color: color),
           ),
           const Spacer(),
         ],
@@ -607,20 +600,23 @@ class _Page5State extends SuperState<_Page5> {
     children: [
       Text(
         '"chartreuse"',
-        style: TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
+        style: SuperStyle.sans(
+          size: 32,
+          weight: 750,
+          width: 87.5,
           color: SuperColors.darkBackground,
           height: 1,
         ),
       ),
       Text(
         '(not a good name tbh)',
-        style: TextStyle(
-          fontWeight: FontWeight.w500,
+        style: SuperStyle.sans(
+          weight: 100,
+          extraBold: true,
+          width: 87.5,
           color: SuperColors.darkBackground,
-          letterSpacing: 0,
-          fontSize: 11,
+          // letterSpacing: 0,
+          size: 11,
         ),
       ),
     ],
@@ -771,7 +767,7 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
             const Spacer(),
             Fader(
               wishVisible,
-              child: const EasyText(
+              child: const SuperText(
                 'I just wish I could describe every shade\n'
                 'with a single name (that isn\'t "chartreuse").',
               ),
@@ -779,7 +775,7 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
             const Spacer(),
             Fader(
               tooBadVisible,
-              child: const EasyText("Too bad there's no way to do that…"),
+              child: const SuperText("Too bad there's no way to do that…"),
             ),
             const Spacer(flex: 2),
           ],
@@ -820,7 +816,7 @@ class _JustKidding extends StatelessWidget {
             const Spacer(),
             const Text(
               'just kidding  :)',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w100),
+              style: SuperStyle.sans(size: 16, weight: 100),
             ),
             const Spacer(flex: 3),
             Fader(
@@ -835,13 +831,10 @@ class _JustKidding extends StatelessWidget {
                 ),
                 onPressed: nextPage,
                 child: const Padding(
-                  padding: EdgeInsets.fromLTRB(25, 10, 25, 12),
+                  padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
                   child: Text(
                     'HUE',
-                    style: TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: SuperStyle.sans(size: 48, weight: 750),
                   ),
                 ),
               ),
@@ -866,7 +859,8 @@ class _Page7State extends SuperState<_Page7> {
   Widget overlay = const SuperContainer(
     color: Colors.black,
     alignment: Alignment.center,
-    child: EasyText('finding a hue\ncan be done in two steps.', size: 32),
+    child:
+        SuperText('finding a hue\ncan be done in two steps.', style: SuperStyle.sans(size: 32)),
   );
   static const overlay2 = SuperContainer(color: Colors.black);
   bool showOverlay2 = false;
@@ -917,12 +911,9 @@ class _Page7State extends SuperState<_Page7> {
         Column(
           children: [
             const Spacer(flex: 4),
-            const EasyText(step1),
+            const SuperText(step1),
             const Spacer(),
-            Fader(
-              step >= 2,
-              child: const EasyText(step2),
-            ),
+            Fader(step >= 2, child: const SuperText(step2)),
             const Spacer(flex: 4),
             MeasuringOrb(
               step: step,
@@ -982,10 +973,10 @@ class _HueBox extends StatelessWidget {
                                   child: Center(
                                     child: Text(
                                       '"chartreuse"',
-                                      style: TextStyle(
+                                      style: SuperStyle.sans(
                                         color: Colors.black,
-                                        fontSize: width * 0.0667,
-                                        fontWeight: FontWeight.bold,
+                                        size: width * 0.0667,
+                                        weight: 800,
                                       ),
                                     ),
                                   ),
@@ -998,7 +989,7 @@ class _HueBox extends StatelessWidget {
                             padding: const EdgeInsets.all(25),
                             child: Text(
                               'hue = $hue',
-                              style: TextStyle(color: color, fontSize: width * 0.06),
+                              style: SuperStyle.sans(color: color, size: width * 0.06),
                             ),
                           ),
                         ),
@@ -1081,14 +1072,18 @@ class _AreYouReady extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EasyRichText(
-      style: const TextStyle(fontSize: 31),
+    const double size = 30;
+    const space = TextSpan(text: ' ', style: SuperStyle.sans(size: 1));
+    return SuperRichText(
+      style: const SuperStyle.sans(size: size, weight: 250),
       [
         const TextSpan(text: 'are'),
+        space,
         TextSpan(
-          text: 'ʏᴏᴜ',
-          style: TextStyle(color: color, fontSize: 32, fontWeight: FontWeight.w500),
+          text: 'YOU',
+          style: SuperStyle.sans(size: size * 0.7, color: color, weight: 800),
         ),
+        space,
         const TextSpan(text: 'ready?'),
       ],
     );
@@ -1109,15 +1104,12 @@ class _PlayButton extends StatelessWidget {
         const Text(
           'intro',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 24, height: 2),
+          style: SuperStyle.sans(size: 24, height: 2),
         ),
         const Text(
           'learn the RGB hues',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            color: SuperColors.white80,
-          ),
+          style: SuperStyle.sans(size: 16, color: SuperColors.white80),
         ),
         const FixedSpacer(33),
         Fader(

@@ -6,6 +6,7 @@ import 'package:super_hueman/data/page_data.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/pages/score.dart';
 import 'package:super_hueman/data/save_data.dart';
 import 'package:super_hueman/data/structs.dart';
@@ -69,7 +70,7 @@ class TenseScoreKeeper implements ScoreKeeper {
   @override
   Widget get finalScore => Text(
         (round * (overfills + 1)).toString(),
-        style: const TextStyle(fontSize: 32),
+        style: const SuperStyle.sans(size: 32),
       );
 
   @override
@@ -82,7 +83,7 @@ class TenseScoreKeeper implements ScoreKeeper {
     return Text(
       desc,
       textAlign: TextAlign.center,
-      style: const TextStyle(fontSize: 18, color: Colors.black54),
+      style: const SuperStyle.sans(size: 18, color: Colors.black54),
     );
   }
 }
@@ -196,15 +197,19 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
           builder: (context) => Theme(
             data: ThemeData(
                 useMaterial3: true,
-                fontFamily: 'Roboto',
+                fontFamily: 'nunito sans',
                 dialogBackgroundColor: SuperColors.lightBackground),
             child: const AlertDialog(
-              title: Text('Tense mode'),
+              title: Text(
+                'Tense mode',
+                style: SuperStyle.sans(weight: 600, width: 87.5),
+              ),
               content: Text(
                 'Stretch your limits!\n\n'
-                'The difficulty for each color adjusts as you play\n'
-                'to match your performance.\n\n'
+                'The difficulty for each color will adjust\n'
+                'based on your performance.\n\n'
                 'Good luck!',
+                style: SuperStyle.sans(),
               ),
             ),
           ),
@@ -221,11 +226,10 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  static const style = TextStyle(
-    fontFamily: 'Inconsolata',
+  static const style = SuperStyle.mono(
     color: SuperColors.white80,
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
+    size: 16,
+    weight: 600,
     inherit: false,
     height: 5 / 3,
   );
@@ -325,7 +329,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     return Theme(
       data: ThemeData(
         useMaterial3: true,
-        fontFamily: 'Roboto',
+        fontFamily: 'nunito sans',
         textTheme: const TextTheme(bodyMedium: style),
       ),
       child: Scaffold(
@@ -351,7 +355,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(15),
                         child: Text(
                           showDetails ? '[hide details]' : '[show tension details]',
-                          style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 16),
+                          style: const SuperStyle.mono(size: 16),
                         ),
                       )),
                   const FixedSpacer(15),
@@ -438,8 +442,8 @@ class _TenseButton extends StatelessWidget {
                       opacity: showReaction ? 1 : 0,
                       child: Text(
                         '$buttonHue°',
-                        style: TextStyle(
-                          fontSize: 40,
+                        style: SuperStyle.sans(
+                          size: 40,
                           color: wrongChoice ? Colors.red : Colors.black,
                         ),
                       ),
@@ -479,9 +483,8 @@ class _SplendidState extends InverseState<Splendid> {
               child: widget.correct
                   ? Text(
                       'Splendid!',
-                      style: TextStyle(
-                        fontFamily: 'Inconsolata',
-                        fontSize: 50,
+                      style: SuperStyle.mono(
+                        size: 50,
                         shadows: [
                           for (double i = 2; i <= 20; i += 2)
                             Shadow(color: Colors.white, blurRadius: i),
@@ -491,10 +494,7 @@ class _SplendidState extends InverseState<Splendid> {
                     )
                   : Text(
                       widget.correct ? 'Splendid!' : '[incorrect]',
-                      style: const TextStyle(
-                        color: SuperColors.darkBackground,
-                        fontFamily: 'Inconsolata',
-                      ),
+                      style: const SuperStyle.mono(color: SuperColors.darkBackground),
                     ),
             ),
             widget.correct
@@ -509,10 +509,7 @@ class _SplendidState extends InverseState<Splendid> {
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
                         'Splendid!',
-                        style: TextStyle(
-                          fontFamily: 'Inconsolata',
-                          fontSize: 50,
-                        ),
+                        style: SuperStyle.mono(size: 50),
                       ),
                     ),
                   )

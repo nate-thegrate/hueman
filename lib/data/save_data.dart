@@ -6,8 +6,8 @@ bool booted = false;
 // settings
 bool casualMode = true;
 bool autoSubmit = true;
-bool externalKeyboard = true;
-bool inverted = false;
+bool externalKeyboard = false;
+bool inverted = true;
 bool music = true;
 bool sounds = true;
 
@@ -20,13 +20,13 @@ abstract final class Tutorials {
   static bool started = true;
   static bool intro3 = false;
   static bool intro6 = false;
-  static bool introC = false;
+  static bool introC = true;
   static bool casual = false;
   static bool intense = false;
   static bool master = false;
-  static bool trivial = false;
-  static bool tense = false;
-  static bool sandbox = false;
+  static bool trivial = true;
+  static bool tense = true;
+  static bool sandbox = true;
   static bool trueMastery = false;
 
   static bool sawInversion = false;

@@ -5,6 +5,7 @@ import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 extension _BallSpacing on BuildContext {
@@ -89,7 +90,7 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
                     ? empty
                     : Fader(
                         textVisible >= 1,
-                        child: const EasyText(
+                        child: const SuperText(
                             'To identify and keep track of twelve different hues,'),
                       ),
               ),
@@ -100,41 +101,47 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          EasyRichText(pad: false, [
+                          SuperRichText(pad: false, [
                             const TextSpan(text: 'this is the jump from '),
                             TextSpan(
                               text: 'sharp',
-                              style: TextStyle(fontWeight: FontWeight.w100, color: color),
+                              style: SuperStyle.sans(
+                                color: color,
+                                weight: 100,
+                                width: 87.5,
+                                letterSpacing: -0.2,
+                              ),
                             ),
                           ]),
                           AnimatedSlide(
                             offset: Offset(madeTheJump ? 0 : 10, 0),
                             duration: const Duration(milliseconds: 750),
                             curve: Curves.easeOutExpo,
-                            child: EasyRichText(pad: false, [
+                            child: SuperRichText(pad: false, [
                               const TextSpan(text: ' to '),
-                              TextSpan(text: 'super', style: TextStyle(color: color)),
+                              TextSpan(text: 'super', style: SuperStyle.sans(color: color)),
                               TextSpan(
                                 text: 'HUE',
-                                style: TextStyle(
-                                  color: color,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 14.5,
-                                ),
+                                style: SuperStyle.sans(color: color, weight: 900, size: 14.5),
                               ),
-                              TextSpan(text: 'man', style: TextStyle(color: color)),
+                              TextSpan(text: 'man', style: SuperStyle.sans(color: color)),
                               const TextSpan(text: '.'),
                             ]),
                           ),
                         ],
                       )
                     : justKidding
-                        ? const EasyText('Sorry, did I say 36?')
-                        : EasyRichText([
+                        ? const SuperText('Sorry, did I say 36?')
+                        : SuperRichText([
                             const TextSpan(text: 'you have to be '),
                             TextSpan(
                               text: 'sharp',
-                              style: TextStyle(fontWeight: FontWeight.w100, color: color),
+                              style: SuperStyle.sans(
+                                color: color,
+                                weight: 100,
+                                width: 87.5,
+                                letterSpacing: -0.2,
+                              ),
                             ),
                             const TextSpan(text: '.'),
                           ]),
@@ -144,9 +151,9 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
                 textVisible >= 3,
                 child: justKidding
                     ? makingTheJump
-                        ? const EasyText("Let's see if you got what it takes.")
-                        : const EasyText('I meant 360.')
-                    : const EasyText("But now it's time to try 36."),
+                        ? const SuperText("Let's see if you got what it takes.")
+                        : const SuperText('I meant 360.')
+                    : const SuperText("But now it's time to try 36."),
               ),
               const Spacer(flex: 3),
               SexyBox(

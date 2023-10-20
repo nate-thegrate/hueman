@@ -7,6 +7,7 @@ import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 
 class SandboxTutorial extends StatefulWidget {
@@ -62,7 +63,7 @@ class _SandboxTutorialState extends SuperState<SandboxTutorial> {
     );
     if (!inverted) return screen;
     return Theme(
-      data: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
+      data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: screen,
     );
   }
@@ -90,7 +91,7 @@ class _Page1State extends SuperState<_Page1> {
     return Column(
       children: [
         const Spacer(flex: 3),
-        EasyRichText([
+        SuperRichText([
           const TextSpan(text: 'Each pixel on this screen has 256 different levels for '),
           ColorTextSpan.red,
           const TextSpan(text: ', '),
@@ -100,7 +101,7 @@ class _Page1State extends SuperState<_Page1> {
           const TextSpan(text: '.'),
         ]),
         const Spacer(),
-        Fader(visible, child: const EasyText('But why 256?')),
+        Fader(visible, child: const SuperText('But why 256?')),
         const Spacer(flex: 2),
         Fader(buttonVisible, child: ContinueButton(onPressed: widget.nextPage)),
         const Spacer(),
@@ -132,7 +133,7 @@ class _Page2State extends SuperState<_Page2> {
     return Column(
       children: [
         const Spacer(flex: 2),
-        const EasyText("It's time for some computer science! 🤓"),
+        const SuperText("It's time for some computer science! 🤓"),
         const Spacer(),
         SizedBox(
           height: 60,
@@ -144,8 +145,8 @@ class _Page2State extends SuperState<_Page2> {
         ),
         SizedBox(height: 25, child: progress > 2 ? _BinaryCaption(progress) : empty),
         const Spacer(),
-        Fader(progress > 0, child: const EasyText('We usually count using base ten.')),
-        Fader(progress > 1, child: const EasyText('But computers use binary.')),
+        Fader(progress > 0, child: const SuperText('We usually count using base ten.')),
+        Fader(progress > 1, child: const SuperText('But computers use binary.')),
         const Spacer(flex: 2),
         Fader(progress > 5, child: ContinueButton(onPressed: widget.nextPage)),
         const Spacer(),
@@ -218,13 +219,10 @@ class _NumberRowState extends SuperState<_NumberRow> {
               duration: duration,
               curve: Curves.easeInQuad,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 6),
                 child: binary
-                    ? Text(
-                        '$i',
-                        style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 48),
-                      )
-                    : EasyText('$i', size: 30),
+                    ? Text('$i', style: const SuperStyle.mono(size: 40))
+                    : Text('$i', style: const SuperStyle.sans(size: 30)),
               ),
             ),
           )
@@ -276,9 +274,9 @@ class _Page3State extends SuperState<_Page3> {
     return Column(
       children: [
         const Spacer(flex: 5),
-        const EasyText('"bits" is a really fun name.'),
+        const SuperText('"bits" is a really fun name.'),
         const Spacer(),
-        Fader(funDontStop, child: const EasyText("And the fun doesn't stop there:")),
+        Fader(funDontStop, child: const SuperText("And the fun doesn't stop there:")),
         const Spacer(),
         Column(
           mainAxisSize: MainAxisSize.min,
@@ -287,19 +285,20 @@ class _Page3State extends SuperState<_Page3> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Opacity(opacity: 0, child: EasyText('and ')),
-                Fader(byteDesc, child: const EasyText('8 bits is called a "byte"')),
+                const Opacity(opacity: 0, child: SuperText('and ', pad: false)),
+                Fader(byteDesc, child: const SuperText('8 bits is called a "byte"', pad: false)),
               ],
             ),
-            Fader(nibbleDesc, child: const EasyText('and 4 bits is called a "nibble" :)')),
+            Fader(nibbleDesc,
+                child: const SuperText('and 4 bits is called a "nibble" :)', pad: false)),
           ],
         ),
         const Spacer(),
         Fader(
           nibbleStorage,
-          child: const EasyText('A nibble can store 16 different values, 0 to 15.'),
+          child: const SuperText('A nibble can store 16 different values, 0 to 15.'),
         ),
-        Fader(counter >= 15, child: const EasyText('And a byte can store 256 values!')),
+        Fader(counter >= 15, child: const SuperText('And a byte can store 256 values!')),
         const Spacer(),
         SexyBox(
           child: showCounter
@@ -318,7 +317,7 @@ class _Page3State extends SuperState<_Page3> {
                           alignment: const Alignment(0.75, 0),
                           child: Text(
                             counter.toString(),
-                            style: const TextStyle(fontSize: 24, fontFamily: 'Inconsolata'),
+                            style: const SuperStyle.mono(size: 24),
                           ),
                         ),
                       ),
@@ -330,7 +329,7 @@ class _Page3State extends SuperState<_Page3> {
                                 .toRadixString(2)
                                 .padLeft(counter > 15 ? 8 : 4, '0')
                                 .padLeft(8),
-                            style: const TextStyle(fontSize: 24, fontFamily: 'Inconsolata'),
+                            style: const SuperStyle.mono(size: 24),
                           ),
                         ),
                       ),
@@ -404,7 +403,7 @@ class _Page4State extends SuperState<_Page4> {
           child: _ColorCard(collapsed, consolidating, showBTS, showBinary),
         ),
         const Spacer(),
-        Fader(kindaHard, child: const EasyText("that's kinda hard to understand though.")),
+        Fader(kindaHard, child: const SuperText("that's kinda hard to understand though.")),
         const Spacer(flex: 2),
         Fader(showButton,
             child: consolidating
@@ -452,10 +451,13 @@ class _ColorCardState extends DynamicState<_ColorCard> {
                             ? 'Have fun in Sandbox mode!'
                             : 'when you see\ncool stuff like this,',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: SuperStyle.sans(
                           color: inverted ? Colors.white : Colors.black,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
+                          size: 24,
+                          weight: 400,
+                          extraBold: true,
+                          width: 96,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
@@ -508,15 +510,13 @@ class _BTS extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SexyBox(
-                  child: showHex
-                      ? const Text('#', style: TextStyle(fontFamily: 'Inconsolata', fontSize: 18))
-                      : empty,
+                  child: showHex ? const Text('#', style: SuperStyle.mono(size: 16)) : empty,
                 ),
                 for (final code in binary)
                   SexyBox(
                     child: Text(
                       code,
-                      style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 18),
+                      style: const SuperStyle.mono(size: 16),
                     ),
                   )
               ],
@@ -527,7 +527,7 @@ class _BTS extends StatelessWidget {
             '    red: ${binary[0]}\n'
             '  green: ${binary[1]}\n'
             '   blue: ${binary[2]}',
-            style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 18),
+            style: const SuperStyle.mono(size: 16),
           );
 
     return SuperContainer(
@@ -543,7 +543,7 @@ class _BTS extends StatelessWidget {
         children: [
           Text(
             btsDesc,
-            style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 18),
+            style: const SuperStyle.mono(size: 16),
           ),
           SexyBox(
             child: showBinary ? colorCode : const SizedBox(width: 200),
@@ -593,14 +593,14 @@ class _Page5State extends SuperState<_Page5> {
         const Spacer(flex: 4),
         SexyBox(
             child: hexRows == -3
-                ? const EasyText('But computer science people are hecka smart. 🤓')
+                ? const SuperText('But computer science people are hecka smart. 🤓')
                 : empty),
         const Spacer(),
         SexyBox(
           child: hexRows == -3
               ? Fader(
                   realization,
-                  child: const EasyText(
+                  child: const SuperText(
                     'They realized that if you use base 16,\n'
                     'you can represent a nibble with 1 digit!',
                   ),
@@ -610,12 +610,11 @@ class _Page5State extends SuperState<_Page5> {
         const Spacer(flex: 2),
         Fader(
           prefix1,
-          child: EasyRichText([
+          child: SuperRichText([
             const TextSpan(text: 'Base 16 numbers usually start with '),
             TextSpan(
               text: "'0x'",
-              style: TextStyle(
-                fontFamily: 'Inconsolata',
+              style: SuperStyle.mono(
                 color: inverted ? SuperColors.black80 : SuperColors.white80,
                 backgroundColor: inverted ? Colors.white : Colors.black38,
               ),
@@ -625,12 +624,11 @@ class _Page5State extends SuperState<_Page5> {
         ),
         Fader(
           prefix2,
-          child: EasyRichText([
+          child: SuperRichText([
             const TextSpan(text: 'or you can use '),
             TextSpan(
               text: "'#'",
-              style: TextStyle(
-                fontFamily: 'Inconsolata',
+              style: SuperStyle.mono(
                 backgroundColor: inverted ? Colors.white : Colors.black38,
                 color: inverted ? SuperColors.black80 : SuperColors.white80,
               ),
@@ -639,15 +637,15 @@ class _Page5State extends SuperState<_Page5> {
           ]),
         ),
         const Spacer(flex: 2),
-        Fader(question, child: const EasyText('How do you write with 16 different digits?')),
-        Fader(answer, child: const EasyText('Just use letters when you run out of numbers :)')),
+        Fader(question, child: const SuperText('How do you write with 16 different digits?')),
+        Fader(answer, child: const SuperText('Just use letters when you run out of numbers :)')),
         const Spacer(flex: 2),
         SexyBox(
           child: hexRows == -3
               ? flat
               : SuperContainer(
                   width: double.infinity,
-                  height: 500,
+                  height: 460,
                   color: inverted ? Colors.white : Colors.black38,
                   alignment: Alignment.center,
                   child: _HexRows(hexRows),
@@ -688,10 +686,10 @@ class _HexRows extends StatelessWidget {
                         -1 => '-----------',
                         _ => '0x${i.toRadixString(16).toUpperCase()}'.padLeft(7),
                       },
-                      style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 18),
+                      style: const SuperStyle.mono(size: 16),
                     ),
                   ),
-                  const Text('| ', style: TextStyle(fontFamily: 'Inconsolata', fontSize: 18)),
+                  const Text('| ', style: SuperStyle.mono(size: 16)),
                   Expanded(
                     flex: 2,
                     child: Text(
@@ -700,10 +698,10 @@ class _HexRows extends StatelessWidget {
                         -1 => '-------',
                         _ => '$i'.padLeft(2, '0').padLeft(4),
                       },
-                      style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 18),
+                      style: const SuperStyle.mono(size: 16),
                     ),
                   ),
-                  const Text('| ', style: TextStyle(fontFamily: 'Inconsolata', fontSize: 18)),
+                  const Text('| ', style: SuperStyle.mono(size: 16)),
                   Expanded(
                     flex: 2,
                     child: Text(
@@ -712,7 +710,7 @@ class _HexRows extends StatelessWidget {
                         -1 => '------',
                         _ => i.toRadixString(2).padLeft(4, '0').padLeft(5),
                       },
-                      style: const TextStyle(fontFamily: 'Inconsolata', fontSize: 18),
+                      style: const SuperStyle.mono(size: 16),
                     ),
                   ),
                 ],

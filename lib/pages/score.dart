@@ -5,6 +5,7 @@ import 'package:super_hueman/data/structs.dart';
 import 'package:super_hueman/data/super_color.dart';
 import 'package:super_hueman/data/super_container.dart';
 import 'package:super_hueman/data/super_state.dart';
+import 'package:super_hueman/data/super_text.dart';
 import 'package:super_hueman/data/widgets.dart';
 import 'package:super_hueman/pages/intro.dart';
 
@@ -27,7 +28,7 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
     return Theme(
       data: ThemeData(
         useMaterial3: true,
-        fontFamily: 'Roboto',
+        fontFamily: 'nunito sans',
         colorScheme: inverted ? null : const ColorScheme.dark(primary: Colors.white),
       ),
       child: Scaffold(
@@ -40,16 +41,16 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
                     border: Border.all(color: color, width: 2),
                     borderRadius: BorderRadius.circular(25)),
                 padding: const EdgeInsets.all(50),
-                child: Text('Finished!', style: TextStyle(fontSize: 54, color: color)),
+                child: Text('Finished!', style: SuperStyle.sans(size: 54, color: color)),
               ),
               const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Game mode:  ', style: TextStyle(fontSize: 22, color: color)),
+                  Text('Game mode:  ', style: SuperStyle.sans(size: 22, color: color)),
                   Text(
                     page.gameMode,
-                    style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w200),
+                    style: const SuperStyle.sans(size: 21, weight: 200),
                   ),
                 ],
               ),
@@ -92,7 +93,7 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Score:  ', style: TextStyle(fontSize: 32, color: color)),
+                    Text('Score:  ', style: SuperStyle.sans(size: 32, color: color)),
                     sk.finalScore,
                   ],
                 ),
