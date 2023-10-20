@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_hueman/data/page_data.dart';
+import 'package:super_hueman/data/save_data.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -18,4 +19,4 @@ class App extends StatelessWidget {
   }
 }
 
-void main() => runApp(const App());
+void main() => loadData().then((_) => runApp(const App()));

@@ -172,7 +172,8 @@ class _Page3State extends SuperState<_Page3> {
   void animate() async {
     await sleepState(4, () => finalMessage = true);
     await sleepState(4, () => fadeAway = true);
-    Tutorials.master = true;
+    saveData('tutorialMaster', true);
+    tutorialMaster = true;
     await sleep(1.5);
     context.goto(Pages.master);
   }

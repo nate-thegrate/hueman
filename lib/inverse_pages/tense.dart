@@ -188,8 +188,9 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     super.initState();
     inverted = true;
     generateHue();
-    if (!Tutorials.tense) {
-      Tutorials.tense = true;
+    if (!tutorialTense) {
+      saveData('tutorialTense', true);
+      tutorialTense = true;
       sleep(
         0.5,
         then: () => showDialog(

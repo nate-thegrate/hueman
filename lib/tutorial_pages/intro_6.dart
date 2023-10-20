@@ -204,11 +204,14 @@ class _Page3State extends SuperState<_Page3> with SinglePress {
           TextSpan(text: "\nif that's what human eyes are built for?"),
         ]),
         const Spacer(flex: 2),
-        const SuperRichText([
-          TextSpan(text: 'How do you print '),
-          ColorTextSpan.red,
-          TextSpan(text: ', a primary color,\nwithout any red ink?'),
-        ]),
+        Fader(
+          showQuestion,
+          child: const SuperRichText([
+            TextSpan(text: 'How do you print '),
+            ColorTextSpan.red,
+            TextSpan(text: ', a primary color,\nwithout any red ink?'),
+          ]),
+        ),
         const Spacer(flex: 2),
         Fader(
           showButton,

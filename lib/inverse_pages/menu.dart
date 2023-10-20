@@ -38,6 +38,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
         sleepState(1, () => showButtons = true);
       }
     } else {
+      saveData('inverted', true);
       inverted = true;
       quickly(() => setState(() => visible = false));
       sleepState(0.6, () => exists = false);
@@ -73,20 +74,20 @@ class _InverseMenuState extends InverseState<InverseMenu>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const FixedSpacer(67),
-                      NavigateButton(Pages.trivial, color: color, isNew: !Tutorials.trivial),
+                      NavigateButton(Pages.trivial, color: color, isNew: !tutorialTrivial),
                       const FixedSpacer(33),
                       SuperButton(
                         'tense',
                         color: color,
                         onPressed: () => setState(() => menuPage = MenuPage.tenseSelect),
                         noDelay: true,
-                        isNew: !Tutorials.tense,
+                        isNew: !tutorialTense,
                       ),
-                      if (Tutorials.trivial && Tutorials.tense && Tutorials.sandbox) ...[
+                      if (tutorialTrivial && tutorialTense && tutorialSandbox) ...[
                         const FixedSpacer(33),
                         ElevatedButton(
                           onPressed: singlePress(() {
-                            if (!Tutorials.trueMastery) {
+                            if (!tutorialTrueMastery) {
                               setState(() => trueMastery = true);
                               sleep(
                                 6,
@@ -117,31 +118,37 @@ class _InverseMenuState extends InverseState<InverseMenu>
                         ),
                       ],
                       const FixedSpacer(67),
-                      NavigateButton(Pages.sandbox, color: color, isNew: !Tutorials.sandbox),
+                      NavigateButton(Pages.sandbox, color: color, isNew: !tutorialSandbox),
                     ],
                   )
                 : const SizedBox(width: 150),
           )
         ],
       MenuPage.settings => [
-          MenuCheckbox(
-            'music',
-            value: music,
-            description: const ('', ''),
-            toggle: (value) => setState(() => music = value),
-          ),
-          MenuCheckbox(
-            'sounds',
-            value: sounds,
-            description: const ('', ''),
-            toggle: (value) => setState(() => sounds = value),
-          ),
-          const FixedSpacer(33),
+          // MenuCheckbox(
+          //   'music',
+          //   value: music,
+          //   description: const ('', ''),
+          //   toggle: (value) => saveData('music', value).then(
+          //     (_) => setState(() => music = value),
+          //   ),
+          // ),
+          // MenuCheckbox(
+          //   'sounds',
+          //   value: sounds,
+          //   description: const ('', ''),
+          //   toggle: (value) => saveData('sounds', value).then(
+          //     (_) => setState(() => sounds = value),
+          //   ),
+          // ),
+          // const FixedSpacer(33),
           MenuCheckbox(
             'casual mode',
             value: casualMode,
             description: ('play without keeping score', 'keep score when you play'),
-            toggle: (value) => setState(() => casualMode = value),
+            toggle: (value) => saveData('casualMode', value).then(
+              (_) => setState(() => casualMode = value),
+            ),
           ),
           const FixedSpacer(67),
           Center(
@@ -252,7 +259,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
           child: Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
         ),
       );
-      if (Tutorials.master && !Tutorials.sawInversion) {
+      if (tutorialMaster && !sawInversion) {
         settingsButton = BrandNew(color: color, child: settingsButton);
       }
     } else {

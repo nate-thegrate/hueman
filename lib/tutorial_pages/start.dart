@@ -45,6 +45,8 @@ class _StartScreenState extends SuperState<StartScreen> {
   String artboard = 'start button screen';
   Widget callOutTheLie = empty;
   SuperColor backgroundColor = SuperColors.lightBackground;
+  bool betaScreen = true;
+  void exitBeta() => setState(() => betaScreen = false);
 
   void start() {
     setState(() => controllers[1].isActive = true);
@@ -71,10 +73,67 @@ class _StartScreenState extends SuperState<StartScreen> {
               controllers: controllers,
             ),
           ),
-          const _Logo(),
+          betaScreen ? _BetaScreen(exitBeta) : const _Logo(),
         ],
       ),
       backgroundColor: backgroundColor,
+    );
+  }
+}
+
+class _BetaScreen extends StatelessWidget {
+  const _BetaScreen(this.onPressed);
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            const Spacer(flex: 3),
+            const SuperRichText(style: SuperStyle.gaegu(size: 32), [
+              TextSpan(text: 'Thanks for playing the '),
+              TextSpan(
+                text: 'H',
+                style: SuperStyle.gaegu(
+                  size: 32,
+                  color: SuperColors.red,
+                  weight: FontWeight.bold,
+                ),
+              ),
+              TextSpan(
+                text: 'U',
+                style: SuperStyle.gaegu(
+                  size: 32,
+                  color: SuperColor(0xF0F000),
+                  weight: FontWeight.bold,
+                ),
+              ),
+              TextSpan(
+                text: 'E',
+                style: SuperStyle.gaegu(
+                  size: 32,
+                  color: SuperColor(0x0060FF),
+                  weight: FontWeight.bold,
+                ),
+              ),
+              TextSpan(
+                text: 'man',
+                style: SuperStyle.gaegu(size: 38, color: SuperColor(0x6C4B00), height: 0),
+              ),
+              TextSpan(
+                text: ' beta!\n\nIf something looks weird or is broken, '
+                    'feel free to screenshot.\n\n'
+                    '(There\'s a "bug report" link in the settings menu.)',
+              ),
+            ]),
+            const Spacer(),
+            ContinueButton(onPressed: onPressed),
+            const Spacer(flex: 3),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -200,17 +259,20 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
               Fader(
                 showButton,
                 child: SizedBox(
-                    height: 60,
-                    child:
-                        // headphones ?
-                        Center(
-                      child: ContinueButton(onPressed: () {
-                        setState(() => showStuff = false);
-                        sleep(2, then: () => context.noTransition(const _FirstLaunchMenu()));
-                      }),
-                    )
-                    // : _TruthButton(onPressed: seeTheTruth),
-                    ),
+                  height: 60,
+                  child: _TruthButton(
+                    // child: headphones
+                    //     ? Center(
+                    //         child: ContinueButton(
+                    onPressed: () {
+                      setState(() => showStuff = false);
+                      sleep(2, then: () => context.noTransition(const _FirstLaunchMenu()));
+                    },
+                    //         ),
+                    //       )
+                    //     : _TruthButton(onPressed: seeTheTruth),
+                  ),
+                ),
               ),
               const Spacer(),
             ],
@@ -439,7 +501,8 @@ class _IntroButtonState extends State<_IntroButton> {
   @override
   void initState() {
     super.initState();
-    Tutorials.started = true;
+    saveData('started', true);
+    started = true;
     epicHues = Ticker((elapsed) => setState(() => color = epicColor))..start();
   }
 

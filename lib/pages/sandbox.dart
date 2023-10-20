@@ -1,3 +1,6 @@
+/// Warning: messy code; view at your own risk.
+library;
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';

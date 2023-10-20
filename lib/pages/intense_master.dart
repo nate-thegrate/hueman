@@ -266,7 +266,10 @@ class _IntenseModeState extends State<IntenseMode> {
 
   /// new random hue will be at least 30° away from previous.
   void generateHue() {
-    if (!hueMaster && offBy == 0) superHue = hue;
+    if (!hueMaster && offBy == 0) {
+      saveData('superHue', hue);
+      superHue = hue;
+    }
     if (numPadController != null) setState(numPadController!.clear);
     int newHue = rng.nextInt(300);
     if (newHue + 30 >= hue) newHue += 60;

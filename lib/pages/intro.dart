@@ -158,15 +158,18 @@ class _IntroModeState extends State<IntroMode> {
     }
 
     switch (widget.numColors) {
-      case 3 when !Tutorials.intro3:
+      case 3 when !tutorialIntro3:
         scoreKeeper = TutorialScoreKeeper(3, scoring: giveScore);
-        Tutorials.intro3 = true;
-      case 6 when !Tutorials.intro6:
+        saveData('tutorialIntro3', true);
+        tutorialIntro3 = true;
+      case 6 when !tutorialIntro6:
         scoreKeeper = TutorialScoreKeeper(6, scoring: giveScore);
-        Tutorials.intro6 = true;
-      case 0xC when !Tutorials.introC:
+        saveData('tutorialIntro6', true);
+        tutorialIntro6 = true;
+      case 0xC when !tutorialIntroC:
         scoreKeeper = TutorialScoreKeeper(0xC, scoring: giveScore);
-        Tutorials.introC = true;
+        saveData('tutorialIntroC', true);
+        tutorialIntroC = true;
       default:
         scoreKeeper =
             casualMode ? null : IntroScoreKeeper(scoring: giveScore, numColors: widget.numColors);
@@ -179,7 +182,7 @@ class _IntroModeState extends State<IntroMode> {
     if (hueQueue case TutorialQueue()) hueQueue.choices.shuffle();
     generateHue();
     hueFocusNode?.requestFocus();
-    if (scoreKeeper == null && !Tutorials.casual) {
+    if (scoreKeeper == null && !tutorialCasual) {
       sleep(
         1,
         then: () => showDialog(
@@ -196,7 +199,8 @@ class _IntroModeState extends State<IntroMode> {
           ),
         ),
       );
-      Tutorials.casual = true;
+      saveData('tutorialCasual', true);
+      tutorialCasual = true;
     }
   }
 
