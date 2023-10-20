@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:super_hueman/data/page_data.dart';
-import 'package:super_hueman/data/save_data.dart';
+import 'package:hueman/data/page_data.dart';
+import 'package:hueman/data/save_data.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

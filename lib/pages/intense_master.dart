@@ -1,14 +1,14 @@
 import 'dart:math';
 import 'package:flutter/gestures.dart';
-import 'package:super_hueman/data/page_data.dart';
-import 'package:super_hueman/data/super_color.dart';
-import 'package:super_hueman/data/photo_colors.dart';
-import 'package:super_hueman/data/super_container.dart';
-import 'package:super_hueman/data/super_text.dart';
-import 'package:super_hueman/pages/score.dart';
-import 'package:super_hueman/pages/hue_typing_game.dart';
-import 'package:super_hueman/data/save_data.dart';
-import 'package:super_hueman/data/structs.dart';
+import 'package:hueman/data/page_data.dart';
+import 'package:hueman/data/super_color.dart';
+import 'package:hueman/data/photo_colors.dart';
+import 'package:hueman/data/super_container.dart';
+import 'package:hueman/data/super_text.dart';
+import 'package:hueman/pages/score.dart';
+import 'package:hueman/pages/hue_typing_game.dart';
+import 'package:hueman/data/save_data.dart';
+import 'package:hueman/data/structs.dart';
 import 'package:collection/collection.dart';
 
 import 'package:flutter/material.dart';

@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:super_hueman/data/structs.dart';
-import 'package:super_hueman/data/super_color.dart';
-import 'package:super_hueman/data/super_container.dart';
-import 'package:super_hueman/data/super_text.dart';
-import 'package:super_hueman/data/widgets.dart';
+import 'package:hueman/data/structs.dart';
+import 'package:hueman/data/super_color.dart';
+import 'package:hueman/data/super_container.dart';
+import 'package:hueman/data/super_text.dart';
+import 'package:hueman/data/widgets.dart';
 
 int _r = 0x80, _g = 0x80, _b = 0x80;
 int _cyan = 0, _magenta = 0, _yellow = 0, _black = 0x7f;

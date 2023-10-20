@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:super_hueman/data/page_data.dart';
-import 'package:super_hueman/data/save_data.dart';
-import 'package:super_hueman/data/structs.dart';
-import 'package:super_hueman/data/super_color.dart';
-import 'package:super_hueman/data/super_state.dart';
-import 'package:super_hueman/data/super_text.dart';
-import 'package:super_hueman/data/widgets.dart';
+import 'package:hueman/data/page_data.dart';
+import 'package:hueman/data/save_data.dart';
+import 'package:hueman/data/structs.dart';
+import 'package:hueman/data/super_color.dart';
+import 'package:hueman/data/super_state.dart';
+import 'package:hueman/data/super_text.dart';
+import 'package:hueman/data/widgets.dart';
 
 class MasterTutorial extends StatefulWidget {
   const MasterTutorial({super.key});

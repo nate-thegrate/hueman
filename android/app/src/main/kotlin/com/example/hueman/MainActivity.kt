@@ -1,4 +1,4 @@
-package com.example.super_hueman
+package com.example.hueman
 
 import io.flutter.embedding.android.FlutterActivity
 

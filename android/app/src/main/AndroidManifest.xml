@@ -1,7 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.super_hueman">
-   <application
-        android:label="super_hueman"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
+        android:label="hueman"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

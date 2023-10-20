@@ -3,12 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rive/rive.dart' as rive;
-import 'package:super_hueman/data/page_data.dart';
-import 'package:super_hueman/data/save_data.dart';
-import 'package:super_hueman/data/structs.dart';
-import 'package:super_hueman/data/super_color.dart';
-import 'package:super_hueman/data/super_container.dart';
-import 'package:super_hueman/data/super_text.dart';
+import 'package:hueman/data/page_data.dart';
+import 'package:hueman/data/save_data.dart';
+import 'package:hueman/data/structs.dart';
+import 'package:hueman/data/super_color.dart';
+import 'package:hueman/data/super_container.dart';
+import 'package:hueman/data/super_text.dart';
 
 const Widget empty = SizedBox.shrink();
 const Widget flat = SizedBox(width: double.infinity);

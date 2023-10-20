@@ -5,13 +5,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:super_hueman/data/structs.dart';
-import 'package:super_hueman/data/super_color.dart';
-import 'package:super_hueman/data/super_container.dart';
-import 'package:super_hueman/data/super_state.dart';
-import 'package:super_hueman/data/super_text.dart';
-import 'package:super_hueman/data/widgets.dart';
-import 'package:super_hueman/pages/intro.dart';
+import 'package:hueman/data/structs.dart';
+import 'package:hueman/data/super_color.dart';
+import 'package:hueman/data/super_container.dart';
+import 'package:hueman/data/super_state.dart';
+import 'package:hueman/data/super_text.dart';
+import 'package:hueman/data/widgets.dart';
+import 'package:hueman/pages/intro.dart';
 
 class IntroCTutorial extends StatefulWidget {
   /// intro `0xC`

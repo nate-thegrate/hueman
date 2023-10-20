@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:super_hueman/data/structs.dart';
+import 'package:hueman/data/structs.dart';
 
 class SuperColor extends Color {
   const SuperColor(this.colorCode)

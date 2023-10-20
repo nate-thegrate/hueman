@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:super_hueman/data/super_color.dart';
+import 'package:hueman/data/super_color.dart';
 
 enum FontFamily { sans, mono, gaegu }
 

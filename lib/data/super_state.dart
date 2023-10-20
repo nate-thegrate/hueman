@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:super_hueman/data/save_data.dart';
-import 'package:super_hueman/data/structs.dart';
-import 'package:super_hueman/data/super_color.dart';
+import 'package:hueman/data/save_data.dart';
+import 'package:hueman/data/structs.dart';
+import 'package:hueman/data/super_color.dart';
 
 /// Auto-runs [animate] when initialized,
 /// and prevents [setState] from running when disposed.

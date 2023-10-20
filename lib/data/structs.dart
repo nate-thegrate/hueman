@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:super_hueman/data/page_data.dart';
-import 'package:super_hueman/inverse_pages/menu.dart';
-import 'package:super_hueman/pages/menu.dart';
-import 'package:super_hueman/data/save_data.dart';
+import 'package:hueman/data/page_data.dart';
+import 'package:hueman/inverse_pages/menu.dart';
+import 'package:hueman/pages/menu.dart';
+import 'package:hueman/data/save_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// ```dart

@@ -3,13 +3,13 @@ import 'dart:math';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:super_hueman/data/save_data.dart';
-import 'package:super_hueman/data/structs.dart';
-import 'package:super_hueman/data/super_color.dart';
-import 'package:super_hueman/data/super_container.dart';
-import 'package:super_hueman/data/super_state.dart';
-import 'package:super_hueman/data/super_text.dart';
-import 'package:super_hueman/data/widgets.dart';
+import 'package:hueman/data/save_data.dart';
+import 'package:hueman/data/structs.dart';
+import 'package:hueman/data/super_color.dart';
+import 'package:hueman/data/super_container.dart';
+import 'package:hueman/data/super_state.dart';
+import 'package:hueman/data/super_text.dart';
+import 'package:hueman/data/widgets.dart';
 
 class ThanksForPlaying extends StatefulWidget {
   const ThanksForPlaying({super.key});
@@ -135,7 +135,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       showText = true;
     });
     await sleepState(5, () => showText = false);
-    await sleep(1);
+    sleep(1);
     context.noTransition(const _TheEnd());
   }
 
@@ -385,14 +385,14 @@ class _CreditsState extends SuperState<_Credits> {
   };
   Future<void> resetLines({bool sleeping = false}) async {
     for (final label in _credits.keys) {
-      if (sleeping) await sleep(2);
+      if (sleeping) sleep(2);
       setState(() => lineData[label] = (Colors.black54, Offset.zero, true));
     }
   }
 
   @override
   void animate() async {
-    await sleep(5);
+    sleep(5);
     await resetLines(sleeping: true);
     await sleepState(2, () => showButton = true);
   }
@@ -402,7 +402,7 @@ class _CreditsState extends SuperState<_Credits> {
         resetLines();
         setState(() => lineData[label] = (color, const Offset(-0.5, 0), true));
         await sleepState(0.2, () => lineData[label] = (color, const Offset(0, 0), true));
-        await sleep(0.4);
+        sleep(0.4);
         if (website == verifyAge) {
           showDialog(
             context: context,

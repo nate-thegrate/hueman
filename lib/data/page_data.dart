@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:super_hueman/data/save_data.dart';
-import 'package:super_hueman/inverse_pages/menu.dart';
-import 'package:super_hueman/inverse_pages/sandbox.dart';
-import 'package:super_hueman/inverse_pages/tense.dart';
-import 'package:super_hueman/inverse_pages/trivial.dart';
-import 'package:super_hueman/inverse_pages/true_mastery.dart';
-import 'package:super_hueman/pages/intense_master.dart';
-import 'package:super_hueman/pages/intro.dart';
-import 'package:super_hueman/pages/menu.dart';
-import 'package:super_hueman/pages/sandbox.dart';
-import 'package:super_hueman/tutorial_pages/intense.dart';
-import 'package:super_hueman/tutorial_pages/intro_3.dart';
-import 'package:super_hueman/tutorial_pages/intro_6.dart';
-import 'package:super_hueman/tutorial_pages/intro_c.dart';
-import 'package:super_hueman/tutorial_pages/master.dart';
-import 'package:super_hueman/tutorial_pages/sandbox.dart';
-import 'package:super_hueman/tutorial_pages/start.dart';
+import 'package:hueman/data/save_data.dart';
+import 'package:hueman/inverse_pages/menu.dart';
+import 'package:hueman/inverse_pages/sandbox.dart';
+import 'package:hueman/inverse_pages/tense.dart';
+import 'package:hueman/inverse_pages/trivial.dart';
+import 'package:hueman/inverse_pages/true_mastery.dart';
+import 'package:hueman/pages/intense_master.dart';
+import 'package:hueman/pages/intro.dart';
+import 'package:hueman/pages/menu.dart';
+import 'package:hueman/pages/sandbox.dart';
+import 'package:hueman/tutorial_pages/intense.dart';
+import 'package:hueman/tutorial_pages/intro_3.dart';
+import 'package:hueman/tutorial_pages/intro_6.dart';
+import 'package:hueman/tutorial_pages/intro_c.dart';
+import 'package:hueman/tutorial_pages/master.dart';
+import 'package:hueman/tutorial_pages/sandbox.dart';
+import 'package:hueman/tutorial_pages/start.dart';
 
 enum Pages {
   start(StartScreen()),
