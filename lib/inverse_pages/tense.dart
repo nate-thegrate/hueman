@@ -188,18 +188,17 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     super.initState();
     inverted = true;
     generateHue();
-    if (!tutorialTense) {
-      saveData('tutorialTense', true);
-      tutorialTense = true;
+    if (!Tutorial.tense()) {
+      Tutorial.tense.complete();
       sleep(
         0.5,
         then: () => showDialog(
           context: context,
           builder: (context) => Theme(
             data: ThemeData(
-                useMaterial3: true,
-                fontFamily: 'nunito sans',
-                dialogBackgroundColor: SuperColors.lightBackground),
+              useMaterial3: true,
+              dialogBackgroundColor: SuperColors.lightBackground,
+            ),
             child: const AlertDialog(
               title: Text(
                 'Tense mode',

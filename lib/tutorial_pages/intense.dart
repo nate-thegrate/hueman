@@ -58,8 +58,7 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
     await sleepState(2, () => madeTheJump = true);
     await sleepState(4 / 3, () => textVisible = 3);
     await sleep(3);
-    saveData('tutorialIntense', true);
-    tutorialIntense = true;
+    await Tutorial.intense.complete();
     context.goto(Pages.intense);
   }
 

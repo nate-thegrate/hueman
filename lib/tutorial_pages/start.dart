@@ -501,8 +501,7 @@ class _IntroButtonState extends State<_IntroButton> {
   @override
   void initState() {
     super.initState();
-    saveData('started', true);
-    started = true;
+    Tutorial.started.complete();
     epicHues = Ticker((elapsed) => setState(() => color = epicColor))..start();
   }
 

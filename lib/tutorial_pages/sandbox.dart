@@ -751,8 +751,7 @@ class _FinalPageState extends SuperState<_FinalPage> {
         });
         await sleepState(1, () => consolidating = false);
         await sleepState(3, () => collapsed = true);
-        saveData('tutorialSandbox', true);
-        tutorialSandbox = true;
+        await Tutorial.sandbox.complete();
         await sleep(1);
       }()
           .then((_) => context.goto(Pages.sandbox));

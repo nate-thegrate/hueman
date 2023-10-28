@@ -37,12 +37,12 @@ enum Pages {
   final Widget _widget;
 
   Widget get widget => switch (this) {
-        intro3 when !tutorialIntro3 => const Intro3Tutorial(),
-        intro6 when !tutorialIntro6 => const Intro6Tutorial(),
-        introC when !tutorialIntroC => const IntroCTutorial(),
-        intense when !tutorialIntense => const IntenseTutorial(),
-        master when !tutorialMaster => const MasterTutorial(),
-        sandbox when !tutorialSandbox => const SandboxTutorial(),
+        intro3 when !Tutorial.intro3() => const Intro3Tutorial(),
+        intro6 when !Tutorial.intro6() => const Intro6Tutorial(),
+        introC when !Tutorial.introC() => const IntroCTutorial(),
+        intense when !Tutorial.intense() => const IntenseTutorial(),
+        master when !Tutorial.master() => const MasterTutorial(),
+        sandbox when !Tutorial.sandbox() => const SandboxTutorial(),
         sandbox when inverted => const InverseSandbox(),
         menu when inverted => const InverseMenu(),
         _ => _widget,
@@ -74,5 +74,5 @@ enum Pages {
     for (final page in values) page.name: (context) => page.widget
   };
 
-  static String get initialRoute => (started ? menu : start).name;
+  static String get initialRoute => (Tutorial.started() ? menu : start).name;
 }

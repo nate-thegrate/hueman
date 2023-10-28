@@ -74,20 +74,20 @@ class _InverseMenuState extends InverseState<InverseMenu>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const FixedSpacer(67),
-                      NavigateButton(Pages.trivial, color: color, isNew: !tutorialTrivial),
+                      NavigateButton(Pages.trivial, color: color, isNew: !Tutorial.trivial()),
                       const FixedSpacer(33),
                       SuperButton(
                         'tense',
                         color: color,
                         onPressed: () => setState(() => menuPage = MenuPage.tenseSelect),
                         noDelay: true,
-                        isNew: !tutorialTense,
+                        isNew: !Tutorial.tense(),
                       ),
-                      if (tutorialTrivial && tutorialTense && tutorialSandbox) ...[
+                      if (Tutorial.trivial() && Tutorial.tense() && Tutorial.sandbox()) ...[
                         const FixedSpacer(33),
                         ElevatedButton(
                           onPressed: singlePress(() {
-                            if (!tutorialTrueMastery) {
+                            if (!Tutorial.trueMastery()) {
                               setState(() => trueMastery = true);
                               sleep(
                                 6,
@@ -118,7 +118,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                         ),
                       ],
                       const FixedSpacer(67),
-                      NavigateButton(Pages.sandbox, color: color, isNew: !tutorialSandbox),
+                      NavigateButton(Pages.sandbox, color: color, isNew: !Tutorial.sandbox()),
                     ],
                   )
                 : const SizedBox(width: 150),
@@ -259,7 +259,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
           child: Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
         ),
       );
-      if (tutorialMaster && !sawInversion) {
+      if (Tutorial.master() && !Tutorial.sawInversion()) {
         settingsButton = BrandNew(color: color, child: settingsButton);
       }
     } else {

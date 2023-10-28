@@ -58,12 +58,11 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
       ),
       const FixedSpacer(50),
       _BugReport(color),
-      if (tutorialMaster) ...[
+      if (Tutorial.master()) ...[
         const FixedSpacer(33),
         OutlinedButton(
           onPressed: () async {
-            saveData('sawInversion', true);
-            sawInversion = true;
+            Tutorial.sawInversion.complete();
             setState(() => inverting = true);
             controller.forward();
             await sleepState(0.7, () => darkBackground = false);
@@ -114,10 +113,12 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
           padding: const EdgeInsets.only(top: 2),
           width: double.infinity,
           child: showMasteryText
-              ? const Text(
-                  'unlock more options\nby playing "intense" mode!',
+              ? Text(
+                  Tutorial.intense()
+                      ? 'to unlock more options,\nfind a hue in "intense" mode!'
+                      : 'unlock more options\nby playing "intense" mode!',
                   textAlign: TextAlign.center,
-                  style: SuperStyle.sans(color: Colors.white70),
+                  style: const SuperStyle.sans(color: Colors.white70),
                 )
               : null,
         ),
@@ -143,25 +144,25 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
                           color: color,
                           onPressed: () => setState(() => menuPage = MenuPage.introSelect),
                           noDelay: true,
-                          isNew: !tutorialIntroC,
+                          isNew: !Tutorial.introC(),
                         ),
-                        if (tutorialIntroC) ...[
+                        if (Tutorial.introC()) ...[
                           const FixedSpacer(33),
-                          NavigateButton(Pages.intense, color: color, isNew: !tutorialIntense),
+                          NavigateButton(Pages.intense, color: color, isNew: !Tutorial.intense()),
                           if (hueMaster)
                             Padding(
                               padding: const EdgeInsets.only(top: 33),
                               child: NavigateButton(
                                 Pages.master,
                                 color: color,
-                                isNew: !tutorialMaster,
+                                isNew: !Tutorial.master(),
                               ),
                             ),
                           const FixedSpacer(67),
                           NavigateButton(
                             Pages.sandbox,
                             color: color,
-                            isNew: !tutorialSandbox,
+                            isNew: !Tutorial.sandbox(),
                           ),
                         ],
                       ],
@@ -185,23 +186,13 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
           // ),
           // const FixedSpacer(33),
           MenuCheckbox(
-            'auto-submit',
-            value: autoSubmit,
-            description: (
-              "'submit' when 3 digits are entered",
-              "submit with the 'submit' button"
-            ),
-            toggle: (value) => setState(() => autoSubmit = value),
-          ),
-          const FixedSpacer(33),
-          MenuCheckbox(
             'external keyboard',
             value: externalKeyboard,
             description: ('type on a keyboard', 'tap buttons on the screen'),
             toggle: (value) => setState(() => externalKeyboard = value),
           ),
           const FixedSpacer(33),
-          ...hueMaster ? masterSettings : noviceSettings,
+          if (hueMaster) ...masterSettings else ...noviceSettings,
         ],
       MenuPage.introSelect => [
           const Text(
@@ -210,14 +201,14 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
             style: SuperStyle.sans(size: 32, weight: 100),
           ),
           const FixedSpacer(55),
-          NavigateButton(Pages.intro3, color: color, isNew: !tutorialIntro3),
-          if (tutorialIntro3) ...[
+          NavigateButton(Pages.intro3, color: color, isNew: !Tutorial.intro3()),
+          if (Tutorial.intro3()) ...[
             const FixedSpacer(33),
-            NavigateButton(Pages.intro6, color: color, isNew: !tutorialIntro6),
+            NavigateButton(Pages.intro6, color: color, isNew: !Tutorial.intro6()),
           ],
-          if (tutorialIntro6) ...[
+          if (Tutorial.intro6()) ...[
             const FixedSpacer(33),
-            NavigateButton(Pages.introC, color: color, isNew: !tutorialIntroC),
+            NavigateButton(Pages.introC, color: color, isNew: !Tutorial.introC()),
           ],
           if (!casualMode)
             const Padding(
@@ -228,7 +219,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
                 style: SuperStyle.sans(color: Colors.white60),
               ),
             )
-          else if (tutorialIntro3)
+          else if (Tutorial.intro3())
             const Padding(
               padding: EdgeInsets.only(top: 33),
               child: Text(
@@ -253,7 +244,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
           child: Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
         ),
       );
-      if (tutorialMaster && !sawInversion) {
+      if (Tutorial.master() && !Tutorial.sawInversion()) {
         settingsButton = BrandNew(color: color, child: settingsButton);
       }
     } else {

@@ -35,10 +35,7 @@ class _NumberButton extends StatelessWidget {
           ),
       };
 
-  void type() {
-    controller.type(number);
-    if (autoSubmit && controller.displayValue.length == 3) submit();
-  }
+  void type() => controller.type(number);
 
   void Function()? get onPressed => switch (number) {
         10 => controller.backspace,
@@ -510,7 +507,6 @@ class KeyboardGame extends StatelessWidget {
         SizedBox(
           width: 100,
           child: TextField(
-            onChanged: (text) => (autoSubmit && text.length == 3) ? submit() : (),
             focusNode: hueFocusNode,
             controller: hueController,
             onSubmitted: (_) => submit(),

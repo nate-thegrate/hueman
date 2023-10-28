@@ -274,9 +274,8 @@ class _TriviaModeState extends State<TriviaMode> {
     inverted = true;
     resetButtons();
     triviaQuestions.shuffle();
-    if (!tutorialTrivial) {
-      saveData('tutorialTrivial', true);
-      tutorialTrivial = true;
+    if (!Tutorial.trivial()) {
+      Tutorial.trivial.complete();
       sleep(
         0.5,
         then: () => showDialog(

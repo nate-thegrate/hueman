@@ -47,8 +47,7 @@ class _TrueMasteryTutorialState extends SuperState<TrueMasteryTutorial> {
       });
     }
     await sleep(10);
-    await saveData('tutorialTrueMastery', true);
-    tutorialTrueMastery = true;
+    Tutorial.trueMastery.complete();
     context.goto(Pages.trueMastery);
   }
 
