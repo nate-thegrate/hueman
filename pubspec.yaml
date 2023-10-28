@@ -1,5 +1,5 @@
 name: hueman
-description: A new Flutter project.
+description: An open-source game about color theory.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -30,13 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  # cupertino_icons: ^1.0.2
-  # google_fonts: ^5.1.0
   url_launcher: ">=6.1.14"
-  collection: ">=1.17.2"
   rive: ">=0.11.17"
   flutter_svg: ">=2.0.7"
   shared_preferences: ">=2.2.2"

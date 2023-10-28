@@ -105,4 +105,16 @@ extension NumStuff<T extends num> on T {
   T stayInRange(T lower, T upper) => min(max(this, lower), upper);
 }
 
+extension Average<T extends num> on List<T> {
+  double get average {
+    if (isEmpty) throw StateError('No elements');
+
+    num sum = 0;
+    for (final value in this) {
+      sum += value;
+    }
+    return sum / length;
+  }
+}
+
 T diff<T extends num>(T a, T b) => (a - b).abs() as T;

@@ -9,7 +9,6 @@ import 'package:hueman/pages/score.dart';
 import 'package:hueman/pages/hue_typing_game.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
-import 'package:collection/collection.dart';
 
 import 'package:flutter/material.dart';
 
@@ -385,7 +384,7 @@ class _IntenseModeState extends State<IntenseMode> {
   Widget build(BuildContext context) {
     final size = context.screenSize;
     screenHeight = size.height;
-    final width = <double>[screenHeight - 625, 500, size.width - 80].min;
+    final width = min(screenHeight - 625, min(500.0, size.width - 80));
 
     return externalKeyboard
         ? KeyboardGame(

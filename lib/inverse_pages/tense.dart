@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/super_color.dart';
