@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// do an animation on boot :)
@@ -25,6 +26,7 @@ Future<void> saveData(String key, Object value) async {
 
 /// using an enum probably would have been better haha
 Future<void> loadData() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   casualMode = prefs.getBool('casualMode') ?? true;
   externalKeyboard = prefs.getBool('externalKeyboard') ?? false;
