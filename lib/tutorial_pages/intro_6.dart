@@ -157,7 +157,7 @@ class _Page2State extends SuperState<_Page2> {
           child: SizedBox(
             width: imgSize,
             height: imgSize,
-            child: Image.asset('assets/ink_cartridge.png'),
+            child: Image.asset('assets/ink_cartridge.jpg'),
           ),
         ),
         const Spacer(flex: 2),

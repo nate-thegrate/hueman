@@ -18,7 +18,7 @@ class SuperStyle extends TextStyle {
   /// ████▄▄▀▀▀▀▀▀▀▄▄████
   /// ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   /// ```
-  /// (not comic sans tho)
+  /// (not comic sans)
   const SuperStyle.sans({
     double? size,
     bool italic = false,

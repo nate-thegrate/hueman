@@ -275,7 +275,9 @@ class BugReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: () => gotoWebsite('https://forms.gle/H9k2LhzJtWRfU1Q2A'),
+      onPressed: () => gotoWebsite(
+        'https://github.com/nate-thegrate/hueman/issues/new?template=report-a-bug.md',
+      ),
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: color, width: 2),
         foregroundColor: color,
