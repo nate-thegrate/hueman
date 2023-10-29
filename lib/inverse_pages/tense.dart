@@ -138,9 +138,11 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
       .fold(0.0, (previousValue, element) => previousValue + 125 / element)
       .toStringAsFixed(2);
 
-  late final TenseScoreKeeper? scoreKeeper = casualMode
-      ? null
-      : TenseScoreKeeper(page: widget.volatile ? Pages.tenseVolatile : Pages.tenseVibrant);
+  late final TenseScoreKeeper? scoreKeeper = switch (widget.volatile) {
+    _ when casualMode => null,
+    true => TenseScoreKeeper(page: Pages.tenseVolatile),
+    false => TenseScoreKeeper(page: Pages.tenseVibrant),
+  };
 
   late int hue;
   final HueQueue hueQueue = HueQueue(12);
@@ -300,7 +302,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   Widget get button2by2 => AnimatedContainer(
         duration: expandDuration,
         curve: curve,
-        height: showDetails ? 0 : 420,
+        height: showDetails ? 0 : min(context.screenWidth, 420),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -402,6 +404,7 @@ class _TenseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double shadowSize = 2;
+    final double width = min((context.screenWidth / 2) - 20, 200);
     return GestureDetector(
       onTap: select,
       child: SlideTransition(
@@ -413,8 +416,8 @@ class _TenseButton extends StatelessWidget {
           padding: const EdgeInsets.all(4),
           child: ClipRect(
             child: SizedBox(
-              width: 200,
-              height: 200,
+              width: width,
+              height: width,
               child: Stack(
                 children: [
                   SuperContainer(
@@ -443,6 +446,7 @@ class _TenseButton extends StatelessWidget {
                         '$buttonHue°',
                         style: SuperStyle.sans(
                           size: 40,
+                          extraBold: true,
                           color: wrongChoice ? Colors.red : Colors.black,
                         ),
                       ),
@@ -491,28 +495,27 @@ class _SplendidState extends InverseState<Splendid> {
                         ],
                       ),
                     )
-                  : Text(
-                      widget.correct ? 'Splendid!' : '[incorrect]',
-                      style: const SuperStyle.mono(color: SuperColors.darkBackground),
+                  : const Text(
+                      '[incorrect]',
+                      style: SuperStyle.mono(color: SuperColors.darkBackground),
                     ),
             ),
-            widget.correct
-                ? ShaderMask(
-                    blendMode: BlendMode.srcIn,
-                    shaderCallback: (bounds) => LinearGradient(colors: [
-                      for (int i = 0; i < 360; i += 10) SuperColor.hue((inverseHue + i) % 360)
-                    ]).createShader(
-                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        'Splendid!',
-                        style: SuperStyle.mono(size: 50),
-                      ),
-                    ),
-                  )
-                : empty,
+            if (widget.correct)
+              ShaderMask(
+                blendMode: BlendMode.srcIn,
+                shaderCallback: (bounds) => LinearGradient(colors: [
+                  for (int i = 0; i < 360; i += 10) SuperColor.hue((inverseHue + i) % 360)
+                ]).createShader(
+                  Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    'Splendid!',
+                    style: SuperStyle.mono(size: 50),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

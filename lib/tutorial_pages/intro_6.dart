@@ -565,7 +565,7 @@ class _Page5State extends SuperState<_Page5> {
               color: Colors.black,
               height: context.screenHeight / 2,
               alignment: Alignment.center,
-              child: _ColorBubbles(counter, showArrows),
+              child: _ColorBubbles.additive(counter, showArrows),
             ),
           ),
         ),
@@ -671,7 +671,7 @@ class _ColorBubbleState extends State<_ColorBubble> {
 }
 
 class _ColorBubbles extends StatelessWidget {
-  const _ColorBubbles(this.counter, this.showArrows)
+  const _ColorBubbles.additive(this.counter, this.showArrows)
       : colors = SuperColors.primaries,
         subtract = false;
   const _ColorBubbles.subtractive(this.counter, this.showArrows)
@@ -878,7 +878,13 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
           const TextSpan(text: "It's time to learn "),
           TextSpan(
             text: 'ALL',
-            style: SuperStyle.sans(color: epicColor, size: 16, weight: 800, width: 87.5),
+            style: SuperStyle.sans(
+              color: epicColor,
+              size: 17,
+              weight: 800,
+              width: 87.5,
+              letterSpacing: 1,
+            ),
           ),
           const TextSpan(text: '\nof the primary color hues.'),
         ]),

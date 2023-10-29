@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
 
-class PhotoColors {
-  const PhotoColors(this.filename, this.colors);
+class PhotoColors extends StatelessWidget {
+  const PhotoColors(this.filename, this.colors, {super.key});
   final String filename;
   final List<int> colors;
 
@@ -15,7 +15,10 @@ class PhotoColors {
     return (imageColor(index1), imageColor(index2));
   }
 
-  Widget image({double width = 500}) => Image.asset('assets/public_domain_photos/$filename.jpg');
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset('assets/public_domain_photos/$filename.jpg');
+  }
 }
 
 const List<PhotoColors> allImages = [

@@ -363,7 +363,7 @@ class _EchoButton extends StatelessWidget {
         if (label == 'continue') gotoWebsite('https://youtu.be/NVhA18_dmg0');
       },
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+        padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
         child: Text(label, style: const SuperStyle.sans(size: 16)),
       ),
     );
@@ -412,18 +412,19 @@ class _CreditsState extends SuperState<_Credits> {
                 children: [
                   SvgPicture.asset(
                     'assets/end_credits_icons/youtube.svg',
-                    width: 50,
+                    width: 45,
                     colorFilter: const ColorFilter.mode(SuperColors.red, BlendMode.srcIn),
                   ),
                   const Padding(
                     padding: EdgeInsets.all(20),
-                    child: Text("Echo's video"),
+                    child: Text("Echo's video", style: SuperStyle.sans()),
                   ),
                 ],
               ),
               content: const Text(
                 'This YouTube video has a little bit of adult language.\n\n'
                 "Please only watch if you have an adult's permission.\n",
+                style: SuperStyle.sans(),
               ),
               actionsAlignment: MainAxisAlignment.spaceEvenly,
               actions: const [_EchoButton('go back'), _EchoButton('continue')],
@@ -442,90 +443,87 @@ class _CreditsState extends SuperState<_Credits> {
         const Spacer(),
         const Text(
           'Credits',
-          style: SuperStyle.sans(size: 32, weight: 600, height: 1),
+          style: SuperStyle.sans(size: 32, extraBold: true, height: 1, letterSpacing: 0.5),
         ),
         const SuperText(
           '(tap on a button to go check it out!)',
-          style: SuperStyle.sans(size: 11),
+          style: SuperStyle.sans(size: 12),
         ),
         const Spacer(),
         for (final MapEntry(key: label, value: buttons) in _credits.entries) ...[
-          Transform.translate(
-            offset: const Offset(-45, 0),
-            child: SuperContainer(
-              height: buttons.length * 60,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Fader(
-                    lineData[label]!.$3,
-                    child: SizedBox(
-                      child: SuperContainer(
-                        width: 145,
-                        margin: const EdgeInsets.only(left: 25, right: 20),
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          label,
-                          textAlign: TextAlign.right,
-                          style: const SuperStyle.sans(size: 18),
-                        ),
+          SuperContainer(
+            height: buttons.length * 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Fader(
+                  lineData[label]!.$3,
+                  child: SizedBox(
+                    child: SuperContainer(
+                      width: 100,
+                      margin: const EdgeInsets.only(left: 0, right: 14),
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        label,
+                        textAlign: TextAlign.right,
+                        style: const SuperStyle.sans(size: 16, width: 75, weight: 666),
                       ),
                     ),
                   ),
-                  AnimatedSlide(
-                    duration: halfSec,
-                    curve: Curves.easeOutCubic,
-                    offset: lineData[label]!.$2,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 100),
-                      width: 8,
-                      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: lineData[label]!.$1,
-                        borderRadius: BorderRadius.circular(0xFF),
-                      ),
-                      child: SexyBox(child: lineData[label]!.$3 ? const SizedBox.expand() : flat),
+                ),
+                AnimatedSlide(
+                  duration: halfSec,
+                  curve: Curves.easeOutCubic,
+                  offset: lineData[label]!.$2,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 100),
+                    width: 8,
+                    margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: lineData[label]!.$1,
+                      borderRadius: BorderRadius.circular(0xFF),
                     ),
+                    child: SexyBox(child: lineData[label]!.$3 ? const SizedBox.expand() : flat),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (final _CreditsButton(
-                            :name,
-                            :website,
-                            :gradient,
-                            :color,
-                            label: buttonLabel,
-                            :white
-                          ) in buttons)
-                        Expanded(
-                          child: Fader(
-                            lineData[label]!.$3,
-                            child: AnimatedSlide(
-                              duration: halfSec,
-                              offset: lineData[label]!.$3 ? Offset.zero : const Offset(0.5, 0),
-                              curve: curve,
-                              child: _CreditsButton(
-                                name: name,
-                                website: website,
-                                gradient: gradient,
-                                color: color,
-                                label: buttonLabel,
-                                white: white,
-                                onPressed: onPressed(
-                                  context,
-                                  color ?? gradient!.colors[0],
-                                  label,
-                                  website,
-                                ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final _CreditsButton(
+                          :name,
+                          :website,
+                          :gradient,
+                          :color,
+                          label: buttonLabel,
+                          :white
+                        ) in buttons)
+                      Expanded(
+                        child: Fader(
+                          lineData[label]!.$3,
+                          child: AnimatedSlide(
+                            duration: halfSec,
+                            offset: lineData[label]!.$3 ? Offset.zero : const Offset(0.5, 0),
+                            curve: curve,
+                            child: _CreditsButton(
+                              name: name,
+                              website: website,
+                              gradient: gradient,
+                              color: color,
+                              label: buttonLabel,
+                              white: white,
+                              onPressed: onPressed(
+                                context,
+                                color ?? gradient!.colors[0],
+                                label,
+                                website,
                               ),
                             ),
                           ),
-                        )
-                    ],
-                  ),
-                ],
-              ),
+                        ),
+                      )
+                  ],
+                ),
+              ],
             ),
           ),
           const Spacer(),

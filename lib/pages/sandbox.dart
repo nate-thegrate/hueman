@@ -96,7 +96,7 @@ class _HSVSlider extends StatelessWidget {
           ),
         ),
         SizedBox(
-          width: context.screenWidth - 160,
+          width: min(context.screenWidth - 160, 720),
           child: SliderTheme(
             data: const SliderThemeData(
               trackHeight: 10,
@@ -277,7 +277,7 @@ class _SandboxState extends State<Sandbox> {
       _ColorPicker.rgb => Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SuperContainer(width: 300, height: 300, color: _color),
+            SuperContainer(width: planeSize, height: planeSize, color: _color),
             const FixedSpacer(30),
             Flex(
               direction: context.squished ? Axis.vertical : Axis.horizontal,
@@ -387,7 +387,7 @@ class _SandboxState extends State<Sandbox> {
             ColorLabel.colorCode(
               'color code',
               _color.hexCode,
-              updateColorCode: (color) => setState(() => updateColor(color)),
+              (color) => setState(() => updateColor(color)),
             ),
             const Spacer(flex: 2),
           ],

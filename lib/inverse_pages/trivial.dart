@@ -62,9 +62,9 @@ class TriviaButton extends StatelessWidget {
 }
 
 class TriviaQuestion {
-  const TriviaQuestion(this.question, this.answers, {this.explanation});
+  const TriviaQuestion(this.question, this.answers, {required this.explanation});
   final String question;
-  final String? explanation;
+  final String explanation;
   final List<SuperColor> answers;
 }
 
@@ -347,8 +347,8 @@ class _TriviaModeState extends State<TriviaMode> {
                   ConstrainedBox(
                       constraints: BoxConstraints.loose(const Size.fromWidth(500)),
                       child: Text(
-                        triviaQuestions.first.explanation ?? '',
-                        style: const SuperStyle.sans(size: 16),
+                        triviaQuestions.first.explanation,
+                        style: const SuperStyle.sans(size: 14),
                       )),
                 ],
               ),
@@ -408,14 +408,17 @@ class _TriviaModeState extends State<TriviaMode> {
 
     final Widget multipleColorsReminder = SizedBox(
       height: 30,
-      child: correctAnswers.length > 1
-          ? Text(
-              selected.isNotEmpty
-                  ? 'Select ${correctAnswers.length - selected.length} more.'
-                  : 'Select ${correctAnswers.length} colors.',
-              style: const SuperStyle.sans(size: 20),
-            )
-          : empty,
+      child: switch (selected.isEmpty) {
+        _ when correctAnswers.length == 1 => empty,
+        true => Text(
+            'Select ${correctAnswers.length} colors.',
+            style: const SuperStyle.sans(size: 20),
+          ),
+        false => Text(
+            'Select ${correctAnswers.length - selected.length} more.',
+            style: const SuperStyle.sans(size: 20),
+          ),
+      },
     );
 
     final Widget score = Text(

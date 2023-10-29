@@ -105,14 +105,16 @@ abstract final class SuperColors {
   static const gray = SuperColor.named('gray', 0x808080);
   static const black = SuperColor.named('black', 0x000000);
 
-  static const lightBackground = SuperColor(0xffeef3f8);
+  static const lightBackground = SuperColor(0xEEF3F8);
   static const darkBackground = SuperColor(0x121212);
-  static const tintedDarkBackground = SuperColor(0x2c2c2c);
-  static const bsBackground = SuperColor(0xfff2d6);
-  static const inverting = SuperColor(0xf5faff);
+  static const tintedDarkBackground = SuperColor(0x2C2C2C);
+  static const bsBackground = SuperColor(0xFFF2D6);
+  static const bsBrown = SuperColor(0x6C4B00);
+  static const inverting = SuperColor(0xF5FAFF);
 
   // blue is struggling to be seen, #relatable
   static const visibleBlue = SuperColor.named('blue', 0x1212FF);
+  static const visibleYellow = SuperColor.named('yellow', 0xF0F000);
 
   static const black80 = Color(0xCC000000);
   static const white80 = Color(0xCCFFFFFF);

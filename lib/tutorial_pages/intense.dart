@@ -23,7 +23,7 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
   int textVisible = 0;
   bool doTheWave = true,
       showAllRows = false,
-      justKidding = false,
+      tellTheTruth = false,
       makingTheJump = false,
       madeTheJump = false;
 
@@ -43,7 +43,7 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
     setState(() => textVisible = 0);
     await sleepState(1, () {
       showAllRows = false;
-      justKidding = true;
+      tellTheTruth = true;
       textVisible = 2;
     });
     await sleepState(2, () {
@@ -76,7 +76,7 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
                 children: [
                   if (doTheWave)
                     const _ColorWave()
-                  else if (justKidding)
+                  else if (tellTheTruth)
                     for (int startHue = 29; startHue >= 0; startHue -= 1)
                       _ColorRow(startHue, showAllRows ? context.ballSpacing : 0)
                   else
@@ -86,80 +86,81 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
               ),
               const Spacer(flex: 2),
               SexyBox(
-                child: justKidding
+                child: tellTheTruth
                     ? empty
                     : Fader(
                         textVisible >= 1,
                         child: const SuperText(
-                            'To identify and keep track of twelve different hues,'),
+                          'To identify and keep track of twelve different hues,',
+                        ),
                       ),
               ),
               Fader(
                 textVisible >= 2,
-                child: makingTheJump
-                    ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          SuperRichText(pad: false, [
-                            const TextSpan(text: 'this is the jump from '),
-                            TextSpan(
-                              text: 'sharp',
-                              style: SuperStyle.sans(
-                                color: color,
-                                weight: 100,
-                                width: 87.5,
-                                letterSpacing: -0.2,
-                              ),
+                child: switch (tellTheTruth) {
+                  _ when makingTheJump => Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        SuperRichText(pad: false, [
+                          const TextSpan(text: 'this is the jump from '),
+                          TextSpan(
+                            text: 'sharp',
+                            style: SuperStyle.sans(
+                              color: color,
+                              weight: 100,
+                              width: 87.5,
+                              letterSpacing: -0.2,
                             ),
-                          ]),
-                          AnimatedSlide(
-                            offset: Offset(madeTheJump ? 0 : 10, 0),
-                            duration: const Duration(milliseconds: 750),
-                            curve: Curves.easeOutExpo,
-                            child: SuperRichText(pad: false, [
-                              const TextSpan(text: ' to '),
-                              TextSpan(text: 'super', style: SuperStyle.sans(color: color)),
-                              TextSpan(
-                                text: 'HUE',
-                                style: SuperStyle.sans(color: color, weight: 900, size: 14.5),
-                              ),
-                              TextSpan(text: 'man', style: SuperStyle.sans(color: color)),
-                              const TextSpan(text: '.'),
-                            ]),
                           ),
-                        ],
-                      )
-                    : justKidding
-                        ? const SuperText('Sorry, did I say 36?')
-                        : SuperRichText([
-                            const TextSpan(text: 'you have to be '),
+                        ]),
+                        AnimatedSlide(
+                          offset: Offset(madeTheJump ? 0 : 10, 0),
+                          duration: const Duration(milliseconds: 750),
+                          curve: Curves.easeOutExpo,
+                          child: SuperRichText(pad: false, [
+                            const TextSpan(text: ' to '),
+                            TextSpan(text: 'super', style: SuperStyle.sans(color: color)),
                             TextSpan(
-                              text: 'sharp',
-                              style: SuperStyle.sans(
-                                color: color,
-                                weight: 100,
-                                width: 87.5,
-                                letterSpacing: -0.2,
-                              ),
+                              text: 'HUE',
+                              style: SuperStyle.sans(color: color, weight: 900, size: 14.5),
                             ),
+                            TextSpan(text: 'man', style: SuperStyle.sans(color: color)),
                             const TextSpan(text: '.'),
                           ]),
+                        ),
+                      ],
+                    ),
+                  true => const SuperText('Sorry, did I say 36?'),
+                  false => SuperRichText([
+                      const TextSpan(text: 'you have to be '),
+                      TextSpan(
+                        text: 'sharp',
+                        style: SuperStyle.sans(
+                          color: color,
+                          weight: 100,
+                          width: 87.5,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                      const TextSpan(text: '.'),
+                    ]),
+                },
               ),
               const Spacer(),
-              Fader(
-                textVisible >= 3,
-                child: justKidding
-                    ? makingTheJump
-                        ? const SuperText("Let's see if you got what it takes.")
-                        : const SuperText('I meant 360.')
-                    : const SuperText("But now it's time to try 36."),
-              ),
+              Fader(textVisible >= 3,
+                  child: SuperText(
+                    switch (makingTheJump) {
+                      _ when !tellTheTruth => "But now it's time to try 36.",
+                      true => "Let's see if you got what it takes.",
+                      false => 'I meant 360.',
+                    },
+                  )),
               const Spacer(flex: 3),
               SexyBox(
                 child: Fader(
                   textVisible >= 4,
-                  child: justKidding ? empty : ContinueButton(onPressed: ready),
+                  child: tellTheTruth ? empty : ContinueButton(onPressed: ready),
                 ),
               ),
               const Spacer(),

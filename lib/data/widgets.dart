@@ -268,6 +268,26 @@ class MenuCheckbox extends StatelessWidget {
   }
 }
 
+class BugReport extends StatelessWidget {
+  const BugReport(this.color, {super.key});
+  final SuperColor color;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: () => gotoWebsite('https://forms.gle/H9k2LhzJtWRfU1Q2A'),
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: color, width: 2),
+        foregroundColor: color,
+      ),
+      child: const Padding(
+        padding: EdgeInsets.fromLTRB(4, 6, 4, 8),
+        child: Text('report a bug', style: SuperStyle.sans(size: 18)),
+      ),
+    );
+  }
+}
+
 class GoBack extends StatelessWidget {
   const GoBack({this.text = 'back', super.key});
   final String text;
@@ -323,8 +343,8 @@ class ColorLabel extends StatelessWidget {
       : colorCode = false,
         update = null;
 
-  const ColorLabel.colorCode(this.property, this.value,
-      {required ValueChanged<SuperColor> updateColorCode, super.key})
+  const ColorLabel.colorCode(this.property, this.value, ValueChanged<SuperColor> updateColorCode,
+      {super.key})
       : style = null,
         colorCode = true,
         update = updateColorCode;
@@ -338,7 +358,7 @@ class ColorLabel extends StatelessWidget {
     const SuperStyle defaultStyle = SuperStyle.sans(size: 16);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -346,25 +366,22 @@ class ColorLabel extends StatelessWidget {
             width: 100,
             child: Text('$property:', style: defaultStyle, textAlign: TextAlign.right),
           ),
-          if (!colorCode) const FixedSpacer.horizontal(15),
-          SizedBox(
-            child: colorCode
-                ? Align(
-                    alignment: Alignment.bottomLeft,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: inverted ? Colors.black : Colors.white,
-                      ),
-                      onPressed: () => ManualColorCode.run(
-                        context,
-                        color: SuperColor(int.parse(value.substring(1), radix: 16)),
-                        updateColor: update!,
-                      ),
-                      child: Text(value, style: const SuperStyle.mono(size: 18)),
-                    ),
-                  )
-                : Text(value, style: style ?? defaultStyle),
-          ),
+          if (colorCode)
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: inverted ? Colors.black : Colors.white,
+              ),
+              onPressed: () => ManualColorCode.run(
+                context,
+                color: SuperColor(int.parse(value.substring(1), radix: 16)),
+                updateColor: update!,
+              ),
+              child: Text(value, style: const SuperStyle.mono(size: 18)),
+            )
+          else ...[
+            const FixedSpacer.horizontal(15),
+            Text(value, style: style ?? defaultStyle),
+          ],
         ],
       ),
     );
@@ -422,7 +439,8 @@ class _ManualColorCodeState extends State<ManualColorCode> {
     },
   );
   final TextInputFormatter maxLength6 = TextInputFormatter.withFunction(
-      (oldValue, newValue) => newValue.text.length > 6 ? oldValue : newValue);
+    (oldValue, newValue) => newValue.text.length > 6 ? oldValue : newValue,
+  );
 
   @override
   void initState() {
@@ -437,32 +455,36 @@ class _ManualColorCodeState extends State<ManualColorCode> {
         useMaterial3: true,
         fontFamily: 'nunito sans',
         colorScheme: ColorScheme(
-          brightness: Brightness.light,
+          brightness: inverted ? Brightness.light : Brightness.dark,
           primary: widget.color,
           onPrimary: widget.color,
           secondary: widget.color,
           onSecondary: widget.color,
           error: widget.color,
           onError: widget.color,
-          background: SuperColors.lightBackground,
-          onBackground: SuperColors.lightBackground,
-          surface: Colors.black,
-          onSurface: Colors.black,
+          background: inverted ? SuperColors.lightBackground : SuperColors.darkBackground,
+          onBackground: inverted ? SuperColors.lightBackground : SuperColors.darkBackground,
+          surface: inverted ? Colors.black : Colors.white,
+          onSurface: inverted ? Colors.black : Colors.white,
         ),
       ),
       child: AlertDialog(
         surfaceTintColor: Colors.transparent,
-        title: const Text('enter color code'),
+        title: const Text(
+          'enter color code',
+          style: SuperStyle.sans(weight: 200, extraBold: true, width: 96, letterSpacing: 1 / 3),
+        ),
         content: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SuperContainer(
-              color: const Color(0x08000000),
-              width: 200,
+              color: inverted ? const Color(0x08000000) : const Color(0x08FFFFFF),
+              width: 167,
               child: TextField(
                 focusNode: focusNode,
                 style: const SuperStyle.mono(),
                 textAlign: TextAlign.center,
-                cursorColor: Colors.black,
+                cursorColor: inverted ? Colors.black : Colors.white,
                 controller: controller,
                 onSubmitted: (_) => popText(),
                 inputFormatters: [onlyHexChars, maxLength6],

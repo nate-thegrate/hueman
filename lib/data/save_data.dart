@@ -62,6 +62,25 @@ enum Tutorial {
   static late final Map<Tutorial, bool> data;
 
   static void init(SharedPreferences prefs) {
-    data = {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false};
+    const bool localStorage = true;
+    data = switch (localStorage) {
+      true => {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false},
+      false => {
+          started: true,
+          intro3: true,
+          intro6: true,
+          introC: false,
+          casual: false,
+          intense: false,
+          master: false,
+          sandbox: false,
+          sawInversion: false,
+          trivial: false,
+          tense: false,
+          trueMastery: false,
+        },
+    };
+    // ignore: dead_code
+    if (!localStorage) superHue = -1;
   }
 }

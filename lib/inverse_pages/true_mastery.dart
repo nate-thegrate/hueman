@@ -350,6 +350,7 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
 
   static const equals = Text(' = ', style: SuperStyle.sans(size: 18, height: -0.2));
 
+  // TODO: adjust for min width
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -408,12 +409,11 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
                       ],
                     ),
                     equals,
-                    offBy == 0
-                        ? empty
-                        : Text(
-                            thisRoundScore.toStringAsFixed(1),
-                            style: const SuperStyle.sans(size: 18, height: -0.15),
-                          ),
+                    if (offBy != 0)
+                      Text(
+                        thisRoundScore.toStringAsFixed(1),
+                        style: const SuperStyle.sans(size: 18, height: -0.15),
+                      ),
                   ],
                 ),
                 const FixedSpacer(10),
@@ -636,7 +636,7 @@ class _RGBSlider extends StatelessWidget {
           ),
         ),
         SuperContainer(
-          width: 100,
+          width: 80,
           alignment: Alignment.center,
           child: Text(
             displayValue,

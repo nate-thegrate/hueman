@@ -56,7 +56,7 @@ extension ContextStuff on BuildContext {
   Size get screenSize => MediaQuery.of(this).size;
   double get screenWidth => screenSize.width;
   double get screenHeight => screenSize.height;
-  bool get squished => screenHeight < 1040;
+  bool get squished => screenHeight < 1080;
   double calcWidth(double Function(double width, double height) widthHeight) {
     final size = screenSize;
     return widthHeight(size.width, size.height);
@@ -97,7 +97,7 @@ extension ToInt on TextEditingValue {
 }
 
 extension HexByte on int {
-  String get hexByte => '0x${toRadixString(16).padLeft(2, "0").toUpperCase()}';
+  String get hexByte => '0x${toRadixString(16).padLeft(2, '0').toUpperCase()}';
 }
 
 extension NumStuff<T extends num> on T {

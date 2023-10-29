@@ -54,7 +54,7 @@ class _NumberButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SuperContainer(
-      width: 125,
+      width: min((context.screenWidth - 5) / 3, 125),
       height: 75,
       padding: const EdgeInsets.all(2),
       child: TextButton(
@@ -132,11 +132,11 @@ class _RankBars extends StatelessWidget {
     final int activeIndex = rank ~/ 25 + 1;
     final double screenHeight = context.screenHeight;
 
-    double barHeight(int i) => (i < activeIndex)
-        ? screenHeight
-        : (i == activeIndex)
-            ? screenHeight * (rank % 25) / 25
-            : 0;
+    double barHeight(int i) => switch (i - activeIndex) {
+          < 0 => screenHeight,
+          0 => screenHeight * (rank % 25) / 25,
+          _ => 0,
+        };
 
     return Stack(
       children: [
@@ -364,7 +364,7 @@ class _HueDialogState extends State<HueDialog> {
                     weight: 800,
                     color: epicColor,
                   )
-                : null,
+                : const SuperStyle.sans(weight: 200, extraBold: true, letterSpacing: 0.5),
           ),
           elevation: isSuper ? epicSine * 10 : null,
           shadowColor: isSuper ? epicColor : null,
@@ -411,8 +411,6 @@ class _GameScreen extends StatelessWidget {
     final bars = (sk is MasterScoreKeeper) ? _RankBars(sk.rank, color: color) : empty;
 
     final double colorBoxWidth = context.screenWidth * 0.75;
-    final bool littleBitSquished =
-        image != null && context.screenHeight < 1200 && !externalKeyboard;
 
     return Scaffold(
       body: Row(
@@ -431,18 +429,13 @@ class _GameScreen extends StatelessWidget {
                     height: min(colorBoxWidth, context.screenHeight - 600),
                     color: color,
                   )
-                ] else ...[
+                ] else
                   image!,
-                  if (!littleBitSquished) ...[
-                    const Spacer(),
-                    SuperContainer(width: colorBoxWidth, height: 150, color: color),
-                  ],
-                ],
                 const Spacer(),
                 const Text(
-                  'What\'s the hue?',
+                  "What's the hue?",
                   textAlign: TextAlign.center,
-                  style: SuperStyle.sans(size: 28, letterSpacing: 0),
+                  style: SuperStyle.sans(size: 24, letterSpacing: 0),
                 ),
                 ...userInput,
                 const Spacer(),
@@ -491,14 +484,11 @@ class KeyboardGame extends StatelessWidget {
         });
 
     final hueValidation = TextInputFormatter.withFunction(
-      (oldValue, newValue) => newValue.text.length > 3
-          ? oldValue
-          : newValue.toInt() < 360
-              ? newValue
-              : const TextEditingValue(
-                  text: '359',
-                  selection: TextSelection.collapsed(offset: 3),
-                ),
+      (oldValue, newValue) {
+        if (newValue.text.length > 3) return oldValue;
+        if (newValue.toInt() < 360) return newValue;
+        return const TextEditingValue(text: '359', selection: TextSelection.collapsed(offset: 3));
+      },
     );
 
     return _GameScreen(
@@ -514,19 +504,24 @@ class KeyboardGame extends StatelessWidget {
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(border: OutlineInputBorder()),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly, hueValidation],
+            style: const SuperStyle.sans(size: 18),
           ),
         ),
         const FixedSpacer(25),
         ElevatedButton(
-            onPressed: submit,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: color,
-              foregroundColor: contrastWith(color),
+          onPressed: submit,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: color,
+            foregroundColor: contrastWith(color),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.fromLTRB(0, 8, 0, 10),
+            child: Text(
+              'submit',
+              style: SuperStyle.sans(size: 18, extraBold: true, letterSpacing: 1 / 3),
             ),
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(0, 8, 0, 10),
-              child: Text('submit', style: SuperStyle.sans(size: 16)),
-            )),
+          ),
+        ),
         const Spacer(flex: 2),
       ],
       image,
@@ -600,7 +595,7 @@ class _IntroGraphicState extends State<IntroGraphic> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ColorNameBox(color),
+        if (SuperColors.twelveHues.contains(color)) ColorNameBox(color),
         MeasuringOrb(
           step: step,
           width: 100,

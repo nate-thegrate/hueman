@@ -142,7 +142,8 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
 
     return Flex(
       direction: screenHeight < 1000 ? Axis.horizontal : Axis.vertical,
-      children: [roundLabel, const SizedBox(width: 15, height: 15), rankLabel],
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [roundLabel, const SizedBox.square(dimension: 15), rankLabel],
     );
   }
 
@@ -295,7 +296,20 @@ class _IntenseModeState extends State<IntenseMode> {
         _ => 'oof…',
       };
 
-  Widget? get image => (casualMode && masterMode) ? pics.first.$1 : null;
+  Widget? get image {
+    if (!casualMode || !masterMode) return null;
+    final size = context.screenSize;
+    final height = min(size.height - (externalKeyboard ? 333 : 525), size.width * 2);
+    return SuperContainer(
+      width: double.infinity,
+      height: height,
+      padding:
+          height < context.screenWidth + 66 ? const EdgeInsets.symmetric(horizontal: 33) : null,
+      color: color,
+      alignment: Alignment.topCenter,
+      child: pics.first.$1,
+    );
+  }
 
   void intenseScore() {
     scoreKeeper!.scores.add(accuracy);
@@ -319,7 +333,6 @@ class _IntenseModeState extends State<IntenseMode> {
       }
 
       sk.rank = sk.rank.stayInRange(0, 100);
-
       if (sk.rank == 100) sk.turnsAtRank100++;
       sk.round++;
     }
@@ -329,11 +342,11 @@ class _IntenseModeState extends State<IntenseMode> {
   void initState() {
     super.initState();
     inverted = false;
-    scoreKeeper = casualMode
-        ? null
-        : masterMode
-            ? MasterScoreKeeper(scoring: masterScore)
-            : IntenseScoreKeeper(scoring: intenseScore);
+    scoreKeeper = switch (masterMode) {
+      _ when casualMode => null,
+      true => MasterScoreKeeper(scoring: masterScore),
+      false => IntenseScoreKeeper(scoring: intenseScore),
+    };
     if (externalKeyboard) {
       hueFocusNode = FocusNode();
       hueController = TextEditingController();
@@ -348,8 +361,8 @@ class _IntenseModeState extends State<IntenseMode> {
       ogPics.shuffle();
       for (final ogPic in ogPics) {
         final randomColors = ogPic.randomColors;
-        pics.add((ogPic.image(), randomColors.$1));
-        pics.add((ogPic.image(), randomColors.$2));
+        pics.add((ogPic, randomColors.$1));
+        pics.add((ogPic, randomColors.$2));
       }
       hue = HSVColor.fromColor(pics.first.$2).hue.round();
     }
@@ -374,17 +387,23 @@ class _IntenseModeState extends State<IntenseMode> {
           text,
           guess,
           hue,
-          offBy == 0
-              ? const HundredPercentGrade()
-              : PercentGrade(accuracy: accuracy, color: color),
+          switch (offBy) {
+            0 => const HundredPercentGrade(),
+            > 20 when !masterMode => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  PercentGrade(accuracy: accuracy, color: color),
+                  IntroGraphic(hue: hue, guess: guess),
+                ],
+              ),
+            _ => PercentGrade(accuracy: accuracy, color: color),
+          },
         );
 
-  bool get littleBitSquished => image != null && context.screenHeight < 1125;
   @override
   Widget build(BuildContext context) {
     final size = context.screenSize;
     screenHeight = size.height;
-    final width = min(screenHeight - 625, min(500.0, size.width - 80));
 
     return externalKeyboard
         ? KeyboardGame(
@@ -403,16 +422,7 @@ class _IntenseModeState extends State<IntenseMode> {
             hueDialogBuilder: hueDialogBuilder,
             scoreKeeper: scoreKeeper,
             generateHue: showPics ? generatePic : generateHue,
-            image: littleBitSquished
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(child: SuperContainer(height: width, color: color)),
-                      SizedBox(height: width, child: image!),
-                      Expanded(child: SuperContainer(height: width, color: color)),
-                    ],
-                  )
-                : image,
+            image: image,
           );
   }
 }

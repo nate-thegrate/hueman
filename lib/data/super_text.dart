@@ -125,9 +125,10 @@ class SuperStyle extends TextStyle {
   final bool opticalSize;
 
   /// ```
+  ///
   ///  sans: 200 - 1000
   ///  mono: 400 - 700
-  /// gaegu: 300, 400, 700
+  /// gaegu: w300, w400, w700
   /// ```
   final double weight;
 
@@ -198,7 +199,7 @@ class SuperRichText extends StatelessWidget {
 }
 
 class SuperHUEman extends StatelessWidget {
-  /// The magestic game logo.
+  /// The majestic game logo.
   const SuperHUEman(this.color, {super.key});
   final SuperColor color;
 

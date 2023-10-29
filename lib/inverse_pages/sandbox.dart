@@ -68,7 +68,7 @@ SuperColor get _color => switch (_colorPicker) {
     };
 
 class _CMYKScreen extends StatelessWidget {
-  const _CMYKScreen({required this.update});
+  const _CMYKScreen(this.update);
   final dynamic update;
 
   @override
@@ -288,7 +288,7 @@ class _HSLSlider extends StatelessWidget {
           ),
         ),
         SizedBox(
-          width: context.screenWidth - 150,
+          width: min(context.screenWidth - 150, 720),
           child: SliderTheme(
             data: const SliderThemeData(
               trackHeight: 10,
@@ -360,30 +360,26 @@ class _ColorWheelState extends State<_ColorWheel> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                centerColor == SuperColors.lightBackground
-                    ? empty
-                    : SuperContainer(
-                        margin: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient:
-                              RadialGradient(colors: [centerColor, centerColor.withAlpha(0)]),
+                if (centerColor != SuperColors.lightBackground)
+                  SuperContainer(
+                    margin: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(colors: [centerColor, centerColor.withAlpha(0)]),
+                    ),
+                    child: Center(
+                      child: IconButton(
+                        icon: Icon(
+                          _color.rounded == centerColor
+                              ? Icons.radio_button_checked
+                              : Icons.radio_button_off,
+                          color: centerColor == SuperColors.black ? Colors.white70 : Colors.black,
+                          size: 32,
                         ),
-                        child: Center(
-                          child: IconButton(
-                            icon: Icon(
-                              _color.rounded == centerColor
-                                  ? Icons.radio_button_checked
-                                  : Icons.radio_button_off,
-                              color: centerColor == SuperColors.black
-                                  ? Colors.white70
-                                  : Colors.black,
-                              size: 32,
-                            ),
-                            onPressed: () => widget.updateColor(centerColor),
-                          ),
-                        ),
+                        onPressed: () => widget.updateColor(centerColor),
                       ),
+                    ),
+                  ),
                 for (int hue = 0; hue < 360; hue += 30)
                   RotationTransition(
                     turns: AlwaysStoppedAnimation(-hue / 360),
@@ -566,7 +562,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
                 duration: const Duration(milliseconds: 100),
                 curve: Curves.easeInOutCubic,
                 child: switch (_colorPicker) {
-                  _ColorPicker.cmyk => _CMYKScreen(update: updateCMYKval),
+                  _ColorPicker.cmyk => _CMYKScreen(updateCMYKval),
                   _ColorPicker.hsl => _HSLScreen(onChangedHSL),
                   _ColorPicker.select => _ColorWheel(updateFromWheel),
                 },
@@ -578,8 +574,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
                 children: [
                   ColorLabel('hue', hue),
                   ColorLabel('color name', _color.rounded.name, style: colorNameStyle),
-                  ColorLabel.colorCode('color code', _color.hexCode,
-                      updateColorCode: updateColorCode),
+                  ColorLabel.colorCode('color code', _color.hexCode, updateColorCode),
                 ],
               ),
               const Spacer(flex: 2),

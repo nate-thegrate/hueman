@@ -270,13 +270,18 @@ class _TrickButton extends StatelessWidget {
           ? Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  children: [
-                    _Slider(_RGB.r, funColor.red),
-                    _Slider(_RGB.g, funColor.green),
-                    _Slider(_RGB.b, blue ? 0xFF : 0),
-                    FixedSpacer.horizontal(context.screenWidth * 0.04),
-                  ],
+                ConstrainedBox(
+                  constraints: BoxConstraints.loose(const Size.fromWidth(300)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      children: [
+                        _Slider(_RGB.r, funColor.red),
+                        _Slider(_RGB.g, funColor.green),
+                        _Slider(_RGB.b, blue ? 0xFF : 0),
+                      ],
+                    ),
+                  ),
                 ),
                 const FixedSpacer(5),
                 SuperText('hue: ${funColor.hue.round()}°'),
@@ -331,12 +336,9 @@ class _Slider extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(0x100)),
         ),
         clipBehavior: Clip.antiAlias,
-        margin: EdgeInsets.only(left: context.screenWidth * 0.04),
+        margin: EdgeInsets.symmetric(horizontal: min(context.screenWidth / 2, 300) * .06),
         alignment: Alignment.bottomCenter,
-        child: SuperContainer(
-          color: color,
-          height: height * val / 0xFF,
-        ),
+        child: SuperContainer(color: color, height: height * val / 0xFF),
       ),
     );
   }

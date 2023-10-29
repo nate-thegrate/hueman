@@ -48,7 +48,15 @@ class _StartScreenState extends SuperState<StartScreen> {
   bool betaScreen = true;
   void exitBeta() => setState(() => betaScreen = false);
 
-  void start() {
+  void start() async {
+    final size = context.screenSize;
+    if (size.width < 350 || size.height < 800) {
+      await showDialog(
+        context: context,
+        builder: (context) => const _ScreenSizeAlert(),
+        barrierDismissible: false,
+      );
+    }
     setState(() => controllers[1].isActive = true);
     sleep(
       1.48,
@@ -133,6 +141,186 @@ class _BetaScreen extends StatelessWidget {
             const Spacer(flex: 3),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ScreenSizeAlert extends StatefulWidget {
+  const _ScreenSizeAlert();
+
+  @override
+  State<_ScreenSizeAlert> createState() => _ScreenSizeAlertState();
+}
+
+class _ScreenSizeAlertState extends State<_ScreenSizeAlert> {
+  bool showRecommendation = false;
+
+  bool get looksGood => context.screenWidth >= 350 && context.screenHeight >= 800;
+  bool get phoneBug =>
+      !looksGood &&
+      [TargetPlatform.iOS, TargetPlatform.android].contains(Theme.of(context).platform);
+
+  static const color = SuperColors.bsBrown;
+  late final continueButton = SizedBox(
+    width: 50,
+    height: 50,
+    child: Stack(
+      children: [
+        const Center(child: Icon(Icons.arrow_forward, color: color)),
+        SizedBox.expand(
+          child: OutlinedButton(
+            style: OutlinedButton.styleFrom(side: const BorderSide(color: color)),
+            onPressed: () => setState(() => showRecommendation = true),
+            child: empty,
+          ),
+        ),
+      ],
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final size = context.screenSize;
+    final (String width, String height) = (
+      size.width.toStringAsFixed(1),
+      size.height.toStringAsFixed(1),
+    );
+    final List<Widget> children = switch (Theme.of(context).platform) {
+      _ when !showRecommendation => const [
+          Text(
+            '(this is measured in "logical pixels": '
+            'values may be smaller than actual display specs '
+            'on a high-resolution screen.)\n\n',
+            style: SuperStyle.sans(size: 12),
+          ),
+          Text('Some parts of this game could break.', style: SuperStyle.sans()),
+        ],
+      TargetPlatform.android => const [
+          Text(
+            'Android devices come in all shapes and sizes, which is awesome, '
+            'but it also makes it difficult to build apps. '
+            "If you'd like, you can take a screenshot "
+            'and tap the "report a bug" button to upload it.',
+            style: SuperStyle.sans(),
+          ),
+        ],
+      TargetPlatform.iOS => const [
+          Text(
+            'This app should work on any iOS device. '
+            "If you're seeing this message, "
+            'feel free to screenshot and tap the "report a bug" button to upload it.',
+            style: SuperStyle.sans(),
+          ),
+        ],
+      TargetPlatform.linux => const [
+          Text(
+            "It looks like you're running linux. "
+            'I was thinking about typing out instructions '
+            'for how to increase your display resolution, '
+            'but you probably know how to do that better than I do lol',
+            style: SuperStyle.sans(),
+          )
+        ],
+      // TODO: run on Mac, finish these instructions
+      TargetPlatform.macOS => const [
+          Text(
+            'This game was designed as a mobile app, '
+            'but if you want to play on this Mac, here are a few ideas:\n',
+            style: SuperStyle.sans(),
+          ),
+          Text(
+            ' • Click the green button to make this a full-screen window.',
+            style: SuperStyle.sans(),
+          ),
+          Text(
+            ' • Go to System Settings → Displays and [finish this thought]',
+            style: SuperStyle.sans(),
+          ),
+        ],
+      TargetPlatform.windows => const [
+          Text(
+            'This game was designed as a mobile app, '
+            'but if you want to play on this PC, here are a few ideas:\n',
+            style: SuperStyle.sans(),
+          ),
+          Text(
+            " • Maximize the size of this window, if it isn't already filling up your screen.",
+            style: SuperStyle.sans(),
+          ),
+          Text(
+            ' • Go to Display Settings. '
+            'Reduce "Scale" to 100% and change "Display Resolution" to the biggest size.',
+            style: SuperStyle.sans(),
+          ),
+          Text(
+            ' • Taskbar Settings → Taskbar behaviors → "Automatically hide the taskbar"',
+            style: SuperStyle.sans(),
+          ),
+        ],
+      TargetPlatform.fuchsia => const [
+          Text(
+            'If you built this from source code on Fuscia, '
+            "hopefully you know what you're doing lol",
+            style: SuperStyle.sans(),
+          ),
+        ],
+    };
+
+    final popButton = OutlinedButton(
+      style: OutlinedButton.styleFrom(side: const BorderSide(color: SuperColors.bsBrown)),
+      onPressed: Navigator.of(context).pop,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 2),
+        child: Text(
+          looksGood ? 'looks good!' : "I'll just risk it",
+          style: const SuperStyle.sans(weight: 200, extraBold: true, letterSpacing: 0.5),
+        ),
+      ),
+    );
+
+    return Theme(
+      data: ThemeData(
+        useMaterial3: true,
+        fontFamily: 'nunito sans',
+        colorScheme: const ColorScheme(
+          brightness: Brightness.light,
+          primary: color,
+          onPrimary: color,
+          secondary: color,
+          onSecondary: color,
+          error: color,
+          onError: color,
+          background: SuperColors.bsBackground,
+          onBackground: SuperColors.bsBackground,
+          surface: color,
+          onSurface: color,
+        ),
+      ),
+      child: AlertDialog(
+        title: const Text(
+          'screen size alert!',
+          style: SuperStyle.sans(extraBold: true, letterSpacing: 1 / 3),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('minimum recommended size:', style: SuperStyle.sans()),
+            const Text('350 x 800 pixels\n', style: SuperStyle.mono(weight: 700)),
+            const Text('this screen:', style: SuperStyle.sans()),
+            Text(
+              '$width x $height pixels\n',
+              style: const SuperStyle.mono(weight: 700),
+            ),
+            ...children
+          ],
+        ),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          if (phoneBug) const BugReport(color),
+          if (showRecommendation || looksGood) popButton else continueButton,
+        ],
       ),
     );
   }
@@ -226,8 +414,8 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
     setState(() => showStuff = false);
     await sleepState(2, () {
       headphones = true;
+      showStuff = true;
     });
-    await sleepState(0.2, () => showStuff = true);
   }
 
   @override
@@ -303,10 +491,7 @@ class _TruthButtonState extends EpicState<_TruthButton> {
       onPressed: widget.onPressed,
       child: const Padding(
         padding: EdgeInsets.only(bottom: 4),
-        child: Text(
-          'see the truth',
-          style: SuperStyle.sans(size: 24, weight: 400),
-        ),
+        child: Text('see the truth', style: SuperStyle.sans(size: 24)),
       ),
     );
   }

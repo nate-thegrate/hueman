@@ -220,9 +220,11 @@ class _NumberRowState extends SuperState<_NumberRow> {
               curve: Curves.easeInQuad,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: binary
-                    ? Text('$i', style: const SuperStyle.mono(size: 40))
-                    : Text('$i', style: const SuperStyle.sans(size: 30)),
+                child: Text(
+                  '$i',
+                  style:
+                      binary ? const SuperStyle.mono(size: 40) : const SuperStyle.sans(size: 30),
+                ),
               ),
             ),
           )
@@ -454,7 +456,6 @@ class _ColorCardState extends DynamicState<_ColorCard> {
                         style: SuperStyle.sans(
                           color: inverted ? Colors.white : Colors.black,
                           size: 24,
-                          weight: 400,
                           extraBold: true,
                           width: 96,
                           letterSpacing: 0.5,
@@ -575,7 +576,7 @@ class _Page5State extends SuperState<_Page5> {
   void animate() async {
     await sleepState(4, () => realization = true);
     await sleepState(7, () => prefix1 = true);
-    await sleepState(4, () => prefix2 = true);
+    await sleepState(6, () => prefix2 = true);
     await sleepState(5, () => question = true);
     await sleepState(3, () => answer = true);
     await sleepState(2, () => hexRows++);
@@ -611,7 +612,7 @@ class _Page5State extends SuperState<_Page5> {
         Fader(
           prefix1,
           child: SuperRichText([
-            const TextSpan(text: 'Base 16 numbers usually start with '),
+            const TextSpan(text: "To show that you're writing in base 16,\nyou can put a "),
             TextSpan(
               text: "'0x'",
               style: SuperStyle.mono(
@@ -619,7 +620,7 @@ class _Page5State extends SuperState<_Page5> {
                 backgroundColor: inverted ? Colors.white : Colors.black38,
               ),
             ),
-            const TextSpan(text: ','),
+            const TextSpan(text: ' before the number,'),
           ]),
         ),
         Fader(

@@ -57,7 +57,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
         ),
       ),
       const FixedSpacer(50),
-      _BugReport(color),
+      BugReport(color),
       if (Tutorial.master()) ...[
         const FixedSpacer(33),
         OutlinedButton(
@@ -85,7 +85,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
     ];
     final List<Widget> noviceSettings = [
       const FixedSpacer(10),
-      _BugReport(color),
+      BugReport(color),
       const FixedSpacer(20),
       Center(
           child: OutlinedButton(
@@ -189,7 +189,9 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
             'external keyboard',
             value: externalKeyboard,
             description: ('type on a keyboard', 'tap buttons on the screen'),
-            toggle: (value) => setState(() => externalKeyboard = value),
+            toggle: (value) => saveData('externalKeyboard', value).then(
+              (_) => setState(() => externalKeyboard = value),
+            ),
           ),
           const FixedSpacer(33),
           if (hueMaster) ...masterSettings else ...noviceSettings,
@@ -316,26 +318,6 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
               ),
             ),
         ],
-      ),
-    );
-  }
-}
-
-class _BugReport extends StatelessWidget {
-  const _BugReport(this.color);
-  final SuperColor color;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: () => gotoWebsite('https://forms.gle/H9k2LhzJtWRfU1Q2A'),
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(color: color, width: 2),
-        foregroundColor: color,
-      ),
-      child: const Padding(
-        padding: EdgeInsets.fromLTRB(4, 6, 4, 8),
-        child: Text('report a bug', style: SuperStyle.sans(size: 18)),
       ),
     );
   }

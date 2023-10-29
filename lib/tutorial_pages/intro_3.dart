@@ -498,7 +498,7 @@ class _Page4State extends SuperState<_Page4> {
         const SuperText("Whether you're making wedding invitations"),
         const Spacer(),
         Expanded(
-            flex: 16,
+            flex: 20,
             child: Image.asset('assets/wedding_invite.png', width: context.screenWidth * 2 / 3)),
         const Spacer(flex: 4),
         Fader(
@@ -507,13 +507,20 @@ class _Page4State extends SuperState<_Page4> {
             TextSpan(text: 'or making '),
             TextSpan(
               text: 'code',
-              style: SuperStyle.mono(color: SuperColor(0x00FFEE), weight: 600, size: 22),
+              style: SuperStyle.mono(color: SuperColor(0x00FFEE), weight: 600, size: 21),
             ),
             TextSpan(text: ' for a video game,'),
           ]),
         ),
         const Spacer(),
-        Fader(showScreenshot, child: Image.asset('assets/picture_of_itself.png', width: 1000)),
+        Fader(
+          showScreenshot,
+          child: ConstrainedBox(
+            constraints: BoxConstraints.loose(Size.fromHeight(context.screenHeight / 3)),
+            // Image is a little out of date, but it looked nicer then so we keeping it
+            child: Image.asset('assets/picture_of_itself.png', width: 1000),
+          ),
+        ),
         const Spacer(flex: 4),
         Fader(
           sometimesUgotta,
@@ -724,6 +731,7 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
     }
   }
 
+  /// number of rows/columns in HSV grid
   static const hsvWidth = 9, hsvHeight = 5;
   static const duration = quarterSec;
 
@@ -744,16 +752,18 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
 
   @override
   Widget build(BuildContext context) {
-    final tileWidth = context.screenWidth / (hsvWidth + 2);
+    final size = context.screenSize;
+    final tileWidth = min(size.width / (hsvWidth + 2), (size.height - 150) / hsvHeight);
 
     return Stack(
+      alignment: Alignment.center,
       children: [
         Column(
           children: [
             const Spacer(flex: 2),
             SizedBox(
-              height: 5 * tileWidth,
-              width: context.screenWidth,
+              height: tileWidth * (hsvHeight - 1),
+              width: tileWidth * hsvWidth,
               child: GridView.count(
                 padding: EdgeInsets.symmetric(horizontal: tileWidth),
                 primary: false,
@@ -860,7 +870,7 @@ class _Page7State extends SuperState<_Page7> {
     color: Colors.black,
     alignment: Alignment.center,
     child:
-        SuperText('finding a hue\ncan be done in two steps.', style: SuperStyle.sans(size: 32)),
+        SuperText('finding a hue\ncan be done in two steps.', style: SuperStyle.sans(size: 24)),
   );
   static const overlay2 = SuperContainer(color: Colors.black);
   bool showOverlay2 = false;
@@ -1073,7 +1083,7 @@ class _AreYouReady extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double size = 30;
-    const space = TextSpan(text: ' ', style: SuperStyle.sans(size: 1));
+    const space = TextSpan(text: ' ', style: SuperStyle.sans(size: 3));
     return SuperRichText(
       style: const SuperStyle.sans(size: size, weight: 250),
       [
