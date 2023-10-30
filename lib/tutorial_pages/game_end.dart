@@ -321,6 +321,7 @@ class _CreditsButton extends StatelessWidget {
               SuperContainer(
                 width: 30,
                 alignment: Alignment.center,
+                // TODO: PNGs here
                 child: SvgPicture.asset(
                   height: 25,
                   'assets/end_credits_icons/$logo.svg',
