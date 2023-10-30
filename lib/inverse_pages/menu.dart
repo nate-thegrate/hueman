@@ -151,6 +151,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
             ),
           ),
           const FixedSpacer(67),
+          // TODO: add ChatGPT button
           Center(
             child: OutlinedButton(
               onPressed: () {
