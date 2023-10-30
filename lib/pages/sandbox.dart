@@ -265,6 +265,9 @@ class _SandboxState extends State<Sandbox> {
   @override
   Widget build(BuildContext context) {
     final Size size = context.screenSize;
+    final horizontal = context.squished;
+    final double width = min(size.width - 50, 500);
+    final double height = min(size.height - (horizontal ? 600 : 820), 500);
     final double planeSize = min(size.width - 50, size.height - 600);
     void touchRecognition(details) {
       final Offset offset = details.localPosition;
@@ -277,10 +280,10 @@ class _SandboxState extends State<Sandbox> {
       _ColorPicker.rgb => Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SuperContainer(width: planeSize, height: planeSize, color: _color),
+            SuperContainer(width: width, height: height, color: _color),
             const FixedSpacer(30),
             Flex(
-              direction: context.squished ? Axis.vertical : Axis.horizontal,
+              direction: horizontal ? Axis.vertical : Axis.horizontal,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

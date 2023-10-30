@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hueman/data/page_data.dart';
@@ -227,6 +229,10 @@ class _TrueMasteryState extends State<TrueMastery> {
   }
 }
 
+extension _Scale on BuildContext {
+  double get scale => min((screenWidth - 100) / 350, 1);
+}
+
 class TrueMasteryScore extends StatefulWidget {
   const TrueMasteryScore({required this.guess, required this.actual, super.key});
   final SuperColor guess, actual;
@@ -301,27 +307,6 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
     super.dispose();
   }
 
-  late final List<DataRow> rows = [
-    DataRow(cells: [
-      const DataCell(Center(child: Text('guess', style: SuperStyle.sans(weight: 600)))),
-      DataCell(_HexText(guess.red)),
-      DataCell(_HexText(guess.green)),
-      DataCell(_HexText(guess.blue)),
-    ]),
-    DataRow(cells: [
-      const DataCell(Center(child: Text('true', style: SuperStyle.sans(weight: 600)))),
-      DataCell(_HexText(actual.red)),
-      DataCell(_HexText(actual.green)),
-      DataCell(_HexText(actual.blue)),
-    ]),
-    DataRow(cells: [
-      const DataCell(Center(child: Text('diff', style: SuperStyle.sans(weight: 600)))),
-      DataCell(Center(child: Text(redOffBy.toString()))),
-      DataCell(Center(child: Text(greenOffBy.toString()))),
-      DataCell(Center(child: Text(blueOffBy.toString()))),
-    ]),
-  ];
-
   static const List<DataColumn> columns = [
     DataColumn(label: empty),
     DataColumn(label: _TableHeader('red')),
@@ -329,7 +314,7 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
     DataColumn(label: _TableHeader('blue')),
   ];
 
-  DataCell matchPercent(int offBy) => DataCell(
+  DataCell matchPercent(int offBy, double scale) => DataCell(
         Center(
           child: offBy == 0
               ? Text(
@@ -337,22 +322,73 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
                   style: SuperStyle.sans(
                     weight: 800,
                     color: inverseColor,
-                    size: 18,
+                    size: 18 * scale,
                     shadows: [
                       for (double i = 0.5; i <= 3; i += 0.5)
                         Shadow(blurRadius: i, color: Colors.white),
                     ],
                   ),
                 )
-              : Text((100 * (1 - offBy / 256)).toStringAsFixed(1)),
+              : Text(
+                  (100 * (1 - offBy / 256)).toStringAsFixed(1),
+                  style: SuperStyle.sans(size: 14 * scale),
+                ),
         ),
       );
 
-  static const equals = Text(' = ', style: SuperStyle.sans(size: 18, height: -0.2));
-
-  // TODO: adjust for min width
   @override
   Widget build(BuildContext context) {
+    final double scale = context.scale;
+
+    final equals = Text(' = ', style: SuperStyle.sans(size: 18 * scale, height: -0.2));
+    final List<DataRow> rows = [
+      DataRow(cells: [
+        DataCell(
+          Center(
+            child: Text(
+              'guess',
+              style: SuperStyle.sans(size: 14 * scale, weight: 600),
+            ),
+          ),
+        ),
+        DataCell(_HexText(guess.red)),
+        DataCell(_HexText(guess.green)),
+        DataCell(_HexText(guess.blue)),
+      ]),
+      DataRow(cells: [
+        DataCell(
+          Center(
+            child: Text(
+              'true',
+              style: SuperStyle.sans(size: 14 * scale, weight: 600),
+            ),
+          ),
+        ),
+        DataCell(_HexText(actual.red)),
+        DataCell(_HexText(actual.green)),
+        DataCell(_HexText(actual.blue)),
+      ]),
+      DataRow(cells: [
+        DataCell(
+          Center(
+            child: Text(
+              'diff',
+              style: SuperStyle.sans(size: 14 * scale, weight: 600),
+            ),
+          ),
+        ),
+        DataCell(Center(
+          child: Text(redOffBy.toString(), style: SuperStyle.sans(size: 14 * scale)),
+        )),
+        DataCell(Center(
+          child: Text(greenOffBy.toString(), style: SuperStyle.sans(size: 14 * scale)),
+        )),
+        DataCell(Center(
+          child: Text(blueOffBy.toString(), style: SuperStyle.sans(size: 14 * scale)),
+        )),
+      ]),
+    ];
+
     return Theme(
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Stack(
@@ -368,23 +404,24 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 DataTable(
-                  columnSpacing: 10,
+                  columnSpacing: 10 * scale.squared,
+                  horizontalMargin: 24 * scale.squared,
                   columns: columns,
                   rows: [
                     ...rows,
                     DataRow(cells: [
-                      const DataCell(
+                      DataCell(
                         Center(
                           child: Text(
                             'match %',
                             textAlign: TextAlign.center,
-                            style: SuperStyle.sans(weight: 600),
+                            style: SuperStyle.sans(size: 14 * scale, weight: 600),
                           ),
                         ),
                       ),
-                      matchPercent(redOffBy),
-                      matchPercent(greenOffBy),
-                      matchPercent(blueOffBy),
+                      matchPercent(redOffBy, scale),
+                      matchPercent(greenOffBy, scale),
+                      matchPercent(blueOffBy, scale),
                     ]),
                   ],
                 ),
@@ -392,7 +429,7 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('score:', style: SuperStyle.sans(size: 18)),
+                    const Text('score:', style: SuperStyle.sans(size: 16, width: 87.5)),
                     const FixedSpacer.horizontal(10),
                     Column(
                       children: [
@@ -404,7 +441,10 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
                           decoration: const BoxDecoration(border: Border(top: BorderSide())),
                           padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
                           margin: const EdgeInsets.only(top: 3),
-                          child: Text('$redOffBy + $greenOffBy + $blueOffBy'),
+                          child: Text(
+                            '$redOffBy + $greenOffBy + $blueOffBy',
+                            style: const SuperStyle.sans(),
+                          ),
                         ),
                       ],
                     ),
@@ -461,34 +501,35 @@ class _ScoreTitleState extends State<_ScoreTitle> {
     quickly(() => setState(() => expanded = true));
   }
 
-  late final Widget text = Align(
-    alignment: Alignment.centerLeft,
-    child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 50),
-        child: Text(
-          '$label: ${widget.color.hexCode}',
-          textAlign: TextAlign.center,
-          style: SuperStyle.mono(
-            weight: 800,
-            size: 20,
-            color: contrastWith(widget.color).withAlpha(0xCC),
+  @override
+  Widget build(BuildContext context) {
+    final Widget text = Align(
+      alignment: Alignment.centerLeft,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 28),
+          child: Text(
+            '$label: ${widget.color.hexCode}',
+            textAlign: TextAlign.center,
+            style: SuperStyle.mono(
+              weight: 700,
+              size: 16,
+              color: contrastWith(widget.color).withAlpha(0xCC),
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
 
-  @override
-  Widget build(BuildContext context) {
+    final width = 308 * context.scale;
     return SuperContainer(
-      width: 450,
+      width: width,
       alignment: widget.isGuess ? Alignment.centerLeft : Alignment.centerRight,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 600),
         curve: curve,
-        width: expanded ? 407 : 0,
+        width: expanded ? min(width, 271.5) : 0,
         height: 50,
         decoration: decoration,
         child: text,
@@ -559,7 +600,13 @@ class _TableHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(width: 60, child: Center(child: Text(text)));
+    final scale = context.scale;
+    return SizedBox(
+      width: 60 * scale,
+      child: Center(
+        child: Text(text, style: SuperStyle.sans(size: 16 * scale)),
+      ),
+    );
   }
 }
 
@@ -591,7 +638,7 @@ class _HexText extends StatelessWidget {
     return Center(
       child: Text(
         value.hexByte,
-        style: const SuperStyle.mono(size: 16, weight: 600),
+        style: SuperStyle.mono(size: 16 * context.scale, weight: 600),
       ),
     );
   }

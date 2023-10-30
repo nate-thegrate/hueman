@@ -76,7 +76,7 @@ class _CMYKScreen extends StatelessWidget {
     final size = context.screenSize;
     final horizontal = context.squished;
     final double width = min(size.width - 50, 500);
-    final double height = min(size.height - (horizontal ? 600 : 750), 500);
+    final double height = min(size.height - (horizontal ? 600 : 820), 500);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
