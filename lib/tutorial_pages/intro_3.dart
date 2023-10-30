@@ -498,8 +498,12 @@ class _Page4State extends SuperState<_Page4> {
         const SuperText("Whether you're making wedding invitations"),
         const Spacer(),
         Expanded(
-            flex: 20,
-            child: Image.asset('assets/wedding_invite.png', width: context.screenWidth * 2 / 3)),
+          flex: 20,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Image.asset('assets/wedding_invite.png', width: context.screenWidth * 2 / 3),
+          ),
+        ),
         const Spacer(flex: 4),
         Fader(
           showScreenshot,

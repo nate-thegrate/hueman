@@ -281,7 +281,7 @@ class _HundredPercentGradeState extends State<HundredPercentGrade> {
     const style = SuperStyle.sans(weight: 800, size: 30, color: Colors.black);
 
     return SuperContainer(
-      margin: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(vertical: 20),
       width: _gradeWidth,
       alignment: Alignment.center,
       child: Column(

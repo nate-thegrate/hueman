@@ -154,11 +154,7 @@ class _Page2State extends SuperState<_Page2> {
         const Spacer(),
         Fader(
           showPrinter,
-          child: SizedBox(
-            width: imgSize,
-            height: imgSize,
-            child: Image.asset('assets/ink_cartridge.jpg'),
-          ),
+          child: SizedBox(width: imgSize, child: Image.asset('assets/ink_cartridge.jpg')),
         ),
         const Spacer(flex: 2),
         Fader(showButton, child: ContinueButton(onPressed: widget.nextPage)),
@@ -757,7 +753,7 @@ class _ColorArrows extends StatelessWidget {
                   shaderCallback: (bounds) => LinearGradient(
                     colors: subtract ? [Colors.white, color] : [Colors.black, color],
                   ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                  child: const Icon(Icons.trending_flat, size: 125),
+                  child: const Icon(Icons.trending_flat, size: 118),
                 ),
               ),
               Padding(

@@ -626,7 +626,7 @@ class _VocabLine extends StatelessWidget {
         child: Text(
           label ?? color.name,
           style: SuperStyle.sans(
-            size: (context.screenHeight - 0x80) / 0x20,
+            size: min((context.screenHeight - 0x80) / 0x20, (context.screenWidth - 75) / 12),
             weight: 100,
             height: -1 / 3,
           ),

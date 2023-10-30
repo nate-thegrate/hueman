@@ -222,11 +222,9 @@ class _ScreenSizeAlertState extends State<_ScreenSizeAlert> {
             style: SuperStyle.sans(),
           )
         ],
-      // TODO: run on Mac, finish these instructions
       TargetPlatform.macOS => const [
           Text(
-            'This game was designed as a mobile app, '
-            'but if you want to play on this Mac, here are a few ideas:\n',
+            'If you want to play on this Mac, here are a few ideas:\n',
             style: SuperStyle.sans(),
           ),
           Text(
@@ -234,14 +232,13 @@ class _ScreenSizeAlertState extends State<_ScreenSizeAlert> {
             style: SuperStyle.sans(),
           ),
           Text(
-            ' • Go to System Settings → Displays and [finish this thought]',
+            ' • Go to System Settings → Displays and select "more space".',
             style: SuperStyle.sans(),
           ),
         ],
       TargetPlatform.windows => const [
           Text(
-            'This game was designed as a mobile app, '
-            'but if you want to play on this PC, here are a few ideas:\n',
+            'If you want to play on this PC, here are a few ideas:\n',
             style: SuperStyle.sans(),
           ),
           Text(
