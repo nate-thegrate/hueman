@@ -157,10 +157,30 @@ class _IntroModeState extends State<IntroMode> {
       numPadController = NumPadController(setState);
     }
 
+    void firstHues() => sleep(
+          1,
+          then: () => showDialog(
+            context: context,
+            builder: (context) => const AlertDialog(
+              title: Text(
+                'Find the hues!',
+                textAlign: TextAlign.center,
+                style: SuperStyle.sans(weight: 200, extraBold: true),
+              ),
+              content: Text(
+                "Type a number between 0 and 359\nand check to see if it's right.",
+                textAlign: TextAlign.center,
+                style: SuperStyle.sans(),
+              ),
+            ),
+          ),
+        );
+
     switch (widget.numColors) {
       case 3 when !Tutorial.intro3():
         scoreKeeper = TutorialScoreKeeper(3, scoring: giveScore);
         Tutorial.intro3.complete();
+        firstHues();
       case 6 when !Tutorial.intro6():
         scoreKeeper = TutorialScoreKeeper(6, scoring: giveScore);
         Tutorial.intro6.complete();
@@ -188,10 +208,12 @@ class _IntroModeState extends State<IntroMode> {
             title: Text(
               'playing in casual mode',
               textAlign: TextAlign.center,
+              style: SuperStyle.sans(),
             ),
             content: Text(
               'no timers or scorekeeping,\njust you and hue :)',
               textAlign: TextAlign.center,
+              style: SuperStyle.sans(),
             ),
           ),
         ),
