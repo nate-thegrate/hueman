@@ -46,6 +46,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ">=3.0.0"
+  msix: ">=3.16.5"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -59,6 +60,15 @@ flutter_launcher_icons:
   windows:
     generate: true
     image_path: "assets/app_icon/wheel_icon.png"
+
+msix_config:
+  display_name: "HUEman: a game about colors"
+  publisher: CN=45439987-713E-4806-A939-727F9EEB2172
+  publisher_display_name: Nate Wilson
+  identity_name: 56500NateWilson.HUEmanagameaboutcolors
+  msix_version: 1.0.0.0
+  logo_path: C:\Users\Nate\repos\hueman\assets\app_icon\wheel_icon.png
+  store: true
 
 # The following section is specific to Flutter packages.
 flutter:
