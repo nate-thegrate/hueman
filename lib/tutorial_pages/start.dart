@@ -372,7 +372,7 @@ class _LogoState extends SuperState<_Logo> {
           duration: duration,
           curve: curve,
           child: SuperRichText(
-            style: const SuperStyle.gaegu(size: 64),
+            style: SuperStyle.gaegu(size: context.screenWidth / 4),
             [
               for (int i = 0; i < 4; i++)
                 TextSpan(
