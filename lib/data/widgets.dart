@@ -290,16 +290,41 @@ class BugReport extends StatelessWidget {
   }
 }
 
+class WarnButton extends StatelessWidget {
+  const WarnButton({this.action, super.key});
+  final VoidCallback? action;
+
+  bool get proceed => action != null;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      style: TextButton.styleFrom(
+        backgroundColor: inverted ? const Color(0x10000000) : const Color(0x10FFFFFF),
+        foregroundColor: inverted ? Colors.black : Colors.white,
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+        if (proceed) action!();
+      },
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+        child: Text(proceed ? 'continue' : 'go back', style: const SuperStyle.sans(size: 16)),
+      ),
+    );
+  }
+}
+
 class GoBack extends StatelessWidget {
   const GoBack({this.text = 'back', super.key});
   final String text;
 
   @override
   Widget build(BuildContext context) {
-    final Widget button = TextButton(
+    return TextButton(
       style: TextButton.styleFrom(
         foregroundColor: inverted ? SuperColors.black80 : Colors.white60,
-        backgroundColor: inverted ? Colors.white54 : Colors.black26,
+        backgroundColor: inverted ? Colors.white54 : const SuperColor(0x0D0D0D),
       ),
       onPressed: context.menu,
       child: Padding(
@@ -313,7 +338,6 @@ class GoBack extends StatelessWidget {
             )),
       ),
     );
-    return button;
   }
 }
 
@@ -406,16 +430,15 @@ class ManualColorCode extends StatefulWidget {
 
   static void Function(dynamic) verifyHexCode(BuildContext context,
           {required void Function(SuperColor) updateColor}) =>
-      (dynamic value) {
-        if (value is String) {
-          if (value.length == 6) {
-            final int colorCode = int.parse(value, radix: 16);
-            updateColor(SuperColor(colorCode));
-          } else if (value.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('invalid hex code: $value')),
-            );
-          }
+      (value) {
+        if (value is! String) return;
+        if (value.length == 6) {
+          final int colorCode = int.parse(value, radix: 16);
+          updateColor(SuperColor(colorCode));
+        } else if (value.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('invalid hex code: $value')),
+          );
         }
       };
 

@@ -793,9 +793,10 @@ class _Page6State extends SuperState<_Page6> {
     Spacer(flex: 4),
     SuperRichText([
       TextSpan(
-          text: 'People who design printers know that\n'
-              'the only way to access the full range of colors\n'
-              'is to use '),
+        text: 'People who design printers know that\n'
+            'the only way to access the full color range\n'
+            'is to use ',
+      ),
       ColorTextSpan.cyan,
       TextSpan(text: '/'),
       ColorTextSpan.magenta,
@@ -807,8 +808,8 @@ class _Page6State extends SuperState<_Page6> {
     SuperText('and subtractive mixing applies to all pigments,\n'
         'including markers and watercolors,'),
     Spacer(),
-    SuperText('but not once in elementary school art class\n'
-        'did we ever learn about cyan or magenta.'),
+    SuperText('but not once in my elementary school art class\n'
+        'did we learn about cyan or magenta.'),
   ];
 
   int textProgress = 0;

@@ -58,8 +58,54 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
       ),
       const FixedSpacer(50),
       BugReport(color),
+      const FixedSpacer(20),
+      Center(
+        child: OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: color, width: 2),
+            foregroundColor: color,
+            backgroundColor: SuperColors.darkBackground,
+            shadowColor: color,
+          ),
+          onPressed: () {
+            if (Tutorial.aiCertificate()) {
+              context.goto(Pages.aiCertificate);
+              return;
+            }
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text(
+                  'Heads up!',
+                  textAlign: TextAlign.center,
+                  style: SuperStyle.sans(),
+                ),
+                content: SuperContainer(
+                  constraints: BoxConstraints.loose(const Size.fromWidth(290)),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: const Text(
+                    'The "AI certificate" is just an excuse '
+                    "to brag about the author's accomplishments.\n\n"
+                    "Proceed only if you're prepared to subject yourself to this.",
+                    style: SuperStyle.sans(),
+                  ),
+                ),
+                actions: [
+                  const WarnButton(),
+                  WarnButton(action: () => context.goto(Pages.aiCertificate)),
+                ],
+                actionsAlignment: MainAxisAlignment.spaceEvenly,
+              ),
+            );
+          },
+          child: const Padding(
+            padding: EdgeInsets.fromLTRB(3.5, 7, 3.5, 10),
+            child: Text('AI certificate', style: SuperStyle.sans(size: 18)),
+          ),
+        ),
+      ),
       if (Tutorial.master()) ...[
-        const FixedSpacer(33),
+        const FixedSpacer(20),
         OutlinedButton(
           onPressed: () async {
             Tutorial.sawInversion.complete();

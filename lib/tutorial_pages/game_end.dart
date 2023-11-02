@@ -347,30 +347,6 @@ class _CreditsButton extends StatelessWidget {
   }
 }
 
-class _EchoButton extends StatelessWidget {
-  const _EchoButton(this.label);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      style: TextButton.styleFrom(
-        backgroundColor: const Color(0x10000000),
-        foregroundColor: Colors.black,
-      ),
-      onPressed: () {
-        Navigator.pop(context);
-        if (label == 'continue') gotoWebsite('https://youtu.be/NVhA18_dmg0');
-      },
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
-        child: Text(label, style: const SuperStyle.sans(size: 16)),
-      ),
-    );
-  }
-}
-
 class _Credits extends StatefulWidget {
   const _Credits(this.buttonPress);
   final VoidCallback buttonPress;
@@ -428,7 +404,10 @@ class _CreditsState extends SuperState<_Credits> {
                 style: SuperStyle.sans(),
               ),
               actionsAlignment: MainAxisAlignment.spaceEvenly,
-              actions: const [_EchoButton('go back'), _EchoButton('continue')],
+              actions: [
+                const WarnButton(),
+                WarnButton(action: () => gotoWebsite('https://youtu.be/NVhA18_dmg0')),
+              ],
             ),
           );
         } else {
@@ -438,7 +417,6 @@ class _CreditsState extends SuperState<_Credits> {
 
   @override
   Widget build(BuildContext context) {
-    // final inkColor = color.withAlpha(0x40);
     return Column(
       children: [
         const Spacer(),
@@ -467,7 +445,13 @@ class _CreditsState extends SuperState<_Credits> {
                       child: Text(
                         label,
                         textAlign: TextAlign.right,
-                        style: const SuperStyle.sans(size: 16, width: 75, weight: 666),
+                        style: const SuperStyle.sans(
+                          size: 16,
+                          width: 75,
+                          weight: 500,
+                          color: Colors.black54,
+                          extraBold: true,
+                        ),
                       ),
                     ),
                   ),
@@ -536,6 +520,7 @@ class _CreditsState extends SuperState<_Credits> {
   }
 }
 
+// TODO: make this return a widget with ColorTextSpans
 String get hueDescription {
   final (int i, int mix) = (superHue ~/ 30, superHue % 30);
   final (SuperColor start, SuperColor end) =

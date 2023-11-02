@@ -73,7 +73,7 @@ class TrueMasteryScoreKeeper implements ScoreKeeper {
 
     return Padding(
       padding: const EdgeInsets.only(top: 10),
-      child: Text(text, textAlign: TextAlign.center),
+      child: Text(text, textAlign: TextAlign.center, style: const SuperStyle.sans()),
     );
   }
 

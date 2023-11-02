@@ -9,6 +9,7 @@ import 'package:hueman/pages/intense_master.dart';
 import 'package:hueman/pages/intro.dart';
 import 'package:hueman/pages/menu.dart';
 import 'package:hueman/pages/sandbox.dart';
+import 'package:hueman/tutorial_pages/ai_certificate.dart';
 import 'package:hueman/tutorial_pages/intense.dart';
 import 'package:hueman/tutorial_pages/intro_3.dart';
 import 'package:hueman/tutorial_pages/intro_6.dart';
@@ -26,6 +27,7 @@ enum Pages {
   intense(IntenseMode()),
   master(IntenseMode('master')),
   sandbox(Sandbox()),
+  aiCertificate(AiCertificate()),
 
   trivial(TriviaMode()),
   tenseVibrant(TenseMode('vibrant')),
