@@ -756,8 +756,9 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
 
   @override
   Widget build(BuildContext context) {
-    final size = context.screenSize;
-    final tileWidth = min(size.width / (hsvWidth + 2), (size.height - 150) / hsvHeight);
+    final tileWidth = context.calcSize(
+      (w, h) => min(w / (hsvWidth + 2), (h - 150) / hsvHeight),
+    );
 
     return Stack(
       alignment: Alignment.center,

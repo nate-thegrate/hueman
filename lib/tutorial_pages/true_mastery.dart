@@ -27,8 +27,7 @@ class _TrueMasteryTutorialState extends SuperState<TrueMasteryTutorial> {
   void animate() async {
     () async {
       await sleep(0.1);
-      final size = context.screenSize;
-      final ballScale = (size.height + size.width) / 8;
+      final ballScale = context.calcSize((w, h) => (w + h) / 8);
       for (int i = 0; i < _balls; i++) {
         setState(() {
           balls.insert(

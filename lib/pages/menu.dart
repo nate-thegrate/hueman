@@ -80,13 +80,11 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
                   textAlign: TextAlign.center,
                   style: SuperStyle.sans(),
                 ),
-                content: SuperContainer(
-                  constraints: BoxConstraints.loose(const Size.fromWidth(290)),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: const Text(
-                    'The "AI certificate" is just an excuse '
-                    "to brag about the author's accomplishments.\n\n"
-                    "Proceed only if you're prepared to subject yourself to this.",
+                content: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    'This "AI certificate" is just an excuse to brag.\n\n'
+                    'Proceed at your own discretion.',
                     style: SuperStyle.sans(),
                   ),
                 ),

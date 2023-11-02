@@ -174,8 +174,7 @@ class _HSLScreen extends StatefulWidget {
 class _HSLScreenState extends State<_HSLScreen> {
   @override
   Widget build(BuildContext context) {
-    final Size size = context.screenSize;
-    final double planeSize = min(size.width - 50, size.height - 600);
+    final double planeSize = context.calcSize((w, h) => min(w - 50, h - 600));
     void touchRecognition(details) {
       final Offset offset = details.localPosition;
       double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);

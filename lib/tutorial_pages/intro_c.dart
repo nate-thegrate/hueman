@@ -410,14 +410,9 @@ class _Page2State extends SuperState<_Page2> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = context.screenSize;
     const colorBoxFlex = 8;
-    final colorBoxHeight = min(
-      screenSize.height / 3,
-      min(
-        screenSize.width * colorBoxFlex / (2 * colorBoxFlex + 3),
-        screenSize.height - 250,
-      ),
+    final colorBoxHeight = context.calcSize(
+      (w, h) => min(w * colorBoxFlex / (2 * colorBoxFlex + 3), min(h / 3, h - 250)),
     );
 
     final List<Widget> children = showBlue ? text2 : text;

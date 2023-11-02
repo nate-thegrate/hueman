@@ -133,8 +133,7 @@ class _Page2State extends SuperState<_Page2> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = context.screenSize;
-    final imgSize = min(screenSize.width * .8, (screenSize.height - 120) * .6);
+    final imgSize = context.calcSize((w, h) => min(w * .8, (h - 120) * .6));
     return Column(
       children: [
         const Spacer(flex: 2),
@@ -485,8 +484,7 @@ class _SplashCMYState extends State<_SplashCMY> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = context.screenSize;
-    final circleSize = max(screenSize.width, screenSize.height * .75) / 10;
+    final circleSize = context.calcSize((w, h) => max(w, h * .75) / 10);
     return Expanded(
       child: Align(
         alignment: widget.color == SuperColors.cyan
@@ -633,8 +631,7 @@ class _ColorBubbleState extends State<_ColorBubble> {
 
   @override
   Widget build(BuildContext context) {
-    final size = context.screenSize;
-    final bubbleSize = min(size.width, size.height / 2 - 50) / 4;
+    final bubbleSize = context.calcSize((w, h) => min(w, h / 2 - 50) / 4);
     final counter = widget.counter;
 
     return Padding(

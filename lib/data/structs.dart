@@ -57,8 +57,7 @@ extension ContextStuff on BuildContext {
   double get screenWidth => screenSize.width;
   double get screenHeight => screenSize.height;
   bool get squished => screenHeight < 1080;
-  // TODO: implement this in relevant spots
-  double calcWidth(double Function(double width, double height) widthHeight) {
+  double calcSize(double Function(double w, double h) widthHeight) {
     final size = screenSize;
     return widthHeight(size.width, size.height);
   }

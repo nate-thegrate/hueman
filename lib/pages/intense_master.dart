@@ -298,8 +298,7 @@ class _IntenseModeState extends State<IntenseMode> {
 
   Widget? get image {
     if (!casualMode || !masterMode) return null;
-    final size = context.screenSize;
-    final height = min(size.height - (externalKeyboard ? 333 : 525), size.width * 2);
+    final height = context.calcSize((w, h) => min(h - (externalKeyboard ? 333 : 525), w * 2));
     return SuperContainer(
       width: double.infinity,
       height: height,
@@ -402,8 +401,7 @@ class _IntenseModeState extends State<IntenseMode> {
 
   @override
   Widget build(BuildContext context) {
-    final size = context.screenSize;
-    screenHeight = size.height;
+    screenHeight = context.screenHeight;
 
     return externalKeyboard
         ? KeyboardGame(

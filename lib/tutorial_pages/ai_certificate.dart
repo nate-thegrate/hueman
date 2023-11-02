@@ -51,7 +51,7 @@ class _AiCertificateState extends State<AiCertificate> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      const SuperText('Nate (the game author) taught ChatGPT\n'
+                      const SuperText('I taught ChatGPT\n'
                           'how to describe the primary colors.'),
                       const SuperText("Here's a screenshot as proof."),
                       ContinueButton(onPressed: () {
