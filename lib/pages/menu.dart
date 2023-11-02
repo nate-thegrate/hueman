@@ -57,7 +57,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
         ),
       ),
       const FixedSpacer(50),
-      BugReport(color),
+      FeedbackButton(color),
       const FixedSpacer(20),
       Center(
         child: OutlinedButton(
@@ -131,7 +131,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
     ];
     final List<Widget> noviceSettings = [
       const FixedSpacer(10),
-      BugReport(color),
+      FeedbackButton(color),
       const FixedSpacer(20),
       Center(
           child: OutlinedButton(

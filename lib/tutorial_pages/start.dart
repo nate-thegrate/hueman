@@ -101,7 +101,7 @@ class _BetaScreen extends StatelessWidget {
           children: [
             const Spacer(flex: 3),
             const SuperRichText(style: SuperStyle.gaegu(size: 32), [
-              TextSpan(text: 'Thanks for playing the '),
+              TextSpan(text: 'Thanks for playing the preliminary '),
               TextSpan(
                 text: 'H',
                 style: SuperStyle.gaegu(
@@ -131,9 +131,12 @@ class _BetaScreen extends StatelessWidget {
                 style: SuperStyle.gaegu(size: 38, color: SuperColor(0x6C4B00), height: 0),
               ),
               TextSpan(
-                text: ' beta!\n\nIf something looks weird or is broken, '
-                    'feel free to screenshot.\n\n'
-                    '(There\'s a "bug report" link in the settings menu.)',
+                text: ' release!\n\n'
+                    'The full release arrives in early December '
+                    'and will include an original soundtrack.\n\n'
+                    'Feel free to screenshot anything that looks weird '
+                    'or that you think could be improved.\n\n'
+                    '(There\'s a "feedback" option in the settings menu.)',
               ),
             ]),
             const Spacer(),
@@ -315,7 +318,7 @@ class _ScreenSizeAlertState extends State<_ScreenSizeAlert> {
         ),
         actionsAlignment: MainAxisAlignment.center,
         actions: [
-          if (phoneBug) const BugReport(color),
+          if (phoneBug) const FeedbackButton(color),
           if (showRecommendation || looksGood) popButton else continueButton,
         ],
       ),

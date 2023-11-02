@@ -268,8 +268,8 @@ class MenuCheckbox extends StatelessWidget {
   }
 }
 
-class BugReport extends StatelessWidget {
-  const BugReport(this.color, {super.key});
+class FeedbackButton extends StatelessWidget {
+  const FeedbackButton(this.color, {super.key});
   final SuperColor color;
 
   @override
@@ -281,8 +281,8 @@ class BugReport extends StatelessWidget {
         foregroundColor: color,
       ),
       child: const Padding(
-        padding: EdgeInsets.fromLTRB(4, 6, 4, 8),
-        child: Text('report a bug', style: SuperStyle.sans(size: 18)),
+        padding: EdgeInsets.fromLTRB(0, 6, 0, 8),
+        child: Text('send feedback', style: SuperStyle.sans(size: 18, width: 87.5)),
       ),
     );
   }
