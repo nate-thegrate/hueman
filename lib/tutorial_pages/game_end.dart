@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
@@ -321,11 +320,7 @@ class _CreditsButton extends StatelessWidget {
               SuperContainer(
                 width: 30,
                 alignment: Alignment.center,
-                // TODO: PNGs here
-                child: SvgPicture.asset(
-                  height: 25,
-                  'assets/end_credits_icons/$logo.svg',
-                ),
+                child: Image.asset('assets/end_credits_icons/$logo.png'),
               ),
               SizedBox(
                 width: 125,
@@ -387,11 +382,7 @@ class _CreditsState extends SuperState<_Credits> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SvgPicture.asset(
-                    'assets/end_credits_icons/youtube.svg',
-                    width: 45,
-                    colorFilter: const ColorFilter.mode(SuperColors.red, BlendMode.srcIn),
-                  ),
+                  Image.asset('assets/end_credits_icons/youtube_red.png', width: 45),
                   const Padding(
                     padding: EdgeInsets.all(20),
                     child: Text("Echo's video", style: SuperStyle.sans()),
