@@ -71,7 +71,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
         const TextSpan(text: 'Fun fact: your super'),
         TextSpan(
           text: 'HUE',
-          style: SuperStyle.sans(color: superColor, weight: 600, size: 15),
+          style: SuperStyle.sans(color: superColor, weight: 800, size: 15),
         ),
         const TextSpan(text: ' actually says a lot about you,\njust like a zodiac sign.'),
       ]);
@@ -119,7 +119,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
     });
     await sleepState(9, () => showText = false);
     await sleepState(1, () {
-      text = const SuperText('When I say "it\'s a really fun time",');
+      text = const SuperText('When I say "telling people about color theory is really fun",');
       showText = true;
     });
     await sleepState(3, () {
@@ -134,7 +134,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       showText = true;
     });
     await sleepState(5, () => showText = false);
-    sleep(1);
+    await sleep(1);
     context.noTransition(const _TheEnd());
   }
 
@@ -318,7 +318,7 @@ class _CreditsButton extends StatelessWidget {
             children: [
               const FixedSpacer.horizontal(16),
               SuperContainer(
-                width: 30,
+                width: 32,
                 alignment: Alignment.center,
                 child: Image.asset('assets/end_credits_icons/$logo.png'),
               ),
@@ -382,7 +382,7 @@ class _CreditsState extends SuperState<_Credits> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('assets/end_credits_icons/youtube_red.png', width: 45),
+                  Image.asset('assets/end_credits_icons/youtube_red.png', width: 48),
                   const Padding(
                     padding: EdgeInsets.all(20),
                     child: Text("Echo's video", style: SuperStyle.sans()),
@@ -416,8 +416,8 @@ class _CreditsState extends SuperState<_Credits> {
           style: SuperStyle.sans(size: 32, extraBold: true, height: 1, letterSpacing: 0.5),
         ),
         const SuperText(
-          '(tap on a button to go check it out!)',
-          style: SuperStyle.sans(size: 12),
+          '(tap a button to go check it out!)',
+          style: SuperStyle.sans(size: 12, width: 87.5),
         ),
         const Spacer(),
         for (final MapEntry(key: label, value: buttons) in _credits.entries) ...[
