@@ -31,6 +31,14 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
   void animate() => sleepState(4, () => showCredits = true);
 
   void next() async {
+    Future<void> textCycle(double timeToRead, String str) async {
+      await sleepState(1, () {
+        showText = true;
+        text = SuperText(str);
+      });
+      await sleepState(timeToRead, () => showText = false);
+    }
+
     setState(() {
       showText = false;
       showCredits = false;
@@ -38,16 +46,9 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
     });
     await sleepState(3, () => showSuperHue = true);
     await sleepState(0.1, () => hideSuperHue = false);
-    await sleepState(2, () {
-      showText = true;
-      text = const SuperText('Remember this?');
-    });
-    await sleepState(4, () => showText = false);
-    await sleepState(1, () {
-      text = const SuperText('This was the first time you chose correctly\nout of 360 options.');
-      showText = true;
-    });
-    await sleepState(4, () => showText = false);
+    await sleep(1);
+    await textCycle(4, 'Remember this?');
+    await textCycle(4, 'This was the first time you chose correctly\nout of 360 options.');
     await sleepState(1, () {
       text = SuperRichText([
         const TextSpan(text: 'Your super'),
@@ -81,25 +82,10 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       showText = true;
     });
     await sleepState(6, () => showText = false);
-    await sleepState(1, () {
-      text = const SuperText('Wanna know what your hue says?');
-      showText = true;
-    });
-    await sleepState(4, () => showText = false);
-    await sleepState(1, () {
-      text = SuperText('$superHue°:\n\n$hueZodiac');
-      showText = true;
-    });
-    await sleepState(6, () {
-      showText = false;
-      hideSuperHue = true;
-    });
-    await sleepState(3, () {
-      text = const SuperText('This game is 100% free & open-source software.');
-      showText = true;
-      showSuperHue = false;
-    });
-    await sleepState(5, () => showText = false);
+    await textCycle(4, 'Wanna know what your hue says?');
+    await textCycle(6, '$superHue°:\n\n$hueZodiac');
+    setState(() => hideSuperHue = true);
+    await textCycle(5, 'This game is 100% free & open-source software.');
     await sleepState(1, () {
       text = const SuperText("If you want to show support,\nhere's what you can do:");
       showText = true;
@@ -120,12 +106,12 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       );
       showText = true;
     });
-    await sleepState(9, () => showText = false);
+    await sleepState(10, () => showText = false);
     await sleepState(1, () {
       text = const SuperText('When I say "telling people about color theory is really fun",');
       showText = true;
     });
-    await sleepState(3, () {
+    await sleepState(4, () {
       text = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -136,7 +122,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       );
       showText = true;
     });
-    await sleepState(5, () => showText = false);
+    await sleepState(6, () => showText = false);
     await sleep(1);
     context.noTransition(const _TheEnd());
   }

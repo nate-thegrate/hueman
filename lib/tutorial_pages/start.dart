@@ -49,6 +49,10 @@ class _StartScreenState extends SuperState<StartScreen> {
   void exitBeta() => setState(() => betaScreen = false);
 
   void start() async {
+    externalKeyboard =
+        ![TargetPlatform.android, TargetPlatform.iOS].contains(Theme.of(context).platform);
+    saveData('externalKeyboard', externalKeyboard);
+
     final size = context.screenSize;
     if (size.width < 350 || size.height < 800) {
       await showDialog(
@@ -520,6 +524,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
   @override
   void initState() {
     super.initState();
+    inverted = false;
     epicHue = 0;
     ticker = Ticker(
       (elapsed) => setState(() {
@@ -601,6 +606,8 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                 margin: const EdgeInsets.only(top: 39),
                 width: girth,
                 decoration: BoxDecoration(shape: BoxShape.circle, color: epicColor),
+                alignment: Alignment.center,
+                child: _Squares(girth * 16 / (16 * root2over2 - 1) * root2over2),
               ),
             )
           : Stack(
@@ -667,6 +674,31 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                 ),
               ],
             ),
+    );
+  }
+}
+
+const root2over2 = 0.7071067811865476;
+
+class _Squares extends StatelessWidget {
+  const _Squares(this.width);
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    final borderWidth = width / 32;
+    final size = width * root2over2 - 2 * borderWidth;
+    return Transform.rotate(
+      angle: 64 / size + pi / 6,
+      child: SuperContainer(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          border: Border.all(color: SuperColors.darkBackground, width: borderWidth),
+        ),
+        alignment: Alignment.center,
+        child: size * root2over2 < 2 ? null : _Squares(size),
+      ),
     );
   }
 }

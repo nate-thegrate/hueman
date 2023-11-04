@@ -5,8 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 bool booted = false;
 
 // settings
-late bool casualMode;
 late bool externalKeyboard;
+late bool casualMode;
 late bool inverted;
 late bool music;
 late bool sounds;
@@ -69,9 +69,9 @@ enum Tutorial {
     data = switch (localStorage) {
       true => {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false},
       false => {
-          started: true,
-          intro3: true,
-          intro6: true,
+          started: false,
+          intro3: false,
+          intro6: false,
           introC: false,
           casual: false,
           intense: false,
@@ -85,6 +85,12 @@ enum Tutorial {
         },
     };
     // ignore: dead_code
-    if (!localStorage) superHue = -1;
+    if (!localStorage) {
+      casualMode = true;
+      inverted = false;
+      music = true;
+      sounds = true;
+      superHue = -1;
+    }
   }
 }
