@@ -546,6 +546,7 @@ class ColorTextSpan extends TextSpan {
   static const magenta = ColorTextSpan(SuperColors.magenta);
   static const yellow = ColorTextSpan(SuperColors.yellow);
   static const orange = ColorTextSpan(SuperColors.orange);
+  static const azure = ColorTextSpan(SuperColors.azure);
 }
 
 class Rive extends StatelessWidget {

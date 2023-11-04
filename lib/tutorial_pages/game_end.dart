@@ -62,7 +62,10 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
     });
     await sleepState(4, () => showText = false);
     await sleepState(1, () {
-      text = SuperText('$superHue degree${superHue == 1 ? '' : 's'}. $hueDescription');
+      text = SuperRichText([
+        TextSpan(text: '$superHue degree${superHue == 1 ? '' : 's'}. '),
+        ...hueDescription,
+      ]);
       showText = true;
     });
     await sleepState(5, () => showText = false);
@@ -511,34 +514,69 @@ class _CreditsState extends SuperState<_Credits> {
   }
 }
 
-// TODO: make this return a widget with ColorTextSpans
-String get hueDescription {
+List<TextSpan> get hueDescription {
   final (int i, int mix) = (superHue ~/ 30, superHue % 30);
   final (SuperColor start, SuperColor end) =
       (SuperColors.twelveHues[i], SuperColors.twelveHues[(i + 1) % 12]);
-  final String between = 'between ${start.name} and ${end.name}';
-  final (String closer, String further) =
-      mix > 15 ? (end.name, start.name) : (start.name, end.name);
+  final List<TextSpan> between = [
+    const TextSpan(text: 'between '),
+    ColorTextSpan(start),
+    const TextSpan(text: ' and '),
+    ColorTextSpan(end),
+  ];
+  final (SuperColor closer, SuperColor further) = mix > 15 ? (end, start) : (start, end);
 
   return switch (min(mix, 30 - mix)) {
-    15 => "That's the exact midpoint $between!",
-    > 8 => 'In $between.',
-    > 3 => 'Mostly $closer, but a little bit $further.',
-    > 0 => "It's $closer, but ever-so-slightly $further.",
+    15 => [
+        const TextSpan(text: "That's the exact midpoint "),
+        ...between,
+        const TextSpan(text: '!'),
+      ],
+    > 8 => [
+        const TextSpan(text: 'In '),
+        ...between,
+        const TextSpan(text: '.'),
+      ],
+    > 3 => [
+        const TextSpan(text: 'Mostly '),
+        ColorTextSpan(closer),
+        const TextSpan(text: ', but a little bit '),
+        ColorTextSpan(further),
+        const TextSpan(text: '.'),
+      ],
+    > 0 => [
+        const TextSpan(text: "It's "),
+        ColorTextSpan(closer),
+        const TextSpan(text: ', but ever-so-slightly '),
+        ColorTextSpan(further),
+        const TextSpan(text: '.'),
+      ],
     _ => switch (start) {
-        // SuperColors.red => '',
-        // SuperColors.orange => '',
-        // SuperColors.yellow => '',
-        SuperColors.chartreuse => "Chartreuse?! I'm beyond impressed.",
-        // SuperColors.green => '',
-        // SuperColors.spring => '',
-        SuperColors.cyan => 'The best hue of them all. Well done, friend.',
-        SuperColors.azure => 'Nice work—differentiating azure from blue is a rare skill.',
-        // SuperColors.blue => '',
-        // SuperColors.violet => '',
-        // SuperColors.magenta => '',
-        // SuperColors.rose => '',
-        _ => 'Exactly ${start.name}. Way to go!',
+        // SuperColors.red => [],
+        // SuperColors.orange => [],
+        // SuperColors.yellow => [],
+        SuperColors.chartreuse => const [TextSpan(text: "Chartreuse?! I'm beyond impressed.")],
+        // SuperColors.green => [],
+        // SuperColors.spring => [],
+        SuperColors.cyan => const [
+            TextSpan(text: 'The best hue of them all. Well done, friend.')
+          ],
+        SuperColors.azure => const [
+            TextSpan(text: 'Nice work—differentiating '),
+            ColorTextSpan.azure,
+            TextSpan(text: ' from '),
+            ColorTextSpan.blue,
+            TextSpan(text: ' is a rare skill.'),
+          ],
+        // SuperColors.blue => [],
+        // SuperColors.violet => [],
+        // SuperColors.magenta => [],
+        // SuperColors.rose => [],
+        _ => [
+            const TextSpan(text: 'Exactly '),
+            ColorTextSpan(start),
+            const TextSpan(text: '. Way to go!'),
+          ],
       },
   };
 }
