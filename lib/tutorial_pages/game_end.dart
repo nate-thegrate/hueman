@@ -69,7 +69,8 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       ]);
       showText = true;
     });
-    await sleepState(5, () => showText = false);
+    await sleepState(6, () => showText = false);
+    await sleep(3);
     await sleepState(1, () {
       text = SuperRichText([
         const TextSpan(text: 'Fun fact: your super'),
@@ -85,7 +86,12 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
     await textCycle(4, 'Wanna know what your hue says?');
     await textCycle(6, '$superHue°:\n\n$hueZodiac');
     setState(() => hideSuperHue = true);
-    await textCycle(5, 'This game is 100% free & open-source software.');
+    await sleepState(3, () {
+      text = const SuperText('This game is 100% free & open-source software.');
+      showText = true;
+      showSuperHue = false;
+    });
+    await sleepState(5, () => showText = false);
     await sleepState(1, () {
       text = const SuperText("If you want to show support,\nhere's what you can do:");
       showText = true;
@@ -129,6 +135,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
 
   @override
   Widget build(BuildContext context) {
+    final height = context.screenHeight;
     return Theme(
       data: ThemeData(
         useMaterial3: true,
@@ -169,13 +176,13 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
               AnimatedContainer(
                 duration: oneSec,
                 curve: Curves.easeInOutQuart,
-                height: showCredits ? context.screenHeight : 0,
+                height: showCredits ? height : 0,
                 color: const SuperColor(0xDEE3E8),
                 alignment: Alignment.center,
                 child: SingleChildScrollView(
                   child: SizedBox(
-                    height: context.screenHeight,
-                    child: _Credits(next),
+                    height: height,
+                    child: SafeArea(child: _Credits(next)),
                   ),
                 ),
               ),
@@ -952,59 +959,61 @@ class _TheEndState extends EpicState<_TheEnd> with SinglePress {
   Widget build(BuildContext context) {
     final color = epicColor;
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            const Spacer(flex: 4),
-            FadeIn(
-              child: SuperContainer(
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                width: 250,
-                height: 100,
-                alignment: Alignment.center,
-                child: const Text(
-                  'The End',
-                  style: SuperStyle.sans(
-                    color: Colors.black,
-                    size: 50,
-                    weight: 800,
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            children: [
+              const Spacer(flex: 4),
+              FadeIn(
+                child: SuperContainer(
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  width: 250,
+                  height: 100,
+                  alignment: Alignment.center,
+                  child: const Text(
+                    'The End',
+                    style: SuperStyle.sans(
+                      color: Colors.black,
+                      size: 50,
+                      weight: 800,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const Spacer(),
-            Fader(
-              seeYa,
-              child: SuperRichText([
-                const TextSpan(text: 'see '),
-                TextSpan(
-                  text: 'HUE',
-                  style: SuperStyle.sans(color: color, weight: 800, size: 15),
-                ),
-                const TextSpan(text: ' later  :)'),
-              ]),
-            ),
-            const Spacer(),
-            Fader(
-              showQuit,
-              child: TextButton(
-                style: TextButton.styleFrom(backgroundColor: Colors.white10),
-                onPressed: singlePress(() => exit(0)),
-                child: const Text(
-                  'quit',
-                  style: SuperStyle.sans(
-                    weight: 300,
-                    size: 16,
-                    color: Colors.white70,
+              const Spacer(),
+              Fader(
+                seeYa,
+                child: SuperRichText([
+                  const TextSpan(text: 'see '),
+                  TextSpan(
+                    text: 'HUE',
+                    style: SuperStyle.sans(color: color, weight: 800, size: 15),
+                  ),
+                  const TextSpan(text: ' later  :)'),
+                ]),
+              ),
+              const Spacer(),
+              Fader(
+                showQuit,
+                child: TextButton(
+                  style: TextButton.styleFrom(backgroundColor: Colors.white10),
+                  onPressed: singlePress(() => exit(0)),
+                  child: const Text(
+                    'quit',
+                    style: SuperStyle.sans(
+                      weight: 300,
+                      size: 16,
+                      color: Colors.white70,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const Spacer(flex: 3),
-          ],
+              const Spacer(flex: 3),
+            ],
+          ),
         ),
       ),
     );

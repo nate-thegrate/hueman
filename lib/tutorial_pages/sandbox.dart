@@ -52,11 +52,13 @@ class _SandboxTutorialState extends SuperState<SandboxTutorial> {
   @override
   Widget build(BuildContext context) {
     final screen = Scaffold(
-      body: Center(
-        child: Fader(
-          visible,
-          duration: duration,
-          child: pages[page - 1],
+      body: SafeArea(
+        child: Center(
+          child: Fader(
+            visible,
+            duration: duration,
+            child: pages[page - 1],
+          ),
         ),
       ),
       backgroundColor: inverted ? SuperColors.lightBackground : null,

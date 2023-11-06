@@ -285,9 +285,9 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
           backgroundColor: Colors.black,
         ),
         onPressed: () => setState(() => menuPage = MenuPage.settings),
-        child: const Padding(
-          padding: EdgeInsets.fromLTRB(8, 7, 8, 10),
-          child: Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 2, 8, 5) + context.iOSpadding,
+          child: const Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
         ),
       );
       if (Tutorial.master() && !Tutorial.sawInversion()) {
@@ -300,9 +300,9 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
           backgroundColor: Colors.black26,
         ),
         onPressed: () => setState(() => menuPage = MenuPage.main),
-        child: const Padding(
-          padding: EdgeInsets.fromLTRB(8, 7, 8, 8),
-          child: Text('back', style: SuperStyle.sans(size: 16, weight: 100)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 2, 8, 3) + context.iOSpadding,
+          child: const Text('back', style: SuperStyle.sans(size: 16, weight: 100)),
         ),
       );
     }

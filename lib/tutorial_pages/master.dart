@@ -43,11 +43,13 @@ class _MasterTutorialState extends SuperState<MasterTutorial> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Fader(
-          visible,
-          duration: duration,
-          child: pages[page - 1],
+      body: SafeArea(
+        child: Center(
+          child: Fader(
+            visible,
+            duration: duration,
+            child: pages[page - 1],
+          ),
         ),
       ),
     );

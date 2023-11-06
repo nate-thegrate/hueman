@@ -55,11 +55,13 @@ class _IntroCTutorialState extends SuperState<IntroCTutorial> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Fader(
-          visible,
-          duration: duration,
-          child: pages[page - 1],
+      body: SafeArea(
+        child: Center(
+          child: Fader(
+            visible,
+            duration: duration,
+            child: pages[page - 1],
+          ),
         ),
       ),
       backgroundColor: backgroundColor,
@@ -291,7 +293,6 @@ class _TrickButton extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 backgroundColor: SuperColors.darkBackground,
                 shadowColor: Colors.white,
-                elevation: funSine * 10,
               ),
               onPressed: onPressed,
               child: Padding(
@@ -327,7 +328,7 @@ class _Slider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double height = context.screenHeight * 2 / 3 - 50;
+    final double height = context.safeHeight * 2 / 3 - 50;
     return Expanded(
       child: SuperContainer(
         height: height,
@@ -621,7 +622,7 @@ class _VocabLine extends StatelessWidget {
         child: Text(
           label ?? color.name,
           style: SuperStyle.sans(
-            size: min((context.screenHeight - 0x80) / 0x20, (context.screenWidth - 75) / 12),
+            size: min((context.safeHeight - 0x80) / 0x20, (context.screenWidth - 75) / 12),
             weight: 100,
             height: -1 / 3,
           ),

@@ -76,7 +76,7 @@ class _CMYKScreen extends StatelessWidget {
     final size = context.screenSize;
     final horizontal = context.squished;
     final double width = min(size.width - 50, 500);
-    final double height = min(size.height - (horizontal ? 600 : 820), 500);
+    final double height = min(context.safeHeight - (horizontal ? 600 : 820), 500);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -174,7 +174,8 @@ class _HSLScreen extends StatefulWidget {
 class _HSLScreenState extends State<_HSLScreen> {
   @override
   Widget build(BuildContext context) {
-    final double planeSize = context.calcSize((w, h) => min(w - 50, h - 600));
+    final double colorBarHeight = context.safeHeight < 900 ? 0 : 100;
+    final double planeSize = context.calcSize((w, h) => min(w - 50, h - 450 - colorBarHeight));
     void touchRecognition(details) {
       final Offset offset = details.localPosition;
       double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);
@@ -260,7 +261,7 @@ class _HSLScreenState extends State<_HSLScreen> {
           onChanged: widget.onChanged(2),
         ),
         const FixedSpacer(25),
-        SuperContainer(width: 500, height: 100, color: _color),
+        if (colorBarHeight > 0) SuperContainer(width: 500, height: colorBarHeight, color: _color),
       ],
     );
   }
@@ -548,36 +549,38 @@ class _InverseSandboxState extends State<InverseSandbox> {
     return Theme(
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Spacer(),
-              const GoBack(),
-              const Spacer(),
-              Text(_colorPicker.desc, style: titleStyle),
-              const Spacer(),
-              AnimatedSize(
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.easeInOutCubic,
-                child: switch (_colorPicker) {
-                  _ColorPicker.cmyk => _CMYKScreen(updateCMYKval),
-                  _ColorPicker.hsl => _HSLScreen(onChangedHSL),
-                  _ColorPicker.select => _ColorWheel(updateFromWheel),
-                },
-              ),
-              const Spacer(flex: 2),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ColorLabel('hue', hue),
-                  ColorLabel('color name', _color.rounded.name, style: colorNameStyle),
-                  ColorLabel.colorCode('color code', _color.hexCode, updateColorCode),
-                ],
-              ),
-              const Spacer(flex: 2),
-            ],
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Spacer(),
+                const GoBack(),
+                const Spacer(),
+                Text(_colorPicker.desc, style: titleStyle),
+                const Spacer(),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.easeInOutCubic,
+                  child: switch (_colorPicker) {
+                    _ColorPicker.cmyk => _CMYKScreen(updateCMYKval),
+                    _ColorPicker.hsl => _HSLScreen(onChangedHSL),
+                    _ColorPicker.select => _ColorWheel(updateFromWheel),
+                  },
+                ),
+                const Spacer(flex: 2),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ColorLabel('hue', hue),
+                    ColorLabel('color name', _color.rounded.name, style: colorNameStyle),
+                    ColorLabel.colorCode('color code', _color.hexCode, updateColorCode),
+                  ],
+                ),
+                const Spacer(flex: 2),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(

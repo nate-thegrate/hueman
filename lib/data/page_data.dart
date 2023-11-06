@@ -17,6 +17,7 @@ import 'package:hueman/tutorial_pages/intro_c.dart';
 import 'package:hueman/tutorial_pages/master.dart';
 import 'package:hueman/tutorial_pages/sandbox.dart';
 import 'package:hueman/tutorial_pages/start.dart';
+import 'package:hueman/tutorial_pages/true_mastery.dart';
 
 enum Pages {
   start(StartScreen()),
@@ -45,6 +46,7 @@ enum Pages {
         intense when !Tutorial.intense() => const IntenseTutorial(),
         master when !Tutorial.master() => const MasterTutorial(),
         sandbox when !Tutorial.sandbox() => const SandboxTutorial(),
+        trueMastery when !Tutorial.trueMastery() => const TrueMasteryTutorial(),
         sandbox when inverted => const InverseSandbox(),
         menu when inverted => const InverseMenu(),
         _ => _widget,

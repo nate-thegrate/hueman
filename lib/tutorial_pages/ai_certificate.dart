@@ -24,47 +24,57 @@ class _AiCertificateState extends State<AiCertificate> {
 
   @override
   Widget build(BuildContext context) {
+    final width = context.screenWidth;
     return Scaffold(
-      body: Stack(
-        children: [
-          Center(
-            child: Theme(
-              data: ThemeData(
-                brightness: Brightness.dark,
-                useMaterial3: true,
-                fontFamily: 'Nunito Sans',
-                scrollbarTheme: const ScrollbarThemeData(
-                  thumbColor: MaterialStatePropertyAll(Colors.black54),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Center(
+              child: Theme(
+                data: ThemeData(
+                  brightness: Brightness.dark,
+                  useMaterial3: true,
+                  fontFamily: 'Nunito Sans',
+                  scrollbarTheme: const ScrollbarThemeData(
+                    thumbColor: MaterialStatePropertyAll(Colors.black54),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: Theme.of(context).platform == TargetPlatform.iOS
+                      ? Image.asset(
+                          'assets/ChatGPT.png',
+                          width: width,
+                          height: width * 17988 / 1056,
+                          fit: BoxFit.fill,
+                        )
+                      : Image.asset('assets/ChatGPT.png'),
                 ),
               ),
-              child: SingleChildScrollView(
-                child: Image.asset('assets/ChatGPT.png'),
-              ),
             ),
-          ),
-          if (!showBack)
-            Fader(
-              !showScreenshot,
-              child: SuperContainer(
-                color: SuperColors.darkBackground,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      const SuperText('I taught ChatGPT\n'
-                          'how to describe the primary colors.'),
-                      const SuperText("Here's a screenshot as proof."),
-                      ContinueButton(onPressed: () {
-                        setState(() => showScreenshot = true);
-                        sleep(1, then: () => setState(() => showBack = true));
-                        Tutorial.aiCertificate.complete();
-                      }),
-                    ],
+            if (!showBack)
+              Fader(
+                !showScreenshot,
+                child: SuperContainer(
+                  color: SuperColors.darkBackground,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        const SuperText('I taught ChatGPT\n'
+                            'how to describe the primary colors.'),
+                        const SuperText("Here's a screenshot as proof."),
+                        ContinueButton(onPressed: () {
+                          Tutorial.aiCertificate.complete();
+                          setState(() => showScreenshot = true);
+                          sleep(1, then: () => setState(() => showBack = true));
+                        }),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: showBack
           ? const Padding(

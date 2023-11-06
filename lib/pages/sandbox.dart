@@ -158,7 +158,7 @@ class _ColorSelection extends StatelessWidget {
     return SuperContainer(
       decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
       padding: const EdgeInsets.symmetric(vertical: 50),
-      constraints: BoxConstraints.loose(Size(double.infinity, context.screenHeight - 400)),
+      constraints: BoxConstraints.loose(Size.fromHeight(context.safeHeight - 400)),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -267,8 +267,9 @@ class _SandboxState extends State<Sandbox> {
     final Size size = context.screenSize;
     final horizontal = context.squished;
     final double width = min(size.width - 50, 500);
-    final double height = min(size.height - (horizontal ? 600 : 820), 500);
-    final double planeSize = min(size.width - 50, size.height - 600);
+    final double height = context.calcSize((w, h) => min(h - (horizontal ? 600 : 820), 500));
+    final double colorBarHeight = context.safeHeight < 900 ? 0 : 100;
+    final double planeSize = context.calcSize((w, h) => min(w - 50, h - 450 - colorBarHeight));
     void touchRecognition(details) {
       final Offset offset = details.localPosition;
       double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);
@@ -348,7 +349,7 @@ class _SandboxState extends State<Sandbox> {
             _HSVSlider(_HSV.saturation, (value) => setState(() => _s = value)),
             _HSVSlider(_HSV.value, (value) => setState(() => _v = value)),
             const FixedSpacer(25),
-            SuperContainer(width: size.width, height: planeSize / 3.5, color: _color),
+            if (colorBarHeight > 0) SuperContainer(width: size.width, height: 100, color: _color),
           ],
         ),
       _ColorPicker.select => _ColorSelection(
@@ -365,35 +366,46 @@ class _SandboxState extends State<Sandbox> {
     };
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            const Spacer(),
-            backButton,
-            const Spacer(),
-            Text(_colorPicker.desc, style: const SuperStyle.sans(size: 24)),
-            const Spacer(),
-            AnimatedSize(
-              duration: const Duration(milliseconds: 100),
-              curve: Curves.easeInOutCubic,
-              child: colorPicker,
-            ),
-            const Spacer(flex: 2),
-            ColorLabel('hue', _color.hue.round().toString()),
-            ColorLabel(
-              'color name',
-              _color.rounded.name,
-              style: SuperStyle.sans(color: _color, size: 20, weight: 900, shadows: [
-                Shadow(color: contrastWith(_color, threshold: 0.01).withAlpha(64), blurRadius: 3)
-              ]),
-            ),
-            ColorLabel.colorCode(
-              'color code',
-              _color.hexCode,
-              (color) => setState(() => updateColor(color)),
-            ),
-            const Spacer(flex: 2),
-          ],
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            children: [
+              const Spacer(),
+              backButton,
+              const Spacer(),
+              Text(_colorPicker.desc, style: const SuperStyle.sans(size: 24)),
+              const Spacer(),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 100),
+                curve: Curves.easeInOutCubic,
+                child: colorPicker,
+              ),
+              const Spacer(flex: 2),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ColorLabel('hue', _color.hue.round().toString()),
+                  ColorLabel(
+                    'color name',
+                    _color.rounded.name,
+                    style: SuperStyle.sans(color: _color, size: 20, weight: 900, shadows: [
+                      Shadow(
+                        color: contrastWith(_color, threshold: 0.01).withAlpha(64),
+                        blurRadius: 3,
+                      )
+                    ]),
+                  ),
+                  ColorLabel.colorCode(
+                    'color code',
+                    _color.hexCode,
+                    (color) => setState(() => updateColor(color)),
+                  ),
+                ],
+              ),
+              const Spacer(flex: 2),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
