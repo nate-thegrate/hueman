@@ -67,7 +67,7 @@ msix_config:
   publisher: CN=45439987-713E-4806-A939-727F9EEB2172
   publisher_display_name: Nate Wilson
   identity_name: 56500NateWilson.HUEmanagameaboutcolors
-  msix_version: 1.0.1.0
+  msix_version: 1.0.1+1
   logo_path: C:\Users\Nate\repos\hueman\assets\app_icon\windows_icon.png
   store: true
 
