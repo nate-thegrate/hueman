@@ -53,13 +53,23 @@ extension ContextStuff on BuildContext {
 
   void invert() => noTransition(inverted ? const MainMenu() : const InverseMenu());
 
+  EdgeInsets get iOSpadding => Theme.of(this).platform == TargetPlatform.iOS
+      ? EdgeInsets.zero
+      : const EdgeInsets.symmetric(vertical: 5);
+
   Size get screenSize => MediaQuery.of(this).size;
   double get screenWidth => screenSize.width;
   double get screenHeight => screenSize.height;
-  bool get squished => screenHeight < 1080;
+  double get safeHeight => screenHeight - safePadding;
+  double get safePadding {
+    final padding = View.of(this).padding;
+    return padding.top + padding.bottom;
+  }
+
+  bool get squished => safeHeight < 1080;
   double calcSize(double Function(double w, double h) widthHeight) {
     final size = screenSize;
-    return widthHeight(size.width, size.height);
+    return widthHeight(size.width, size.height - safePadding);
   }
 }
 

@@ -18,7 +18,7 @@ class TriviaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buttonWidth = min(context.screenWidth / 2 - 20, context.screenHeight / 2 - 250);
+    final buttonWidth = context.calcSize((w, h) => min(w / 2 - 20, h / 2 - 250));
     return SuperContainer(
       width: buttonWidth,
       height: buttonWidth / 3,
@@ -400,7 +400,7 @@ class _TriviaModeState extends State<TriviaMode> {
         textAlign: TextAlign.center,
         style: SuperStyle.sans(
           color: Colors.black,
-          size: min(context.screenHeight / 2, context.screenWidth) / 20,
+          size: context.calcSize((w, h) => min(w, h / 2) / 20),
           weight: 600,
         ),
       ),
@@ -429,21 +429,23 @@ class _TriviaModeState extends State<TriviaMode> {
     return Theme(
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
-        body: Center(
-          child: Column(
-            children: [
-              const Spacer(),
-              const GoBack(),
-              const Spacer(),
-              questionText,
-              const Spacer(),
-              multipleColorsReminder,
-              const FixedSpacer(20),
-              ...buttons,
-              const Spacer(),
-              score,
-              const FixedSpacer(20),
-            ],
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              children: [
+                const Spacer(),
+                const GoBack(),
+                const Spacer(),
+                questionText,
+                const Spacer(),
+                multipleColorsReminder,
+                const FixedSpacer(20),
+                ...buttons,
+                const Spacer(),
+                score,
+                const FixedSpacer(20),
+              ],
+            ),
           ),
         ),
         backgroundColor: SuperColors.lightBackground,

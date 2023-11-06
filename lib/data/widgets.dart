@@ -250,10 +250,11 @@ class MenuCheckbox extends StatelessWidget {
                   value: value,
                   onChanged: (_) => toggle(!value),
                 ),
-                const FixedSpacer.horizontal(10),
+                if (Theme.of(context).platform != TargetPlatform.iOS)
+                  const FixedSpacer.horizontal(10),
                 Text(
                   label,
-                  style: const SuperStyle.sans(size: 18),
+                  style: const SuperStyle.sans(size: 17),
                 ),
               ],
             ),
@@ -306,7 +307,7 @@ class WarnButton extends StatelessWidget {
         if (proceed) action!();
       },
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+        padding: const EdgeInsets.fromLTRB(10, 3, 10, 5) + context.iOSpadding,
         child: Text(proceed ? 'continue' : 'go back', style: const SuperStyle.sans(size: 16)),
       ),
     );
@@ -326,7 +327,7 @@ class GoBack extends StatelessWidget {
       ),
       onPressed: context.menu,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 6, 8, 7),
+        padding: const EdgeInsets.fromLTRB(8, 1, 8, 2) + context.iOSpadding,
         child: Text(text,
             style: SuperStyle.sans(
               weight: inverted ? 300 : 100,
@@ -559,9 +560,7 @@ class Rive extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: SuperContainer(
-        constraints: BoxConstraints.loose(
-          Size(context.screenHeight * 2 / 3, double.infinity),
-        ),
+        constraints: BoxConstraints.loose(Size.fromWidth(context.screenHeight * 2 / 3)),
         child: rive.RiveAnimation.asset(
           'assets/animations/$name.riv',
           fit: BoxFit.cover,

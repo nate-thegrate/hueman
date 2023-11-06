@@ -78,29 +78,31 @@ class _TrueMasteryTutorialState extends SuperState<TrueMasteryTutorial> {
     ];
 
     return Scaffold(
-      body: Stack(
-        children: [
-          Stack(children: balls),
-          Center(
-            child: Column(
-              children: [
-                const Spacer(),
-                Fader(
-                  visible,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text(
-                      text,
-                      textAlign: TextAlign.center,
-                      style: const SuperStyle.sans(size: 24, shadows: shadows),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Stack(children: balls),
+            Center(
+              child: Column(
+                children: [
+                  const Spacer(),
+                  Fader(
+                    visible,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        text,
+                        textAlign: TextAlign.center,
+                        style: const SuperStyle.sans(size: 24, shadows: shadows),
+                      ),
                     ),
                   ),
-                ),
-                const Spacer(),
-              ],
+                  const Spacer(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       backgroundColor: Colors.black,
     );

@@ -54,7 +54,8 @@ class _StartScreenState extends SuperState<StartScreen> {
     saveData('externalKeyboard', externalKeyboard);
 
     final size = context.screenSize;
-    if (size.width < 350 || size.height < 800) {
+    if ((size.width < 350 || size.height < 800) &&
+        ![TargetPlatform.android, TargetPlatform.iOS].contains(Theme.of(context).platform)) {
       await showDialog(
         context: context,
         builder: (context) => const _ScreenSizeAlert(),
@@ -74,19 +75,21 @@ class _StartScreenState extends SuperState<StartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          GestureDetector(
-            onTap: start,
-            child: Rive(
-              name: 'color_bs',
-              artboard: artboard,
-              controllers: controllers,
+      body: SafeArea(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            GestureDetector(
+              onTap: start,
+              child: Rive(
+                name: 'color_bs',
+                artboard: artboard,
+                controllers: controllers,
+              ),
             ),
-          ),
-          betaScreen ? _BetaScreen(exitBeta) : const _Logo(),
-        ],
+            betaScreen ? _BetaScreen(exitBeta) : const _Logo(),
+          ],
+        ),
       ),
       backgroundColor: backgroundColor,
     );
@@ -100,53 +103,52 @@ class _BetaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            const Spacer(flex: 3),
-            const SuperRichText(style: SuperStyle.gaegu(size: 32), [
-              TextSpan(text: 'Thanks for playing the preliminary '),
-              TextSpan(
-                text: 'H',
-                style: SuperStyle.gaegu(
-                  size: 32,
-                  color: SuperColors.red,
-                  weight: FontWeight.bold,
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            children: [
+              const Spacer(flex: 3),
+              const SuperRichText(style: SuperStyle.gaegu(size: 24), [
+                TextSpan(text: 'Thanks for playing the preliminary '),
+                TextSpan(
+                  text: 'H',
+                  style: SuperStyle.gaegu(
+                    color: SuperColors.red,
+                    weight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              TextSpan(
-                text: 'U',
-                style: SuperStyle.gaegu(
-                  size: 32,
-                  color: SuperColor(0xF0F000),
-                  weight: FontWeight.bold,
+                TextSpan(
+                  text: 'U',
+                  style: SuperStyle.gaegu(
+                    color: SuperColor(0xF0F000),
+                    weight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              TextSpan(
-                text: 'E',
-                style: SuperStyle.gaegu(
-                  size: 32,
-                  color: SuperColor(0x0060FF),
-                  weight: FontWeight.bold,
+                TextSpan(
+                  text: 'E',
+                  style: SuperStyle.gaegu(
+                    color: SuperColor(0x0060FF),
+                    weight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              TextSpan(
-                text: 'man',
-                style: SuperStyle.gaegu(size: 38, color: SuperColor(0x6C4B00), height: 0),
-              ),
-              TextSpan(
-                text: ' release!\n\n'
-                    'The full release arrives in early December '
-                    'and will include an original soundtrack.\n\n'
-                    'Feel free to screenshot anything that looks weird '
-                    'or that you think could be improved.\n\n'
-                    '(There\'s a "feedback" option in the settings menu.)',
-              ),
-            ]),
-            const Spacer(),
-            ContinueButton(onPressed: onPressed),
-            const Spacer(flex: 3),
-          ],
+                TextSpan(
+                  text: 'man',
+                  style: SuperStyle.gaegu(size: 27, color: SuperColor(0x6C4B00), height: 0),
+                ),
+                TextSpan(
+                  text: ' release!\n\n'
+                      'The full release arrives in early December '
+                      'and will include an original soundtrack.\n\n'
+                      'Feel free to screenshot anything that looks weird '
+                      'or that you think could be improved.\n\n'
+                      '(There\'s a "feedback" option in the settings menu.)',
+                ),
+              ]),
+              const Spacer(),
+              ContinueButton(onPressed: onPressed),
+              const Spacer(flex: 3),
+            ],
+          ),
         ),
       ),
     );
@@ -201,25 +203,10 @@ class _ScreenSizeAlertState extends State<_ScreenSizeAlert> {
             'on a high-resolution screen.)\n\n',
             style: SuperStyle.sans(size: 12),
           ),
-          Text('Some parts of this game could break.', style: SuperStyle.sans()),
+          Text("The game should work fine, but there's no guarantee.", style: SuperStyle.sans()),
         ],
-      TargetPlatform.android => const [
-          Text(
-            'Android devices come in all shapes and sizes, which is awesome, '
-            'but it also makes it difficult to build apps. '
-            "If you'd like, you can take a screenshot "
-            'and tap the "report a bug" button to upload it.',
-            style: SuperStyle.sans(),
-          ),
-        ],
-      TargetPlatform.iOS => const [
-          Text(
-            'This app should work on any iOS device. '
-            "If you're seeing this message, "
-            'feel free to screenshot and tap the "report a bug" button to upload it.',
-            style: SuperStyle.sans(),
-          ),
-        ],
+      TargetPlatform.android => const [],
+      TargetPlatform.iOS => const [],
       TargetPlatform.linux => const [
           Text(
             "It looks like you're running linux. "
@@ -424,50 +411,52 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Fader(
-          showStuff,
-          duration: const Duration(milliseconds: 600),
-          child: Column(
-            children: [
-              const Spacer(flex: 2),
-              headphones
-                  ? const Column(
-                      children: [
-                        Icon(Icons.headphones_outlined, size: 300),
-                        Text(
-                          '(headphones recommended)',
-                          style: SuperStyle.sans(size: 16, letterSpacing: 0.5),
-                        )
-                      ],
-                    )
-                  : const Text(
-                      'Except that was\na complete lie.',
-                      textAlign: TextAlign.center,
-                      style: SuperStyle.sans(size: 32),
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: Fader(
+            showStuff,
+            duration: const Duration(milliseconds: 600),
+            child: Column(
+              children: [
+                const Spacer(flex: 2),
+                headphones
+                    ? const Column(
+                        children: [
+                          Icon(Icons.headphones_outlined, size: 300),
+                          Text(
+                            '(headphones recommended)',
+                            style: SuperStyle.sans(size: 16, letterSpacing: 0.5),
+                          )
+                        ],
+                      )
+                    : const Text(
+                        'Except that was\na complete lie.',
+                        textAlign: TextAlign.center,
+                        style: SuperStyle.sans(size: 32),
+                      ),
+                const Spacer(),
+                Fader(
+                  showButton,
+                  child: SizedBox(
+                    height: 60,
+                    child: _TruthButton(
+                      // child: headphones
+                      //     ? Center(
+                      //         child: ContinueButton(
+                      onPressed: () {
+                        setState(() => showStuff = false);
+                        sleep(2, then: () => context.noTransition(const _FirstLaunchMenu()));
+                      },
+                      //         ),
+                      //       )
+                      //     : _TruthButton(onPressed: seeTheTruth),
                     ),
-              const Spacer(),
-              Fader(
-                showButton,
-                child: SizedBox(
-                  height: 60,
-                  child: _TruthButton(
-                    // child: headphones
-                    //     ? Center(
-                    //         child: ContinueButton(
-                    onPressed: () {
-                      setState(() => showStuff = false);
-                      sleep(2, then: () => context.noTransition(const _FirstLaunchMenu()));
-                    },
-                    //         ),
-                    //       )
-                    //     : _TruthButton(onPressed: seeTheTruth),
                   ),
                 ),
-              ),
-              const Spacer(),
-            ],
+                const Spacer(),
+              ],
+            ),
           ),
         ),
       ),
@@ -549,7 +538,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
     final double x = counter / 3;
     const int peak = 345;
     final double val = x < peak ? x : (x - peak) * peak / (peak - 360) + peak;
-    return val * min(context.screenWidth, context.screenHeight - 39) / 350;
+    return val * min(context.screenWidth, context.safeHeight - 39) / 350;
   }
 
   static const buffer = Expanded(
@@ -600,80 +589,83 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
     );
 
     return Scaffold(
-      body: counter < 360 * 3
-          ? Center(
-              child: SuperContainer(
-                margin: const EdgeInsets.only(top: 39),
-                width: girth,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: epicColor),
-                alignment: Alignment.center,
-                child: _Squares(girth * 16 / (16 * root2over2 - 1) * root2over2),
-              ),
-            )
-          : Stack(
-              children: [
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 220,
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: AnimatedPadding(
-                                duration: oneSec,
-                                curve: Curves.easeInOutQuart,
-                                padding: padding,
-                                child: SuperHUEman(epicColor),
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                buffer2,
-                                AnimatedSize(
-                                  duration: showAllDuration,
-                                  curve: curve,
-                                  child: SizedBox(width: showAll ? 200 : 4),
+      body: SafeArea(
+        child: counter < 360 * 3
+            ? Center(
+                child: SuperContainer(
+                  margin: const EdgeInsets.only(top: 39),
+                  width: girth,
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: epicColor),
+                  alignment: Alignment.center,
+                  child: _Squares(girth * 16 / (16 * root2over2 - 1) * root2over2),
+                ),
+              )
+            : Stack(
+                children: [
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 220,
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: AnimatedPadding(
+                                  duration: oneSec,
+                                  curve: Curves.easeInOutQuart,
+                                  padding: padding,
+                                  child: SuperHUEman(epicColor),
                                 ),
-                                buffer2,
-                                const FixedSpacer.horizontal(20),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SuperContainer(
-                        decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
-                        child: SexyBox(
-                          child: SizedBox(
-                            width: expanded ? 300 : context.screenWidth,
-                            height: expanded2 ? 200 : 0,
-                            child: introButton,
+                              ),
+                              Row(
+                                children: [
+                                  buffer2,
+                                  AnimatedSize(
+                                    duration: showAllDuration,
+                                    curve: curve,
+                                    child: SizedBox(width: showAll ? 200 : 4),
+                                  ),
+                                  buffer2,
+                                  const FixedSpacer.horizontal(20),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
+                        SuperContainer(
+                          decoration:
+                              BoxDecoration(border: Border.all(color: epicColor, width: 2)),
+                          child: SexyBox(
+                            child: SizedBox(
+                              width: expanded ? 300 : context.screenWidth,
+                              height: expanded2 ? 200 : 0,
+                              child: introButton,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      buffer,
+                      AnimatedSize(
+                        duration: showAllDuration,
+                        curve: curve,
+                        child: SizedBox(width: showAll ? context.screenWidth : 45),
                       ),
+                      buffer,
                     ],
                   ),
-                ),
-                Row(
-                  children: [
-                    buffer,
-                    AnimatedSize(
-                      duration: showAllDuration,
-                      curve: curve,
-                      child: SizedBox(width: showAll ? context.screenWidth : 45),
-                    ),
-                    buffer,
-                  ],
-                ),
-                Fader(
-                  !showAll,
-                  duration: showAllDuration,
-                  child: Center(child: transparentHUEman),
-                ),
-              ],
-            ),
+                  Fader(
+                    !showAll,
+                    duration: showAllDuration,
+                    child: Center(child: transparentHUEman),
+                  ),
+                ],
+              ),
+      ),
     );
   }
 }

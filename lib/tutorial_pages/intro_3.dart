@@ -56,11 +56,13 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Fader(
-          visible,
-          duration: duration,
-          child: pages[page - 1],
+      body: SafeArea(
+        child: Center(
+          child: Fader(
+            visible,
+            duration: duration,
+            child: pages[page - 1],
+          ),
         ),
       ),
       backgroundColor: backgroundColor,
@@ -210,7 +212,7 @@ class _Page2State extends SuperState<_Page2> {
               child: AnimatedContainer(
                 duration: squeezeDuration,
                 curve: Curves.easeInQuad,
-                height: expanded ? context.screenHeight : 300,
+                height: expanded ? context.safeHeight : 300,
                 child: Stack(
                   children: [
                     Row(

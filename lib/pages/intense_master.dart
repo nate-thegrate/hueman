@@ -401,7 +401,7 @@ class _IntenseModeState extends State<IntenseMode> {
 
   @override
   Widget build(BuildContext context) {
-    screenHeight = context.screenHeight;
+    screenHeight = context.safeHeight;
 
     return externalKeyboard
         ? KeyboardGame(

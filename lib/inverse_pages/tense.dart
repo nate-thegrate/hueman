@@ -236,7 +236,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   );
 
   Widget get tensionDesc {
-    final double height = min(800, context.screenHeight - 400);
+    final double height = min(800, context.safeHeight - 400);
     return AnimatedContainer(
       duration: expandDuration,
       curve: curve,
@@ -334,46 +334,48 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
         textTheme: const TextTheme(bodyMedium: style),
       ),
       child: Scaffold(
-        body: Stack(
-          children: [
-            Center(
-              child: Column(
-                children: [
-                  const Spacer(),
-                  const GoBack(),
-                  const Spacer(),
-                  target,
-                  const Spacer(),
-                  button2by2,
-                  const Spacer(flex: 2),
-                  TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.black12,
-                        foregroundColor: SuperColors.darkBackground,
-                      ),
-                      onPressed: () => setState(() => showDetails = !showDetails),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Text(
-                          showDetails ? '[hide details]' : '[show tension details]',
-                          style: const SuperStyle.mono(size: 16),
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Center(
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    const GoBack(),
+                    const Spacer(),
+                    target,
+                    const Spacer(),
+                    button2by2,
+                    const Spacer(flex: 2),
+                    TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.black12,
+                          foregroundColor: SuperColors.darkBackground,
                         ),
-                      )),
-                  const FixedSpacer(15),
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 100),
-                    child: casualMode || showDetails ? flat : scoreKeeper!.midRoundDisplay,
-                  ),
-                  const FixedSpacer(15),
-                ],
+                        onPressed: () => setState(() => showDetails = !showDetails),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Text(
+                            showDetails ? '[hide details]' : '[show tension details]',
+                            style: const SuperStyle.mono(size: 16),
+                          ),
+                        )),
+                    const FixedSpacer(15),
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 100),
+                      child: casualMode || showDetails ? flat : scoreKeeper!.midRoundDisplay,
+                    ),
+                    const FixedSpacer(15),
+                  ],
+                ),
               ),
-            ),
-            if (showReaction)
-              Splendid(
-                correct: selectedHue == hue,
-                onTap: tapReaction,
-              ),
-          ],
+              if (showReaction)
+                Splendid(
+                  correct: selectedHue == hue,
+                  onTap: tapReaction,
+                ),
+            ],
+          ),
         ),
         backgroundColor: SuperColors.lightBackground,
       ),

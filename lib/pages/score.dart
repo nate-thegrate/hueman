@@ -32,93 +32,95 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
         colorScheme: inverted ? null : const ColorScheme.dark(primary: Colors.white),
       ),
       child: Scaffold(
-        body: Center(
-          child: Column(
-            children: [
-              const Expanded(flex: 4, child: empty),
-              SuperContainer(
-                decoration: BoxDecoration(
-                    border: Border.all(color: color, width: 2),
-                    borderRadius: BorderRadius.circular(25)),
-                padding: const EdgeInsets.all(50),
-                child: Text('Finished!', style: SuperStyle.sans(size: 54, color: color)),
-              ),
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Game mode:  ', style: SuperStyle.sans(size: 22, color: color)),
-                  Text(
-                    page.gameMode,
-                    style: const SuperStyle.sans(size: 21, weight: 200),
-                  ),
-                ],
-              ),
-              const Spacer(flex: 3),
-              if (tutorial) ...[
-                if (page == Pages.introC) ...[
-                  BrandNew(
-                    color: color,
-                    text: 'casual\nmode',
-                    child: SuperButton(
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              children: [
+                const Expanded(flex: 4, child: empty),
+                SuperContainer(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: color, width: 2),
+                      borderRadius: BorderRadius.circular(25)),
+                  padding: const EdgeInsets.all(50),
+                  child: Text('Finished!', style: SuperStyle.sans(size: 54, color: color)),
+                ),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Game mode:  ', style: SuperStyle.sans(size: 22, color: color)),
+                    Text(
+                      page.gameMode,
+                      style: const SuperStyle.sans(size: 21, weight: 200),
+                    ),
+                  ],
+                ),
+                const Spacer(flex: 3),
+                if (tutorial) ...[
+                  if (page == Pages.introC) ...[
+                    BrandNew(
+                      color: color,
+                      text: 'casual\nmode',
+                      child: SuperButton(
+                        'play again',
+                        color: color,
+                        onPressed: () => context.goto(page),
+                      ),
+                    ),
+                  ] else ...[
+                    SuperButton(
+                      'continue',
+                      color: color,
+                      onPressed: () => context.goto(switch (page) {
+                        Pages.intro3 => Pages.intro6,
+                        Pages.intro6 => Pages.introC,
+                        _ => throw Error(),
+                      }),
+                    ),
+                    const FixedSpacer(33),
+                    SuperButton(
                       'play again',
                       color: color,
                       onPressed: () => context.goto(page),
                     ),
+                  ],
+                  const FixedSpacer(33),
+                  SuperButton(
+                    'main menu',
+                    color: color,
+                    onPressed: context.menu,
                   ),
                 ] else ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Score:  ', style: SuperStyle.sans(size: 32, color: color)),
+                      sk.finalScore,
+                    ],
+                  ),
+                  const FixedSpacer(10),
+                  sk.finalDetails,
+                  const Spacer(flex: 3),
+                  SuperButton('play again', color: color, onPressed: () => context.goto(page)),
+                  const FixedSpacer(33),
                   SuperButton(
-                    'continue',
+                    'play in casual mode',
                     color: color,
-                    onPressed: () => context.goto(switch (page) {
-                      Pages.intro3 => Pages.intro6,
-                      Pages.intro6 => Pages.introC,
-                      _ => throw Error(),
-                    }),
+                    onPressed: () {
+                      casualMode = true;
+                      context.goto(page);
+                    },
                   ),
                   const FixedSpacer(33),
                   SuperButton(
-                    'play again',
+                    'main menu',
                     color: color,
-                    onPressed: () => context.goto(page),
+                    onPressed: context.menu,
                   ),
                 ],
-                const FixedSpacer(33),
-                SuperButton(
-                  'main menu',
-                  color: color,
-                  onPressed: context.menu,
-                ),
-              ] else ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Score:  ', style: SuperStyle.sans(size: 32, color: color)),
-                    sk.finalScore,
-                  ],
-                ),
-                const FixedSpacer(10),
-                sk.finalDetails,
-                const Spacer(flex: 3),
-                SuperButton('play again', color: color, onPressed: () => context.goto(page)),
-                const FixedSpacer(33),
-                SuperButton(
-                  'play in casual mode',
-                  color: color,
-                  onPressed: () {
-                    casualMode = true;
-                    context.goto(page);
-                  },
-                ),
-                const FixedSpacer(33),
-                SuperButton(
-                  'main menu',
-                  color: color,
-                  onPressed: context.menu,
-                ),
+                const Expanded(flex: 3, child: empty),
               ],
-              const Expanded(flex: 3, child: empty),
-            ],
+            ),
           ),
         ),
         backgroundColor: inverted ? SuperColors.lightBackground : null,

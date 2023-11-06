@@ -54,7 +54,7 @@ class _NumberButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SuperContainer(
-      width: min((context.screenWidth - 5) / 3, 125),
+      width: min((context.screenWidth - 55) / 3, 125),
       height: 75,
       padding: const EdgeInsets.all(2),
       child: TextButton(
@@ -418,30 +418,32 @@ class _GameScreen extends StatelessWidget {
         children: [
           bars,
           Expanded(
-            child: Column(
-              children: <Widget>[
-                const Spacer(),
-                if (sk is! TutorialScoreKeeper) const GoBack(),
-                const Spacer(),
-                if (image == null) ...[
-                  SuperContainer(
-                    width: colorBoxWidth,
-                    height: min(colorBoxWidth, context.screenHeight - 600),
-                    color: color,
-                  )
-                ] else
-                  image!,
-                const Spacer(),
-                const Text(
-                  "What's the hue?",
-                  textAlign: TextAlign.center,
-                  style: SuperStyle.sans(size: 24, letterSpacing: 0),
-                ),
-                ...userInput,
-                const Spacer(),
-                scoreKeeper?.midRoundDisplay ?? empty,
-                const Spacer(),
-              ],
+            child: SafeArea(
+              child: Column(
+                children: <Widget>[
+                  const Spacer(),
+                  if (sk is! TutorialScoreKeeper) const GoBack(),
+                  const Spacer(),
+                  if (image == null) ...[
+                    SuperContainer(
+                      width: colorBoxWidth,
+                      height: min(colorBoxWidth, context.safeHeight - 500),
+                      color: color,
+                    )
+                  ] else
+                    image!,
+                  const Spacer(),
+                  const Text(
+                    "What's the hue?",
+                    textAlign: TextAlign.center,
+                    style: SuperStyle.sans(size: 24, letterSpacing: 0),
+                  ),
+                  ...userInput,
+                  const Spacer(),
+                  scoreKeeper?.midRoundDisplay ?? empty,
+                  if (scoreKeeper != null) const Spacer(),
+                ],
+              ),
             ),
           ),
           bars,
