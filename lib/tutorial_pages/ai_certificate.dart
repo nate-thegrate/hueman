@@ -40,12 +40,14 @@ class _AiCertificateState extends State<AiCertificate> {
                   ),
                 ),
                 child: SingleChildScrollView(
-                  child: Image.asset(
-                    'assets/ChatGPT.png',
-                    width: width,
-                    height: width * 17988 / 1056,
-                    fit: BoxFit.fill,
-                  ),
+                  child: Theme.of(context).platform == TargetPlatform.iOS
+                      ? Image.asset(
+                          'assets/ChatGPT.png',
+                          width: width,
+                          height: width * 17988 / 1056,
+                          fit: BoxFit.fill,
+                        )
+                      : Image.asset('assets/ChatGPT.png'),
                 ),
               ),
             ),
@@ -62,9 +64,9 @@ class _AiCertificateState extends State<AiCertificate> {
                             'how to describe the primary colors.'),
                         const SuperText("Here's a screenshot as proof."),
                         ContinueButton(onPressed: () {
+                          Tutorial.aiCertificate.complete();
                           setState(() => showScreenshot = true);
                           sleep(1, then: () => setState(() => showBack = true));
-                          Tutorial.aiCertificate.complete();
                         }),
                       ],
                     ),

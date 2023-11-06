@@ -63,7 +63,7 @@ extension ContextStuff on BuildContext {
   double get safeHeight => screenHeight - safePadding;
   double get safePadding {
     final padding = View.of(this).padding;
-    return padding.top + padding.bottom;
+    return min(padding.top + padding.bottom, 110);
   }
 
   bool get squished => safeHeight < 1080;

@@ -267,7 +267,7 @@ class _SandboxState extends State<Sandbox> {
     final Size size = context.screenSize;
     final horizontal = context.squished;
     final double width = min(size.width - 50, 500);
-    final double height = context.calcSize((w, h) => min(h - (horizontal ? 500 : 820), 500));
+    final double height = context.calcSize((w, h) => min(h - (horizontal ? 600 : 820), 500));
     final double colorBarHeight = context.safeHeight < 900 ? 0 : 100;
     final double planeSize = context.calcSize((w, h) => min(w - 50, h - 450 - colorBarHeight));
     void touchRecognition(details) {

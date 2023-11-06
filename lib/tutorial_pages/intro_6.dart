@@ -569,8 +569,15 @@ class _Page5State extends SuperState<_Page5> {
         ),
         Align(
           alignment: const Alignment(0, -7 / 8),
-          child: Fader(showText,
-              child: const SuperText("There isn't just one set of primary colors:")),
+          child: Fader(
+            showText,
+            child: Padding(
+              padding: Theme.of(context).platform == TargetPlatform.iOS
+                  ? const EdgeInsets.only(top: 20)
+                  : EdgeInsets.zero,
+              child: const SuperText("There isn't just one set of primary colors:"),
+            ),
+          ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
@@ -637,16 +644,17 @@ class _ColorBubbleState extends State<_ColorBubble> {
   Widget build(BuildContext context) {
     final bubbleSize = context.calcSize((w, h) => min(w, h / 2 - 50) / 4);
     final counter = widget.counter;
+    final iOS = Theme.of(context).platform == TargetPlatform.iOS;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: bubbleSize / 2.5),
       child: Transform.translate(
         offset: Offset(
           offset.dx * bubbleSize / 3,
-          sin(counter / 25) * 6 + offset.dy * bubbleSize / 3,
+          (iOS ? 0 : sin(counter / 25) * 6) + offset.dy * bubbleSize / 3,
         ),
         child: Transform.scale(
-          scaleY: 1 + sin(counter / 25 + pi / 6) * .025,
+          scaleY: iOS ? 1 : 1 + sin(counter / 25 + pi / 6) * .025,
           child: AnimatedScale(
             duration: halfSec,
             scale: counter > 15 ? 1 : 0,
@@ -789,30 +797,6 @@ class _Page6 extends StatefulWidget {
 }
 
 class _Page6State extends SuperState<_Page6> {
-  static const screenText = [
-    SuperText('You know what rustles my jimmies?'),
-    Spacer(flex: 4),
-    SuperRichText([
-      TextSpan(
-        text: 'People who design printers know that\n'
-            'the only way to access the full color range\n'
-            'is to use ',
-      ),
-      ColorTextSpan.cyan,
-      TextSpan(text: '/'),
-      ColorTextSpan.magenta,
-      TextSpan(text: '/'),
-      ColorTextSpan.yellow,
-      TextSpan(text: ','),
-    ]),
-    Spacer(),
-    SuperText('and subtractive mixing applies to all pigments,\n'
-        'including markers and watercolors,'),
-    Spacer(),
-    SuperText('but not once in my elementary school art class\n'
-        'did we learn about cyan or magenta.'),
-  ];
-
   int textProgress = 0;
   late final Timer timer;
 
@@ -833,17 +817,55 @@ class _Page6State extends SuperState<_Page6> {
 
   @override
   Widget build(BuildContext context) {
+    final double size = min(context.screenWidth / 25, 20);
     return Column(
       children: [
         const Spacer(flex: 4),
-        for (int i = 0; i < screenText.length; i++)
-          switch (screenText[i]) {
-            Spacer() => screenText[i],
-            _ => Fader(i <= textProgress, child: screenText[i]),
-          },
+        Fader(
+          textProgress > 0,
+          child: SuperText(
+            'You know what rustles my jimmies?',
+            style: SuperStyle.sans(size: size),
+          ),
+        ),
         const Spacer(flex: 4),
         Fader(
-          textProgress >= screenText.length,
+          textProgress > 1,
+          child: SuperRichText(style: SuperStyle.sans(size: size), const [
+            TextSpan(
+              text: 'People who design printers know that\n'
+                  'the only way to access the full color range\n'
+                  'is to use ',
+            ),
+            ColorTextSpan.cyan,
+            TextSpan(text: '/'),
+            ColorTextSpan.magenta,
+            TextSpan(text: '/'),
+            ColorTextSpan.yellow,
+            TextSpan(text: ','),
+          ]),
+        ),
+        const Spacer(),
+        Fader(
+          textProgress > 3,
+          child: SuperText(
+            'and subtractive mixing applies to all pigments,\n'
+            'including markers and watercolors,',
+            style: SuperStyle.sans(size: size),
+          ),
+        ),
+        const Spacer(),
+        Fader(
+          textProgress > 5,
+          child: SuperText(
+            'but not once in my elementary school art class\n'
+            'did we learn about cyan or magenta.',
+            style: SuperStyle.sans(size: size),
+          ),
+        ),
+        const Spacer(flex: 4),
+        Fader(
+          textProgress > 6,
           child: ContinueButton(onPressed: widget.nextPage),
         ),
         const Spacer(flex: 2),
