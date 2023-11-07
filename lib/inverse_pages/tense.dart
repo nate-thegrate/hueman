@@ -302,7 +302,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   Widget get button2by2 => AnimatedContainer(
         duration: expandDuration,
         curve: curve,
-        height: showDetails ? 0 : min(context.screenWidth, 420),
+        height: showDetails ? 0 : context.calcSize((w, h) => min(w, min(h - 300, 420))),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -354,7 +354,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                         ),
                         onPressed: () => setState(() => showDetails = !showDetails),
                         child: Padding(
-                          padding: const EdgeInsets.all(15),
+                          padding: const EdgeInsets.fromLTRB(15, 5, 15, 5) + context.iOSpadding,
                           child: Text(
                             showDetails ? '[hide details]' : '[show tension details]',
                             style: const SuperStyle.mono(size: 16),
@@ -406,7 +406,9 @@ class _TenseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double shadowSize = 2;
-    final double width = min((context.screenWidth / 2) - 20, 200);
+    final double width = context.calcSize(
+      (w, h) => min((w / 2) - 20, min((h - 300) / 2 - 20, 200)),
+    );
     return GestureDetector(
       onTap: select,
       child: SlideTransition(
