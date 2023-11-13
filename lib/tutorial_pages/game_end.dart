@@ -10,6 +10,8 @@ import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 
+int get superHue => Score.superHue.value!;
+
 class ThanksForPlaying extends StatefulWidget {
   const ThanksForPlaying({super.key});
 
@@ -69,8 +71,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       ]);
       showText = true;
     });
-    await sleepState(6, () => showText = false);
-    await sleep(3);
+    await sleepState(8, () => showText = false);
     await sleepState(1, () {
       text = SuperRichText([
         const TextSpan(text: 'Fun fact: your super'),
@@ -102,12 +103,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
         children: [
           text,
           const FixedSpacer(20),
-          const FadeIn(
-            child: SuperText(
-              'Just randomly bring up color theory\n'
-              'in your next conversation with your friends.',
-            ),
-          ),
+          const _HowToSupport(),
         ],
       );
       showText = true;
@@ -180,6 +176,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
                 color: const SuperColor(0xDEE3E8),
                 alignment: Alignment.center,
                 child: SingleChildScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
                   child: SizedBox(
                     height: height,
                     child: SafeArea(child: _Credits(next)),
@@ -210,7 +207,7 @@ const Map<String, List<_CreditsButton>> _credits = {
       name: ' Flutter',
       gradient: LinearGradient(
         colors: [
-          SuperColor(0x54ccff),
+          SuperColor(0x54CCFF),
           SuperColor(0x004080),
           SuperColor(0x0060C0),
           SuperColor(0x0060C0),
@@ -508,17 +505,70 @@ class _CreditsState extends SuperState<_Credits> {
 }
 
 List<TextSpan> get hueDescription {
-  final (int i, int mix) = (superHue ~/ 30, superHue % 30);
+  final bool extraHues = Tutorial.mastered();
+
+  final degreeSpan = extraHues ? 15 : 30;
+  final (int i, int mix) = (superHue ~/ degreeSpan, superHue % degreeSpan);
   final (SuperColor start, SuperColor end) =
-      (SuperColors.twelveHues[i], SuperColors.twelveHues[(i + 1) % 12]);
+      (SuperColors.hueList[i], SuperColors.hueList[(i + 1) % (extraHues ? 24 : 12)]);
   final List<TextSpan> between = [
     const TextSpan(text: 'between '),
     ColorTextSpan(start),
     const TextSpan(text: ' and '),
     ColorTextSpan(end),
   ];
-  final (SuperColor closer, SuperColor further) = mix > 15 ? (end, start) : (start, end);
-
+  final (SuperColor closer, SuperColor further) =
+      mix > (degreeSpan / 2) ? (end, start) : (start, end);
+  if (extraHues) {
+    return switch (min(mix, 15 - mix)) {
+      > 5 => [
+          const TextSpan(text: 'In '),
+          ...between,
+          const TextSpan(text: '.'),
+        ],
+      > 2 => [
+          const TextSpan(text: 'Mostly '),
+          ColorTextSpan(closer),
+          const TextSpan(text: ', but a little bit '),
+          ColorTextSpan(further),
+          const TextSpan(text: '.'),
+        ],
+      > 0 => [
+          const TextSpan(text: "It's "),
+          ColorTextSpan(closer),
+          const TextSpan(text: ', but ever-so-slightly '),
+          ColorTextSpan(further),
+          const TextSpan(text: '.'),
+        ],
+      _ => switch (start) {
+          // SuperColors.red => [],
+          // SuperColors.orange => [],
+          // SuperColors.yellow => [],
+          SuperColors.chartreuse => const [TextSpan(text: "Chartreuse?! I'm beyond impressed.")],
+          // SuperColors.green => [],
+          // SuperColors.spring => [],
+          SuperColors.cyan => const [
+              TextSpan(text: 'The best hue of them all. Well done, friend.')
+            ],
+          SuperColors.azure => const [
+              TextSpan(text: 'Nice work—differentiating '),
+              ColorTextSpan.azure,
+              TextSpan(text: ' from '),
+              ColorTextSpan.blue,
+              TextSpan(text: ' is a rare skill.'),
+            ],
+          // SuperColors.blue => [],
+          // SuperColors.violet => [],
+          // SuperColors.magenta => [],
+          // SuperColors.rose => [],
+          _ => [
+              const TextSpan(text: 'Exactly '),
+              ColorTextSpan(start),
+              const TextSpan(text: '. Way to go!'),
+            ],
+        }
+    };
+  }
   return switch (min(mix, 30 - mix)) {
     15 => [
         const TextSpan(text: "That's the exact midpoint "),
@@ -939,6 +989,39 @@ String get hueZodiac => switch (superHue) {
       _ => "You're unique and intelligent. And you like to have fun!",
     };
 
+class _HowToSupport extends StatefulWidget {
+  const _HowToSupport();
+
+  @override
+  State<_HowToSupport> createState() => _HowToSupportState();
+}
+
+class _HowToSupportState extends SuperState<_HowToSupport> {
+  static const text = 'Just randomly bring up color theory\n'
+      'in your next conversation with your friends.';
+
+  int visibleLetters = 0;
+  @override
+  void animate() async {
+    for (int i = 0; i < text.length; i++) {
+      await sleepState(0.04, () => visibleLetters++);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SuperRichText([
+      for (final (i, letter) in text.characters.indexed)
+        TextSpan(
+          text: letter,
+          style: TextStyle(
+            color: visibleLetters > i ? Colors.white : Colors.transparent,
+          ),
+        )
+    ]);
+  }
+}
+
 class _TheEnd extends StatefulWidget {
   const _TheEnd();
 
@@ -951,6 +1034,7 @@ class _TheEndState extends EpicState<_TheEnd> with SinglePress {
 
   @override
   void animate() async {
+    await Tutorial.gameEnd.complete();
     await sleepState(3, () => seeYa = true);
     await sleepState(3, () => showQuit = true);
   }

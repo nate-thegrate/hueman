@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
@@ -9,7 +11,7 @@ import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 import 'package:hueman/tutorial_pages/true_mastery.dart';
 
-enum MenuPage { main, settings, tenseSelect, howToWin }
+enum MenuPage { main, settings, tenseSelect, howToWin, highScores, reset }
 
 class InverseMenu extends StatefulWidget {
   const InverseMenu({super.key});
@@ -22,6 +24,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
     with SingleTickerProviderStateMixin, SinglePress {
   late final AnimationController controller = AnimationController(duration: oneSec, vsync: this);
   bool inverting = false, visible = true, exists = true, trueMastery = false, showButtons = true;
+  late bool showResetButton;
   late int hintsVisible;
   MenuPage menuPage = MenuPage.main;
   bool get mainMenu => menuPage == MenuPage.main;
@@ -45,24 +48,74 @@ class _InverseMenuState extends InverseState<InverseMenu>
     }
   }
 
-  static const SuperStyle titleStyle = SuperStyle.sans(
-    color: Colors.black,
-    size: 32,
-    height: 1.3,
-  );
-
-  static const hints = [
-    'make sure casual mode\nis  ☑ enabled.',
-    'go to "true mastery".',
-    'tap the color code button.',
-    'watch how the values for\nred/green/blue change\nwhen you tap the button.',
-    'convert each value to\nhexadecimal, then type\nthem in and "submit".',
-    'If you\'re stuck, you can\nGoogle "base 10 to base\n16" for some extra help.',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    const SuperStyle titleStyle = SuperStyle.sans(
+      color: Colors.black,
+      size: 32,
+      height: 1.3,
+    );
+    const hints = [
+      'make sure casual mode\nis  ☑ enabled.',
+      'go to "true mastery".',
+      'tap the color code button.',
+      'watch how the values for\nred/green/blue change\nwhen you tap the button.',
+      'convert each value to\nhexadecimal, then type\nthem in and "submit".',
+      'If you\'re stuck, you can\nGoogle "base 10 to base\n16" for some extra help.',
+    ];
+
     final color = inverseColor;
+    final furtherColor = evenFurther ? SuperColor.hue(inverseHue, 0.35) : null;
+
+    final trueMasteryButton = Padding(
+      padding: const EdgeInsets.only(top: 33),
+      child: ElevatedButton(
+        onPressed: singlePress(() {
+          if (evenFurther) {
+            context.goto(Pages.evenFurther);
+          } else if (!Tutorial.trueMastery() &&
+              Theme.of(context).platform != TargetPlatform.iOS) {
+            setState(() => trueMastery = true);
+            sleep(
+              6,
+              then: () => context.noTransition(const TrueMasteryTutorial()),
+            );
+          } else {
+            context.goto(Pages.trueMastery);
+          }
+        }),
+        style: evenFurther
+            ? ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: furtherColor,
+                surfaceTintColor: Colors.transparent,
+                elevation: 0,
+                shadowColor: furtherColor,
+              )
+            : ElevatedButton.styleFrom(
+                backgroundColor: color,
+                foregroundColor: Colors.white,
+              ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 8, 0, 13),
+          child: SizedBox(
+            width: 85,
+            child: Text(
+              evenFurther ? 'even\nfurther' : 'true\nmastery',
+              textAlign: TextAlign.center,
+              style: SuperStyle.sans(
+                size: 24,
+                width: 87.5,
+                weight: evenFurther ? 450 : 350,
+                extraBold: true,
+                letterSpacing: 2 / 3,
+                height: 0.95,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
     final children = switch (menuPage) {
       MenuPage.main => [
           SuperHUEman(color),
@@ -83,41 +136,36 @@ class _InverseMenuState extends InverseState<InverseMenu>
                         noDelay: true,
                         isNew: !Tutorial.tense(),
                       ),
-                      if (Tutorial.trivial() && Tutorial.tense() && Tutorial.sandbox()) ...[
-                        const FixedSpacer(33),
-                        ElevatedButton(
-                          onPressed: singlePress(() {
-                            if (!Tutorial.trueMastery() &&
-                                Theme.of(context).platform != TargetPlatform.iOS) {
-                              setState(() => trueMastery = true);
-                              sleep(
-                                6,
-                                then: () => context.noTransition(const TrueMasteryTutorial()),
-                              );
-                            } else {
-                              context.goto(Pages.trueMastery);
-                            }
-                          }),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: color,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.fromLTRB(0, 8, 0, 13),
-                            child: Text(
-                              'true\nmastery',
-                              textAlign: TextAlign.center,
-                              style: SuperStyle.sans(
-                                size: 24,
-                                weight: 350,
-                                extraBold: true,
-                                letterSpacing: 0.5,
-                                height: 0.95,
+                      if (Tutorial.gameEnd())
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Opacity(
+                              opacity: 0,
+                              child: Padding(
+                                padding: EdgeInsets.only(right: 8),
+                                child: IconButton(
+                                  onPressed: null,
+                                  icon: Icon(Icons.autorenew),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ],
+                            trueMasteryButton,
+                            Padding(
+                              padding: const EdgeInsets.only(top: 33, left: 8),
+                              child: IconButton(
+                                style: IconButton.styleFrom(foregroundColor: color),
+                                onPressed: () {
+                                  setState(() => evenFurther = !evenFurther);
+                                  saveData('evenFurther', evenFurther);
+                                },
+                                icon: const Icon(Icons.autorenew),
+                              ),
+                            ),
+                          ],
+                        )
+                      else if (Tutorial.trivial() && Tutorial.tense() && Tutorial.sandbox())
+                        trueMasteryButton,
                       const FixedSpacer(67),
                       NavigateButton(Pages.sandbox, color: color, isNew: !Tutorial.sandbox()),
                     ],
@@ -152,26 +200,49 @@ class _InverseMenuState extends InverseState<InverseMenu>
             ),
           ),
           const FixedSpacer(67),
-          Center(
-            child: OutlinedButton(
-              onPressed: () {
-                hintsVisible = 0;
-                setState(() => menuPage = MenuPage.howToWin);
-              },
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: color, width: 2),
-                foregroundColor: color,
-              ),
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(3, 6, 3, 7),
-                child: Text(
-                  'how to win',
-                  style: SuperStyle.sans(size: 16, weight: 600),
+          if (Tutorial.gameEnd()) ...[
+            Center(
+              child: OutlinedButton(
+                onPressed: () {
+                  setState(() => menuPage = MenuPage.highScores);
+                },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: color, width: 2),
+                  foregroundColor: color,
+                  padding: EdgeInsets.zero,
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.fromLTRB(19, 6, 19, 7),
+                  child: Text(
+                    'high scores',
+                    style: SuperStyle.sans(size: 16, weight: 600),
+                  ),
                 ),
               ),
             ),
-          ),
-          const FixedSpacer(25),
+            const FixedSpacer(25),
+          ] else if (Tutorial.trueMastery()) ...[
+            Center(
+              child: OutlinedButton(
+                onPressed: () {
+                  hintsVisible = 0;
+                  setState(() => menuPage = MenuPage.howToWin);
+                },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: color, width: 2),
+                  foregroundColor: color,
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.fromLTRB(3, 6, 3, 7),
+                  child: Text(
+                    'how to win',
+                    style: SuperStyle.sans(size: 16, weight: 600),
+                  ),
+                ),
+              ),
+            ),
+            const FixedSpacer(25),
+          ],
           Center(
             child: OutlinedButton(
               onPressed: () async {
@@ -183,12 +254,34 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 side: BorderSide(color: color, width: 2),
                 foregroundColor: color,
               ),
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 14),
-                child: Text('revert', style: SuperStyle.sans(size: 24)),
+              child: const SuperContainer(
+                padding: EdgeInsets.only(top: 10, bottom: 14),
+                width: 75,
+                child: SuperText('revert', style: SuperStyle.sans(size: 24), pad: false),
               ),
             ),
           ),
+          if (Tutorial.evenFurther()) ...[
+            const FixedSpacer(25),
+            Center(
+              child: OutlinedButton(
+                onPressed: () {
+                  showResetButton = false;
+                  setState(() => menuPage = MenuPage.reset);
+                  sleepState(2, () => showResetButton = true);
+                },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: color, width: 2),
+                  foregroundColor: color,
+                ),
+                child: const SuperContainer(
+                  padding: EdgeInsets.only(top: 10, bottom: 14),
+                  width: 75,
+                  child: SuperText('reset', style: SuperStyle.sans(size: 24), pad: false),
+                ),
+              ),
+            ),
+          ],
         ],
       MenuPage.tenseSelect => [
           const Text('tense', textAlign: TextAlign.center, style: titleStyle),
@@ -245,6 +338,50 @@ class _InverseMenuState extends InverseState<InverseMenu>
               ),
             ),
         ],
+      MenuPage.highScores => [
+          const Text('High Scores', style: SuperStyle.mono(size: 24)),
+          // TODO: high scores here
+        ],
+      MenuPage.reset => [
+          Text(
+            'Reset?',
+            style: SuperStyle.sans(size: 32, extraBold: true, letterSpacing: 0.5, color: color),
+          ),
+          const FixedSpacer(25),
+          SuperText(
+            Score.noneSet
+                ? 'This will delete\n your game progress.\n\n'
+                    '(It usually deletes\nhigh scores too,\n'
+                    "but you always did\ncasual mode so you\n don't have any lol)"
+                : 'This will delete\nyour high scores\nand game progress.',
+            style: const SuperStyle.mono(weight: 500),
+          ),
+          const FixedSpacer(50),
+          Fader(
+            showResetButton,
+            child: SizedBox(
+              height: 60,
+              child: OutlinedButton(
+                onPressed: showResetButton ? reset : null,
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: color, width: 2),
+                  foregroundColor: color,
+                  backgroundColor: SuperColors.lightBackground,
+                  shadowColor: color,
+                  elevation: (sin(6 * 2 * pi * (inverseHue) / 360) + 1) * 5,
+                ),
+                child: SexyBox(
+                  child: showResetButton
+                      ? const Padding(
+                          padding: EdgeInsets.fromLTRB(16, 0, 16, 2),
+                          child: Text("let's do it", style: SuperStyle.sans(size: 24)),
+                        )
+                      : empty,
+                ),
+              ),
+            ),
+          ),
+        ],
     };
 
     Widget settingsButton;
@@ -281,7 +418,10 @@ class _InverseMenuState extends InverseState<InverseMenu>
       data: ThemeData(
         useMaterial3: true,
         fontFamily: 'nunito sans',
-        checkboxTheme: CheckboxThemeData(fillColor: MaterialStatePropertyAll(color)),
+        checkboxTheme: CheckboxThemeData(
+          fillColor: MaterialStatePropertyAll(color),
+          side: BorderSide.none,
+        ),
       ),
       child: Stack(
         children: [
@@ -295,7 +435,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                   SuperContainer(
                     decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
                     width: 300,
-                    padding: const EdgeInsets.all(50),
+                    padding: EdgeInsets.symmetric(horizontal: mainMenu ? 0 : 50, vertical: 50),
                     child: AnimatedSize(
                       duration: quarterSec,
                       curve: curve,

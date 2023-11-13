@@ -178,7 +178,8 @@ class _Page2State extends SuperState<_Page2> {
               curve: curve,
               child: SizedBox(
                 height: expanded ? 0 : null,
-                child: SingleChildScrollView(
+                child: FittedBox(
+                  clipBehavior: Clip.hardEdge,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -666,11 +667,11 @@ class _Page5State extends SuperState<_Page5> {
                         child: AnimatedSize(
                           duration: const Duration(seconds: 3),
                           curve: curve,
-                          child: SuperContainer(
-                            width: textProgress > 2 ? width : width / 2,
-                            decoration: const BoxDecoration(
-                              backgroundBlendMode: BlendMode.screen,
-                              color: Color(0x80FFFF00),
+                          child: Opacity(
+                            opacity: 0.5,
+                            child: SuperContainer(
+                              width: textProgress > 2 ? width : width / 2,
+                              color: SuperColors.yellow,
                             ),
                           ),
                         ),
@@ -759,7 +760,7 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
   @override
   Widget build(BuildContext context) {
     final tileWidth = context.calcSize(
-      (w, h) => min(w / (hsvWidth + 2), (h - 150) / hsvHeight),
+      (w, h) => min(w / hsvWidth, (h - 150) / hsvHeight),
     );
 
     return Stack(
@@ -798,68 +799,13 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
           ],
         ),
         if (justKidding)
-          _JustKidding(
-            duration: duration,
+          JustKidding(
+            'HUE',
             buttonVisible: buttonVisible,
             color: epicColor,
-            nextPage: singlePress(widget.nextPage),
+            onPressed: singlePress(widget.nextPage),
           ),
       ],
-    );
-  }
-}
-
-class _JustKidding extends StatelessWidget {
-  const _JustKidding({
-    required this.duration,
-    required this.buttonVisible,
-    required this.color,
-    required this.nextPage,
-  });
-  final Duration duration;
-  final bool buttonVisible;
-  final SuperColor color;
-  final void Function() nextPage;
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeIn(
-      duration: duration,
-      child: SuperContainer(
-        color: Colors.black,
-        width: double.infinity,
-        child: Column(
-          children: [
-            const Spacer(),
-            const Text(
-              'just kidding  :)',
-              style: SuperStyle.sans(size: 16, weight: 100),
-            ),
-            const Spacer(flex: 3),
-            Fader(
-              buttonVisible,
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: color,
-                  side: BorderSide(color: color, width: 2),
-                  shadowColor: color,
-                  elevation: epicSine * 8,
-                ),
-                onPressed: nextPage,
-                child: const Padding(
-                  padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
-                  child: Text(
-                    'HUE',
-                    style: SuperStyle.sans(size: 48, weight: 750),
-                  ),
-                ),
-              ),
-            ),
-            const Spacer(),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hueman/data/save_data.dart';
+import 'package:hueman/inverse_pages/even_further.dart';
 import 'package:hueman/inverse_pages/menu.dart';
 import 'package:hueman/inverse_pages/sandbox.dart';
 import 'package:hueman/inverse_pages/tense.dart';
@@ -17,6 +18,7 @@ import 'package:hueman/tutorial_pages/intro_c.dart';
 import 'package:hueman/tutorial_pages/master.dart';
 import 'package:hueman/tutorial_pages/sandbox.dart';
 import 'package:hueman/tutorial_pages/start.dart';
+import 'package:hueman/tutorial_pages/even_further.dart';
 import 'package:hueman/tutorial_pages/true_mastery.dart';
 
 enum Pages {
@@ -24,7 +26,8 @@ enum Pages {
   menu(MainMenu()),
   intro3(IntroMode(3)),
   intro6(IntroMode(6)),
-  introC(IntroMode(12)),
+  introC(IntroMode(0xC)),
+  intro18(IntroMode(0x18)),
   intense(IntenseMode()),
   master(IntenseMode('master')),
   sandbox(Sandbox()),
@@ -34,6 +37,7 @@ enum Pages {
   tenseVibrant(TenseMode('vibrant')),
   tenseVolatile(TenseMode('volatile')),
   trueMastery(TrueMastery()),
+  evenFurther(EvenFurther()),
   ;
 
   const Pages(this._widget);
@@ -47,6 +51,7 @@ enum Pages {
         master when !Tutorial.master() => const MasterTutorial(),
         sandbox when !Tutorial.sandbox() => const SandboxTutorial(),
         trueMastery when !Tutorial.trueMastery() => const TrueMasteryTutorial(),
+        evenFurther when !Tutorial.evenFurther() => const EvenFurtherTutorial(),
         sandbox when inverted => const InverseSandbox(),
         menu when inverted => const InverseMenu(),
         _ => _widget,
@@ -54,10 +59,10 @@ enum Pages {
 
   /// button text
   String call() => switch (this) {
-        trueMastery => 'true\nmastery',
         intro3 => '3 colors',
         intro6 => '6 colors',
         introC => '12 colors',
+        intro18 => '24 colors',
         _ when name.startsWith('tense') => name.substring(5).toLowerCase(),
         _ => name,
       };
@@ -66,6 +71,7 @@ enum Pages {
         intro3 => 'intro  (3 colors)',
         intro6 => 'intro  (6 colors)',
         introC => 'intro  (12 colors)',
+        intro18 => 'intro  (24 colors)',
         intense => 'Intense',
         master => 'Master',
         tenseVibrant => 'Tense (vibrant)',

@@ -58,16 +58,19 @@ class _AiCertificateState extends State<AiCertificate> {
                   color: SuperColors.darkBackground,
                   child: Center(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
+                        const Spacer(flex: 4),
                         const SuperText('I taught ChatGPT\n'
                             'how to describe the primary colors.'),
+                        const Spacer(),
                         const SuperText("Here's a screenshot as proof."),
+                        const Spacer(flex: 3),
                         ContinueButton(onPressed: () {
                           Tutorial.aiCertificate.complete();
                           setState(() => showScreenshot = true);
                           sleep(1, then: () => setState(() => showBack = true));
                         }),
+                        const Spacer(flex: 2),
                       ],
                     ),
                   ),

@@ -17,11 +17,16 @@ class MainMenu extends StatefulWidget {
 
 enum MenuPage { main, settings, introSelect }
 
-class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateMixin {
+class _MainMenuState extends EpicState<MainMenu>
+    with SingleTickerProviderStateMixin, SinglePress {
   late final AnimationController controller;
   MenuPage menuPage = MenuPage.main;
   bool get mainMenu => menuPage == MenuPage.main;
-  bool showMasteryText = false, inverting = false, visible = true, showButtons = true;
+  bool showMasteryText = false,
+      inverting = false,
+      visible = true,
+      showButtons = true,
+      newChallenge = !Tutorial.intense();
   bool? darkBackground = true;
 
   @override
@@ -192,8 +197,37 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
                         ),
                         if (Tutorial.introC()) ...[
                           const FixedSpacer(33),
-                          NavigateButton(Pages.intense, color: color, isNew: !Tutorial.intense()),
-                          if (hueMaster)
+                          if (Tutorial.intense())
+                            NavigateButton(Pages.intense, color: color)
+                          else if (newChallenge)
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                surfaceTintColor: Colors.transparent,
+                                shadowColor: color,
+                                elevation: 1,
+                              ),
+                              onPressed: singlePress(() => setState(() => newChallenge = false)),
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                child: Text(
+                                  'a new challenge',
+                                  style: SuperStyle.sans(
+                                    size: 20,
+                                    width: 87.5,
+                                    letterSpacing: 0.33,
+                                    weight: 300,
+                                    extraBold: true,
+                                    color: color,
+                                  ),
+                                ),
+                              ),
+                            )
+                          else
+                            FadeIn(
+                              child: NavigateButton(Pages.intense, color: color, isNew: true),
+                            ),
+                          if (Score.superHue())
                             Padding(
                               padding: const EdgeInsets.only(top: 33),
                               child: NavigateButton(
@@ -238,7 +272,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
             ),
           ),
           const FixedSpacer(33),
-          if (hueMaster) ...masterSettings else ...noviceSettings,
+          if (Score.superHue()) ...masterSettings else ...noviceSettings,
         ],
       MenuPage.introSelect => [
           const Text(
@@ -246,15 +280,22 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
             textAlign: TextAlign.center,
             style: SuperStyle.sans(size: 32, weight: 100),
           ),
-          const FixedSpacer(55),
-          NavigateButton(Pages.intro3, color: color, isNew: !Tutorial.intro3()),
-          if (Tutorial.intro3()) ...[
+          const FixedSpacer(20),
+          if (casualMode) ...[
             const FixedSpacer(33),
-            NavigateButton(Pages.intro6, color: color, isNew: !Tutorial.intro6()),
+            NavigateButton(Pages.intro3, color: color, isNew: !Tutorial.intro3()),
+            if (Tutorial.intro3()) ...[
+              const FixedSpacer(33),
+              NavigateButton(Pages.intro6, color: color, isNew: !Tutorial.intro6()),
+            ],
           ],
           if (Tutorial.intro6()) ...[
             const FixedSpacer(33),
             NavigateButton(Pages.introC, color: color, isNew: !Tutorial.introC()),
+          ],
+          if (Tutorial.mastered()) ...[
+            const FixedSpacer(33),
+            NavigateButton(Pages.intro18, color: color),
           ],
           if (!casualMode)
             const Padding(
@@ -265,7 +306,7 @@ class _MainMenuState extends EpicState<MainMenu> with SingleTickerProviderStateM
                 style: SuperStyle.sans(color: Colors.white60),
               ),
             )
-          else if (Tutorial.intro3())
+          else if (Tutorial.intro3() && !Tutorial.casual())
             const Padding(
               padding: EdgeInsets.only(top: 33),
               child: Text(

@@ -7,43 +7,6 @@ library;
 
 import 'package:flutter/material.dart';
 
-class _DynamicBox extends StatelessWidget {
-  const _DynamicBox(this.config, {required this.child});
-
-  final dynamic config;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (config) {
-      null || (null, null) || (null, null, null) || (null, Clip.none) => child,
-      final EdgeInsets p => Padding(padding: p, child: child),
-      (final double? w, final double? h, null) => SizedBox(width: w, height: h, child: child),
-      (final double? w, final double? h, final BoxConstraints c) => ConstrainedBox(
-          constraints: (w != null || h != null) ? c.tighten(width: w, height: h) : c,
-          child: child,
-        ),
-      final Color c => ColoredBox(color: c, child: child),
-      (final Decoration d, Clip.none) => DecoratedBox(decoration: d, child: child),
-      (final Decoration d, final Clip c) => DecoratedBox(
-          decoration: d,
-          child: ClipPath(
-            clipper: _DecorationClipper(
-              textDirection: Directionality.maybeOf(context),
-              decoration: d,
-            ),
-            clipBehavior: c,
-            child: child,
-          ),
-        ),
-      final Alignment a => Align(alignment: a, child: child),
-      (final Matrix4 t, final AlignmentGeometry? a) =>
-        Transform(transform: t, alignment: a, child: child),
-      _ => throw Exception('problem with config type ${config.runtimeType}'),
-    };
-  }
-}
-
 class SuperContainer extends StatelessWidget {
   const SuperContainer({
     super.key,
@@ -60,7 +23,12 @@ class SuperContainer extends StatelessWidget {
     this.transformAlignment,
     this.child,
     this.clipBehavior = Clip.none,
-  });
+  })  : assert(decoration != null || clipBehavior == Clip.none),
+        assert(
+          color == null || decoration == null,
+          'Cannot provide both a color and a decoration\n'
+          'To provide both, use "decoration: BoxDecoration(color: color)".',
+        );
 
   final Widget? child;
   final AlignmentGeometry? alignment;
@@ -75,43 +43,84 @@ class SuperContainer extends StatelessWidget {
   final AlignmentGeometry? transformAlignment;
   final Clip clipBehavior;
 
-  EdgeInsetsGeometry? get _paddingIncludingDecoration => switch ((decoration?.padding, padding)) {
-        (null, final pad) || (final pad, null) => pad,
-        (final deco, final pad) => pad!.add(deco!),
+  BoxConstraints? get _constraints => switch ((width, height, constraints)) {
+        (null, null, _) => constraints,
+        (_, _, null) => BoxConstraints.tightFor(width: width, height: height),
+        _ => constraints!.tighten(width: width, height: height),
       };
 
-  Widget get _child {
-    if (child != null) {
-      return _DynamicBox(alignment, child: child!);
-    }
-    if (constraints?.isTight ?? true) {
-      return const LimitedBox(
+  EdgeInsetsGeometry? get _paddingIncludingDecoration => switch ((decoration?.padding, padding)) {
+        (null, final EdgeInsetsGeometry? padding) ||
+        (final EdgeInsetsGeometry? padding, null) =>
+          padding,
+        _ => padding!.add(decoration!.padding),
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    Widget? current = child;
+
+    if (child == null && (constraints == null || !constraints!.isTight)) {
+      current = const LimitedBox(
         maxWidth: 0.0,
         maxHeight: 0.0,
         child: SizedBox.expand(),
       );
+    } else if (alignment != null) {
+      current = Align(alignment: alignment!, child: current);
     }
-    return const SizedBox.shrink();
-  }
 
-  List<dynamic> get _layers => [
-        _paddingIncludingDecoration,
-        (decoration, clipBehavior),
-        foregroundDecoration,
-        color,
-        (width, height, constraints),
-        margin,
-        (transform, transformAlignment),
-      ];
-
-  @override
-  Widget build(BuildContext context) {
-    Widget current = _child;
-
-    for (final layer in _layers) {
-      current = _DynamicBox(layer, child: current);
+    assert(padding == null || padding!.isNonNegative);
+    final EdgeInsetsGeometry? effectivePadding = _paddingIncludingDecoration;
+    if (effectivePadding != null) {
+      current = Padding(padding: effectivePadding, child: current);
     }
-    return current;
+
+    if (color != null) {
+      current = ColoredBox(color: color!, child: current);
+    }
+
+    if (clipBehavior != Clip.none) {
+      assert(decoration != null);
+      current = ClipPath(
+        clipper: _DecorationClipper(
+          textDirection: Directionality.maybeOf(context),
+          decoration: decoration!,
+        ),
+        clipBehavior: clipBehavior,
+        child: current,
+      );
+    }
+
+    if (decoration != null) {
+      assert(decoration!.debugAssertIsValid());
+      current = DecoratedBox(decoration: decoration!, child: current);
+    }
+
+    if (foregroundDecoration != null) {
+      current = DecoratedBox(
+        decoration: foregroundDecoration!,
+        position: DecorationPosition.foreground,
+        child: current,
+      );
+    }
+
+    final BoxConstraints? effectiveConstraints = _constraints;
+    if (effectiveConstraints != null) {
+      assert(effectiveConstraints.debugAssertIsValid());
+      current = ConstrainedBox(constraints: effectiveConstraints, child: current);
+    }
+
+    if (margin != null) {
+      assert(margin!.isNonNegative);
+      current = Padding(padding: margin!, child: current);
+    }
+
+    if (transform != null) {
+      current = Transform(transform: transform!, alignment: transformAlignment, child: current);
+    }
+
+    return current!;
   }
 }
 

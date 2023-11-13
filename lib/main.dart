@@ -13,6 +13,7 @@ class App extends StatelessWidget {
         colorScheme: const ColorScheme.dark(primary: Colors.white),
         fontFamily: 'nunito sans',
       ),
+      debugShowCheckedModeBanner: false,
       routes: Pages.routes,
       initialRoute: Pages.initialRoute,
     );

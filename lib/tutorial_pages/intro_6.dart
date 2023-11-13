@@ -821,12 +821,9 @@ class _Page6State extends SuperState<_Page6> {
     return Column(
       children: [
         const Spacer(flex: 4),
-        Fader(
-          textProgress > 0,
-          child: SuperText(
-            'You know what rustles my jimmies?',
-            style: SuperStyle.sans(size: size),
-          ),
+        SuperText(
+          'You know what rustles my jimmies?',
+          style: SuperStyle.sans(size: size),
         ),
         const Spacer(flex: 4),
         Fader(
@@ -908,7 +905,7 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
           ),
           const TextSpan(text: '\nof the primary color hues.'),
         ]),
-        const Spacer(flex: 5),
+        const Spacer(flex: 4),
         Fader(
           showButton,
           child: OutlinedButton(
@@ -931,7 +928,7 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
             ),
           ),
         ),
-        const Spacer(flex: 2),
+        const Spacer(flex: 3),
       ],
     );
   }

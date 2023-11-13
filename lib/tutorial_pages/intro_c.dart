@@ -548,27 +548,56 @@ class _Page3State extends SuperState<_Page3> {
 
     return Column(
       children: [
-        SuperContainer(
+        Padding(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Fader(
-                showLeftDesc,
-                child: const Text(
-                  'on the left: the color vocabulary I grew up with',
-                  style: SuperStyle.sans(size: 20, weight: 100),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Fader(
+                  showLeftDesc,
+                  child: const Text(
+                    'on the left: the color vocabulary I grew up with',
+                    style: SuperStyle.sans(size: 20, weight: 100),
+                    softWrap: false,
+                  ),
                 ),
-              ),
-              Fader(
-                showRightDesc,
-                child: const Text(
-                  'on the right: my color vocabulary now',
-                  style: SuperStyle.sans(size: 20, weight: 100),
+                Fader(
+                  showRightDesc,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'on the right: color names from',
+                        style: SuperStyle.sans(size: 20, weight: 100),
+                        softWrap: false,
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: SuperColors.azure,
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                        ),
+                        onPressed: () => gotoWebsite(
+                          'https://en.wikipedia.org/wiki/Tertiary_color#RGB_or_CMYK_primary,_secondary,_and_tertiary_colors',
+                        ),
+                        child: const Text(
+                          'Wikipedia',
+                          style: SuperStyle.sans(
+                            size: 20,
+                            weight: 100,
+                            width: 87.5,
+                            letterSpacing: 1 / 3,
+                            extraBold: true,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         Expanded(
@@ -718,8 +747,8 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
     const space = TextSpan(text: ' ', style: SuperStyle.sans(size: 1));
     return AnimatedContainer(
       duration: oneSec,
-      width: 400,
-      height: 500,
+      width: 333,
+      height: 444,
       decoration: letsDoIt
           ? BoxDecoration(border: Border.all(color: color, width: 2))
           : const BoxDecoration(),

@@ -9,14 +9,6 @@ import 'package:hueman/data/widgets.dart';
 
 import 'package:flutter/material.dart';
 
-class IntroMode extends StatefulWidget {
-  const IntroMode(this.numColors, {super.key});
-  final int numColors;
-
-  @override
-  State<IntroMode> createState() => _IntroModeState();
-}
-
 class TutorialQueue extends HueQueue {
   TutorialQueue(super.numColors);
 
@@ -42,10 +34,24 @@ class TutorialScoreKeeper implements ScoreKeeper {
   void scoreTheRound() => scoring();
 
   @override
-  Widget get midRoundDisplay => SuperText('hues found: $numCorrect / $numColors');
+  Widget get midRoundDisplay {
+    final String possibleValues =
+        List.generate(numColors, (i) => i * 360 ~/ numColors).join(', ');
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SuperText('hues found: $numCorrect / $numColors'),
+        const FixedSpacer(10),
+        SuperText(
+          'possible hue values: $possibleValues',
+          style: const SuperStyle.sans(size: 14),
+        ),
+      ],
+    );
+  }
 
   @override
-  Widget get finalScore => empty;
+  int get scoreVal => throw Error();
 
   @override
   Widget get finalDetails => empty;
@@ -97,10 +103,7 @@ class IntroScoreKeeper implements ScoreKeeper {
       );
 
   @override
-  Widget get finalScore => Text(
-        (colorsPerMinute * accuracy).round().toString(),
-        style: const SuperStyle.sans(size: 32),
-      );
+  int get scoreVal => (colorsPerMinute * accuracy).round();
 
   @override
   Pages get page => switch (numColors) {
@@ -109,6 +112,14 @@ class IntroScoreKeeper implements ScoreKeeper {
         12 => Pages.introC,
         _ => throw Error(),
       };
+}
+
+class IntroMode extends StatefulWidget {
+  const IntroMode(this.numColors, {super.key});
+  final int numColors;
+
+  @override
+  State<IntroMode> createState() => _IntroModeState();
 }
 
 class _IntroModeState extends State<IntroMode> {
@@ -123,13 +134,14 @@ class _IntroModeState extends State<IntroMode> {
 
   late final ScoreKeeper? scoreKeeper;
   void giveScore() {
-    switch (scoreKeeper) {
+    final sk = scoreKeeper;
+    switch (sk) {
       case IntroScoreKeeper():
-        if (guess == hue) (scoreKeeper as IntroScoreKeeper).numCorrect++;
-        (scoreKeeper as IntroScoreKeeper).round++;
+        if (guess == hue) sk.numCorrect++;
+        sk.round++;
       case TutorialScoreKeeper():
         if (guess == hue) {
-          (scoreKeeper as TutorialScoreKeeper).numCorrect++;
+          sk.numCorrect++;
         } else {
           hueQueue.choices.add(hue);
         }

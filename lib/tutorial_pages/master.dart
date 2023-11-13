@@ -135,12 +135,20 @@ class _Page2State extends SuperState<_Page2> {
               const Spacer(),
               Expanded(
                 flex: 8,
-                child: AnimatedContainer(duration: duration, color: yellow),
+                child: AnimatedContainer(
+                  duration: duration,
+                  curve: Curves.easeOutSine,
+                  color: yellow,
+                ),
               ),
               const Spacer(),
               Expanded(
                 flex: 8,
-                child: AnimatedContainer(duration: duration, color: blue),
+                child: AnimatedContainer(
+                  duration: duration,
+                  curve: Curves.easeOutSine,
+                  color: blue,
+                ),
               ),
               const Spacer(),
             ],

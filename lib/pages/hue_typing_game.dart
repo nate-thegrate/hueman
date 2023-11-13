@@ -16,6 +16,8 @@ import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/widgets.dart';
 import 'package:hueman/pages/intro.dart';
 
+// TODO: circle stuff
+
 const double _gradeWidth = 200;
 
 class _NumberButton extends StatelessWidget {
@@ -376,7 +378,7 @@ class _HueDialogState extends State<HueDialog> {
               const FixedSpacer(20),
               _AnswerFeedback(widget.guess, text: 'Your answer:'),
               _AnswerFeedback(widget.hue, text: 'Correct answer:'),
-              if (!hueMaster && isSuper) ...[
+              if (!Score.superHue() && isSuper) ...[
                 const FixedSpacer(20),
                 Text(
                   'all game modes\nunlocked!',
@@ -597,7 +599,7 @@ class _IntroGraphicState extends State<IntroGraphic> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (SuperColors.twelveHues.contains(color)) ColorNameBox(color),
+        if (SuperColors.allNamedHues.contains(color)) ColorNameBox(color),
         MeasuringOrb(
           step: step,
           width: 100,

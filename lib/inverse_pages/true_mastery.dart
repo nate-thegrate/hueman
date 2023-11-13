@@ -61,10 +61,7 @@ class TrueMasteryScoreKeeper implements ScoreKeeper {
   }
 
   @override
-  Widget get finalScore => Text(
-        (score * (superCount + 1)).toStringAsFixed(1),
-        style: const SuperStyle.sans(size: 32),
-      );
+  int get scoreVal => (score * (superCount + 1)).round();
 
   @override
   Widget get midRoundDisplay {
@@ -498,6 +495,7 @@ class _ScoreTitleState extends State<_ScoreTitle> {
     final Widget text = Align(
       alignment: Alignment.centerLeft,
       child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.horizontal,
         child: Padding(
           padding: const EdgeInsets.only(left: 28),
@@ -547,8 +545,8 @@ class _Flicker extends StatelessWidget {
           SuperContainer(width: context.screenWidth * .75, height: 2, color: color),
           const FixedSpacer(4),
           SuperContainer(
-            width: context.screenWidth * 2 / 3,
-            height: 2,
+            width: context.screenWidth * .5,
+            height: 25,
             color: flickerValue ? color : null,
           ),
           const FixedSpacer(3),

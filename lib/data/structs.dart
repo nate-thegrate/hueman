@@ -24,6 +24,17 @@ const halfSec = Duration(milliseconds: 500);
 const quarterSec = Duration(milliseconds: 250);
 const Curve curve = Curves.easeOutCubic;
 
+// ignore: constant_identifier_names
+const String k_bot = '\n'
+    '    ▙\n'
+    '    █▙\n'
+    '  ▟███████████▙\n'
+    '  ███ ▐███ ▐███\n'
+    '▐████ ▐███ ▐████▌\n'
+    '▝▀███▄▟███▄▟███▀▘\n'
+    '  █████████████\n'
+    '  ▝▀▀▀▀▀▀▀▀▀▀▀▘\n';
+
 final rng = Random();
 
 Color contrastWith(Color c, {double threshold = .2}) =>
@@ -33,7 +44,7 @@ abstract interface class ScoreKeeper {
   Pages get page;
   Widget get midRoundDisplay;
   Widget get finalDetails;
-  Widget get finalScore;
+  int get scoreVal;
   void scoreTheRound();
   void roundCheck(BuildContext context);
 }
@@ -57,19 +68,21 @@ extension ContextStuff on BuildContext {
       ? EdgeInsets.zero
       : const EdgeInsets.symmetric(vertical: 5);
 
-  Size get screenSize => MediaQuery.of(this).size;
-  double get screenWidth => screenSize.width;
-  double get screenHeight => screenSize.height;
-  double get safeHeight => screenHeight - safePadding;
-  double get safePadding {
+  double get _safePadding {
     final padding = View.of(this).padding;
     return min(padding.top + padding.bottom, 110);
   }
 
+  Size get screenSize => MediaQuery.of(this).size;
+  double get screenWidth => screenSize.width;
+  double get screenHeight => screenSize.height;
+  double get safeHeight => screenHeight - _safePadding;
   bool get squished => safeHeight < 1080;
+
+  /// calculates the ideal size (a [double]) based on the viewport width & height.
   double calcSize(double Function(double w, double h) widthHeight) {
     final size = screenSize;
-    return widthHeight(size.width, size.height - safePadding);
+    return widthHeight(size.width, size.height - _safePadding);
   }
 }
 
@@ -116,15 +129,8 @@ extension NumStuff<T extends num> on T {
 }
 
 extension Average<T extends num> on List<T> {
-  double get average {
-    if (isEmpty) throw StateError('No elements');
-
-    num sum = 0;
-    for (final value in this) {
-      sum += value;
-    }
-    return sum / length;
-  }
+  /// it better not be an empty list :)
+  double get average => reduce((total, val) => total + val as T) / length;
 }
 
 T diff<T extends num>(T a, T b) => (a - b).abs() as T;

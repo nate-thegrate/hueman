@@ -18,7 +18,7 @@ class TriviaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buttonWidth = context.calcSize((w, h) => min(w / 2 - 20, h / 2 - 250));
+    final buttonWidth = context.calcSize((w, h) => min(w / 2 - 30, h / 2 - 250));
     return SuperContainer(
       width: buttonWidth,
       height: buttonWidth / 3,
@@ -123,7 +123,7 @@ const List<TriviaQuestion> _allQuestions = [
     'Which color is also the name of a cloud computing platform?',
     [SuperColors.azure],
     explanation: 'You can use Microsoft Azure to make websites and virtual machines.\n\n'
-        'And as you would expect, it has an azure logo.',
+        "And, of course, it's got an azure logo.",
   ),
   TriviaQuestion(
     "Which 2 color names are different from the names on Wikipedia's color wheel?",
@@ -171,10 +171,7 @@ const List<TriviaQuestion> _allQuestions = [
     [SuperColors.red, SuperColors.green],
     explanation: '"Congenital red-green color blindness" is caused '
         'by a recessive gene in the X-chromosome, '
-        'so it affects males more often than females.\n\n'
-        'When I first started working on this game, '
-        'it felt like I had "green-chartreuse color blindness" '
-        'since I was having so much difficulty telling those two apart.',
+        'so it affects males more often than females.',
   ),
   TriviaQuestion(
     'The more distant another star is from our solar system, the more _____ it appears to us.',

@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:hueman/data/super_state.dart';
 import 'package:rive/rive.dart' as rive;
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
@@ -72,6 +76,38 @@ class _FadeInState extends State<FadeIn> {
   }
 }
 
+class SlideItIn extends StatelessWidget {
+  const SlideItIn(
+    this.isItInYet, {
+    super.key,
+    this.duration = oneSec,
+    this.curve = Curves.easeOutExpo,
+    required this.direction,
+    required this.child,
+  });
+  final bool isItInYet;
+  final Duration duration;
+  final Curve curve;
+  final AxisDirection direction;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSlide(
+      offset: switch (direction) {
+        _ when isItInYet => Offset.zero,
+        AxisDirection.up => const Offset(0, 10),
+        AxisDirection.down => const Offset(0, -10),
+        AxisDirection.left => const Offset(-10, 0),
+        AxisDirection.right => const Offset(10, 0),
+      },
+      duration: duration,
+      curve: curve,
+      child: child,
+    );
+  }
+}
+
 class SexyBox extends AnimatedSize {
   /// very slick size change animation :)
   const SexyBox({super.child, super.key}) : super(duration: oneSec, curve: Curves.easeInOutQuart);
@@ -99,6 +135,7 @@ class ContinueButton extends StatefulWidget {
 class _ContinueButtonState extends State<ContinueButton> with SinglePress {
   @override
   Widget build(BuildContext context) {
+    final color = Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white;
     return SizedBox(
       width: 50,
       height: 50,
@@ -106,7 +143,14 @@ class _ContinueButtonState extends State<ContinueButton> with SinglePress {
         children: [
           const Center(child: Icon(Icons.arrow_forward)),
           SizedBox.expand(
-            child: OutlinedButton(onPressed: singlePress(widget.onPressed), child: empty),
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: color,
+                side: BorderSide(color: color, width: 2),
+              ),
+              onPressed: singlePress(widget.onPressed),
+              child: empty,
+            ),
           ),
         ],
       ),
@@ -127,7 +171,7 @@ class BrandNew extends StatelessWidget {
       children: [
         child,
         Transform.translate(
-          offset: Offset(text == 'new!' ? 40 : 65, 0),
+          offset: Offset(text == 'new!' ? 40 : 55, 0),
           child: Text(
             text,
             textAlign: TextAlign.center,
@@ -189,8 +233,11 @@ class _SuperButtonState extends State<SuperButton> with SinglePress {
         ),
       ),
     );
-    if (!widget.isNew) return button;
-    return BrandNew(color: widget.color, child: button);
+    if (widget.isNew) return BrandNew(color: widget.color, child: button);
+    if (widget.label == 'intro' && casualMode && !Tutorial.casual()) {
+      return BrandNew(color: widget.color, text: 'casual\nmode', child: button);
+    }
+    return button;
   }
 }
 
@@ -315,7 +362,7 @@ class WarnButton extends StatelessWidget {
 }
 
 class GoBack extends StatelessWidget {
-  const GoBack({this.text = 'back', super.key});
+  const GoBack({super.key, this.text = 'back'});
   final String text;
 
   @override
@@ -335,6 +382,69 @@ class GoBack extends StatelessWidget {
               size: 16,
               letterSpacing: 0.5,
             )),
+      ),
+    );
+  }
+}
+
+class JustKidding extends StatelessWidget {
+  const JustKidding(
+    this.text, {
+    super.key,
+    required this.buttonVisible,
+    required this.color,
+    required this.onPressed,
+  });
+  final bool buttonVisible;
+  final SuperColor color;
+  final VoidCallback onPressed;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeIn(
+      duration: quarterSec,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Column(
+            children: [
+              const Spacer(),
+              const Text(
+                'just kidding  :)',
+                style: SuperStyle.sans(size: 16, weight: 100),
+              ),
+              const Spacer(flex: 3),
+              Fader(
+                buttonVisible,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: color,
+                        side: BorderSide(color: color, width: 2),
+                        shadowColor: color,
+                        elevation: epicSine * 8,
+                      ),
+                      onPressed: onPressed,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
+                        child: Text(
+                          text,
+                          style: const SuperStyle.sans(size: 48, weight: 750),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const Spacer(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -567,6 +677,79 @@ class Rive extends StatelessWidget {
           artboard: artboard,
           controllers: controllers,
         ),
+      ),
+    );
+  }
+}
+
+// ignore: camel_case_types
+class K_crash extends StatefulWidget {
+  const K_crash({super.key}) : padded = false;
+  const K_crash.padded({super.key}) : padded = true;
+  final bool padded;
+
+  @override
+  State<K_crash> createState() => _KCrashState();
+}
+
+class _KCrashState extends State<K_crash> {
+  double opacity = 0;
+  bool glitched = false;
+  String get filename => glitched ? 'glitched' : 'art';
+  void newOpacity(double? o) {
+    if (o == null) return;
+    final glitching = o < 0;
+    if (glitching) {
+      setState(() {
+        opacity = -o;
+        glitched = true;
+      });
+      return;
+    }
+    setState(() {
+      opacity = o;
+      glitched = false;
+    });
+  }
+
+  int counter = 0;
+  late final Ticker ticker;
+
+  void tick(_) {
+    counter++;
+    newOpacity(switch (counter) {
+      30 => 2 / 3,
+      33 => 0,
+      40 => -0.5,
+      41 => 0,
+      > 75 && < 125 => -0.5 - .2 * (counter % 2),
+      125 => 1,
+      _ => null,
+    });
+    if (counter == 150 && !kDebugMode) exit(0);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ticker = Ticker(tick)..start();
+    Tutorial.worldEnd.complete();
+  }
+
+  @override
+  void dispose() {
+    ticker.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final (sides, bottom) = (context.screenWidth / 8, context.safeHeight / 8);
+    return Opacity(
+      opacity: opacity,
+      child: SuperContainer(
+        padding: widget.padded ? EdgeInsets.fromLTRB(sides, 0, sides, bottom) : EdgeInsets.zero,
+        child: Image.asset('assets/k_$filename.png'),
       ),
     );
   }

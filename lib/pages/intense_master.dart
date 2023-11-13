@@ -1,9 +1,9 @@
 import 'dart:math';
-import 'package:flutter/gestures.dart';
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/super_color.dart';
 import 'package:hueman/data/photo_colors.dart';
 import 'package:hueman/data/super_container.dart';
+import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/pages/score.dart';
 import 'package:hueman/pages/hue_typing_game.dart';
@@ -17,24 +17,18 @@ SuperColor c = SuperColors.darkBackground;
 
 class IntenseScoreKeeper implements ScoreKeeper {
   IntenseScoreKeeper({required this.scoring});
-  int round = 0;
-  final List<int> scores = [];
-  int superCount = 0;
-
-  /// ignore these, only used in [MasterScoreKeeper]
-  late int rank, turnsAtRank100;
-
   final Function scoring;
+  int round = 0, superCount = 0;
+  final List<int> scores = [];
 
   @override
   void scoreTheRound() => scoring();
 
   @override
   void roundCheck(BuildContext context) {
-    if (round == 30) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)));
-    }
+    if (round != 30) return;
+    Navigator.pushReplacement(
+        context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)));
   }
 
   @override
@@ -69,10 +63,7 @@ class IntenseScoreKeeper implements ScoreKeeper {
   }
 
   @override
-  Widget get finalScore => Text(
-        (30 * scores.average * (superCount + 1)).round().toString(),
-        style: const SuperStyle.sans(size: 32),
-      );
+  int get scoreVal => (30 * scores.average * (superCount + 1)).round();
 
   @override
   Widget get finalDetails {
@@ -95,17 +86,11 @@ double screenHeight = 1200;
 
 class MasterScoreKeeper implements IntenseScoreKeeper {
   MasterScoreKeeper({required this.scoring});
+  int rank = 0, turnsAtRank100 = 0;
   @override
-  int superCount = 0;
-  @override
-  int round = 0;
+  int superCount = 0, round = 0;
   @override
   final List<int> scores = [];
-  @override
-  int rank = 0;
-
-  @override
-  int turnsAtRank100 = 0;
 
   @override
   final Function scoring;
@@ -148,10 +133,7 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
   }
 
   @override
-  Widget get finalScore => Text(
-        (rank * max(1, turnsAtRank100) * (superCount + 1)).toString(),
-        style: const SuperStyle.sans(size: 32),
-      );
+  int get scoreVal => rank * max(1, turnsAtRank100) * (superCount + 1) as int;
 
   @override
   Widget get finalDetails {
@@ -177,16 +159,19 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
 class SawEveryPic extends StatelessWidget {
   const SawEveryPic({super.key});
 
-  GestureRecognizer hyperlink(String url) =>
-      TapGestureRecognizer()..onTap = () => gotoWebsite(url);
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Congrats!'),
-      content: const Text(
-        "You've made it through every image!",
-        style: SuperStyle.sans(size: 16),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            "You've made it through every image!",
+            style: SuperStyle.sans(size: 16),
+          ),
+          if (!Tutorial.mastered()) const _NewHuesUnlocked(),
+        ],
       ),
       actions: [
         Center(
@@ -204,6 +189,44 @@ class SawEveryPic extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _NewHuesUnlocked extends StatefulWidget {
+  const _NewHuesUnlocked();
+
+  @override
+  State<_NewHuesUnlocked> createState() => _NewHuesUnlockedState();
+}
+
+class _NewHuesUnlockedState extends EpicState<_NewHuesUnlocked> {
+  @override
+  void animate() => Tutorial.mastered.complete();
+
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+        textAlign: TextAlign.center,
+        TextSpan(children: [
+          TextSpan(
+            text: '\n12 new hues unlocked!\n',
+            style: SuperStyle.gaegu(
+              size: 27,
+              weight: FontWeight.bold,
+              color: epicColor,
+              height: 5 / 3,
+              shadows: const [
+                Shadow(blurRadius: 1),
+                Shadow(blurRadius: 2),
+                Shadow(blurRadius: 3),
+              ],
+            ),
+          ),
+          const TextSpan(
+            text: 'find them in intro & sandbox mode',
+            style: SuperStyle.sans(size: 12, height: -0.01, color: Colors.white54),
+          ),
+        ]));
   }
 }
 
@@ -228,8 +251,8 @@ class _IntenseModeState extends State<IntenseMode> {
   late final IntenseScoreKeeper? scoreKeeper;
 
   int get difficulty {
-    if (!masterMode) return 0;
-    return casualMode ? 50 : scoreKeeper!.rank;
+    if (scoreKeeper case final MasterScoreKeeper sk) return casualMode ? 50 : sk.rank;
+    return 0;
   }
 
   /// used in 'master' mode if we're keeping score
@@ -266,9 +289,8 @@ class _IntenseModeState extends State<IntenseMode> {
 
   /// new random hue will be at least 30° away from previous.
   void generateHue() {
-    if (!hueMaster && offBy == 0) {
-      saveData('superHue', hue);
-      superHue = hue;
+    if (!Score.superHue() && offBy == 0) {
+      Score.superHue.set(hue);
     }
     if (numPadController != null) setState(numPadController!.clear);
     int newHue = rng.nextInt(300);

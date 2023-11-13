@@ -87,7 +87,7 @@ class SuperStyle extends TextStyle {
           fontWeight: extraBold ? FontWeight.bold : FontWeight.normal,
         );
   const SuperStyle.gaegu({
-    double? size,
+    double size = 24,
     bool italic = false,
     FontWeight? weight,
     this.opticalSize = true,

@@ -108,42 +108,45 @@ class _BetaScreen extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(flex: 3),
-              const SuperRichText(style: SuperStyle.gaegu(size: 24), [
-                TextSpan(text: 'Thanks for playing the preliminary '),
-                TextSpan(
-                  text: 'H',
-                  style: SuperStyle.gaegu(
-                    color: SuperColors.red,
-                    weight: FontWeight.bold,
+              const SuperRichText(
+                style: SuperStyle.gaegu(),
+                [
+                  TextSpan(text: 'Thanks for playing the preliminary '),
+                  TextSpan(
+                    text: 'H',
+                    style: SuperStyle.gaegu(
+                      color: SuperColors.red,
+                      weight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                TextSpan(
-                  text: 'U',
-                  style: SuperStyle.gaegu(
-                    color: SuperColor(0xF0F000),
-                    weight: FontWeight.bold,
+                  TextSpan(
+                    text: 'U',
+                    style: SuperStyle.gaegu(
+                      color: SuperColor(0xF0F000),
+                      weight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                TextSpan(
-                  text: 'E',
-                  style: SuperStyle.gaegu(
-                    color: SuperColor(0x0060FF),
-                    weight: FontWeight.bold,
+                  TextSpan(
+                    text: 'E',
+                    style: SuperStyle.gaegu(
+                      color: SuperColor(0x0060FF),
+                      weight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                TextSpan(
-                  text: 'man',
-                  style: SuperStyle.gaegu(size: 27, color: SuperColor(0x6C4B00), height: 0),
-                ),
-                TextSpan(
-                  text: ' release!\n\n'
-                      'The full release arrives in early December '
-                      'and will include an original soundtrack.\n\n'
-                      'Feel free to screenshot anything that looks weird '
-                      'or that you think could be improved.\n\n'
-                      '(There\'s a "feedback" option in the settings menu.)',
-                ),
-              ]),
+                  TextSpan(
+                    text: 'man',
+                    style: SuperStyle.gaegu(size: 27, color: SuperColor(0x6C4B00), height: 0),
+                  ),
+                  TextSpan(
+                    text: ' release!\n\n'
+                        'The full release arrives in early December '
+                        'and will include an original soundtrack.\n\n'
+                        'Feel free to screenshot anything that looks weird '
+                        'or that you think could be improved.\n\n'
+                        '(There\'s a "feedback" option in the settings menu.)',
+                  ),
+                ],
+              ),
               const Spacer(),
               ContinueButton(onPressed: onPressed),
               const Spacer(flex: 3),
@@ -205,8 +208,7 @@ class _ScreenSizeAlertState extends State<_ScreenSizeAlert> {
           ),
           Text("The game should work fine, but there's no guarantee.", style: SuperStyle.sans()),
         ],
-      TargetPlatform.android => const [],
-      TargetPlatform.iOS => const [],
+      TargetPlatform.android || TargetPlatform.iOS => const [],
       TargetPlatform.linux => const [
           Text(
             "It looks like you're running linux. "
@@ -356,6 +358,7 @@ class _LogoState extends SuperState<_Logo> {
   @override
   Widget build(BuildContext context) {
     if (!exists) return empty;
+    final size = context.screenWidth / 4;
     return Fader(
       visible,
       child: SuperContainer(
@@ -365,18 +368,16 @@ class _LogoState extends SuperState<_Logo> {
           offset: Offset(0, dy),
           duration: duration,
           curve: curve,
-          child: SuperRichText(
-            style: SuperStyle.gaegu(size: context.screenWidth / 4),
-            [
-              for (int i = 0; i < 4; i++)
-                TextSpan(
-                  text: letterData[i].$1,
-                  style: SuperStyle.gaegu(
-                    color: lettersVisible > i ? letterData[i].$2 : Colors.transparent,
-                  ),
-                )
-            ],
-          ),
+          child: SuperRichText([
+            for (int i = 0; i < 4; i++)
+              TextSpan(
+                text: letterData[i].$1,
+                style: SuperStyle.gaegu(
+                  size: size,
+                  color: lettersVisible > i ? letterData[i].$2 : Colors.transparent,
+                ),
+              )
+          ]),
         ),
       ),
     );
@@ -392,11 +393,8 @@ class _CallOutTheLie extends StatefulWidget {
 
 class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
   @override
-  void initState() {
-    super.initState();
-    sleepState(3, () {
-      showButton = true;
-    });
+  void animate() async {
+    await sleepState(3, () => showButton = true);
   }
 
   bool showStuff = true, showButton = false, headphones = false;
@@ -537,7 +535,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
   double get girth {
     final double x = counter / 3;
     const int peak = 345;
-    final double val = x < peak ? x : (x - peak) * peak / (peak - 360) + peak;
+    final double val = x < peak ? x.squared / peak : (x - peak) * peak / (peak - 360) + peak;
     return val * min(context.screenWidth, context.safeHeight - 39) / 350;
   }
 
@@ -545,10 +543,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
     child: SuperContainer(color: SuperColors.darkBackground),
   );
   static const buffer2 = Expanded(
-    child: SuperContainer(
-      color: SuperColors.darkBackground,
-      height: 39,
-    ),
+    child: SuperContainer(color: SuperColors.darkBackground, height: 39),
   );
 
   @override

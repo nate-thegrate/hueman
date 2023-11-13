@@ -66,6 +66,17 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
   Widget build(BuildContext context) {
     final color = epicColor;
 
+    final jumpTo = SuperRichText(pad: false, [
+      const TextSpan(text: ' to '),
+      TextSpan(text: 'super', style: SuperStyle.sans(color: color)),
+      TextSpan(
+        text: 'HUE',
+        style: SuperStyle.sans(color: color, weight: 900, size: 14.5),
+      ),
+      TextSpan(text: 'man', style: SuperStyle.sans(color: color)),
+      const TextSpan(text: '.'),
+    ]);
+
     return Scaffold(
       body: SafeArea(
         child: FadeIn(
@@ -115,21 +126,12 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
                               ),
                             ),
                           ]),
-                          AnimatedSlide(
-                            offset: Offset(madeTheJump ? 0 : 10, 0),
+                          SlideItIn(
+                            madeTheJump,
                             duration: const Duration(milliseconds: 750),
-                            curve: Curves.easeOutExpo,
-                            child: SuperRichText(pad: false, [
-                              const TextSpan(text: ' to '),
-                              TextSpan(text: 'super', style: SuperStyle.sans(color: color)),
-                              TextSpan(
-                                text: 'HUE',
-                                style: SuperStyle.sans(color: color, weight: 900, size: 14.5),
-                              ),
-                              TextSpan(text: 'man', style: SuperStyle.sans(color: color)),
-                              const TextSpan(text: '.'),
-                            ]),
-                          ),
+                            direction: AxisDirection.right,
+                            child: jumpTo,
+                          )
                         ],
                       ),
                     true => const SuperText('Sorry, did I say 36?'),

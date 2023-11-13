@@ -19,6 +19,14 @@ class ScoreScreen extends StatefulWidget {
 
 class _ScoreScreenState extends DynamicState<ScoreScreen> {
   @override
+  void initState() {
+    super.initState();
+    final ScoreKeeper sk = widget.scoreKeeper;
+    final Score? mode = Score.fromScoreKeeper(sk);
+    if (mode != null) mode.set(sk.scoreVal);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ScoreKeeper sk = widget.scoreKeeper;
     final Pages page = sk.page;
@@ -41,7 +49,7 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
                   decoration: BoxDecoration(
                       border: Border.all(color: color, width: 2),
                       borderRadius: BorderRadius.circular(25)),
-                  padding: const EdgeInsets.all(50),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 36),
                   child: Text('Finished!', style: SuperStyle.sans(size: 54, color: color)),
                 ),
                 const Spacer(),
@@ -91,11 +99,11 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
                     onPressed: context.menu,
                   ),
                 ] else ...[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Score:  ', style: SuperStyle.sans(size: 32, color: color)),
-                      sk.finalScore,
+                  SuperRichText(
+                    style: const SuperStyle.sans(size: 32),
+                    [
+                      TextSpan(text: 'Score:  ', style: TextStyle(color: color)),
+                      TextSpan(text: sk.scoreVal.toString())
                     ],
                   ),
                   const FixedSpacer(10),

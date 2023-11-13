@@ -67,10 +67,7 @@ class TenseScoreKeeper implements ScoreKeeper {
       );
 
   @override
-  Widget get finalScore => Text(
-        (round * (overfills + 1)).toString(),
-        style: const SuperStyle.sans(size: 32),
-      );
+  int get scoreVal => round * (overfills + 1);
 
   @override
   Widget get finalDetails {
@@ -304,6 +301,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
         curve: curve,
         height: showDetails ? 0 : context.calcSize((w, h) => min(w, min(h - 300, 420))),
         child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

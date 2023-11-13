@@ -439,10 +439,6 @@ const List<PhotoColors> allImages = [
     [0xad1615, 0x193f3c, 0xeaa490],
   ),
   PhotoColors(
-    'obama',
-    [0xe9ac86, 0x20407d, 0xba5b4e, 0x404e66],
-  ),
-  PhotoColors(
     'a famous painting',
     [0x78200a, 0xf7ef98, 0x6e401f, 0x168f53],
   ),
