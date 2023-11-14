@@ -372,7 +372,8 @@ const topics = [
                   color: SuperColor(0xFFCC99),
                   shadows: [Shadow(color: Colors.black38, blurRadius: 3)],
                 )),
-            TextSpan(text: '".\nThere\'s an option to '),
+            TextSpan(text: '".\n'),
+            TextSpan(text: "There's an option to "),
             TextSpan(
                 text: 'reset',
                 style: TextStyle(
@@ -585,9 +586,7 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                         recognizer: hyperlink(
                             'https://en.wikipedia.org/w/index.php?title=Color_term&oldid=1182771422'),
                       ),
-                      const TextSpan(
-                        text: ' page, it\'s shown as ',
-                      ),
+                      const TextSpan(text: " page, it's shown as "),
                       const TextSpan(
                         text: 'another gross color',
                         style: SuperStyle.sans(
@@ -683,21 +682,83 @@ class _HighScores extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
-        Spacer(),
-        SuperText(
+        const Spacer(),
+        const SuperText(
           "HUEman doesn't have any public leaderboards, "
           "since it's super easy to cheat if you take screenshots.",
           style: SuperStyle.gaegu(height: 0),
         ),
-        Spacer(),
-        SuperText(
-          'But just for fun, your high scores are saved here, '
-          'and you can compare them to what I got.',
+        const Spacer(),
+        const SuperText(
+          'But your high scores are saved in this app! '
+          'Go back to the main menu and find the "high scores" button in the settings, '
+          'or compare with my high scores here:',
           style: SuperStyle.gaegu(height: 0),
         ),
-        Spacer(flex: 2),
+        const Spacer(),
+        if (Score.noneSet)
+          const SuperText(
+            'In order to set high scores, turn off "casual mode" before starting a game!',
+            style: SuperStyle.gaegu(height: 0),
+          )
+        else
+          Theme(
+            data: ThemeData(dividerColor: Colors.black),
+            child: DataTable(
+              columnSpacing: 30,
+              columns: const [
+                DataColumn(
+                  label: Text(
+                    'game mode',
+                    style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'my score',
+                    style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'your score',
+                    style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'comparison',
+                    style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
+                  ),
+                ),
+              ],
+              rows: [
+                for (final score in Score.allScores)
+                  if (score())
+                    DataRow(cells: [
+                      DataCell(Text(
+                        score.label,
+                        style: const SuperStyle.mono(),
+                      )),
+                      DataCell(Text(
+                        '${score.mine}',
+                        style: const SuperStyle.sans(size: 16, weight: 300),
+                      )),
+                      DataCell(Text(
+                        '${score.value}',
+                        style: const SuperStyle.sans(size: 16, weight: 300),
+                      )),
+                      DataCell(Text(
+                        score.compare,
+                        style: const SuperStyle.gaegu(size: 20),
+                      )),
+                    ])
+              ],
+            ),
+          ),
+        const Spacer(flex: 2),
       ],
     );
   }

@@ -129,9 +129,21 @@ enum Score {
   trueMastery,
   ;
 
-  String get scoreKey => this == superHue ? name : '${name}Score';
   int? get value => highScores[this];
+  int get mine => myScores[this]!;
+  String get compare => '${(value! * 100) ~/ mine}%';
   bool call() => value != null;
+  String get scoreKey => this == superHue ? name : '${name}Score';
+  String get label => switch (this) {
+        superHue => throw Error(),
+        introC => 'intro_0x0C',
+        intro18 => 'intro_0x18',
+        intense => 'intense_mode',
+        master => 'master_mode',
+        tenseVibrant => 'tense_vibrant',
+        tenseVolatile => 'tense_volatile',
+        trueMastery => 'true_mastery',
+      };
 
   Future<void> set(int score) async {
     if (score < (value ?? 0)) return;
@@ -140,19 +152,20 @@ enum Score {
     await prefs.setInt(scoreKey, score);
   }
 
+  static Iterable<Score> get allScores => values.skip(1);
   static bool get noneSet {
-    for (final value in values.skip(1)) {
-      if (value()) return false;
+    for (final score in allScores) {
+      if (score()) return false;
     }
     return true;
   }
 
   static late final Map<Score, int?> highScores;
   static const Map<Score, int> myScores = {
-    introC: 3749,
-    intro18: 1936,
+    introC: 3774,
+    intro18: 1944,
     intense: 14280,
-    master: 73,
+    master: 162,
     tenseVibrant: 23940,
     tenseVolatile: 7740,
     trueMastery: 140,

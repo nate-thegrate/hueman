@@ -340,7 +340,11 @@ class _InverseMenuState extends InverseState<InverseMenu>
         ],
       MenuPage.highScores => [
           const Text('High Scores', style: SuperStyle.mono(size: 24)),
-          // TODO: high scores here
+          const FixedSpacer(33),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: _ScoreLog(),
+          ),
         ],
       MenuPage.reset => [
           Text(
@@ -486,6 +490,50 @@ class _InverseMenuState extends InverseState<InverseMenu>
             ),
         ],
       ),
+    );
+  }
+}
+
+class _ScoreLog extends StatefulWidget {
+  const _ScoreLog();
+
+  @override
+  State<_ScoreLog> createState() => _ScoreLogState();
+}
+
+class _ScoreLogState extends SuperState<_ScoreLog> {
+  final description = Score.noneSet
+      ? '[no scores set]'
+      : [
+          for (final score in Score.allScores)
+            if (score()) '${(score.label).padRight(14)} -> ${score.value}'
+        ].join('\n');
+  String cursor = '';
+  void blink() => cursor.isEmpty ? cursor = '▌' : cursor = '';
+  int lettersShown = 0;
+
+  @override
+  void animate() async {
+    await sleepState(1 / 3, blink);
+    await sleepState(2 / 3, blink);
+    await sleepState(2 / 3, blink);
+    for (final char in description.characters) {
+      if (char == ' ') {
+        await sleep(0.04);
+        lettersShown++;
+      } else {
+        await sleepState(0.04, () => lettersShown++);
+        if (char == '>') await sleep(0.15);
+      }
+    }
+    await sleepState(2 / 3, blink);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      description.substring(0, lettersShown) + cursor,
+      style: const SuperStyle.mono(size: 13, weight: 600),
     );
   }
 }
