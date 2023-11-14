@@ -218,21 +218,21 @@ const topics = [
                   Text(
                     '"Black lights" mostly give off ultraviolet radiation, '
                     'which is outside the visible spectrum.',
-                    style: SuperStyle.sans(color: SuperColors.gray, size: 50),
+                    style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
                   ),
                   Text(
                     'So if a material is glowing under a black light, '
                     "that means it's somehow able to collect the energy from ultraviolet radiation "
                     'and then emit it as light we can see.',
-                    style: SuperStyle.sans(color: SuperColors.gray, size: 50),
+                    style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
                   ),
                   Text(
                     'I have no idea how any of that works, '
                     "but someone who's into chemical engineering might understand what's going on.",
-                    style: SuperStyle.sans(color: SuperColors.gray, size: 50),
+                    style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
                   ),
                   Text.rich(
-                    style: SuperStyle.sans(color: SuperColors.gray, size: 50),
+                    style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
                     TextSpan(
                       children: [
                         TextSpan(
@@ -273,7 +273,7 @@ const topics = [
     name: 'color\nspaces',
     defaultColor: Colors.white54,
     accentColor: Colors.black54,
-    details: Text('lorem ipsum'),
+    details: _ColorSpaceInfo(),
   ),
   Topic(
     name: 'your own\ngame',
@@ -397,6 +397,96 @@ const topics = [
     details: K_crash.padded(),
   ),
 ];
+
+class _HighScores extends StatelessWidget {
+  const _HighScores();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Spacer(),
+        const SuperText(
+          "HUEman doesn't have any public leaderboards, "
+          "since it's super easy to cheat if you take screenshots.",
+          style: SuperStyle.gaegu(size: 18, height: 0),
+        ),
+        const Spacer(),
+        const SuperText(
+          'But your high scores are saved in this app!\n'
+          'Go back to the main menu and find the "high scores" button in the settings, '
+          'or compare with my high scores here:',
+          style: SuperStyle.gaegu(size: 18, height: 0),
+        ),
+        const Spacer(),
+        if (Score.noneSet)
+          const SuperText(
+            'In order to set high scores, turn off "casual mode" before starting a game!',
+            style: SuperStyle.gaegu(size: 18, height: 0),
+          )
+        else
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Theme(
+              data: ThemeData(dividerColor: Colors.black),
+              child: DataTable(
+                columnSpacing: 30,
+                columns: const [
+                  DataColumn(
+                    label: Text(
+                      'game mode',
+                      style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'my score',
+                      style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'your score',
+                      style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'comparison',
+                      style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+                rows: [
+                  for (final score in Score.allScores)
+                    if (score())
+                      DataRow(cells: [
+                        DataCell(Text(
+                          score.label,
+                          style: const SuperStyle.mono(),
+                        )),
+                        DataCell(Text(
+                          '${score.mine}',
+                          style: const SuperStyle.sans(size: 16, weight: 300),
+                        )),
+                        DataCell(Text(
+                          '${score.value}',
+                          style: const SuperStyle.sans(size: 16, weight: 300),
+                        )),
+                        DataCell(Text(
+                          score.compare,
+                          style: const SuperStyle.gaegu(size: 20),
+                        )),
+                      ])
+                ],
+              ),
+            ),
+          ),
+        const Spacer(flex: 2),
+      ],
+    );
+  }
+}
 
 class _ChartreuseSucks extends StatefulWidget {
   const _ChartreuseSucks();
@@ -547,7 +637,8 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                           decorationColor: SuperColors.azure,
                         ),
                         recognizer: hyperlink(
-                            'https://en.wikipedia.org/w/index.php?title=Chartreuse_(color)&oldid=1184724573'),
+                          'https://en.wikipedia.org/w/index.php?title=Chartreuse_(color)&oldid=1184724573',
+                        ),
                       ),
                       const TextSpan(text: ' page defines it as '),
                       const TextSpan(
@@ -570,8 +661,9 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                           decoration: TextDecoration.underline,
                           decorationColor: SuperColors.azure,
                         ),
-                        recognizer:
-                            hyperlink('https://en.wikipedia.org/wiki/Chartreuse_(liqueur)'),
+                        recognizer: hyperlink(
+                          'https://en.wikipedia.org/wiki/Chartreuse_(liqueur)',
+                        ),
                       ),
                       const TextSpan(text: ' with the same name).\n\n'),
                       const TextSpan(text: 'And on the '),
@@ -584,7 +676,8 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                           decorationColor: SuperColors.azure,
                         ),
                         recognizer: hyperlink(
-                            'https://en.wikipedia.org/w/index.php?title=Color_term&oldid=1182771422'),
+                          'https://en.wikipedia.org/w/index.php?title=Color_term&oldid=1182771422',
+                        ),
                       ),
                       const TextSpan(text: " page, it's shown as "),
                       const TextSpan(
@@ -601,7 +694,7 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                             'The more vibrant chartreuse is shown in the ',
                       ),
                       TextSpan(
-                        text: 'scientifically accurate color wheel',
+                        text: 'RGB color wheel',
                         style: const SuperStyle.sans(
                           extraBold: true,
                           color: SuperColors.azure,
@@ -677,88 +770,76 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
   }
 }
 
-class _HighScores extends StatelessWidget {
-  const _HighScores();
+class _ColorSpaceInfo extends StatefulWidget {
+  const _ColorSpaceInfo();
 
+  @override
+  State<_ColorSpaceInfo> createState() => _ColorSpaceInfoState();
+}
+
+class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
+  bool mindBlown = false;
+  String get imageName => mindBlown ? 'color_spaces' : 'rgb_cmyk';
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        const Spacer(),
-        const SuperText(
-          "HUEman doesn't have any public leaderboards, "
-          "since it's super easy to cheat if you take screenshots.",
-          style: SuperStyle.gaegu(height: 0),
-        ),
-        const Spacer(),
-        const SuperText(
-          'But your high scores are saved in this app! '
-          'Go back to the main menu and find the "high scores" button in the settings, '
-          'or compare with my high scores here:',
-          style: SuperStyle.gaegu(height: 0),
-        ),
-        const Spacer(),
-        if (Score.noneSet)
-          const SuperText(
-            'In order to set high scores, turn off "casual mode" before starting a game!',
-            style: SuperStyle.gaegu(height: 0),
-          )
-        else
-          Theme(
-            data: ThemeData(dividerColor: Colors.black),
-            child: DataTable(
-              columnSpacing: 30,
-              columns: const [
-                DataColumn(
-                  label: Text(
-                    'game mode',
-                    style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
-                  ),
+        if (!mindBlown)
+          const SuperRichText(
+            pad: false,
+            [
+              TextSpan(text: 'In an ideal world, '),
+              TextSpan(
+                text: 'cyan',
+                style: SuperStyle.sans(
+                  weight: 600,
+                  color: SuperColors.cyan,
+                  shadows: [
+                    Shadow(color: Colors.black38, blurRadius: 2),
+                  ],
                 ),
-                DataColumn(
-                  label: Text(
-                    'my score',
-                    style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
-                  ),
+              ),
+              TextSpan(text: ' ink would absorb 100% of '),
+              ColorTextSpan.red,
+              TextSpan(text: ' light and reflect 100% of '),
+              TextSpan(
+                text: 'green',
+                style: SuperStyle.sans(
+                  weight: 600,
+                  color: SuperColors.green,
+                  shadows: [
+                    Shadow(color: Colors.black38, blurRadius: 2),
+                  ],
                 ),
-                DataColumn(
-                  label: Text(
-                    'your score',
-                    style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
-                  ),
-                ),
-                DataColumn(
-                  label: Text(
-                    'comparison',
-                    style: SuperStyle.gaegu(size: 20, weight: FontWeight.bold),
-                  ),
-                ),
-              ],
-              rows: [
-                for (final score in Score.allScores)
-                  if (score())
-                    DataRow(cells: [
-                      DataCell(Text(
-                        score.label,
-                        style: const SuperStyle.mono(),
-                      )),
-                      DataCell(Text(
-                        '${score.mine}',
-                        style: const SuperStyle.sans(size: 16, weight: 300),
-                      )),
-                      DataCell(Text(
-                        '${score.value}',
-                        style: const SuperStyle.sans(size: 16, weight: 300),
-                      )),
-                      DataCell(Text(
-                        score.compare,
-                        style: const SuperStyle.gaegu(size: 20),
-                      )),
-                    ])
-              ],
-            ),
+              ),
+              TextSpan(text: ' & '),
+              ColorTextSpan.blue,
+              TextSpan(text: ' light.'),
+            ],
           ),
-        const Spacer(flex: 2),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: SuperText(
+            mindBlown
+                ? 'And I don\'t fully understand this, '
+                    'but there are other color spaces '
+                    'that claim to be even more vibrant than standard RGB:'
+                : "Unfortunately, ink isn't 100% perfect, "
+                    'so there are some colors in the standard RGB color space '
+                    "that printers can't quite replicate.",
+          ),
+        ),
+        Expanded(
+            child: Padding(
+          padding: EdgeInsets.all(mindBlown ? 20 : 0),
+          child: Image(image: AssetImage('assets/$imageName.png')),
+        )),
+        if (!mindBlown)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: ContinueButton(onPressed: () => setState(() => mindBlown = true)),
+          ),
       ],
     );
   }
