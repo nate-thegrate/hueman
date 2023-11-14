@@ -177,17 +177,23 @@ class SuperText extends StatelessWidget {
 }
 
 class SuperRichText extends StatelessWidget {
-  const SuperRichText(this.children,
-      {super.key, this.style = const SuperStyle.sans(size: 20), this.pad = true});
+  const SuperRichText(
+    this.children, {
+    super.key,
+    this.style = const SuperStyle.sans(size: 20),
+    this.align = TextAlign.center,
+    this.pad = true,
+  });
   final List<TextSpan> children;
   final SuperStyle style;
+  final TextAlign align;
   final bool pad;
 
   @override
   Widget build(BuildContext context) {
     final text = Text.rich(
       TextSpan(children: children),
-      textAlign: TextAlign.center,
+      textAlign: align,
       style: style,
     );
     if (!pad) return text;

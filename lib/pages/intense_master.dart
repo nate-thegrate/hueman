@@ -205,28 +205,26 @@ class _NewHuesUnlockedState extends EpicState<_NewHuesUnlocked> {
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(
-        textAlign: TextAlign.center,
-        TextSpan(children: [
-          TextSpan(
-            text: '\n12 new hues unlocked!\n',
-            style: SuperStyle.gaegu(
-              size: 27,
-              weight: FontWeight.bold,
-              color: epicColor,
-              height: 5 / 3,
-              shadows: const [
-                Shadow(blurRadius: 1),
-                Shadow(blurRadius: 2),
-                Shadow(blurRadius: 3),
-              ],
-            ),
-          ),
-          const TextSpan(
-            text: 'find them in intro & sandbox mode',
-            style: SuperStyle.sans(size: 12, height: -0.01, color: Colors.white54),
-          ),
-        ]));
+    return SuperRichText(align: TextAlign.center, pad: false, [
+      TextSpan(
+        text: '\n12 new hues unlocked!\n',
+        style: SuperStyle.gaegu(
+          size: 27,
+          weight: FontWeight.bold,
+          color: epicColor,
+          height: 5 / 3,
+          shadows: const [
+            Shadow(blurRadius: 1),
+            Shadow(blurRadius: 2),
+            Shadow(blurRadius: 3),
+          ],
+        ),
+      ),
+      const TextSpan(
+        text: 'find them in intro & sandbox mode',
+        style: SuperStyle.sans(size: 12, height: -0.01, color: Colors.white54),
+      ),
+    ]);
   }
 }
 

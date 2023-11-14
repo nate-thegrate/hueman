@@ -73,22 +73,23 @@ class IntroScoreKeeper implements ScoreKeeper {
 
   final int numColors;
   final VoidCallback scoring;
+  late final int rounds = numColors == 0x18 ? 24 : 30;
 
   @override
   void scoreTheRound() => scoring();
 
   @override
-  void roundCheck(BuildContext context) => round == 29
+  void roundCheck(BuildContext context) => round == rounds - 1
       ? Navigator.pushReplacement(
           context, MaterialPageRoute<void>(builder: (context) => ScoreScreen(this)))
       : null;
 
-  double get colorsPerMinute => 30 * 60 * 1000 / stopwatch.elapsedMilliseconds;
+  double get colorsPerMinute => rounds * 60 * 1000 / stopwatch.elapsedMilliseconds;
   double get accuracy => numCorrect / round * 100;
 
   @override
   Widget get midRoundDisplay {
-    final Widget roundLabel = SuperText('round ${round + 1} / 30');
+    final Widget roundLabel = SuperText('round ${round + 1} / $rounds');
     if (round == 0) return roundLabel;
     final Widget accuracyDesc = SuperText('accuracy: ${accuracy.round()}%');
 
@@ -110,6 +111,7 @@ class IntroScoreKeeper implements ScoreKeeper {
         3 => Pages.intro3,
         6 => Pages.intro6,
         12 => Pages.introC,
+        24 => Pages.intro18,
         _ => throw Error(),
       };
 }
@@ -205,7 +207,7 @@ class _IntroModeState extends State<IntroMode> {
     }
 
     if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.start();
-    hueQueue = scoreKeeper is TutorialScoreKeeper
+    hueQueue = scoreKeeper is TutorialScoreKeeper || widget.numColors == 0x18
         ? TutorialQueue(widget.numColors)
         : HueQueue(widget.numColors);
     if (hueQueue case TutorialQueue()) hueQueue.choices.shuffle();

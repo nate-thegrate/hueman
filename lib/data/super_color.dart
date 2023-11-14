@@ -143,7 +143,7 @@ abstract final class SuperColors {
   ];
   static const allNamedHues = [
     red,
-    SuperColor.named('vermilion', 0xFF4000),
+    SuperColor.named('vermillion', 0xFF4000),
     orange,
     SuperColor.named('amber', 0xFFC000),
     yellow,
