@@ -692,24 +692,17 @@ class K_glitch extends StatefulWidget {
   State<K_glitch> createState() => _KGlitchState();
 }
 
-// TODO: make image look cooler, then publish update
 class _KGlitchState extends State<K_glitch> {
   double opacity = 0;
   bool glitched = false;
   String get filename => glitched ? 'glitched' : 'art';
+
+  /// sets opacity; negative values make it look 'glitched'
   void newOpacity(double? o) {
     if (o == null) return;
-    final glitching = o < 0;
-    if (glitching) {
-      setState(() {
-        opacity = -o;
-        glitched = true;
-      });
-      return;
-    }
     setState(() {
-      opacity = o;
-      glitched = false;
+      opacity = o.abs();
+      glitched = o.isNegative;
     });
   }
 
@@ -727,8 +720,8 @@ class _KGlitchState extends State<K_glitch> {
       125 => 1,
       _ => null,
     });
-    if (counter != 150) return;
 
+    if (counter != 150) return;
     if (!widget.padded) {
       newOpacity(0.02);
     } else if (!kDebugMode) {

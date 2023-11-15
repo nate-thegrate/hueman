@@ -395,7 +395,8 @@ class _GoodLuck extends StatelessWidget {
               showBottom,
               child: const SuperText(
                 "There's nothing left in this game:\n"
-                "now it's up to you to teach yourself more about colors.\n\n"
+                "it's time for you to venture beyond what I know "
+                'and teach yourself more about colors.\n\n'
                 'Good luck!',
               ),
             ),

@@ -401,8 +401,8 @@ class _HueDialogState extends State<HueDialog> {
   }
 }
 
-class _GameScreen extends StatelessWidget {
-  const _GameScreen(this.userInput, this.image, this.color, this.scoreKeeper);
+class _HueTypingScreen extends StatelessWidget {
+  const _HueTypingScreen(this.userInput, this.image, this.color, this.scoreKeeper);
   final List<Widget> userInput;
   final Widget? image;
   final Color color;
@@ -480,13 +480,15 @@ class KeyboardGame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void submit() => showDialog(context: context, builder: hueDialogBuilder).then((_) {
-          scoreKeeper?.scoreTheRound();
-          scoreKeeper?.roundCheck(context);
-          generateHue();
-          hueController.clear();
-          hueFocusNode.requestFocus();
-        });
+    void submit() async {
+      if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.stop();
+      await showDialog(context: context, builder: hueDialogBuilder);
+      scoreKeeper?.scoreTheRound();
+      scoreKeeper?.roundCheck(context);
+      generateHue();
+      hueController.clear();
+      hueFocusNode.requestFocus();
+    }
 
     final hueValidation = TextInputFormatter.withFunction(
       (oldValue, newValue) {
@@ -496,7 +498,7 @@ class KeyboardGame extends StatelessWidget {
       },
     );
 
-    return _GameScreen(
+    return _HueTypingScreen(
       [
         const FixedSpacer(20),
         SizedBox(
@@ -557,13 +559,15 @@ class NumPadGame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void submit() => showDialog(context: context, builder: hueDialogBuilder).then((_) {
-          scoreKeeper?.scoreTheRound();
-          scoreKeeper?.roundCheck(context);
-          generateHue();
-        });
+    void submit() async {
+      if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.stop();
+      await showDialog(context: context, builder: hueDialogBuilder);
+      scoreKeeper?.scoreTheRound();
+      scoreKeeper?.roundCheck(context);
+      generateHue();
+    }
 
-    return _GameScreen(
+    return _HueTypingScreen(
       [
         const Spacer(),
         Center(child: Text(numPadVal, style: const SuperStyle.sans(size: 32))),
@@ -663,6 +667,7 @@ class _CircleGameState extends State<CircleGame> {
   void submit(_) async {
     widget.updateGuess(lastGuess);
     setState(() => guess = null);
+    if (widget.scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.stop();
     await showDialog(
       context: context,
       builder: widget.hueDialogBuilder,

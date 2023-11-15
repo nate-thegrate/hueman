@@ -159,6 +159,10 @@ class _IntroModeState extends State<IntroMode> {
   void generateHue() {
     numPadController?.clear();
     hue = hueQueue.queuedHue;
+    if (scoreKeeper case final IntroScoreKeeper sk) {
+      if (sk.round < sk.rounds - 1) return;
+      sk.stopwatch.start();
+    }
   }
 
   SuperColor get color => SuperColor.hue(hue);
@@ -217,7 +221,6 @@ class _IntroModeState extends State<IntroMode> {
             casualMode ? null : IntroScoreKeeper(scoring: giveScore, numColors: widget.numColors);
     }
 
-    if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.start();
     hueQueue = scoreKeeper is TutorialScoreKeeper || widget.numColors == 0x18
         ? TutorialQueue(widget.numColors)
         : HueQueue(widget.numColors);

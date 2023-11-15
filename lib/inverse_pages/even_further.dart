@@ -200,13 +200,9 @@ const topics = [
         height: 1500,
         child: Stack(
           children: [
-            AnimatedSlide(
-              offset: Offset(0, -0.2),
-              duration: oneSec,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 66),
-                child: Image(image: AssetImage('assets/black_light.jpg')),
-              ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 100),
+              child: Image(image: AssetImage('assets/black_light.jpg')),
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -577,9 +573,9 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
               child: SuperContainer(
                 margin: const EdgeInsets.symmetric(horizontal: 10),
                 width: 600,
-                height: 610,
+                height: 640,
                 child: SuperRichText(align: TextAlign.left, [
-                  const TextSpan(text: 'Thanks! I wish I had a good answer.\n\n'),
+                  const TextSpan(text: 'Thanks! I wish I had a good answer.\n\n\n'),
                   const TextSpan(
                     text: 'While I was doing color theory research,\t'
                         "I realized there isn't even a clear consensus "
