@@ -93,10 +93,6 @@ class HueQueue {
 
   /// grabs the next hue to use and updates the queue.
   int get queuedHue {
-    // print('choices: $choices\nmin choices: $minChoices');
-    //   keeping this comment here,
-    //   since the issue stopped without me changing anything and I'm a little sus
-
     final hue = choices.removeAt(rng.nextInt(choices.length));
     if (choices.length < minChoices) choices.add(recentChoices.removeAt(0));
     recentChoices.add(hue);

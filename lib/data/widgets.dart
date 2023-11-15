@@ -778,7 +778,7 @@ class MeasuringOrb extends StatelessWidget {
     linesVisible = step >= 2;
     rotating = step >= 4;
     showRightAngle = step >= 5;
-    // print('step $step');
+
     final Widget line = SuperContainer(
       width: double.infinity,
       height: 4,

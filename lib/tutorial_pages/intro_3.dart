@@ -594,16 +594,13 @@ class _Page5State extends SuperState<_Page5> {
       borderRadius: BorderRadius.circular(10),
       color: SuperColors.darkBackground.withAlpha(0x60),
     ),
-    margin: EdgeInsets.symmetric(horizontal: context.screenWidth / 16),
+    margin: const EdgeInsets.symmetric(horizontal: 45),
     padding: const EdgeInsets.symmetric(vertical: 10),
     child: Row(
       children: [
         const Spacer(),
         for (final (desc, color) in colorCode) ...[
-          Text(
-            desc,
-            style: SuperStyle.mono(size: 20, weight: 900, color: color),
-          ),
+          Text(desc, style: SuperStyle.mono(size: 48, weight: 900, color: color)),
           const Spacer(),
         ],
       ],
@@ -615,7 +612,7 @@ class _Page5State extends SuperState<_Page5> {
       Text(
         '"chartreuse"',
         style: SuperStyle.sans(
-          size: 32,
+          size: 64,
           weight: 750,
           width: 87.5,
           color: SuperColors.darkBackground,
@@ -627,10 +624,9 @@ class _Page5State extends SuperState<_Page5> {
         style: SuperStyle.sans(
           weight: 100,
           extraBold: true,
-          width: 87.5,
+          width: 96,
           color: SuperColors.darkBackground,
-          // letterSpacing: 0,
-          size: 11,
+          size: 18,
         ),
       ),
     ],
@@ -638,7 +634,6 @@ class _Page5State extends SuperState<_Page5> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = min(context.screenWidth * 2 / 3, 800);
     return Column(
       children: [
         const Spacer(flex: 2),
@@ -649,44 +644,47 @@ class _Page5State extends SuperState<_Page5> {
           },
         const Spacer(),
         Expanded(
-            flex: 3,
-            child: SizedBox(
-              width: width,
-              child: Stack(
-                children: [
-                  const SuperContainer(color: SuperColors.green),
-                  Fader(
-                    textProgress > 0,
-                    curve: curve,
-                    child: AnimatedSlide(
-                      duration: halfSec,
-                      offset: textProgress > 1 ? Offset.zero : const Offset(0, -1),
-                      curve: Curves.easeInQuad,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: AnimatedSize(
-                          duration: const Duration(seconds: 3),
-                          curve: curve,
-                          child: Opacity(
-                            opacity: 0.5,
-                            child: SuperContainer(
-                              width: textProgress > 2 ? width : width / 2,
-                              color: SuperColors.yellow,
+            flex: 4,
+            child: FittedBox(
+              child: SizedBox(
+                width: 500,
+                height: 300,
+                child: Stack(
+                  children: [
+                    const SuperContainer(color: SuperColors.green),
+                    Fader(
+                      textProgress > 0,
+                      curve: curve,
+                      child: AnimatedSlide(
+                        duration: halfSec,
+                        offset: textProgress > 1 ? Offset.zero : const Offset(0, -1),
+                        curve: Curves.easeInQuad,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: AnimatedSize(
+                            duration: const Duration(seconds: 3),
+                            curve: curve,
+                            child: Opacity(
+                              opacity: 0.5,
+                              child: SuperContainer(
+                                width: textProgress > 2 ? 500 : 250,
+                                color: SuperColors.yellow,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Fader(textProgress > 4, child: colorCodeBox),
-                      const FixedSpacer(30),
-                      Fader(textProgress > 5, child: colorName),
-                    ],
-                  ),
-                ],
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Fader(textProgress > 4, child: colorCodeBox),
+                        const FixedSpacer(30),
+                        Fader(textProgress > 5, child: colorName),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             )),
         const Spacer(),
@@ -822,25 +820,26 @@ class _Page7State extends SuperState<_Page7> {
   Widget overlay = const SuperContainer(
     color: Colors.black,
     alignment: Alignment.center,
-    child:
-        SuperText('finding a hue\ncan be done in two steps.', style: SuperStyle.sans(size: 24)),
+    child: SuperText(
+      'finding a hue\ncan be done in two steps.',
+      style: SuperStyle.sans(size: 24),
+    ),
   );
   static const overlay2 = SuperContainer(color: Colors.black);
   bool showOverlay2 = false;
 
   late final Ticker animateHue;
   int step = 0;
-  double _hue = 0;
+  double hue = 0;
   static const duration = Duration(seconds: 3);
 
   void smoothHue(Duration elapsed) {
-    if (elapsed >= duration) return animateHue.dispose();
-
     final double t, newHue;
-    t = min(elapsed.inMicroseconds / duration.inMicroseconds, 1);
+    t = min(elapsed.inMilliseconds / duration.inMilliseconds, 1);
     newHue = 90 * curve.transform(t);
+    setState(() => hue = newHue);
 
-    setState(() => _hue = newHue);
+    if (t == 1) animateHue.dispose();
   }
 
   @override
@@ -866,8 +865,7 @@ class _Page7State extends SuperState<_Page7> {
 
   @override
   Widget build(BuildContext context) {
-    final width = min(context.screenWidth * 0.8, context.screenHeight * .8 - 250);
-    final hue = _hue.ceil();
+    final width = context.calcSize((w, h) => min(w * 0.8, h * 0.8 - 250));
 
     return Stack(
       children: [
@@ -886,7 +884,7 @@ class _Page7State extends SuperState<_Page7> {
               lineColor: Colors.black,
             ),
             const Spacer(flex: 4),
-            _HueBox(step: step, width: width, hue: hue),
+            _HueBox(step: step, width: width, hue: hue.ceil()),
             const Spacer(flex: 4),
           ],
         ),
@@ -912,7 +910,7 @@ class _HueBox extends StatelessWidget {
     final color = SuperColor.hue(hue);
 
     return SuperContainer(
-      height: 100 + width / 8,
+      height: width / 4,
       alignment: Alignment.center,
       child: Fader(
         step >= 2,
@@ -921,7 +919,7 @@ class _HueBox extends StatelessWidget {
           child: SuperContainer(
             width: step < 2 ? 20 : width,
             color: color,
-            padding: const EdgeInsets.all(5),
+            padding: EdgeInsets.all(width / 48),
             child: SexyBox(
               child: step < 3
                   ? empty
@@ -949,7 +947,6 @@ class _HueBox extends StatelessWidget {
                           child: SuperContainer(
                             color: SuperColors.darkBackground,
                             alignment: Alignment.center,
-                            padding: const EdgeInsets.all(25),
                             child: Text(
                               'hue = $hue',
                               style: SuperStyle.sans(color: color, size: width * 0.06),
