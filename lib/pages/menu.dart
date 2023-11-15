@@ -30,21 +30,20 @@ class _MainMenuState extends EpicState<MainMenu>
   bool? darkBackground = true;
 
   @override
-  void initState() {
-    super.initState();
+  void animate() async {
     controller = AnimationController(duration: oneSec, vsync: this);
     if (inverted) {
       saveData('inverted', false);
       inverted = false;
       quickly(() => setState(() => visible = false));
-      sleepState(0.5, () => darkBackground = null);
+      await sleepState(0.5, () => darkBackground = null);
     } else {
       visible = false;
       darkBackground = null;
       if (!booted) {
-        booted = true;
         showButtons = false;
-        sleepState(1, () => showButtons = true);
+        await sleepState(1, () => showButtons = true);
+        booted = true;
       }
     }
   }

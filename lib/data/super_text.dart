@@ -1,7 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:hueman/data/save_data.dart';
+import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
+import 'package:hueman/data/super_state.dart';
 
 enum FontFamily { sans, mono, gaegu }
 
@@ -204,10 +208,41 @@ class SuperRichText extends StatelessWidget {
   }
 }
 
-class SuperHUEman extends StatelessWidget {
+class SuperHUEman extends StatefulWidget {
   /// The majestic game logo.
   const SuperHUEman(this.color, {super.key});
   final SuperColor color;
+
+  @override
+  State<SuperHUEman> createState() => _SuperHUEmanState();
+}
+
+class _SuperHUEmanState extends SuperState<SuperHUEman> {
+  late final Ticker? ticker;
+  late double weight;
+
+  @override
+  void animate() async {
+    const double startWeight = 200, endWeight = 800;
+    if (booted) {
+      weight = endWeight;
+      ticker = null;
+    } else {
+      weight = startWeight;
+      await sleep(1);
+      ticker = Ticker((elapsed) {
+        setState(() => weight += 7500 ~/ weight);
+        if (weight >= endWeight) ticker?.stop();
+      })
+        ..start();
+    }
+  }
+
+  @override
+  void dispose() {
+    ticker?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -220,7 +255,7 @@ class SuperHUEman extends StatelessWidget {
         space,
         TextSpan(
           text: 'HUE',
-          style: SuperStyle.sans(size: size * 0.7, color: color, weight: 800),
+          style: SuperStyle.sans(size: size * 0.7, color: widget.color, weight: weight),
         ),
         space,
         const TextSpan(text: 'man'),

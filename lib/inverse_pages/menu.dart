@@ -30,15 +30,14 @@ class _InverseMenuState extends InverseState<InverseMenu>
   bool get mainMenu => menuPage == MenuPage.main;
 
   @override
-  void initState() {
-    super.initState();
+  void animate() async {
     if (inverted) {
       visible = false;
       exists = false;
       if (!booted) {
-        booted = true;
         showButtons = false;
-        sleepState(1, () => showButtons = true);
+        await sleepState(1, () => showButtons = true);
+        booted = true;
       }
     } else {
       saveData('inverted', true);

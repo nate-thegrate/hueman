@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 Future<void> sleep(double seconds, {Function()? then}) =>
     Future.delayed(Duration(milliseconds: (seconds * 1000).toInt()), then);
 
+// TODO: slow down a bit & test iPhone
 void quickly(Function() function) => sleep(0.001, then: function);
 
 const oneSec = Duration(seconds: 1);

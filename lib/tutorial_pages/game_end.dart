@@ -238,9 +238,9 @@ const Map<String, List<_CreditsButton>> _credits = {
     ),
     _CreditsButton(
       name: 'Wikipedia',
-      website: 'https://commons.wikimedia.org/w/index.php'
-          '?title=Special:MediaSearch&type=image&haslicense=unrestricted',
-      color: SuperColor(0xfcfaf7),
+      website:
+          'https://commons.wikimedia.org/w/index.php?title=Special:MediaSearch&type=image&haslicense=unrestricted',
+      color: SuperColor(0xFCFAF7),
     ),
   ],
   'inspiration': [
