@@ -561,7 +561,7 @@ class _Page5State extends SuperState<_Page5> {
             curve: Curves.easeInQuad,
             child: SuperContainer(
               color: Colors.black,
-              height: context.screenHeight / 2,
+              height: context.screenHeight * .48,
               alignment: Alignment.center,
               child: _ColorBubbles.additive(counter, showArrows),
             ),
@@ -587,7 +587,7 @@ class _Page5State extends SuperState<_Page5> {
             curve: Curves.easeInQuad,
             child: SuperContainer(
               color: Colors.white,
-              height: context.screenHeight / 2,
+              height: context.screenHeight * .52,
               alignment: Alignment.center,
               child: Column(
                 children: [

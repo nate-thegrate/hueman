@@ -77,10 +77,17 @@ class _CMYKScreen extends StatelessWidget {
     final horizontal = context.squished;
     final double width = min(size.width - 50, 500);
     final double height = min(context.safeHeight - (horizontal ? 600 : 820), 500);
+    final bool isK = _color.colorCode == 0x8080FF;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SuperContainer(width: width, height: height, color: _color),
+        SuperContainer(
+          width: width,
+          height: height,
+          color: _color,
+          alignment: Alignment.center,
+          child: isK ? const K_glitch() : null,
+        ),
         const FixedSpacer(30),
         Flex(
           direction: horizontal ? Axis.vertical : Axis.horizontal,

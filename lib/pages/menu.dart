@@ -60,9 +60,9 @@ class _MainMenuState extends EpicState<MainMenu>
           (_) => setState(() => casualMode = value),
         ),
       ),
-      const FixedSpacer(50),
+      const FixedSpacer(33),
       FeedbackButton(color),
-      const FixedSpacer(20),
+      const FixedSpacer(15),
       Center(
         child: OutlinedButton(
           style: OutlinedButton.styleFrom(
@@ -107,7 +107,7 @@ class _MainMenuState extends EpicState<MainMenu>
         ),
       ),
       if (Tutorial.master()) ...[
-        const FixedSpacer(20),
+        const FixedSpacer(18),
         OutlinedButton(
           onPressed: () async {
             Tutorial.sawInversion.complete();
@@ -134,7 +134,7 @@ class _MainMenuState extends EpicState<MainMenu>
     final List<Widget> noviceSettings = [
       const FixedSpacer(10),
       FeedbackButton(color),
-      const FixedSpacer(20),
+      const FixedSpacer(18),
       Center(
           child: OutlinedButton(
         style: OutlinedButton.styleFrom(
@@ -262,15 +262,28 @@ class _MainMenuState extends EpicState<MainMenu>
           //   toggle: (value) => setState(() => sounds = value),
           // ),
           // const FixedSpacer(33),
-          MenuCheckbox(
-            'external keyboard',
-            value: externalKeyboard,
-            description: ('type on a keyboard', 'tap buttons on the screen'),
-            toggle: (value) => saveData('externalKeyboard', value).then(
-              (_) => setState(() => externalKeyboard = value),
+          if (Tutorial.intro6()) ...[
+            MenuCheckbox(
+              'hue typing',
+              value: hueTyping,
+              description: ('type a number', 'tap a circle'),
+              toggle: (value) => saveData('hueTyping', value).then(
+                (_) => setState(() => hueTyping = value),
+              ),
             ),
-          ),
-          const FixedSpacer(33),
+            const FixedSpacer(18),
+            if (hueTyping) ...[
+              MenuCheckbox(
+                'external keyboard',
+                value: externalKeyboard,
+                description: ('type on a keyboard', 'tap buttons on the screen'),
+                toggle: (value) => saveData('externalKeyboard', value).then(
+                  (_) => setState(() => externalKeyboard = value),
+                ),
+              ),
+              const FixedSpacer(18),
+            ],
+          ],
           if (Score.superHue()) ...masterSettings else ...noviceSettings,
         ],
       MenuPage.introSelect => [
@@ -279,7 +292,7 @@ class _MainMenuState extends EpicState<MainMenu>
             textAlign: TextAlign.center,
             style: SuperStyle.sans(size: 32, weight: 100),
           ),
-          const FixedSpacer(20),
+          const FixedSpacer(18),
           if (casualMode) ...[
             const FixedSpacer(33),
             NavigateButton(Pages.intro3, color: color, isNew: !Tutorial.intro3()),
@@ -326,7 +339,7 @@ class _MainMenuState extends EpicState<MainMenu>
         ),
         onPressed: () => setState(() => menuPage = MenuPage.settings),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 2, 8, 5) + context.iOSpadding,
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 3) + context.iOSpadding,
           child: const Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
         ),
       );
@@ -341,7 +354,7 @@ class _MainMenuState extends EpicState<MainMenu>
         ),
         onPressed: () => setState(() => menuPage = MenuPage.main),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 2, 8, 3) + context.iOSpadding,
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 1) + context.iOSpadding,
           child: const Text('back', style: SuperStyle.sans(size: 16, weight: 100)),
         ),
       );
@@ -376,9 +389,7 @@ class _MainMenuState extends EpicState<MainMenu>
                 color: SuperColors.inverting,
               ),
             ),
-            SuperContainer(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(top: 400),
+            Center(
               child: ScaleTransition(
                 scale: Tween<double>(begin: 12, end: 0).animate(controller),
                 child: SuperContainer(

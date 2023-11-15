@@ -131,23 +131,26 @@ class _EvenFurtherTutorialState extends EpicState<EvenFurtherTutorial> {
                   whatIshowed,
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: Text.rich(
-                      style: const SuperStyle.gaegu(),
-                      softWrap: false,
-                      TextSpan(
-                        children: [
-                          const TextSpan(text: '(And also since I showed a big '),
-                          TextSpan(
-                            text: '  The End  ',
-                            style: SuperStyle.sans(
-                              size: 20,
-                              weight: 700,
-                              extraBold: true,
-                              backgroundColor: epicColor,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text.rich(
+                        style: const SuperStyle.gaegu(),
+                        softWrap: false,
+                        TextSpan(
+                          children: [
+                            const TextSpan(text: '(And also since I showed a big '),
+                            TextSpan(
+                              text: '  The End  ',
+                              style: SuperStyle.sans(
+                                size: 20,
+                                weight: 700,
+                                extraBold: true,
+                                backgroundColor: epicColor,
+                              ),
                             ),
-                          ),
-                          const TextSpan(text: ' screen.)'),
-                        ],
+                            const TextSpan(text: ' screen.)'),
+                          ],
+                        ),
                       ),
                     ),
                   ),

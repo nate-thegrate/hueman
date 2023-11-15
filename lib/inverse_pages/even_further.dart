@@ -75,11 +75,11 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
                 duration: quarterSec,
                 curve: Curves.easeOutQuart,
                 alignment: selected()
-                    ? const Alignment(0, -.8)
+                    ? Alignment.topCenter
                     : Alignment(iAlign % 2 - .5, (iAlign + .6) / (topics.length - 1) * 2 - 1),
                 child: Padding(
                   padding: selected()
-                      ? EdgeInsets.zero
+                      ? const EdgeInsets.only(top: 20)
                       : EdgeInsets.only(top: sine, bottom: 10 - sine),
                   child: SizedBox.fromSize(
                     size: const Size.square(150),
@@ -149,7 +149,7 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
                     duration: quarterSec,
                     curve: Curves.easeInExpo,
                     child: SizedBox(
-                      height: context.safeHeight * .85 - 150,
+                      height: context.safeHeight - 190,
                       child: topics[topic].details,
                     ),
                   )
@@ -387,7 +387,7 @@ const topics = [
   Topic(
     name: 'end of\nthe world',
     defaultColor: SuperColors.k,
-    details: K_crash.padded(),
+    details: K_glitch.destroyer(),
   ),
 ];
 
@@ -405,11 +405,11 @@ class _HighScores extends StatelessWidget {
           style: SuperStyle.gaegu(size: 18, height: 0),
         ),
         const Spacer(),
-        const SuperText(
+        SuperText(
           'But your scores are saved in this app!\n'
-          'Go back to the main menu and find the "high scores" button in the settings, '
-          'or compare with my high scores here:',
-          style: SuperStyle.gaegu(size: 18, height: 0),
+          'Go back to the main menu and find the "high scores" button in the settings'
+          '${Score.noneSet ? '.' : ', or compare with my high scores here:'}',
+          style: const SuperStyle.gaegu(size: 18, height: 0),
         ),
         const Spacer(),
         if (Score.noneSet)
@@ -774,9 +774,10 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         if (!mindBlown)
-          const SuperRichText(
+          SuperRichText(
             pad: false,
-            [
+            style: SuperStyle.sans(size: min(20, context.screenWidth / 24)),
+            const [
               TextSpan(text: 'In an ideal world, '),
               TextSpan(
                 text: 'cyan',
@@ -816,6 +817,7 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
                 : "But ink isn't 100% perfect, "
                     'so there are some colors in the standard RGB color space '
                     "that printers can't quite replicate.",
+            style: SuperStyle.sans(size: min(20, context.screenWidth / 24)),
           ),
         ),
         Expanded(
@@ -834,9 +836,14 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
               onPressed: () => gotoWebsite(
                 'https://en.wikipedia.org/wiki/File:CIE1931xy_gamut_comparison_of_sRGB_P3_Rec2020.svg',
               ),
-              child: const SuperText(
+              child: SuperText(
                 'tap here for image source',
-                style: SuperStyle.sans(size: 16, width: 96, extraBold: true, weight: 300),
+                style: SuperStyle.sans(
+                  size: min(20, context.screenWidth / 32),
+                  width: 96,
+                  extraBold: true,
+                  weight: 300,
+                ),
               ),
             ),
           )

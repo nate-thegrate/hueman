@@ -54,7 +54,7 @@ class _StartScreenState extends SuperState<StartScreen> {
     saveData('externalKeyboard', externalKeyboard);
 
     final size = context.screenSize;
-    if ((size.width < 350 || size.height < 800) &&
+    if ((size.width < 350 || size.height < 667) &&
         ![TargetPlatform.android, TargetPlatform.iOS].contains(Theme.of(context).platform)) {
       await showDialog(
         context: context,
@@ -168,10 +168,7 @@ class _ScreenSizeAlert extends StatefulWidget {
 class _ScreenSizeAlertState extends State<_ScreenSizeAlert> {
   bool showRecommendation = false;
 
-  bool get looksGood => context.screenWidth >= 350 && context.screenHeight >= 800;
-  bool get phoneBug =>
-      !looksGood &&
-      [TargetPlatform.iOS, TargetPlatform.android].contains(Theme.of(context).platform);
+  bool get looksGood => context.screenWidth >= 350 && context.screenHeight >= 667;
 
   static const color = SuperColors.bsBrown;
   late final continueButton = SizedBox(
@@ -208,7 +205,7 @@ class _ScreenSizeAlertState extends State<_ScreenSizeAlert> {
           ),
           Text("The game should work fine, but there's no guarantee.", style: SuperStyle.sans()),
         ],
-      TargetPlatform.android || TargetPlatform.iOS => const [],
+      TargetPlatform.android || TargetPlatform.iOS => throw UnimplementedError(),
       TargetPlatform.linux => const [
           Text(
             "It looks like you're running linux. "
@@ -300,7 +297,7 @@ class _ScreenSizeAlertState extends State<_ScreenSizeAlert> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('minimum recommended size:', style: SuperStyle.sans()),
-            const Text('350 x 800 pixels\n', style: SuperStyle.mono(weight: 700)),
+            const Text('350 x 667 pixels\n', style: SuperStyle.mono(weight: 700)),
             const Text('this screen:', style: SuperStyle.sans()),
             Text(
               '$width x $height pixels\n',
@@ -311,7 +308,6 @@ class _ScreenSizeAlertState extends State<_ScreenSizeAlert> {
         ),
         actionsAlignment: MainAxisAlignment.center,
         actions: [
-          if (phoneBug) const FeedbackButton(color),
           if (showRecommendation || looksGood) popButton else continueButton,
         ],
       ),
@@ -568,7 +564,11 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
           space,
           TextSpan(
             text: 'HUE',
-            style: SuperStyle.sans(size: size * 0.7, color: epicColor, weight: 800),
+            style: SuperStyle.sans(
+              size: size * 0.7,
+              color: epicColor,
+              weight: ((counter - 900) * 8 / 5).stayInRange(200, 800),
+            ),
           ),
           space,
           const TextSpan(
@@ -619,7 +619,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
                                   AnimatedSize(
                                     duration: showAllDuration,
                                     curve: curve,
-                                    child: SizedBox(width: showAll ? 200 : 4),
+                                    child: SizedBox(width: showAll ? 200 : 0),
                                   ),
                                   buffer2,
                                   const FixedSpacer.horizontal(20),

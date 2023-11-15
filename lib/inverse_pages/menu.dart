@@ -301,7 +301,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
       MenuPage.howToWin => [
           Text(
             "If you're ready to finish the game, you can follow these steps:",
-            style: SuperStyle.sans(color: color, size: 16, weight: 500),
+            style: SuperStyle.sans(color: color, size: 13, width: 92, extraBold: true),
           ),
           for (int i = 1; i <= 6; i++)
             Padding(
@@ -396,7 +396,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
         ),
         onPressed: () => setState(() => menuPage = MenuPage.settings),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 2, 8, 5) + context.iOSpadding,
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 3) + context.iOSpadding,
           child: const Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
         ),
       );
@@ -411,7 +411,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
         ),
         onPressed: () => setState(() => menuPage = MenuPage.main),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 2, 8, 3) + context.iOSpadding,
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 1) + context.iOSpadding,
           child: const Text('back', style: SuperStyle.sans(size: 16, weight: 100)),
         ),
       );
@@ -457,9 +457,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
             ),
             backgroundColor: SuperColors.lightBackground,
           ),
-          SuperContainer(
-            alignment: Alignment.center,
-            padding: const EdgeInsets.only(top: 275),
+          Center(
             child: ScaleTransition(
               scale: Tween<double>(begin: 0, end: 12).animate(controller),
               child: SuperContainer(
@@ -479,7 +477,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
               ),
             ),
           ),
-          trueMastery ? _TrueMasteryAnimation(color) : empty,
+          if (trueMastery) _TrueMasteryAnimation(color),
           if (exists)
             Fader(
               visible,

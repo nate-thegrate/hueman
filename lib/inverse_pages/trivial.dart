@@ -18,7 +18,7 @@ class TriviaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buttonWidth = context.calcSize((w, h) => min(w / 2 - 30, h / 2 - 250));
+    final buttonWidth = context.calcSize((w, h) => min(w / 2 - 30, h / 2 - 215));
     return SuperContainer(
       width: buttonWidth,
       height: buttonWidth / 3,
@@ -187,16 +187,6 @@ const List<TriviaQuestion> _allQuestions = [
     [SuperColors.red, SuperColors.blue],
     explanation: 'Even though its name was "the blue pill",\nits hue was much closer to cyan.',
   ),
-  // TriviaQuestion(
-  //   'The official color of the Dutch royal family:',
-  //   [SuperColors.orange],
-  //   explanation: 'The Netherlands national football team wears orange because of this.',
-  // ),
-  // TriviaQuestion(
-  //   "What are the colors of Jon Arbuckle's pets?",
-  //   [SuperColors.orange, SuperColors.yellow],
-  //   explanation: 'Jon is a cartoonist with an orange cat and a yellow dog.',
-  // ),
 ];
 
 class TriviaMode extends StatefulWidget {
@@ -432,15 +422,10 @@ class _TriviaModeState extends State<TriviaMode> {
               children: [
                 const Spacer(),
                 const GoBack(),
-                const Spacer(),
                 questionText,
-                const Spacer(),
                 multipleColorsReminder,
-                const FixedSpacer(20),
                 ...buttons,
-                const Spacer(),
                 score,
-                const FixedSpacer(20),
               ],
             ),
           ),

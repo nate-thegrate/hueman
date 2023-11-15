@@ -16,6 +16,7 @@ bool booted = false;
 bool theEndApproaches = false;
 
 // settings
+late bool hueTyping;
 late bool externalKeyboard;
 late bool casualMode;
 late bool inverted;
@@ -37,6 +38,7 @@ Future<void> loadData() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   casualMode = prefs.getBool('casualMode') ?? true;
+  hueTyping = prefs.getBool('hueTyping') ?? true;
   externalKeyboard = prefs.getBool('externalKeyboard') ?? false;
   inverted = prefs.getBool('inverted') ?? false;
   evenFurther = prefs.getBool('evenFurther') ?? false;
@@ -84,7 +86,7 @@ enum Tutorial {
   static late final Map<Tutorial, bool> data;
 
   static void init(SharedPreferences prefs) {
-    const bool localStorage = true;
+    const bool localStorage = false;
     data = switch (localStorage) {
       true => {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false},
       false => {

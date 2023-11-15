@@ -591,21 +591,27 @@ class _Page5State extends SuperState<_Page5> {
 
   @override
   Widget build(BuildContext context) {
+    final double size = min(20, context.screenWidth / 24);
     return Column(
       children: [
         const Spacer(flex: 4),
         SexyBox(
-            child: hexRows == -3
-                ? const SuperText('But computer science people are hecka smart. 🤓')
-                : empty),
+          child: hexRows == -3
+              ? SuperText(
+                  'But computer science people are hecka smart. 🤓',
+                  style: SuperStyle.sans(size: size),
+                )
+              : empty,
+        ),
         const Spacer(),
         SexyBox(
           child: hexRows == -3
               ? Fader(
                   realization,
-                  child: const SuperText(
+                  child: SuperText(
                     'They realized that if you use base 16,\n'
                     'you can represent a nibble with 1 digit!',
+                    style: SuperStyle.sans(size: size),
                   ),
                 )
               : empty,
@@ -613,7 +619,7 @@ class _Page5State extends SuperState<_Page5> {
         const Spacer(flex: 2),
         Fader(
           prefix1,
-          child: SuperRichText([
+          child: SuperRichText(style: SuperStyle.sans(size: size), [
             const TextSpan(text: "To show that you're writing in base 16,\nyou can put a "),
             TextSpan(
               text: "'0x'",
@@ -627,7 +633,7 @@ class _Page5State extends SuperState<_Page5> {
         ),
         Fader(
           prefix2,
-          child: SuperRichText([
+          child: SuperRichText(style: SuperStyle.sans(size: size), [
             const TextSpan(text: 'or you can use '),
             TextSpan(
               text: "'#'",
@@ -640,8 +646,16 @@ class _Page5State extends SuperState<_Page5> {
           ]),
         ),
         const Spacer(flex: 2),
-        Fader(question, child: const SuperText('How do you write with 16 different digits?')),
-        Fader(answer, child: const SuperText('Just use letters when you run out of numbers :)')),
+        Fader(question,
+            child: SuperText(
+              'How do you write with 16 different digits?',
+              style: SuperStyle.sans(size: size),
+            )),
+        Fader(answer,
+            child: SuperText(
+              'Just use letters when you run out of numbers :)',
+              style: SuperStyle.sans(size: size),
+            )),
         const Spacer(flex: 2),
         SexyBox(
           child: hexRows == -3

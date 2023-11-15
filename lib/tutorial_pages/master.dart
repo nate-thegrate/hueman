@@ -85,7 +85,7 @@ class _Page1State extends SuperState<_Page1> {
         Fader(
           finalStep,
           child: const SuperText(
-            "But there's one final step on the path\nto fully unlocking this superpower.",
+            "But there's one more step on the path\nto fully unlocking this superpower.",
           ),
         ),
         const Spacer(flex: 2),
@@ -105,7 +105,7 @@ class _Page2 extends StatefulWidget {
 }
 
 class _Page2State extends SuperState<_Page2> {
-  bool timeToChange = false, buttonVisible = false;
+  bool timeToChange = false, buttonVisible = false, showK = false;
 
   @override
   void animate() async {
@@ -113,8 +113,9 @@ class _Page2State extends SuperState<_Page2> {
       timeToChange = true;
       buttonVisible = true;
       yellow = const SuperColor(0x404000);
-      blue = const SuperColor(0xA0A0F0);
+      blue = const SuperColor(0x8080FF);
     });
+    await sleepState(5, () => showK = true);
   }
 
   SuperColor yellow = SuperColors.yellow;
@@ -148,6 +149,8 @@ class _Page2State extends SuperState<_Page2> {
                   duration: duration,
                   curve: Curves.easeOutSine,
                   color: blue,
+                  alignment: Alignment.center,
+                  child: showK ? const K_glitch() : null,
                 ),
               ),
               const Spacer(),

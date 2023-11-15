@@ -258,28 +258,32 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     );
   }
 
-  Widget get target => SuperContainer(
-        width: 340,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: SuperColors.darkBackground,
-            boxShadow: [
-              BoxShadow(
-                  color: SuperColors.darkBackground.withAlpha(128),
-                  blurRadius: 10,
-                  offset: const Offset(0, 10))
+  Widget get target => FittedBox(
+        fit: BoxFit.scaleDown,
+        child: SuperContainer(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          width: 390,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: SuperColors.darkBackground,
+              boxShadow: [
+                BoxShadow(
+                    color: SuperColors.darkBackground.withAlpha(128),
+                    blurRadius: 10,
+                    offset: const Offset(0, 10))
+              ]),
+          padding: const EdgeInsets.symmetric(vertical: 33),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Column(children: [
+              Target('hue', '$hue°'),
+              Target(widget.volatile ? 'source_color' : 'color', name),
+              Target('color_code', SuperColor(color.value - SuperColor.opaque).hexCode),
+              Target('tension', tension[name]),
+              casualMode ? empty : Target('round', scoreKeeper!.round),
+              tensionDesc,
             ]),
-        padding: const EdgeInsets.symmetric(vertical: 33),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Column(children: [
-            Target('hue', '$hue°'),
-            Target(widget.volatile ? 'source_color' : 'color', name),
-            Target('color_code', SuperColor(color.value - SuperColor.opaque).hexCode),
-            Target('tension', tension[name]),
-            casualMode ? empty : Target('round', scoreKeeper!.round),
-            tensionDesc,
-          ]),
+          ),
         ),
       );
 
@@ -299,7 +303,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   Widget get button2by2 => AnimatedContainer(
         duration: expandDuration,
         curve: curve,
-        height: showDetails ? 0 : context.calcSize((w, h) => min(w, min(h - 300, 420))),
+        height: showDetails ? 0 : context.calcSize((w, h) => min(w, min(h - 350, 420))),
         child: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
           child: Column(
@@ -405,7 +409,7 @@ class _TenseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     const double shadowSize = 2;
     final double width = context.calcSize(
-      (w, h) => min((w / 2) - 20, min((h - 300) / 2 - 20, 200)),
+      (w, h) => min((w / 2) - 20, min((h - 350) / 2 - 20, 200)),
     );
     return GestureDetector(
       onTap: select,

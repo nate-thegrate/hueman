@@ -27,6 +27,55 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
   }
 
   @override
+  void animate() async {
+    if (widget.scoreKeeper case final TutorialScoreKeeper sk) {
+      if (sk.numColors != 6) return;
+      await sleep(0.5);
+      final bool lovinTheCircle = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          Widget circleLoveButton(bool lovinIt) => TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: inverted ? const Color(0x10000000) : const Color(0x10FFFFFF),
+                  foregroundColor: inverted ? Colors.black : Colors.white,
+                ),
+                onPressed: () => Navigator.pop(context, lovinIt),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 3, 10, 5) + context.iOSpadding,
+                  child: Text(lovinIt ? 'yes' : 'no', style: const SuperStyle.sans(size: 16)),
+                ),
+              );
+          return AlertDialog(
+            title: const Text('How was that?', style: SuperStyle.sans()),
+            content: const Text(
+              'Did you like the circle better than typing?',
+              style: SuperStyle.sans(),
+            ),
+            actions: [circleLoveButton(true), circleLoveButton(false)],
+            actionsAlignment: MainAxisAlignment.spaceEvenly,
+          );
+        },
+      );
+      hueTyping = !lovinTheCircle;
+      saveData('hueTyping', hueTyping);
+
+      final soundsGood = hueTyping ? 'You can type out the hues' : "We'll keep the circle going";
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Sounds good!', style: SuperStyle.sans()),
+          content: Text(
+            '$soundsGood from now on.\n\n'
+            'If you change your mind, you can switch back in the game settings.',
+            style: const SuperStyle.sans(),
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ScoreKeeper sk = widget.scoreKeeper;
     final Pages page = sk.page;

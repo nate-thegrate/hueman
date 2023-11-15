@@ -6,7 +6,7 @@ import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/pages/score.dart';
-import 'package:hueman/pages/hue_typing_game.dart';
+import 'package:hueman/pages/find_the_hues.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 
@@ -258,7 +258,9 @@ class _IntenseModeState extends State<IntenseMode> {
   double get saturation => pow(1 + difficulty / 1000 * (masterRNG - 1), 20).toDouble();
   double get value => pow(1 - difficulty / 700 * masterRNG, 20).toDouble();
 
+  late int _guess;
   int get guess {
+    if (!hueTyping) return _guess;
     if (externalKeyboard) return hueController!.value.toInt();
     final val = numPadController!.displayValue;
     return val.isEmpty ? 0 : int.parse(val);
@@ -319,6 +321,8 @@ class _IntenseModeState extends State<IntenseMode> {
   Widget? get image {
     if (!casualMode || !masterMode) return null;
     final height = context.calcSize((w, h) => min(h - (externalKeyboard ? 333 : 525), w * 2));
+    final pic = pics.first.$1;
+    if (!hueTyping) return pic;
     return SuperContainer(
       width: double.infinity,
       height: height,
@@ -326,7 +330,7 @@ class _IntenseModeState extends State<IntenseMode> {
           height < context.screenWidth + 66 ? const EdgeInsets.symmetric(horizontal: 33) : null,
       color: color,
       alignment: Alignment.topCenter,
-      child: pics.first.$1,
+      child: pic,
     );
   }
 
@@ -422,25 +426,41 @@ class _IntenseModeState extends State<IntenseMode> {
   @override
   Widget build(BuildContext context) {
     screenHeight = context.safeHeight;
-
-    return externalKeyboard
-        ? KeyboardGame(
-            color: color,
-            hueFocusNode: hueFocusNode!,
-            hueController: hueController!,
-            hueDialogBuilder: hueDialogBuilder,
-            generateHue: showPics ? generatePic : generateHue,
-            scoreKeeper: scoreKeeper,
-            image: image,
-          )
-        : NumPadGame(
-            color: color,
-            numPad: (submit) => NumPad(numPadController!, submit: submit),
-            numPadVal: numPadController!.displayValue,
-            hueDialogBuilder: hueDialogBuilder,
-            scoreKeeper: scoreKeeper,
-            generateHue: showPics ? generatePic : generateHue,
-            image: image,
-          );
+    if (!hueTyping) {
+      final gameScreen = CircleGame(
+        color: color,
+        numColors: 360,
+        generateHue: showPics ? generatePic : generateHue,
+        updateGuess: (value) => _guess = value,
+        hueDialogBuilder: hueDialogBuilder,
+        scoreKeeper: scoreKeeper,
+        image: image,
+      );
+      if (scoreKeeper case final MasterScoreKeeper sk) {
+        final bars = RankBars(sk.rank, color: color);
+        return Row(children: [bars, Expanded(child: gameScreen), bars]);
+      }
+      return gameScreen;
+    }
+    if (externalKeyboard) {
+      return KeyboardGame(
+        color: color,
+        hueFocusNode: hueFocusNode!,
+        hueController: hueController!,
+        hueDialogBuilder: hueDialogBuilder,
+        generateHue: showPics ? generatePic : generateHue,
+        scoreKeeper: scoreKeeper,
+        image: image,
+      );
+    }
+    return NumPadGame(
+      color: color,
+      numPad: (submit) => NumPad(numPadController!, submit: submit),
+      numPadVal: numPadController!.displayValue,
+      hueDialogBuilder: hueDialogBuilder,
+      scoreKeeper: scoreKeeper,
+      generateHue: showPics ? generatePic : generateHue,
+      image: image,
+    );
   }
 }

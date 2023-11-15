@@ -2,7 +2,7 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/super_color.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/pages/score.dart';
-import 'package:hueman/pages/hue_typing_game.dart';
+import 'package:hueman/pages/find_the_hues.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/widgets.dart';
@@ -35,12 +35,14 @@ class TutorialScoreKeeper implements ScoreKeeper {
 
   @override
   Widget get midRoundDisplay {
+    final huesFound = SuperText('hues found: $numCorrect / $numColors');
+    if (!hueTyping) return huesFound;
     final String possibleValues =
         List.generate(numColors, (i) => i * 360 ~/ numColors).join(', ');
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SuperText('hues found: $numCorrect / $numColors'),
+        huesFound,
         const FixedSpacer(10),
         SuperText(
           'possible hue values: $possibleValues',
@@ -129,8 +131,12 @@ class _IntroModeState extends State<IntroMode> {
   late final TextEditingController? textFieldController;
   late final NumPadController? numPadController;
   String get val => numPadController!.displayValue;
-  late int hue;
-  int get guess => externalKeyboard ? textFieldController!.value.toInt() : numPadController!.hue;
+  late int hue, _guess;
+  int get guess => switch (externalKeyboard) {
+        _ when !hueTyping => _guess,
+        true => textFieldController!.value.toInt(),
+        false => numPadController!.hue,
+      };
 
   late final HueQueue hueQueue;
 
@@ -175,16 +181,18 @@ class _IntroModeState extends State<IntroMode> {
           1,
           then: () => showDialog(
             context: context,
-            builder: (context) => const AlertDialog(
-              title: Text(
+            builder: (context) => AlertDialog(
+              title: const Text(
                 'Find the hues!',
                 textAlign: TextAlign.center,
                 style: SuperStyle.sans(weight: 200, extraBold: true),
               ),
               content: Text(
-                "Type a number between 0 and 359\nand check to see if it's right.",
+                hueTyping
+                    ? "Type a number between 0 and 359\nand check to see if it's right."
+                    : 'Tap part of the circle.',
                 textAlign: TextAlign.center,
-                style: SuperStyle.sans(),
+                style: const SuperStyle.sans(),
               ),
             ),
           ),
@@ -194,10 +202,13 @@ class _IntroModeState extends State<IntroMode> {
       case 3 when !Tutorial.intro3():
         scoreKeeper = TutorialScoreKeeper(3, scoring: giveScore);
         Tutorial.intro3.complete();
+        hueTyping = true;
         firstHues();
       case 6 when !Tutorial.intro6():
         scoreKeeper = TutorialScoreKeeper(6, scoring: giveScore);
         Tutorial.intro6.complete();
+        hueTyping = false;
+        firstHues();
       case 0xC when !Tutorial.introC():
         scoreKeeper = TutorialScoreKeeper(0xC, scoring: giveScore);
         Tutorial.introC.complete();
@@ -251,6 +262,16 @@ class _IntroModeState extends State<IntroMode> {
 
   @override
   Widget build(BuildContext context) {
+    if (!hueTyping) {
+      return CircleGame(
+        color: color,
+        numColors: widget.numColors,
+        generateHue: () => setState(generateHue),
+        updateGuess: (value) => _guess = value,
+        hueDialogBuilder: hueDialogBuilder,
+        scoreKeeper: scoreKeeper,
+      );
+    }
     if (externalKeyboard) {
       return KeyboardGame(
         color: color,

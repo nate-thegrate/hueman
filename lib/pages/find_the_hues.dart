@@ -1,4 +1,4 @@
-/// Contains resources used in `intro.dart` and `intense.dart`
+/// Contains resources used in `intro.dart` and `intense_master.dart`
 library;
 
 import 'dart:math';
@@ -15,8 +15,6 @@ import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/widgets.dart';
 import 'package:hueman/pages/intro.dart';
-
-// TODO: circle stuff
 
 const double _gradeWidth = 200;
 
@@ -115,8 +113,8 @@ class NumPadController {
   void clear() => displayValue = '';
 }
 
-class _RankBars extends StatelessWidget {
-  const _RankBars(this.rank, {required this.color});
+class RankBars extends StatelessWidget {
+  const RankBars(this.rank, {super.key, required this.color});
   final int rank;
   final Color color;
 
@@ -354,44 +352,47 @@ class _HueDialogState extends State<HueDialog> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        AlertDialog(
-          title: Text(
-            widget.text,
-            textAlign: TextAlign.center,
-            style: isSuper
-                ? SuperStyle.sans(
-                    shadows: const [Shadow(blurRadius: 8)],
-                    size: 42,
-                    italic: true,
-                    weight: 800,
-                    color: epicColor,
-                  )
-                : const SuperStyle.sans(weight: 200, extraBold: true, letterSpacing: 0.5),
-          ),
-          elevation: isSuper ? epicSine * 10 : null,
-          shadowColor: isSuper ? epicColor : null,
-          surfaceTintColor: isSuper ? epicColor : null,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              widget.graphic,
-              const FixedSpacer(20),
-              _AnswerFeedback(widget.guess, text: 'Your answer:'),
-              _AnswerFeedback(widget.hue, text: 'Correct answer:'),
-              if (!Score.superHue() && isSuper) ...[
+        GestureDetector(
+          onTap: unclickable ? null : () => Navigator.of(context).pop(),
+          child: AlertDialog(
+            title: Text(
+              widget.text,
+              textAlign: TextAlign.center,
+              style: isSuper
+                  ? SuperStyle.sans(
+                      shadows: const [Shadow(blurRadius: 8)],
+                      size: 42,
+                      italic: true,
+                      weight: 800,
+                      color: epicColor,
+                    )
+                  : const SuperStyle.sans(weight: 200, extraBold: true, letterSpacing: 0.5),
+            ),
+            elevation: isSuper ? epicSine * 10 : null,
+            shadowColor: isSuper ? epicColor : null,
+            surfaceTintColor: isSuper ? epicColor : null,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                widget.graphic,
                 const FixedSpacer(20),
-                Text(
-                  'all game modes\nunlocked!',
-                  textAlign: TextAlign.center,
-                  style: SuperStyle.sans(
-                    color: epicColor,
-                    weight: 800,
-                    size: 24,
-                    shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
+                _AnswerFeedback(widget.guess, text: 'Your answer:'),
+                _AnswerFeedback(widget.hue, text: 'Correct answer:'),
+                if (!Score.superHue() && isSuper) ...[
+                  const FixedSpacer(20),
+                  Text(
+                    'all game modes\nunlocked!',
+                    textAlign: TextAlign.center,
+                    style: SuperStyle.sans(
+                      color: epicColor,
+                      weight: 800,
+                      size: 24,
+                      shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
+                    ),
                   ),
-                ),
-              ]
-            ],
+                ]
+              ],
+            ),
           ),
         ),
         if (unclickable) const SuperContainer(color: Colors.transparent),
@@ -410,7 +411,7 @@ class _GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sk = scoreKeeper;
-    final bars = (sk is MasterScoreKeeper) ? _RankBars(sk.rank, color: color) : empty;
+    final bars = (sk is MasterScoreKeeper) ? RankBars(sk.rank, color: color) : empty;
 
     final double colorBoxWidth = context.screenWidth * 0.75;
 
@@ -609,6 +610,188 @@ class _IntroGraphicState extends State<IntroGraphic> {
           guess: widget.guess,
         ),
       ],
+    );
+  }
+}
+
+class CircleGame extends StatefulWidget {
+  const CircleGame({
+    super.key,
+    required this.color,
+    required this.numColors,
+    required this.generateHue,
+    required this.updateGuess,
+    required this.hueDialogBuilder,
+    required this.scoreKeeper,
+    this.image,
+  });
+  final int numColors;
+  final SuperColor color;
+  final VoidCallback generateHue;
+  final ValueChanged<int> updateGuess;
+  final WidgetBuilder hueDialogBuilder;
+  final ScoreKeeper? scoreKeeper;
+  final Widget? image;
+
+  @override
+  State<CircleGame> createState() => _CircleGameState();
+}
+
+class _CircleGameState extends State<CircleGame> {
+  int? guess;
+  int lastGuess = 0;
+
+  int computeAngle(double x, double y) {
+    if (x == 0 || y == 0) {
+      return switch ((x, y)) {
+        (0, > 0) => 90,
+        (< 0, 0) => 180,
+        (0, < 0) => 270,
+        _ => 0,
+      };
+    }
+    final quadrantAngle = atan(y.abs() / x.abs()) * 180 / pi;
+    final exactAngle = switch ((x, y)) {
+      (> 0, > 0) => quadrantAngle,
+      (< 0, > 0) => 180 - quadrantAngle,
+      (< 0, < 0) => quadrantAngle + 180,
+      _ => 360 - quadrantAngle,
+    };
+    return exactAngle.round() % 360;
+  }
+
+  void submit(_) async {
+    widget.updateGuess(lastGuess);
+    setState(() => guess = null);
+    await showDialog(
+      context: context,
+      builder: widget.hueDialogBuilder,
+    );
+    widget.scoreKeeper?.scoreTheRound();
+    widget.scoreKeeper?.roundCheck(context);
+    widget.generateHue();
+  }
+
+  bool isPrimary(int hue) => hue % 60 == 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final circleSize = context.calcSize((w, h) => switch (widget.scoreKeeper) {
+          MasterScoreKeeper() => min(w - 100, h - 200),
+          _ when widget.image != null => min(w - 50, h / 2 - 100),
+          _ => min(w - 50, h - 200),
+        });
+    void touchRecognition(details) {
+      final Offset offset = details.localPosition;
+      final int angle = computeAngle(offset.dx - circleSize / 2, -offset.dy + circleSize / 2);
+      setState(() {
+        guess = angle.roundToNearest(360 ~/ widget.numColors);
+        lastGuess = guess!;
+      });
+    }
+
+    final hueLine = SuperContainer(
+      height: circleSize / 25,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(100),
+          bottomLeft: Radius.circular(100),
+        ),
+        color: SuperColors.darkBackground,
+      ),
+    );
+
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            const Spacer(flex: 2),
+            const GoBack(),
+            const Spacer(flex: 2),
+            if (widget.image case final Widget img) ...[
+              Expanded(flex: 16, child: img),
+              const Spacer(flex: 3),
+            ],
+            GestureDetector(
+              onPanStart: touchRecognition,
+              onPanUpdate: touchRecognition,
+              onPanEnd: submit,
+              child: SuperContainer(
+                width: circleSize,
+                height: circleSize,
+                decoration: BoxDecoration(
+                  color: widget.color,
+                  shape: BoxShape.circle,
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Transform.rotate(
+                      angle: -lastGuess * pi / 180,
+                      child: Row(
+                        children: [
+                          Expanded(child: Opacity(opacity: 0, child: hueLine)),
+                          Transform.rotate(
+                            angle: lastGuess * pi / 180,
+                            child: SuperContainer(
+                              width: circleSize / 2,
+                              height: circleSize / 2,
+                              alignment: Alignment.center,
+                              child: guess == null
+                                  ? null
+                                  : SuperText(
+                                      '$guess°',
+                                      style: SuperStyle.sans(
+                                        size: circleSize / 8,
+                                        weight: 600,
+                                        color: SuperColors.darkBackground,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Fader(
+                              guess != null,
+                              duration: quarterSec,
+                              child:
+                                  Transform.translate(offset: const Offset(1, 0), child: hueLine),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    for (int i = 0; i < 360; i += 30)
+                      Transform.rotate(
+                        angle: i * pi / 180,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Transform.translate(
+                            offset: const Offset(1, 0),
+                            child: SuperContainer(
+                              width: circleSize / (isPrimary(i) ? 16 : 32),
+                              height: circleSize / (isPrimary(i) ? 30 : 60),
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(100),
+                                  bottomLeft: Radius.circular(100),
+                                ),
+                                color: SuperColors.darkBackground,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            const Spacer(flex: 2),
+            if (widget.scoreKeeper case final ScoreKeeper sk)
+              AnimatedSize(duration: quarterSec, child: sk.midRoundDisplay),
+            const Spacer(),
+          ],
+        ),
+      ),
     );
   }
 }

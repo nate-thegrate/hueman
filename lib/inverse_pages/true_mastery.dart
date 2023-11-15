@@ -621,11 +621,19 @@ class _ErrorScreenState extends SuperState<_ErrorScreen> {
     return Scaffold(
       backgroundColor: SuperColors.blue,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(context.screenWidth / 16),
-          child: Text(
-            text,
-            style: const SuperStyle.sans(color: Colors.white, size: 16),
+        child: SizedBox.expand(
+          child: FittedBox(
+            alignment: Alignment.topCenter,
+            child: SuperContainer(
+              margin: const EdgeInsets.all(50),
+              width: 500,
+              height: 260,
+              child: Text(
+                text,
+                softWrap: false,
+                style: const SuperStyle.sans(color: Colors.white, size: 16),
+              ),
+            ),
           ),
         ),
       ),

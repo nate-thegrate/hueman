@@ -683,16 +683,17 @@ class Rive extends StatelessWidget {
 }
 
 // ignore: camel_case_types
-class K_crash extends StatefulWidget {
-  const K_crash({super.key}) : padded = false;
-  const K_crash.padded({super.key}) : padded = true;
+class K_glitch extends StatefulWidget {
+  const K_glitch({super.key}) : padded = false;
+  const K_glitch.destroyer({super.key}) : padded = true;
   final bool padded;
 
   @override
-  State<K_crash> createState() => _KCrashState();
+  State<K_glitch> createState() => _KGlitchState();
 }
 
-class _KCrashState extends State<K_crash> {
+// TODO: make image look cooler, then publish update
+class _KGlitchState extends State<K_glitch> {
   double opacity = 0;
   bool glitched = false;
   String get filename => glitched ? 'glitched' : 'art';
@@ -726,14 +727,20 @@ class _KCrashState extends State<K_crash> {
       125 => 1,
       _ => null,
     });
-    if (counter == 150 && !kDebugMode) exit(0);
+    if (counter != 150) return;
+
+    if (!widget.padded) {
+      newOpacity(0.02);
+    } else if (!kDebugMode) {
+      exit(0);
+    }
   }
 
   @override
   void initState() {
     super.initState();
     ticker = Ticker(tick)..start();
-    Tutorial.worldEnd.complete();
+    if (widget.padded) Tutorial.worldEnd.complete();
   }
 
   @override

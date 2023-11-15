@@ -32,11 +32,13 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
   @override
   void animate() => sleepState(4, () => showCredits = true);
 
+  SuperStyle get style => SuperStyle.sans(size: min(20, context.screenWidth / 24));
+
   void next() async {
     Future<void> textCycle(double timeToRead, String str) async {
       await sleepState(1, () {
         showText = true;
-        text = SuperText(str);
+        text = SuperText(str, style: style);
       });
       await sleepState(timeToRead, () => showText = false);
     }
@@ -56,10 +58,10 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
         const TextSpan(text: 'Your super'),
         TextSpan(
           text: 'HUE',
-          style: SuperStyle.sans(color: superColor, weight: 800, size: 15),
+          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 32),
         ),
         const TextSpan(text: '.'),
-      ]);
+      ], style: style);
       showText = true;
       showHueVal = true;
     });
@@ -68,7 +70,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       text = SuperRichText([
         TextSpan(text: '$superHue degree${superHue == 1 ? '' : 's'}. '),
         ...hueDescription,
-      ]);
+      ], style: style);
       showText = true;
     });
     await sleepState(8, () => showText = false);
@@ -77,10 +79,10 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
         const TextSpan(text: 'Fun fact: your super'),
         TextSpan(
           text: 'HUE',
-          style: SuperStyle.sans(color: superColor, weight: 800, size: 15),
+          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 32),
         ),
         const TextSpan(text: ' actually says a lot about you,\njust like a zodiac sign.'),
-      ]);
+      ], style: style);
       showText = true;
     });
     await sleepState(6, () => showText = false);
@@ -88,13 +90,13 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
     await textCycle(6, '$superHue°:\n\n$hueZodiac');
     setState(() => hideSuperHue = true);
     await sleepState(3, () {
-      text = const SuperText('This game is 100% free & open-source software.');
+      text = SuperText('This game is 100% free & open-source software.', style: style);
       showText = true;
       showSuperHue = false;
     });
     await sleepState(5, () => showText = false);
     await sleepState(1, () {
-      text = const SuperText("If you want to show support,\nhere's what you can do:");
+      text = SuperText("If you want to show support,\nhere's what you can do:", style: style);
       showText = true;
     });
     await sleepState(5, () {
@@ -103,14 +105,17 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
         children: [
           text,
           const FixedSpacer(20),
-          const _HowToSupport(),
+          _HowToSupport(style),
         ],
       );
       showText = true;
     });
     await sleepState(10, () => showText = false);
     await sleepState(1, () {
-      text = const SuperText('When I say "telling people about color theory is really fun",');
+      text = SuperText(
+        'When I say "telling people about color theory is really fun",',
+        style: style,
+      );
       showText = true;
     });
     await sleepState(4, () {
@@ -119,7 +124,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
         children: [
           text,
           const FixedSpacer(10),
-          const FadeIn(child: SuperText("that's me speaking from experience.")),
+          FadeIn(child: SuperText("that's me speaking from experience.", style: style)),
         ],
       );
       showText = true;
@@ -168,7 +173,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
                 ),
               ],
               const Spacer(),
-              if (!showCredits) Expanded(flex: 2, child: Fader(showText, child: text)),
+              if (!showCredits) Expanded(flex: 3, child: Fader(showText, child: text)),
               AnimatedContainer(
                 duration: oneSec,
                 curve: Curves.easeInOutQuart,
@@ -990,7 +995,8 @@ String get hueZodiac => switch (superHue) {
     };
 
 class _HowToSupport extends StatefulWidget {
-  const _HowToSupport();
+  const _HowToSupport(this.style);
+  final SuperStyle style;
 
   @override
   State<_HowToSupport> createState() => _HowToSupportState();
@@ -1018,7 +1024,7 @@ class _HowToSupportState extends SuperState<_HowToSupport> {
             color: visibleLetters > i ? Colors.white : Colors.transparent,
           ),
         )
-    ]);
+    ], style: widget.style);
   }
 }
 
@@ -1082,15 +1088,67 @@ class _TheEndState extends EpicState<_TheEnd> with SinglePress {
               const Spacer(),
               Fader(
                 showQuit,
+                child: switch (Theme.of(context).platform) {
+                  TargetPlatform.iOS || TargetPlatform.macOS => OutlinedButton(
+                      onPressed: () => gotoWebsite(
+                        'https://apps.apple.com/us/app/hueman-a-game-about-colors/id6471395924',
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: color, width: 2),
+                        foregroundColor: color,
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.fromLTRB(5, 10, 5, 12),
+                        child: Text(
+                          'rate on the App Store',
+                          style: SuperStyle.sans(
+                            size: 18,
+                            width: 96,
+                            letterSpacing: 1 / 3,
+                            extraBold: true,
+                          ),
+                        ),
+                      ),
+                    ),
+                  TargetPlatform.windows => OutlinedButton(
+                      onPressed: () => gotoWebsite(
+                        'https://www.microsoft.com/store/productId/9NNNTH9JV380',
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: color, width: 2),
+                        foregroundColor: color,
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.fromLTRB(5, 10, 5, 12),
+                        child: Text(
+                          'rate on the Windows Store',
+                          style: SuperStyle.sans(
+                            size: 18,
+                            width: 96,
+                            letterSpacing: 1 / 3,
+                            extraBold: true,
+                          ),
+                        ),
+                      ),
+                    ),
+                  _ => empty,
+                },
+              ),
+              const Spacer(),
+              Fader(
+                showQuit,
                 child: TextButton(
                   style: TextButton.styleFrom(backgroundColor: Colors.white10),
                   onPressed: singlePress(() => exit(0)),
-                  child: const Text(
-                    'quit',
-                    style: SuperStyle.sans(
-                      weight: 300,
-                      size: 16,
-                      color: Colors.white70,
+                  child: const Padding(
+                    padding: EdgeInsets.only(bottom: 2),
+                    child: Text(
+                      'quit',
+                      style: SuperStyle.sans(
+                        weight: 300,
+                        size: 16,
+                        color: Colors.white70,
+                      ),
                     ),
                   ),
                 ),

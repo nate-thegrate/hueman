@@ -17,24 +17,12 @@ import 'package:url_launcher/url_launcher.dart';
 Future<void> sleep(double seconds, {Function()? then}) =>
     Future.delayed(Duration(milliseconds: (seconds * 1000).toInt()), then);
 
-// TODO: slow down a bit & test iPhone
 void quickly(Function() function) => sleep(0.001, then: function);
 
 const oneSec = Duration(seconds: 1);
 const halfSec = Duration(milliseconds: 500);
 const quarterSec = Duration(milliseconds: 250);
 const Curve curve = Curves.easeOutCubic;
-
-// ignore: constant_identifier_names
-const String k_bot = '\n'
-    '    ▙\n'
-    '    █▙\n'
-    '  ▟███████████▙\n'
-    '  ███ ▐███ ▐███\n'
-    '▐████ ▐███ ▐████▌\n'
-    '▝▀███▄▟███▄▟███▀▘\n'
-    '  █████████████\n'
-    '  ▝▀▀▀▀▀▀▀▀▀▀▀▘\n';
 
 final rng = Random();
 
@@ -127,6 +115,8 @@ extension HexByte on int {
 extension NumStuff<T extends num> on T {
   T get squared => this * this as T;
   T stayInRange(T lower, T upper) => min(max(this, lower), upper);
+
+  int roundToNearest(int roundTo) => ((this / roundTo).round() * roundTo) % 360;
 }
 
 extension Average<T extends num> on List<T> {

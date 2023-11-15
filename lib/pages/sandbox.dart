@@ -277,11 +277,19 @@ class _SandboxState extends State<Sandbox> {
       setState(() => _v = 1 - val(offset.dy));
     }
 
+    final bool isK = _color.colorCode == 0x8080FF;
+
     final colorPicker = switch (_colorPicker) {
       _ColorPicker.rgb => Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SuperContainer(width: width, height: height, color: _color),
+            SuperContainer(
+              width: width,
+              height: height,
+              color: _color,
+              alignment: Alignment.center,
+              child: isK ? const K_glitch() : null,
+            ),
             const FixedSpacer(30),
             Flex(
               direction: horizontal ? Axis.vertical : Axis.horizontal,
