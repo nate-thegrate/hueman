@@ -72,10 +72,16 @@ class SuperColor extends Color {
   String get hexCode => '#${colorCode.toRadixString(16).padLeft(6, "0").toUpperCase()}';
 
   @override
-  String toString() => switch (name) { '[none]' => hexCode, _ => 'SuperColors.$name ($hexCode)' };
+  String toString() => switch (name) {
+        '[none]' => hexCode,
+        _ => 'SuperColors.$name ($hexCode)',
+      };
 
   SuperColor get complement => SuperColor.rgb(0xFF - red, 0xFF - green, 0xFF - blue).rounded;
   SuperColor get rounded {
+    const k = SuperColor.named('[???]', 0x8080FF);
+    if (colorCode == k.colorCode) return k;
+
     int snapToVals(int rgbVal) {
       const int tolerance = 0x0F;
       for (final int snappable in [0x00, 0x80, 0xFF]) {

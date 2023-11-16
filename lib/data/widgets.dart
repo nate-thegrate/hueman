@@ -748,7 +748,9 @@ class _KGlitchState extends State<K_glitch> {
     return Opacity(
       opacity: opacity,
       child: SuperContainer(
-        padding: widget.padded ? EdgeInsets.fromLTRB(sides, 0, sides, bottom) : EdgeInsets.zero,
+        padding: widget.padded
+            ? EdgeInsets.fromLTRB(sides, 0, sides, bottom)
+            : const EdgeInsets.all(15),
         child: Image.asset('assets/k_$filename.png'),
       ),
     );
