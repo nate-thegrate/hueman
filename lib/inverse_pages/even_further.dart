@@ -755,7 +755,6 @@ class _ColorSpaceInfo extends StatefulWidget {
 
 class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
   bool mindBlown = false;
-  String get imageName => mindBlown ? 'color_spaces' : 'rgb_cmyk';
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -808,12 +807,60 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
             style: SuperStyle.sans(size: min(20, context.screenWidth / 24)),
           ),
         ),
-        // TODO: just make this a widget
-        Expanded(
+        if (mindBlown)
+          Expanded(
             child: Padding(
-          padding: EdgeInsets.all(mindBlown ? 20 : 0),
-          child: Image(image: AssetImage('assets/$imageName.png')),
-        )),
+              padding: EdgeInsets.all(mindBlown ? 20 : 0),
+              child: const Image(image: AssetImage('assets/color_spaces.png')),
+            ),
+          )
+        else
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  child: SuperContainer(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [...SuperColors.allPrimaries, SuperColors.red],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: SuperText(
+                      'RGB',
+                      style: SuperStyle.sans(weight: 800, size: context.screenWidth / 10),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SuperContainer(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          SuperColor(0xEC1C24),
+                          SuperColor(0xFFF100),
+                          SuperColor(0x00A550),
+                          SuperColor(0x00ADEE),
+                          SuperColor(0x2E3092),
+                          SuperColor(0xEB008B),
+                          SuperColor(0xEC1C24),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: SuperText(
+                      'CMYK',
+                      style: SuperStyle.sans(weight: 800, size: context.screenWidth / 10),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         if (mindBlown)
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
