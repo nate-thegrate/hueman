@@ -412,14 +412,14 @@ class _IntenseModeState extends State<IntenseMode> {
           hue,
           switch (offBy) {
             0 => const HundredPercentGrade(),
-            > 20 when !masterMode => Column(
+            _ when masterMode => PercentGrade(accuracy: accuracy, color: color),
+            _ => Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   PercentGrade(accuracy: accuracy, color: color),
                   IntroGraphic(hue: hue, guess: guess),
                 ],
               ),
-            _ => PercentGrade(accuracy: accuracy, color: color),
           },
         );
 
