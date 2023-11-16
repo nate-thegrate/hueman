@@ -481,7 +481,9 @@ class KeyboardGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void submit() async {
-      if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.stop();
+      if (scoreKeeper case final IntroScoreKeeper sk) {
+        if (sk.round >= sk.rounds - 1) sk.stopwatch.stop();
+      }
       await showDialog(context: context, builder: hueDialogBuilder);
       scoreKeeper?.scoreTheRound();
       scoreKeeper?.roundCheck(context);
@@ -560,7 +562,9 @@ class NumPadGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void submit() async {
-      if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.stop();
+      if (scoreKeeper case final IntroScoreKeeper sk) {
+        if (sk.round >= sk.rounds - 1) sk.stopwatch.stop();
+      }
       await showDialog(context: context, builder: hueDialogBuilder);
       scoreKeeper?.scoreTheRound();
       scoreKeeper?.roundCheck(context);
@@ -667,7 +671,9 @@ class _CircleGameState extends State<CircleGame> {
   void submit(_) async {
     widget.updateGuess(lastGuess);
     setState(() => guess = null);
-    if (widget.scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.stop();
+    if (widget.scoreKeeper case final IntroScoreKeeper sk) {
+      if (sk.round >= sk.rounds - 1) sk.stopwatch.stop();
+    }
     await showDialog(
       context: context,
       builder: widget.hueDialogBuilder,
@@ -676,8 +682,6 @@ class _CircleGameState extends State<CircleGame> {
     widget.scoreKeeper?.roundCheck(context);
     widget.generateHue();
   }
-
-  bool isPrimary(int hue) => hue % 60 == 0;
 
   @override
   Widget build(BuildContext context) {
@@ -742,7 +746,7 @@ class _CircleGameState extends State<CircleGame> {
                               width: circleSize / 2,
                               height: circleSize / 2,
                               alignment: Alignment.center,
-                              child: guess == null
+                              child: guess == null || !hueRuler
                                   ? null
                                   : SuperText(
                                       '$guess°',
@@ -765,27 +769,8 @@ class _CircleGameState extends State<CircleGame> {
                         ],
                       ),
                     ),
-                    for (int i = 0; i < 360; i += 30)
-                      Transform.rotate(
-                        angle: i * pi / 180,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Transform.translate(
-                            offset: const Offset(1, 0),
-                            child: SuperContainer(
-                              width: circleSize / (isPrimary(i) ? 16 : 32),
-                              height: circleSize / (isPrimary(i) ? 30 : 60),
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(100),
-                                  bottomLeft: Radius.circular(100),
-                                ),
-                                color: SuperColors.darkBackground,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                    if (hueRuler)
+                      for (int i = 0; i < 360; i += 30) _TickMark(i, circleSize),
                   ],
                 ),
               ),
@@ -795,6 +780,38 @@ class _CircleGameState extends State<CircleGame> {
               AnimatedSize(duration: quarterSec, child: sk.midRoundDisplay),
             const Spacer(),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TickMark extends StatelessWidget {
+  const _TickMark(this.i, this.circleSize);
+  final int i;
+  final double circleSize;
+
+  bool isPrimary(int hue) => hue % 60 == 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: i * pi / 180,
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Transform.translate(
+          offset: const Offset(1, 0),
+          child: SuperContainer(
+            width: circleSize / (isPrimary(i) ? 16 : 32),
+            height: circleSize / (isPrimary(i) ? 30 : 60),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(100),
+                bottomLeft: Radius.circular(100),
+              ),
+              color: SuperColors.darkBackground,
+            ),
+          ),
         ),
       ),
     );

@@ -285,6 +285,17 @@ class _MainMenuState extends EpicState<MainMenu>
                 ),
               ),
               const FixedSpacer(18),
+            ] else ...[
+              MenuCheckbox(
+                'hue ruler',
+                key: const Key('hue circle ruler'),
+                value: hueRuler,
+                description: ('helpful tick marks on the circle', 'Use the Force, Luke.'),
+                toggle: (value) => saveData('hueRuler', value).then(
+                  (_) => setState(() => hueRuler = value),
+                ),
+              ),
+              const FixedSpacer(18),
             ],
           ],
           if (Score.superHue()) ...masterSettings else ...noviceSettings,

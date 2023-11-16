@@ -18,6 +18,7 @@ bool theEndApproaches = false;
 // settings
 late bool hueTyping;
 late bool externalKeyboard;
+late bool hueRuler;
 late bool casualMode;
 late bool inverted;
 late bool evenFurther;
@@ -40,6 +41,7 @@ Future<void> loadData() async {
   casualMode = prefs.getBool('casualMode') ?? true;
   hueTyping = prefs.getBool('hueTyping') ?? true;
   externalKeyboard = prefs.getBool('externalKeyboard') ?? false;
+  hueRuler = prefs.getBool('hueRuler') ?? true;
   inverted = prefs.getBool('inverted') ?? false;
   evenFurther = prefs.getBool('evenFurther') ?? false;
   music = prefs.getBool('music') ?? true;
@@ -112,6 +114,7 @@ enum Tutorial {
     // ignore: dead_code
     if (!localStorage) {
       casualMode = true;
+      hueRuler = true;
       inverted = false;
       music = true;
       sounds = true;
