@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -72,8 +73,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
         onPressed: singlePress(() {
           if (evenFurther) {
             context.goto(Pages.evenFurther);
-          } else if (!Tutorial.trueMastery() &&
-              Theme.of(context).platform != TargetPlatform.iOS) {
+          } else if (!Tutorial.trueMastery() && !Platform.isIOS) {
             setState(() => trueMastery = true);
             sleep(
               6,

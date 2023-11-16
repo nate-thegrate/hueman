@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -567,7 +568,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
             style: SuperStyle.sans(
               size: size * 0.7,
               color: epicColor,
-              weight: ((counter - 900) * 8 / 5).stayInRange(200, 800),
+              weight: Platform.isIOS ? 800 : ((counter - 900) * 8 / 5).stayInRange(200, 800),
             ),
           ),
           space,

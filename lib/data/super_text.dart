@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -224,7 +225,7 @@ class _SuperHUEmanState extends SuperState<SuperHUEman> {
   @override
   void animate() async {
     const double startWeight = 200, endWeight = 800;
-    if (booted) {
+    if (booted || Platform.isIOS) {
       weight = endWeight;
       ticker = null;
     } else {

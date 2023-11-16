@@ -135,25 +135,27 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
         onTap: selectedTopic == 6 ? null : () => setState(deselect),
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: Center(
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                const Balls(),
-                ConstrainedBox(
-                  constraints: BoxConstraints.loose(const Size.fromWidth(550)),
-                  child: Stack(children: _buttons),
-                ),
-                if (selectedTopic case final int topic)
-                  FadeIn(
-                    duration: quarterSec,
-                    curve: Curves.easeInExpo,
-                    child: SizedBox(
-                      height: context.safeHeight - 190,
-                      child: topics[topic].details,
-                    ),
-                  )
-              ],
+          body: SafeArea(
+            child: Center(
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  const Balls(),
+                  ConstrainedBox(
+                    constraints: BoxConstraints.loose(const Size.fromWidth(550)),
+                    child: Stack(children: _buttons),
+                  ),
+                  if (selectedTopic case final int topic)
+                    FadeIn(
+                      duration: quarterSec,
+                      curve: Curves.easeInExpo,
+                      child: SizedBox(
+                        height: context.safeHeight - 190,
+                        child: topics[topic].details,
+                      ),
+                    )
+                ],
+              ),
             ),
           ),
           floatingActionButton: selectedTopic == null
@@ -218,7 +220,7 @@ const topics = [
                 Text(
                   'So if a material is glowing under a black light, '
                   "that means it's somehow able to collect the energy from ultraviolet radiation "
-                  'and then emit it as light we can see.',
+                  'and then re-emit it as light we can see.',
                   style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
                 ),
                 Text(
@@ -240,14 +242,13 @@ const topics = [
                             'and releases it as red light: ',
                       ),
                       TextSpan(
-                        text: 'the brightest red imaginable',
+                        text: 'the brightest red imaginable!',
                         style: SuperStyle.sans(
                           size: 50,
                           weight: 800,
                           color: SuperColor(0xFF2020),
                         ),
                       ),
-                      TextSpan(text: '.'),
                     ],
                   ),
                 ),
@@ -280,44 +281,35 @@ const topics = [
             fit: BoxFit.scaleDown,
             child: SuperContainer(
               margin: EdgeInsets.symmetric(horizontal: 33),
-              width: 1080,
-              height: 1333,
+              width: 1060,
+              height: 975,
               child: Text.rich(
-                style: SuperStyle.sans(size: 42, color: Colors.black),
+                style: SuperStyle.sans(size: 36, color: Colors.black),
                 TextSpan(children: [
                   TextSpan(
-                    text: 'Flutter is an open-source app-building framework\n'
-                        'made by Google.\n\n',
+                    text: 'Flutter is an open-source app framework made by Google.\n\n',
                   ),
                   TextSpan(
-                    text: "It wasn't originally designed for video games, "
-                        'but Flutter game development '
-                        'has been gaining traction over the past few years, '
-                        "and that's how this game was made.\n\n",
+                    text: "I really like Flutter's flexibility—it lets you make a game "
+                        '(or any other type of application) and then publish it to any platform.\n'
+                        "And it's open-source, so you never have to pay for it!\n\n",
                   ),
                   TextSpan(
-                    text: 'Unity, a 3D game engine, charges over ',
-                  ),
-                  TextSpan(text: '\$2000', style: SuperStyle.mono(size: 42, weight: 500)),
-                  TextSpan(
-                    text: ' a year for a "pro" subscription. '
-                        "Flutter isn't built for 3D graphics, "
-                        "but since it's open-source, "
-                        'you never have to pay for it!\n\n',
+                    text: 'For those who want to focus on making games, '
+                        "you can look up Flutter's Flame engine, "
+                        'or if you need something that can handle 3D graphics, '
+                        'then ditch Flutter completely and check out Bevy :)\n\n',
                   ),
                   TextSpan(
                     text: 'I animated this game using Rive '
-                        "(along with Flutter's built-in animated widgets), "
-                        'and if you want to make a 2D game with more action, '
-                        "there's the Flame engine.\n\n",
+                        "(plus Flutter's built-in animated widgets). "
+                        'Rive is really fun to use, and it works with Bevy too!\n\n',
                   ),
                   TextSpan(
-                    text: "I'm excited to see all the cool stuff "
-                        'people make with Flutter in the future '
-                        '(even if this game ends up feeling '
-                        'not quite as cool by comparison).\n\n'
-                        'Oh, and ',
+                    text: "I'm excited to see all the cool stuff people make in the future "
+                        '(even if this game ends up feeling not-so-cool by comparison).\n\n',
                   ),
+                  TextSpan(text: 'Oh, and '),
                   TextSpan(
                     text: 'HUEman',
                     style: SuperStyle.gaegu(
@@ -330,7 +322,7 @@ const topics = [
                   TextSpan(
                     text: " is open-source too! This game's source code "
                         'is linked below, along with some other resources '
-                        'for getting started as a Flutter game dev.',
+                        'for getting started as a cross-platform game dev.',
                   ),
                 ]),
               ),
@@ -816,6 +808,7 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
             style: SuperStyle.sans(size: min(20, context.screenWidth / 24)),
           ),
         ),
+        // TODO: just make this a widget
         Expanded(
             child: Padding(
           padding: EdgeInsets.all(mindBlown ? 20 : 0),
@@ -861,7 +854,7 @@ class _GameDevButtons extends StatelessWidget {
     const Map<String, String> links = {
       'hueman': 'https://github.com/nate-thegrate/hueman',
       'Flutter': 'https://flutter.dev/',
-      'Flame': 'https://flame-engine.org/',
+      'Bevy': 'https://bevyengine.org/',
       'Rive': 'https://rive.app/',
     };
     return Padding(
@@ -877,7 +870,7 @@ class _GameDevButtons extends StatelessWidget {
               ),
               onPressed: () => gotoWebsite(url),
               child: Padding(
-                padding: EdgeInsets.fromLTRB(5, name == 'hueman' ? 8 : 10, 5, 10),
+                padding: const EdgeInsets.all(5) + context.iOSpadding,
                 child: name == 'hueman'
                     ? const Text.rich(TextSpan(children: [
                         TextSpan(

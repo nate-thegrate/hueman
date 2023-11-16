@@ -54,6 +54,7 @@ class _MainMenuState extends EpicState<MainMenu>
     final List<Widget> masterSettings = [
       MenuCheckbox(
         'casual mode',
+        key: const Key('casual mode'),
         value: casualMode,
         description: ('play without keeping score', 'keep score when you play'),
         toggle: (value) => saveData('casualMode', value).then(
@@ -265,6 +266,7 @@ class _MainMenuState extends EpicState<MainMenu>
           if (Tutorial.intro6()) ...[
             MenuCheckbox(
               'hue typing',
+              key: const Key('hue typing'),
               value: hueTyping,
               description: ('type a number', 'tap a circle'),
               toggle: (value) => saveData('hueTyping', value).then(
@@ -275,6 +277,7 @@ class _MainMenuState extends EpicState<MainMenu>
             if (hueTyping) ...[
               MenuCheckbox(
                 'external keyboard',
+                key: const Key('external keyboard'),
                 value: externalKeyboard,
                 description: ('type on a keyboard', 'tap buttons on the screen'),
                 toggle: (value) => saveData('externalKeyboard', value).then(

@@ -274,9 +274,13 @@ class _TriviaModeState extends State<TriviaMode> {
               dialogBackgroundColor: SuperColors.lightBackground,
             ),
             child: AlertDialog(
-              title: const Text(
-                'Welcome to trivial mode!',
-                style: SuperStyle.sans(weight: 600, width: 87.5),
+              title: const FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'Welcome to trivial mode!',
+                  softWrap: false,
+                  style: SuperStyle.sans(weight: 600, width: 87.5),
+                ),
               ),
               content: Text(
                 "It's literally just ${_allQuestions.length} color trivia questions.",

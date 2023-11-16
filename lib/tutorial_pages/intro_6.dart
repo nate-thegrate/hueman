@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -572,9 +573,7 @@ class _Page5State extends SuperState<_Page5> {
           child: Fader(
             showText,
             child: Padding(
-              padding: Theme.of(context).platform == TargetPlatform.iOS
-                  ? const EdgeInsets.only(top: 20)
-                  : EdgeInsets.zero,
+              padding: Platform.isIOS ? const EdgeInsets.only(top: 20) : EdgeInsets.zero,
               child: const SuperText("There isn't just one set of primary colors:"),
             ),
           ),
@@ -644,7 +643,7 @@ class _ColorBubbleState extends State<_ColorBubble> {
   Widget build(BuildContext context) {
     final bubbleSize = context.calcSize((w, h) => min(w, h / 2 - 50) / 4);
     final counter = widget.counter;
-    final iOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final iOS = Platform.isIOS;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: bubbleSize / 2.5),

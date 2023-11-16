@@ -202,12 +202,16 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                 'Tense mode',
                 style: SuperStyle.sans(weight: 600, width: 87.5),
               ),
-              content: Text(
-                'Stretch your limits!\n\n'
-                'The difficulty for each color will adjust\n'
-                'based on your performance.\n\n'
-                'Good luck!',
-                style: SuperStyle.sans(),
+              content: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'Stretch your limits!\n\n'
+                  'The difficulty for each color will adjust\n'
+                  'based on your performance.\n\n'
+                  'Good luck!',
+                  softWrap: false,
+                  style: SuperStyle.sans(),
+                ),
               ),
             ),
           ),

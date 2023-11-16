@@ -840,8 +840,9 @@ class MeasuringOrb extends StatelessWidget {
             ),
             Fader(
               showRightAngle,
-              child: Align(
-                alignment: const Alignment(0.25, -0.25),
+              child: SuperContainer(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.only(bottom: 60, left: 80),
                 child: Text(
                   '$hue°',
                   style: const SuperStyle.sans(

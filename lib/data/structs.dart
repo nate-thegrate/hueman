@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -53,9 +54,8 @@ extension ContextStuff on BuildContext {
 
   void invert() => noTransition(inverted ? const MainMenu() : const InverseMenu());
 
-  EdgeInsets get iOSpadding => Theme.of(this).platform == TargetPlatform.iOS
-      ? EdgeInsets.zero
-      : const EdgeInsets.symmetric(vertical: 5);
+  EdgeInsets get iOSpadding =>
+      Platform.isIOS ? EdgeInsets.zero : const EdgeInsets.symmetric(vertical: 5);
 
   double get _safePadding {
     final padding = View.of(this).padding;
