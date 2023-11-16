@@ -120,24 +120,10 @@ class RankBars extends StatelessWidget {
 
   static const duration = Duration(milliseconds: 750);
 
-  static const List<Color> barColors = [
-    Colors.black12,
-    Colors.white12,
-    Colors.white24,
-    Colors.white38,
-  ];
+  int get activeIndex => rank ~/ 25 + 1;
 
   @override
   Widget build(BuildContext context) {
-    final int activeIndex = rank ~/ 25 + 1;
-    final double screenHeight = context.screenHeight;
-
-    double barHeight(int i) => switch (i - activeIndex) {
-          < 0 => screenHeight,
-          0 => screenHeight * (rank % 25) / 25,
-          _ => 0,
-        };
-
     return Stack(
       children: [
         for (int i = 0; i < 5; i++)
@@ -150,8 +136,18 @@ class RankBars extends StatelessWidget {
                 width: 25,
                 duration: duration,
                 curve: curve,
-                color: i == 4 ? color : barColors[i],
-                height: barHeight(i),
+                color: switch (i) {
+                  0 => Colors.black12,
+                  1 => Colors.white12,
+                  2 => Colors.white24,
+                  3 => Colors.white38,
+                  _ => color,
+                },
+                height: switch (i - activeIndex) {
+                  < 0 => context.screenHeight,
+                  0 => context.screenHeight * (rank % 25) / 25,
+                  _ => 0,
+                },
               ),
             ),
           ),
