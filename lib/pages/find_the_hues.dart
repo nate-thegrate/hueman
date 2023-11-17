@@ -695,6 +695,7 @@ class _CircleGameState extends State<CircleGame> {
       });
     }
 
+    // TODO: make this the colored triangle thing
     final hueLine = SuperContainer(
       height: circleSize / 25,
       decoration: const BoxDecoration(

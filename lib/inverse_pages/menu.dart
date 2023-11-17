@@ -12,7 +12,20 @@ import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 import 'package:hueman/tutorial_pages/true_mastery.dart';
 
-enum MenuPage { main, settings, tenseSelect, howToWin, highScores, reset }
+enum MenuPage {
+  main,
+  settings,
+  tenseSelect,
+  howToWin,
+  highScores,
+  reset;
+
+  EdgeInsets get padding => switch (this) {
+        main => const EdgeInsets.symmetric(vertical: 50),
+        howToWin => const EdgeInsets.all(25),
+        _ => const EdgeInsets.all(50),
+      };
+}
 
 class InverseMenu extends StatefulWidget {
   const InverseMenu({super.key});
@@ -56,12 +69,10 @@ class _InverseMenuState extends InverseState<InverseMenu>
       height: 1.3,
     );
     const hints = [
-      'make sure casual mode\nis  ☑ enabled.',
-      'go to "true mastery".',
-      'tap the color code button.',
-      'watch how the values for\nred/green/blue change\nwhen you tap the button.',
-      'convert each value to\nhexadecimal, then type\nthem in and "submit".',
-      'If you\'re stuck, you can\nGoogle "base 10 to base\n16" for some extra help.',
+      'enable ☑ casual mode, and go to\n"true mastery".',
+      'tap the color code button, and\nsee how the RGB values change.',
+      'convert each value to hexadecimal,\nthen type them in and "submit".',
+      'to get help with converting, you\ncan Google "base 10 to base 16".',
     ];
 
     final color = inverseColor;
@@ -301,28 +312,28 @@ class _InverseMenuState extends InverseState<InverseMenu>
       MenuPage.howToWin => [
           Text(
             "If you're ready to finish the game, you can follow these steps:",
-            style: SuperStyle.sans(color: color, size: 13, width: 92, extraBold: true),
+            style: SuperStyle.sans(color: color, size: 16, width: 92, extraBold: true),
           ),
-          for (int i = 1; i <= 6; i++)
+          for (final (i, hint) in hints.indexed)
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '$i:  ',
+                    '${i + 1}:  ',
                     style: SuperStyle.sans(color: color, size: 16, weight: 500),
                   ),
-                  if (hintsVisible >= i)
+                  if (hintsVisible > i)
                     Padding(
                       padding: const EdgeInsets.only(top: 1),
-                      child: Text(hints[i - 1], style: const SuperStyle.sans(width: 96)),
+                      child: Text(hint, style: const SuperStyle.sans(width: 96)),
                     ),
                 ],
               ),
             ),
-          if (hintsVisible < 6) const FixedSpacer(33),
-          if (hintsVisible < 6)
+          if (hintsVisible < hints.length) ...[
+            const FixedSpacer(33),
             Center(
               child: OutlinedButton(
                 onPressed: () => setState(() => hintsVisible++),
@@ -336,6 +347,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 ),
               ),
             ),
+          ],
         ],
       MenuPage.highScores => [
           const Text('High Scores', style: SuperStyle.mono(size: 24)),
@@ -438,7 +450,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                   SuperContainer(
                     decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
                     width: 300,
-                    padding: EdgeInsets.symmetric(horizontal: mainMenu ? 0 : 50, vertical: 50),
+                    padding: menuPage.padding,
                     child: AnimatedSize(
                       duration: quarterSec,
                       curve: curve,

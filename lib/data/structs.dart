@@ -54,6 +54,7 @@ extension ContextStuff on BuildContext {
 
   void invert() => noTransition(inverted ? const MainMenu() : const InverseMenu());
 
+  // TODO: use .styleFrom() instead, set padding for all TextButtons
   EdgeInsets get iOSpadding =>
       Platform.isIOS ? EdgeInsets.zero : const EdgeInsets.symmetric(vertical: 5);
 
@@ -65,6 +66,8 @@ extension ContextStuff on BuildContext {
   Size get screenSize => MediaQuery.of(this).size;
   double get screenWidth => screenSize.width;
   double get screenHeight => screenSize.height;
+
+  // TODO: use a layout builder instead
   double get safeHeight => screenHeight - _safePadding;
   bool get squished => safeHeight < 1080;
 

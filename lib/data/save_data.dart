@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/inverse_pages/tense.dart';
@@ -49,6 +50,8 @@ Future<void> loadData() async {
 
   Tutorial.init(prefs);
   Score.init(prefs);
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 }
 
 Future<void> reset() async {

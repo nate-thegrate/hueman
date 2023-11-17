@@ -48,21 +48,24 @@ class TenseScoreKeeper implements ScoreKeeper {
 
   /// health bar
   @override
-  Widget get midRoundDisplay => SuperContainer(
-        width: 500,
-        height: 60,
-        padding: const EdgeInsets.all(5),
-        alignment: Alignment.centerLeft,
-        decoration: const BoxDecoration(
-          border: Border.fromBorderSide(
-            BorderSide(color: Colors.black12, width: 5),
+  Widget get midRoundDisplay => FittedBox(
+        fit: BoxFit.scaleDown,
+        child: SuperContainer(
+          width: 500,
+          height: 60,
+          padding: const EdgeInsets.all(5),
+          alignment: Alignment.centerLeft,
+          decoration: const BoxDecoration(
+            border: Border.fromBorderSide(
+              BorderSide(color: Colors.black12, width: 5),
+            ),
           ),
-        ),
-        child: AnimatedContainer(
-          width: 480 * health / 25,
-          duration: expandDuration,
-          curve: curve,
-          color: healthBarFlash ? Colors.white : Colors.black12,
+          child: AnimatedContainer(
+            width: 480 * health / 25,
+            duration: expandDuration,
+            curve: curve,
+            color: healthBarFlash ? Colors.white : Colors.black12,
+          ),
         ),
       );
 
@@ -197,6 +200,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
               useMaterial3: true,
               dialogBackgroundColor: SuperColors.lightBackground,
             ),
+            // TODO: every button-less dialog should dismiss by tapping the dialog
             child: const AlertDialog(
               title: Text(
                 'Tense mode',

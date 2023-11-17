@@ -316,6 +316,41 @@ class MenuCheckbox extends StatelessWidget {
   }
 }
 
+class DismissibleDialog extends StatelessWidget {
+  const DismissibleDialog({
+    super.key,
+    required this.title,
+    required this.content,
+    required this.actions,
+    this.actionsAlignment,
+    this.backgroundColor,
+  });
+  final Widget title, content;
+  final List<Widget> actions;
+  final MainAxisAlignment? actionsAlignment;
+  final SuperColor? backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData(
+        useMaterial3: true,
+        brightness: inverted ? Brightness.light : Brightness.dark,
+        dialogBackgroundColor: backgroundColor,
+      ),
+      child: GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: AlertDialog(
+          title: title,
+          content: content,
+          actions: actions,
+          actionsAlignment: actionsAlignment,
+        ),
+      ),
+    );
+  }
+}
+
 class FeedbackButton extends StatelessWidget {
   const FeedbackButton(this.color, {super.key});
   final SuperColor color;

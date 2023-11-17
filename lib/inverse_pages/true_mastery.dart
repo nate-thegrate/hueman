@@ -138,8 +138,8 @@ class _TrueMasteryState extends State<TrueMastery> {
                   decoration: const BoxDecoration(
                       color: SuperColors.lightBackground,
                       borderRadius: BorderRadiusDirectional.only(
-                          topStart: Radius.circular(50), topEnd: Radius.circular(50))),
-                  padding: const EdgeInsets.fromLTRB(30, 60, 30, 40),
+                          topStart: Radius.circular(64), topEnd: Radius.circular(64))),
+                  padding: const EdgeInsets.fromLTRB(30, 45, 30, 40),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -677,7 +677,7 @@ class _RGBSlider extends StatelessWidget {
         RotatedBox(
           quarterTurns: 3,
           child: SizedBox(
-            width: context.safeHeight - 500,
+            width: context.safeHeight - 380,
             child: SliderTheme(
               data: const SliderThemeData(
                 trackHeight: 15,
