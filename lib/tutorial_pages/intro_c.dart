@@ -392,40 +392,6 @@ class _Page2State extends SuperState<_Page2> {
     setState(() => showNames = true);
   }
 
-  static const List<Widget> text = [
-    SuperText(
-      'Back in the 1400s,\n'
-      'both of these colors were called "red",\n'
-      'and people had trouble telling them apart.',
-    ),
-    SuperText(
-      'But then in the 1500s,\n'
-      'somebody decided that orange (the fruit)\n'
-      'should also be a color name.',
-    ),
-    SuperRichText([
-      TextSpan(text: 'And now that '),
-      ColorTextSpan.orange,
-      TextSpan(text: ' is in our color vocabulary,\ndistinguishing it from '),
-      ColorTextSpan.red,
-      TextSpan(text: ' is second-nature.'),
-    ]),
-    empty,
-  ];
-
-  late final List<Widget> text2 = [
-    const SuperText('These "shades of blue"\nare really two different colors.'),
-    const SuperRichText([
-      TextSpan(text: 'And just like with '),
-      ColorTextSpan.red,
-      TextSpan(text: ' & '),
-      ColorTextSpan.orange,
-      TextSpan(text: ',\nour brains can be trained to distinguish them.'),
-    ]),
-    const SuperText('We just need a better color vocabulary.'),
-    ContinueButton(onPressed: widget.nextPage),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
@@ -433,8 +399,8 @@ class _Page2State extends SuperState<_Page2> {
       final colorBoxHeight = constraints.calcSize(
         (w, h) => min(w * colorBoxFlex / (2 * colorBoxFlex + 3), min(h / 3, h - 250)),
       );
+      final double size = min(context.screenWidth / 23, 20);
 
-      final List<Widget> children = showBlue ? text2 : text;
       return Column(
         children: [
           FixedSpacer(colorBoxHeight / colorBoxFlex),
@@ -498,8 +464,85 @@ class _Page2State extends SuperState<_Page2> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                for (int i = 0; i < children.length; i++)
-                  Fader(numVisible > i, child: children[i])
+                if (showBlue) ...[
+                  Fader(
+                    numVisible >= 1,
+                    child: SuperText(
+                      'These "shades of blue"\nare really two different colors.',
+                      style: SuperStyle.sans(size: size),
+                    ),
+                  ),
+                  Fader(
+                    numVisible >= 2,
+                    child: SuperRichText(
+                      style: SuperStyle.sans(size: size),
+                      const [
+                        TextSpan(text: 'And just like with '),
+                        ColorTextSpan.red,
+                        TextSpan(text: ' & '),
+                        ColorTextSpan.orange,
+                        TextSpan(text: ',\nour brains can be trained to distinguish them.'),
+                      ],
+                    ),
+                  ),
+                  Fader(
+                    numVisible >= 3,
+                    child: SuperText(
+                      'We just need a better color vocabulary.',
+                      style: SuperStyle.sans(size: size),
+                    ),
+                  ),
+                  Fader(numVisible >= 4, child: ContinueButton(onPressed: widget.nextPage)),
+                ] else ...[
+                  Fader(
+                    numVisible >= 1,
+                    child: SuperText(
+                      'Back in the 1400s,\n'
+                      'both of these colors were called "red",\n'
+                      'and people had trouble telling them apart.',
+                      style: SuperStyle.sans(size: size),
+                    ),
+                  ),
+                  Fader(
+                    numVisible >= 2,
+                    child: SuperText(
+                      'But then in the 1500s,\n'
+                      'somebody decided that orange (the fruit)\n'
+                      'should also be a color name.',
+                      style: SuperStyle.sans(size: size),
+                      pad: false,
+                    ),
+                  ),
+                  Fader(
+                    numVisible >= 3,
+                    child: SuperRichText(
+                      style: SuperStyle.sans(size: size),
+                      pad: false,
+                      const [
+                        TextSpan(text: 'And now that '),
+                        TextSpan(
+                          text: 'orange',
+                          style: SuperStyle.sans(
+                            weight: 600,
+                            width: 87.5,
+                            color: SuperColors.orange,
+                          ),
+                        ),
+                        TextSpan(text: ' is in our color vocabulary,\ndistinguishing it from '),
+                        TextSpan(
+                          text: 'red',
+                          style: SuperStyle.sans(
+                            weight: 600,
+                            width: 87.5,
+                            color: SuperColors.red,
+                          ),
+                        ),
+                        TextSpan(text: ' is second-nature.'),
+                      ],
+                    ),
+                  ),
+                  empty,
+                ],
               ],
             ),
           ),

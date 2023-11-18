@@ -134,7 +134,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                 children: [
                   const Spacer(),
                   const GoBack(),
-                  const Spacer(flex: 3),
+                  const Spacer(),
                   SuperContainer(
                     decoration: const BoxDecoration(
                         color: SuperColors.lightBackground,
@@ -690,7 +690,7 @@ class _RGBSlider extends StatelessWidget {
         RotatedBox(
           quarterTurns: 3,
           child: SizedBox(
-            width: constraints.maxHeight - 280,
+            width: constraints.maxHeight - 320,
             child: SliderTheme(
               data: const SliderThemeData(
                 trackHeight: 15,

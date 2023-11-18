@@ -147,10 +147,9 @@ class _Page2State extends SuperState<_Page2> {
 
   void endTransition() async {
     setState(() => visible = false);
+
     final secs = duration.inMilliseconds / 1000;
-
     await sleepState(secs, () => expanded = true);
-
     await sleepState(secs, () => squeezed = true);
 
     await Future.delayed(squeezeDuration);
@@ -159,10 +158,8 @@ class _Page2State extends SuperState<_Page2> {
 
   static const duration = Duration(milliseconds: 1500);
   static const squeezeDuration = Duration(seconds: 2);
-  static const squeezeCurve = Curves.easeInExpo;
 
-  bool expanded = false;
-  bool squeezed = false;
+  bool expanded = false, squeezed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +202,7 @@ class _Page2State extends SuperState<_Page2> {
             const Spacer(),
             AnimatedPadding(
               duration: squeezeDuration,
-              curve: squeezeCurve,
+              curve: Curves.easeInExpo,
               padding: squeezed
                   ? EdgeInsets.symmetric(horizontal: context.screenWidth / 2)
                   : EdgeInsets.zero,
@@ -235,7 +232,7 @@ class _Page2State extends SuperState<_Page2> {
                     Center(
                       child: AnimatedContainer(
                         duration: squeezeDuration,
-                        curve: squeezeCurve,
+                        curve: Curves.easeInExpo,
                         color: squeezed ? Colors.white : const Color(0x00FFFFFF),
                       ),
                     ),
@@ -243,15 +240,17 @@ class _Page2State extends SuperState<_Page2> {
                 ),
               ),
             ),
-            const Spacer(flex: 4),
+            const Spacer(flex: 2),
+            SexyBox(
+              child: buttonVisible && !visible
+                  ? null
+                  : Fader(
+                      buttonVisible,
+                      child: ContinueButton(onPressed: endTransition),
+                    ),
+            ),
+            const Spacer(flex: 2),
           ],
-        ),
-        Align(
-          alignment: const Alignment(0, .75),
-          child: Fader(
-            visible && buttonVisible,
-            child: ContinueButton(onPressed: endTransition),
-          ),
         ),
       ],
     );

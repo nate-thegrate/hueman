@@ -411,11 +411,17 @@ class _CreditsState extends SuperState<_Credits> {
         const Spacer(),
         const Text(
           'Credits',
-          style: SuperStyle.sans(size: 32, extraBold: true, height: 1, letterSpacing: 0.5),
+          style: SuperStyle.sans(
+            size: 32,
+            extraBold: true,
+            color: Colors.black,
+            height: 1,
+            letterSpacing: 0.5,
+          ),
         ),
         const SuperText(
           '(tap a button to go check it out!)',
-          style: SuperStyle.sans(size: 12, width: 87.5),
+          style: SuperStyle.sans(size: 12, width: 87.5, color: Colors.black),
         ),
         const Spacer(),
         for (final MapEntry(key: label, value: buttons) in _credits.entries) ...[

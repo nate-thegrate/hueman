@@ -87,7 +87,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
           } else if (!Tutorial.trueMastery() && !Platform.isIOS) {
             setState(() => trueMastery = true);
             sleep(
-              6,
+              7,
               then: () => context.noTransition(const TrueMasteryTutorial()),
             );
           } else {
@@ -401,6 +401,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
 
     Widget settingsButton;
     if (mainMenu) {
+      // TODO: SizedBoxes to normalized TextButton height, then publish to Google Play!
       settingsButton = TextButton(
         style: TextButton.styleFrom(
           foregroundColor: color,
@@ -552,24 +553,25 @@ class _TrueMasteryAnimation extends StatefulWidget {
 }
 
 class _TrueMasteryAnimationState extends SuperState<_TrueMasteryAnimation> {
-  bool showHues = false;
+  bool fadeToWhite = false;
   @override
-  void animate() => quickly(() => setState(() => showHues = true));
+  void animate() => sleepState(1, () => fadeToWhite = true);
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       alignment: Alignment.center,
       children: [
-        Fader(
-          showHues,
-          duration: const Duration(seconds: 2),
+        FadeIn(
+          duration: oneSec,
           curve: Curves.easeOutCubic,
           child: SuperContainer(color: widget.color),
         ),
-        const Padding(
-          padding: EdgeInsets.only(top: 210),
-          child: Text(
+        Fader(
+          fadeToWhite,
+          duration: const Duration(seconds: 6),
+          curve: Curves.easeOutQuad,
+          child: const Text(
             'true\nmastery',
             textAlign: TextAlign.center,
             style: SuperStyle.sans(
@@ -584,7 +586,7 @@ class _TrueMasteryAnimationState extends SuperState<_TrueMasteryAnimation> {
           ),
         ),
         Fader(
-          showHues,
+          fadeToWhite,
           duration: const Duration(seconds: 6),
           child: const SuperContainer(color: Colors.white),
         ),

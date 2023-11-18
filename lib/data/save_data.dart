@@ -38,6 +38,8 @@ Future<void> saveData(String key, Object value) async {
 /// using an enum probably would have been better haha
 Future<void> loadData() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+
   final prefs = await SharedPreferences.getInstance();
   casualMode = prefs.getBool('casualMode') ?? true;
   hueTyping = prefs.getBool('hueTyping') ?? true;
@@ -50,8 +52,6 @@ Future<void> loadData() async {
 
   Score.init(prefs);
   Tutorial.init(prefs);
-
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 }
 
 Future<void> reset() async {
