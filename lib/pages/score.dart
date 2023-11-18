@@ -39,12 +39,10 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
                 style: TextButton.styleFrom(
                   backgroundColor: inverted ? const Color(0x10000000) : const Color(0x10FFFFFF),
                   foregroundColor: inverted ? Colors.black : Colors.white,
+                  padding: const EdgeInsets.fromLTRB(15, 13, 15, 15),
                 ),
                 onPressed: () => Navigator.pop(context, lovinIt),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 3, 10, 5) + context.iOSpadding,
-                  child: Text(lovinIt ? 'yes' : 'no', style: const SuperStyle.sans(size: 16)),
-                ),
+                child: Text(lovinIt ? 'yes' : 'no', style: const SuperStyle.sans(size: 16)),
               );
           return AlertDialog(
             title: const Text('How was that?', style: SuperStyle.sans()),
@@ -63,7 +61,7 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
       final soundsGood = hueTyping ? 'You can type out the hues' : "We'll keep the circle going";
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) => DismissibleDialog(
           title: const Text('Sounds good!', style: SuperStyle.sans()),
           content: Text(
             '$soundsGood from now on.\n\n'

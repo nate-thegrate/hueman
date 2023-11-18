@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -54,28 +53,16 @@ extension ContextStuff on BuildContext {
 
   void invert() => noTransition(inverted ? const MainMenu() : const InverseMenu());
 
-  // TODO: use .styleFrom() instead, set padding for all TextButtons
-  EdgeInsets get iOSpadding =>
-      Platform.isIOS ? EdgeInsets.zero : const EdgeInsets.symmetric(vertical: 5);
-
-  double get _safePadding {
-    final padding = View.of(this).padding;
-    return min(padding.top + padding.bottom, 110);
-  }
-
   Size get screenSize => MediaQuery.of(this).size;
   double get screenWidth => screenSize.width;
   double get screenHeight => screenSize.height;
 
-  // TODO: use a layout builder instead
-  double get safeHeight => screenHeight - _safePadding;
-  bool get squished => safeHeight < 1080;
+  // bool get squished => safeHeight < 1080;
+}
 
-  /// calculates the ideal size (a [double]) based on the viewport width & height.
-  double calcSize(double Function(double w, double h) widthHeight) {
-    final size = screenSize;
-    return widthHeight(size.width, size.height - _safePadding);
-  }
+extension CalcSize on BoxConstraints {
+  double calcSize(double Function(double w, double h) widthHeight) =>
+      widthHeight(maxWidth, maxHeight);
 }
 
 void gotoWebsite(String url) => launchUrl(Uri.parse(url));

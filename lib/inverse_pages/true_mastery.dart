@@ -128,100 +128,106 @@ class _TrueMasteryState extends State<TrueMastery> {
       child: Scaffold(
         body: SafeArea(
           bottom: false,
-          child: Center(
-            child: Column(
-              children: [
-                const Spacer(),
-                const GoBack(),
-                const Spacer(flex: 3),
-                SuperContainer(
-                  decoration: const BoxDecoration(
-                      color: SuperColors.lightBackground,
-                      borderRadius: BorderRadiusDirectional.only(
-                          topStart: Radius.circular(64), topEnd: Radius.circular(64))),
-                  padding: const EdgeInsets.fromLTRB(30, 45, 30, 40),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _RGBSlider(
-                            'red',
-                            r,
-                            giveHint ? '${color.red}' : r.hexByte,
-                            onChanged: (value) => setState(() => r = value.toInt()),
-                          ),
-                          _RGBSlider(
-                            'green',
-                            g,
-                            giveHint ? '${color.green}' : g.hexByte,
-                            onChanged: (value) => setState(() => g = value.toInt()),
-                          ),
-                          _RGBSlider(
-                            'blue',
-                            b,
-                            giveHint ? '${color.blue}' : b.hexByte,
-                            onChanged: (value) => setState(() => b = value.toInt()),
-                          ),
-                        ],
-                      ),
-                      const FixedSpacer(50),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'color code:',
-                            style: SuperStyle.mono(size: 20),
-                          ),
-                          const FixedSpacer.horizontal(10),
-                          TextButton(
-                            style: TextButton.styleFrom(foregroundColor: Colors.black),
-                            onPressed: () {
-                              if (casualMode) setState(() => giveHint = true);
-                              ManualColorCode.run(
-                                context,
-                                color: color,
-                                updateColor: updateUserColor,
-                              ).then((_) {
-                                if (casualMode) setState(() => giveHint = false);
-                              });
-                            },
-                            child: Text(
-                              userColorCode,
-                              style: const SuperStyle.mono(size: 20),
+          child: LayoutBuilder(builder: (context, constraints) {
+            return Center(
+              child: Column(
+                children: [
+                  const Spacer(),
+                  const GoBack(),
+                  const Spacer(flex: 3),
+                  SuperContainer(
+                    decoration: const BoxDecoration(
+                        color: SuperColors.lightBackground,
+                        borderRadius: BorderRadiusDirectional.only(
+                            topStart: Radius.circular(64), topEnd: Radius.circular(64))),
+                    padding: const EdgeInsets.fromLTRB(30, 45, 30, 40),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _RGBSlider(
+                              'red',
+                              r,
+                              constraints: constraints,
+                              giveHint ? '${color.red}' : r.hexByte,
+                              onChanged: (value) => setState(() => r = value.toInt()),
                             ),
+                            _RGBSlider(
+                              'green',
+                              g,
+                              constraints: constraints,
+                              giveHint ? '${color.green}' : g.hexByte,
+                              onChanged: (value) => setState(() => g = value.toInt()),
+                            ),
+                            _RGBSlider(
+                              'blue',
+                              b,
+                              constraints: constraints,
+                              giveHint ? '${color.blue}' : b.hexByte,
+                              onChanged: (value) => setState(() => b = value.toInt()),
+                            ),
+                          ],
+                        ),
+                        const FixedSpacer(50),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'color code:',
+                              style: SuperStyle.mono(size: 20),
+                            ),
+                            const FixedSpacer.horizontal(10),
+                            TextButton(
+                              style: TextButton.styleFrom(foregroundColor: Colors.black),
+                              onPressed: () {
+                                if (casualMode) setState(() => giveHint = true);
+                                ManualColorCode.run(
+                                  context,
+                                  color: color,
+                                  updateColor: updateUserColor,
+                                ).then((_) {
+                                  if (casualMode) setState(() => giveHint = false);
+                                });
+                              },
+                              child: Text(
+                                userColorCode,
+                                style: const SuperStyle.mono(size: 20),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const FixedSpacer(30),
+                        ElevatedButton(
+                          onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) =>
+                                TrueMasteryScore(guess: userColor, actual: color),
+                            barrierDismissible: userColor.colorCode != color.colorCode,
+                          ).then((_) {
+                            scoreKeeper?.scoreTheRound();
+                            scoreKeeper?.roundCheck(context);
+                            setState(nextColor);
+                          }),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: color,
+                            foregroundColor: contrastWith(color),
                           ),
-                        ],
-                      ),
-                      const FixedSpacer(30),
-                      ElevatedButton(
-                        onPressed: () => showDialog(
-                          context: context,
-                          builder: (context) => TrueMasteryScore(guess: userColor, actual: color),
-                          barrierDismissible: userColor.colorCode != color.colorCode,
-                        ).then((_) {
-                          scoreKeeper?.scoreTheRound();
-                          scoreKeeper?.roundCheck(context);
-                          setState(nextColor);
-                        }),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: color,
-                          foregroundColor: contrastWith(color),
+                          child: const Padding(
+                            padding: EdgeInsets.only(bottom: 4),
+                            child: Text('submit', style: SuperStyle.sans(size: 24)),
+                          ),
                         ),
-                        child: const Padding(
-                          padding: EdgeInsets.only(bottom: 4),
-                          child: Text('submit', style: SuperStyle.sans(size: 24)),
-                        ),
-                      ),
-                      scoreKeeper == null ? empty : scoreKeeper!.midRoundDisplay,
-                    ],
+                        scoreKeeper == null ? empty : scoreKeeper!.midRoundDisplay,
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
+                ],
+              ),
+            );
+          }),
         ),
         backgroundColor: color,
       ),
@@ -382,7 +388,7 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Stack(
         children: [
-          AlertDialog(
+          DismissibleDialog(
             surfaceTintColor: Colors.transparent,
             backgroundColor: SuperColors.lightBackground,
             title: Column(children: [
@@ -657,7 +663,14 @@ class _HexText extends StatelessWidget {
 }
 
 class _RGBSlider extends StatelessWidget {
-  const _RGBSlider(this.name, this.value, this.displayValue, {required this.onChanged});
+  const _RGBSlider(
+    this.name,
+    this.value,
+    this.displayValue, {
+    required this.constraints,
+    required this.onChanged,
+  });
+  final BoxConstraints constraints;
   final String name, displayValue;
   final int value;
   final ValueChanged<double> onChanged;
@@ -677,7 +690,7 @@ class _RGBSlider extends StatelessWidget {
         RotatedBox(
           quarterTurns: 3,
           child: SizedBox(
-            width: context.safeHeight - 380,
+            width: constraints.maxHeight - 280,
             child: SliderTheme(
               data: const SliderThemeData(
                 trackHeight: 15,

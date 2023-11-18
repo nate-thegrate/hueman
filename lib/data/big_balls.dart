@@ -391,7 +391,8 @@ class _BallsState extends SuperState<Balls> {
   @override
   void animate() async {
     await sleep(0.1);
-    final ballScale = context.calcSize((w, h) => (w + h) / 8);
+    final size = context.screenSize;
+    final ballScale = (size.width + size.height) / 8;
     for (int i = 0; i < ballCount; i++) {
       setState(() {
         balls.insert(

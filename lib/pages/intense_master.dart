@@ -82,7 +82,7 @@ class IntenseScoreKeeper implements ScoreKeeper {
   final Pages page = Pages.intense;
 }
 
-double screenHeight = 1200;
+bool squished = false;
 
 class MasterScoreKeeper implements IntenseScoreKeeper {
   MasterScoreKeeper({required this.scoring});
@@ -126,7 +126,7 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
         : Card(color: Colors.black38, elevation: 0, child: rankDesc);
 
     return Flex(
-      direction: screenHeight < 1000 ? Axis.horizontal : Axis.vertical,
+      direction: squished ? Axis.horizontal : Axis.vertical,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [roundLabel, const SizedBox.square(dimension: 15), rankLabel],
     );
@@ -318,18 +318,18 @@ class _IntenseModeState extends State<IntenseMode> {
         _ => 'oof…',
       };
 
-  Widget? get image {
+  Widget? image(BoxConstraints constraints) {
     if (!casualMode || !masterMode) return null;
-    final height = context.calcSize((w, h) => min(h - (externalKeyboard ? 333 : 525), w * 2));
+    final height = constraints.calcSize((w, h) => min(h - (externalKeyboard ? 333 : 425), w * 2));
+    final pad = ((constraints.maxWidth - height) / 2 + 50).stayInRange(0, 50);
     final pic = pics.first.$1;
     if (!hueTyping) return pic;
     return SuperContainer(
       width: double.infinity,
       height: height,
-      padding:
-          height < context.screenWidth + 66 ? const EdgeInsets.symmetric(horizontal: 33) : null,
+      padding: EdgeInsets.symmetric(horizontal: pad),
       color: color,
-      alignment: Alignment.topCenter,
+      alignment: Alignment.center,
       child: pic,
     );
   }
@@ -425,7 +425,7 @@ class _IntenseModeState extends State<IntenseMode> {
 
   @override
   Widget build(BuildContext context) {
-    screenHeight = context.safeHeight;
+    squished = context.screenHeight < 1080;
     if (!hueTyping) {
       final gameScreen = CircleGame(
         color: color,

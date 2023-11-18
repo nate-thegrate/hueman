@@ -68,15 +68,14 @@ SuperColor get _color => switch (_colorPicker) {
     };
 
 class _CMYKScreen extends StatelessWidget {
-  const _CMYKScreen(this.update);
+  const _CMYKScreen(this.update, this.constraints);
   final dynamic update;
+  final BoxConstraints constraints;
 
   @override
   Widget build(BuildContext context) {
-    final size = context.screenSize;
-    final horizontal = context.squished;
-    final double width = min(size.width - 50, 500);
-    final double height = min(context.safeHeight - (horizontal ? 600 : 820), 500);
+    final double width = min(constraints.maxWidth - 50, 500);
+    final double height = min(constraints.maxHeight - 500, 500);
     final bool isK = _color.colorCode == 0x8080FF;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -89,19 +88,30 @@ class _CMYKScreen extends StatelessWidget {
           child: isK ? const K_glitch() : null,
         ),
         const FixedSpacer(30),
-        Flex(
-          direction: horizontal ? Axis.vertical : Axis.horizontal,
+        Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _CMYKSlider('cyan', _cyan / 0xFF,
-                onChanged: (value) => update(() => _cyan = (value * 0xFF).round())),
-            _CMYKSlider('magenta', _magenta / 0xFF,
-                onChanged: (value) => update(() => _magenta = (value * 0xFF).round())),
-            _CMYKSlider('yellow', _yellow / 0xFF,
-                onChanged: (value) => update(() => _yellow = (value * 0xFF).round())),
-            _CMYKSlider('key', _black / 0xFF,
-                onChanged: (value) => update(() => _black = (value * 0xFF).round())),
+            _CMYKSlider(
+              'cyan',
+              _cyan / 0xFF,
+              onChanged: (value) => update(() => _cyan = (value * 0xFF).round()),
+            ),
+            _CMYKSlider(
+              'magenta',
+              _magenta / 0xFF,
+              onChanged: (value) => update(() => _magenta = (value * 0xFF).round()),
+            ),
+            _CMYKSlider(
+              'yellow',
+              _yellow / 0xFF,
+              onChanged: (value) => update(() => _yellow = (value * 0xFF).round()),
+            ),
+            _CMYKSlider(
+              'key',
+              _black / 0xFF,
+              onChanged: (value) => update(() => _black = (value * 0xFF).round()),
+            ),
           ],
         ),
       ],
@@ -132,28 +142,23 @@ class _CMYKSlider extends StatelessWidget {
       'key' => true,
       _ => throw Error(),
     };
-    final bool horizontal = context.squished;
 
-    return Flex(
-      direction: horizontal ? Axis.horizontal : Axis.vertical,
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        RotatedBox(
-          quarterTurns: horizontal ? 0 : 3,
-          child: SizedBox(
-            width: min(384, horizontal ? context.screenWidth - 80 : double.infinity),
-            child: SliderTheme(
-              data: const SliderThemeData(
-                trackHeight: 15,
-                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
-              ),
-              child: Slider(
-                thumbColor: color,
-                activeColor: color.withAlpha(0x80),
-                inactiveColor: Colors.white24,
-                value: value.toDouble(),
-                onChanged: enabled ? onChanged : null,
-              ),
+        SizedBox(
+          width: min(384, context.screenWidth - 80),
+          child: SliderTheme(
+            data: const SliderThemeData(
+              trackHeight: 15,
+              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
+            ),
+            child: Slider(
+              thumbColor: color,
+              activeColor: color.withAlpha(0x80),
+              inactiveColor: Colors.white24,
+              value: value.toDouble(),
+              onChanged: enabled ? onChanged : null,
             ),
           ),
         ),
@@ -181,96 +186,100 @@ class _HSLScreen extends StatefulWidget {
 class _HSLScreenState extends State<_HSLScreen> {
   @override
   Widget build(BuildContext context) {
-    final double colorBarHeight = context.safeHeight < 900 ? 0 : 100;
-    final double planeSize = context.calcSize((w, h) => min(w - 50, h - 450 - colorBarHeight));
-    void touchRecognition(details) {
-      final Offset offset = details.localPosition;
-      double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);
-      widget.onChanged(1)(val(offset.dx));
-      widget.onChanged(2)(1 - val(offset.dy));
-    }
+    return LayoutBuilder(builder: (context, constraints) {
+      final double colorBarHeight = constraints.maxHeight < 800 ? 0 : 100;
+      final double planeSize =
+          constraints.calcSize((w, h) => min(w - 50, h - 450 - colorBarHeight));
+      void touchRecognition(details) {
+        final Offset offset = details.localPosition;
+        double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);
+        widget.onChanged(1)(val(offset.dx));
+        widget.onChanged(2)(1 - val(offset.dy));
+      }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SuperContainer(
-          width: planeSize,
-          height: planeSize,
-          alignment: Alignment.center,
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Stack(
-                  children: [
-                    SuperContainer(
-                      margin: const EdgeInsets.all(0.5),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [SuperColors.gray, SuperColor.hue(_h)],
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SuperContainer(
+            width: planeSize,
+            height: planeSize,
+            alignment: Alignment.center,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Stack(
+                    children: [
+                      SuperContainer(
+                        margin: const EdgeInsets.all(0.5),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [SuperColors.gray, SuperColor.hue(_h)],
+                          ),
                         ),
                       ),
-                    ),
-                    const SuperContainer(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.white, Color(0x00FFFFFF), Color(0x00FFFFFF)],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onPanStart: touchRecognition,
-                      onPanUpdate: touchRecognition,
-                      child: const SuperContainer(
+                      const SuperContainer(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Colors.transparent, Colors.black],
+                            colors: [Colors.white, Color(0x00FFFFFF), Color(0x00FFFFFF)],
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      GestureDetector(
+                        onPanStart: touchRecognition,
+                        onPanUpdate: touchRecognition,
+                        child: const SuperContainer(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, Colors.transparent, Colors.black],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Align(
-                alignment: Alignment(2 * _s - 1, 1 - 2 * _l),
-                child: Icon(
-                  Icons.add,
-                  color: contrastWith(_color),
-                  size: 40,
+                Align(
+                  alignment: Alignment(2 * _s - 1, 1 - 2 * _l),
+                  child: Icon(
+                    Icons.add,
+                    color: contrastWith(_color),
+                    size: 40,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        _HSLSlider(
-          'hue',
-          _h,
-          color: SuperColor.hue(_h),
-          onChanged: widget.onChanged(0),
-        ),
-        _HSLSlider(
-          'saturation',
-          _s,
-          color: SuperColor.hsl(_h, _s, 0.5),
-          onChanged: widget.onChanged(1),
-        ),
-        _HSLSlider(
-          'lightness',
-          _l,
-          color: SuperColor.hsl(_h, _s, _l),
-          onChanged: widget.onChanged(2),
-        ),
-        const FixedSpacer(25),
-        if (colorBarHeight > 0) SuperContainer(width: 500, height: colorBarHeight, color: _color),
-      ],
-    );
+          _HSLSlider(
+            'hue',
+            _h,
+            color: SuperColor.hue(_h),
+            onChanged: widget.onChanged(0),
+          ),
+          _HSLSlider(
+            'saturation',
+            _s,
+            color: SuperColor.hsl(_h, _s, 0.5),
+            onChanged: widget.onChanged(1),
+          ),
+          _HSLSlider(
+            'lightness',
+            _l,
+            color: SuperColor.hsl(_h, _s, _l),
+            onChanged: widget.onChanged(2),
+          ),
+          const FixedSpacer(25),
+          if (colorBarHeight > 0)
+            SuperContainer(width: 500, height: colorBarHeight, color: _color),
+        ],
+      );
+    });
   }
 }
 
@@ -557,38 +566,40 @@ class _InverseSandboxState extends State<InverseSandbox> {
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
         body: SafeArea(
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Spacer(),
-                const GoBack(),
-                const Spacer(),
-                Text(_colorPicker.desc, style: titleStyle),
-                const Spacer(),
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 100),
-                  curve: Curves.easeInOutCubic,
-                  child: switch (_colorPicker) {
-                    _ColorPicker.cmyk => _CMYKScreen(updateCMYKval),
-                    _ColorPicker.hsl => _HSLScreen(onChangedHSL),
-                    _ColorPicker.select => _ColorWheel(updateFromWheel),
-                  },
-                ),
-                const Spacer(flex: 2),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ColorLabel('hue', hue),
-                    ColorLabel('color name', _color.rounded.name, style: colorNameStyle),
-                    ColorLabel.colorCode('color code', _color.hexCode, updateColorCode),
-                  ],
-                ),
-                const Spacer(flex: 2),
-              ],
-            ),
-          ),
+          child: LayoutBuilder(builder: (context, constraints) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Spacer(),
+                  const GoBack(),
+                  const Spacer(),
+                  Text(_colorPicker.desc, style: titleStyle),
+                  const Spacer(),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.easeInOutCubic,
+                    child: switch (_colorPicker) {
+                      _ColorPicker.cmyk => _CMYKScreen(updateCMYKval, constraints),
+                      _ColorPicker.hsl => _HSLScreen(onChangedHSL),
+                      _ColorPicker.select => _ColorWheel(updateFromWheel),
+                    },
+                  ),
+                  const Spacer(flex: 2),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ColorLabel('hue', hue),
+                      ColorLabel('color name', _color.rounded.name, style: colorNameStyle),
+                      ColorLabel.colorCode('color code', _color.hexCode, updateColorCode),
+                    ],
+                  ),
+                  const Spacer(flex: 2),
+                ],
+              ),
+            );
+          }),
         ),
         bottomNavigationBar: BottomNavigationBar(
           elevation: 0,

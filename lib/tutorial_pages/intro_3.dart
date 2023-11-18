@@ -756,54 +756,55 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
 
   @override
   Widget build(BuildContext context) {
-    final tileWidth = context.calcSize(
-      (w, h) => min(w / hsvWidth, (h - 150) / hsvHeight),
-    );
-
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Column(
-          children: [
-            const Spacer(flex: 2),
-            SizedBox(
-              height: tileWidth * (hsvHeight - 1),
-              width: tileWidth * hsvWidth,
-              child: GridView.count(
-                padding: EdgeInsets.symmetric(horizontal: tileWidth),
-                primary: false,
-                crossAxisCount: hsvWidth,
-                children: [
-                  for (final item in hsvGrid)
-                    AnimatedScale(scale: item.scale, duration: duration, child: item.tile)
-                ],
+    return LayoutBuilder(builder: (context, constraints) {
+      final tileWidth = constraints.calcSize(
+        (w, h) => min(w / hsvWidth, (h - 50) / hsvHeight),
+      );
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          Column(
+            children: [
+              const Spacer(flex: 2),
+              SizedBox(
+                height: tileWidth * (hsvHeight - 1),
+                width: tileWidth * hsvWidth,
+                child: GridView.count(
+                  padding: EdgeInsets.symmetric(horizontal: tileWidth),
+                  primary: false,
+                  crossAxisCount: hsvWidth,
+                  children: [
+                    for (final item in hsvGrid)
+                      AnimatedScale(scale: item.scale, duration: duration, child: item.tile)
+                  ],
+                ),
               ),
-            ),
-            const Spacer(),
-            Fader(
-              wishVisible,
-              child: const SuperText(
-                'I just wish I could describe every shade\n'
-                'with a single name (that isn\'t "chartreuse").',
+              const Spacer(),
+              Fader(
+                wishVisible,
+                child: const SuperText(
+                  'I just wish I could describe every shade\n'
+                  'with a single name (that isn\'t "chartreuse").',
+                ),
               ),
-            ),
-            const Spacer(),
-            Fader(
-              tooBadVisible,
-              child: const SuperText("Too bad there's no way to do that…"),
-            ),
-            const Spacer(flex: 2),
-          ],
-        ),
-        if (justKidding)
-          JustKidding(
-            'HUE',
-            buttonVisible: buttonVisible,
-            color: epicColor,
-            onPressed: singlePress(widget.nextPage),
+              const Spacer(),
+              Fader(
+                tooBadVisible,
+                child: const SuperText("Too bad there's no way to do that…"),
+              ),
+              const Spacer(flex: 2),
+            ],
           ),
-      ],
-    );
+          if (justKidding)
+            JustKidding(
+              'HUE',
+              buttonVisible: buttonVisible,
+              color: epicColor,
+              onPressed: singlePress(widget.nextPage),
+            ),
+        ],
+      );
+    });
   }
 }
 
@@ -864,33 +865,34 @@ class _Page7State extends SuperState<_Page7> {
 
   @override
   Widget build(BuildContext context) {
-    final width = context.calcSize((w, h) => min(w * 0.8, h * 0.8 - 250));
-
-    return Stack(
-      children: [
-        Column(
-          children: [
-            const Spacer(flex: 4),
-            const SuperText(step1),
-            const Spacer(),
-            Fader(step >= 2, child: const SuperText(step2)),
-            const Spacer(flex: 4),
-            MeasuringOrb(
-              step: step,
-              width: width,
-              duration: duration,
-              hue: 90,
-              lineColor: Colors.black,
-            ),
-            const Spacer(flex: 4),
-            _HueBox(step: step, width: width, hue: hue.ceil()),
-            const Spacer(flex: 4),
-          ],
-        ),
-        overlay,
-        Fader(showOverlay2, child: overlay2),
-      ],
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      final width = constraints.calcSize((w, h) => min(w * 0.8, h * 0.8 - 250));
+      return Stack(
+        children: [
+          Column(
+            children: [
+              const Spacer(flex: 4),
+              const SuperText(step1),
+              const Spacer(),
+              Fader(step >= 2, child: const SuperText(step2)),
+              const Spacer(flex: 4),
+              MeasuringOrb(
+                step: step,
+                width: width,
+                duration: duration,
+                hue: 90,
+                lineColor: Colors.black,
+              ),
+              const Spacer(flex: 4),
+              _HueBox(step: step, width: width, hue: hue.ceil()),
+              const Spacer(flex: 4),
+            ],
+          ),
+          overlay,
+          Fader(showOverlay2, child: overlay2),
+        ],
+      );
+    });
   }
 }
 

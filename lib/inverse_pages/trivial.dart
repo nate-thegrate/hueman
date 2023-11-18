@@ -9,7 +9,8 @@ import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 
 class TriviaButton extends StatelessWidget {
-  const TriviaButton(this.color, {required this.submit, super.key});
+  const TriviaButton(this.color, {required this.constraints, required this.submit, super.key});
+  final BoxConstraints constraints;
   final SuperColor color;
   final void Function() Function(SuperColor) submit;
 
@@ -18,7 +19,7 @@ class TriviaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buttonWidth = context.calcSize((w, h) => min(w / 2 - 30, h / 2 - 215));
+    final buttonWidth = constraints.calcSize((w, h) => min(w / 2 - 30, h / 2 - 215));
     return SuperContainer(
       width: buttonWidth,
       height: buttonWidth / 3,
@@ -273,7 +274,7 @@ class _TriviaModeState extends State<TriviaMode> {
               fontFamily: 'nunito sans',
               dialogBackgroundColor: SuperColors.lightBackground,
             ),
-            child: AlertDialog(
+            child: DismissibleDialog(
               title: const FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
@@ -312,7 +313,7 @@ class _TriviaModeState extends State<TriviaMode> {
               fontFamily: 'nunito sans',
               dialogBackgroundColor: SuperColors.lightBackground,
             ),
-            child: AlertDialog(
+            child: DismissibleDialog(
               title: Center(
                 child: Text(
                   correct ? 'Correct!' : 'Incorrect.',
@@ -365,15 +366,15 @@ class _TriviaModeState extends State<TriviaMode> {
         });
       };
 
-  List<Widget> get buttons {
+  List<Widget> buttons(BoxConstraints constraints) {
     final buttons = <Widget>[];
     for (int i = 0; i < 6; i++) {
       final (leftColor, rightColor) = (SuperColors.twelveHues[i], SuperColors.twelveHues[11 - i]);
       buttons.add(Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TriviaButton(leftColor, submit: submit),
-          TriviaButton(rightColor, submit: submit),
+          TriviaButton(leftColor, constraints: constraints, submit: submit),
+          TriviaButton(rightColor, constraints: constraints, submit: submit),
         ],
       ));
     }
@@ -382,57 +383,60 @@ class _TriviaModeState extends State<TriviaMode> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget questionText = SuperContainer(
-      height: 200,
-      padding: const EdgeInsets.symmetric(horizontal: 50),
-      alignment: Alignment.center,
-      child: Text(
-        triviaQuestions.first.question,
-        textAlign: TextAlign.center,
-        style: SuperStyle.sans(
-          color: Colors.black,
-          size: context.calcSize((w, h) => min(w, h / 2) / 20),
-          weight: 600,
-        ),
-      ),
-    );
-
-    final Widget multipleColorsReminder = SizedBox(
-      height: 30,
-      child: switch (selected.isEmpty) {
-        _ when correctAnswers.length == 1 => empty,
-        true => Text(
-            'Select ${correctAnswers.length} colors.',
-            style: const SuperStyle.sans(size: 20),
-          ),
-        false => Text(
-            'Select ${correctAnswers.length - selected.length} more.',
-            style: const SuperStyle.sans(size: 20),
-          ),
-      },
-    );
-
-    final Widget score = Text(
-      (casualMode || totalAnswers == 0) ? '' : 'Score: $totalCorrect / $totalAnswers correct',
-      style: const SuperStyle.sans(size: 18),
-    );
-
     return Theme(
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
         body: SafeArea(
-          child: Center(
-            child: Column(
-              children: [
-                const Spacer(),
-                const GoBack(),
-                questionText,
-                multipleColorsReminder,
-                ...buttons,
-                score,
-              ],
-            ),
-          ),
+          child: LayoutBuilder(builder: (context, constraints) {
+            final Widget questionText = SuperContainer(
+              height: 200,
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              alignment: Alignment.center,
+              child: Text(
+                triviaQuestions.first.question,
+                textAlign: TextAlign.center,
+                style: SuperStyle.sans(
+                  color: Colors.black,
+                  size: constraints.calcSize((w, h) => min(w, h / 2) / 20),
+                  weight: 600,
+                ),
+              ),
+            );
+
+            final Widget multipleColorsReminder = SizedBox(
+              height: 30,
+              child: switch (selected.isEmpty) {
+                _ when correctAnswers.length == 1 => empty,
+                true => Text(
+                    'Select ${correctAnswers.length} colors.',
+                    style: const SuperStyle.sans(size: 20),
+                  ),
+                false => Text(
+                    'Select ${correctAnswers.length - selected.length} more.',
+                    style: const SuperStyle.sans(size: 20),
+                  ),
+              },
+            );
+
+            final Widget score = Text(
+              (casualMode || totalAnswers == 0)
+                  ? ''
+                  : 'Score: $totalCorrect / $totalAnswers correct',
+              style: const SuperStyle.sans(size: 18),
+            );
+            return Center(
+              child: Column(
+                children: [
+                  const Spacer(),
+                  const GoBack(),
+                  questionText,
+                  multipleColorsReminder,
+                  ...buttons(constraints),
+                  score,
+                ],
+              ),
+            );
+          }),
         ),
         backgroundColor: SuperColors.lightBackground,
       ),

@@ -48,8 +48,8 @@ Future<void> loadData() async {
   music = prefs.getBool('music') ?? true;
   sounds = prefs.getBool('sounds') ?? true;
 
-  Tutorial.init(prefs);
   Score.init(prefs);
+  Tutorial.init(prefs);
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 }
@@ -95,15 +95,15 @@ enum Tutorial {
     data = switch (localStorage) {
       true => {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false},
       false => {
-          started: false,
-          intro3: false,
-          intro6: false,
-          introC: false,
+          started: true,
+          intro3: true,
+          intro6: true,
+          introC: true,
           casual: false,
           intense: false,
           master: false,
           mastered: false,
-          sandbox: false,
+          sandbox: true,
           aiCertificate: false,
           sawInversion: false,
           trivial: false,
@@ -121,6 +121,10 @@ enum Tutorial {
       inverted = false;
       music = true;
       sounds = true;
+
+      // for (final score in Score.values) {
+      //   Score.highScores[score] = null;
+      // }
     }
   }
 }

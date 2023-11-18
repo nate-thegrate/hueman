@@ -181,7 +181,7 @@ class _IntroModeState extends State<IntroMode> {
           1,
           then: () => showDialog(
             context: context,
-            builder: (context) => AlertDialog(
+            builder: (context) => DismissibleDialog(
               title: const Text(
                 'Find the hues!',
                 textAlign: TextAlign.center,
@@ -262,6 +262,7 @@ class _IntroModeState extends State<IntroMode> {
 
   @override
   Widget build(BuildContext context) {
+    Widget? noImage(BoxConstraints constraints) => null;
     if (!hueTyping) {
       return CircleGame(
         color: color,
@@ -270,6 +271,7 @@ class _IntroModeState extends State<IntroMode> {
         updateGuess: (value) => _guess = value,
         hueDialogBuilder: hueDialogBuilder,
         scoreKeeper: scoreKeeper,
+        image: noImage,
       );
     }
     if (externalKeyboard) {
@@ -280,6 +282,7 @@ class _IntroModeState extends State<IntroMode> {
         hueDialogBuilder: hueDialogBuilder,
         generateHue: () => setState(generateHue),
         scoreKeeper: scoreKeeper,
+        image: noImage,
       );
     }
     return NumPadGame(
@@ -289,6 +292,7 @@ class _IntroModeState extends State<IntroMode> {
       hueDialogBuilder: hueDialogBuilder,
       scoreKeeper: scoreKeeper,
       generateHue: () => setState(generateHue),
+      image: noImage,
     );
   }
 }

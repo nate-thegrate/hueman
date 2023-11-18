@@ -400,7 +400,7 @@ class _HueDialogState extends State<HueDialog> {
 class _HueTypingScreen extends StatelessWidget {
   const _HueTypingScreen(this.userInput, this.image, this.color, this.scoreKeeper);
   final List<Widget> userInput;
-  final Widget? image;
+  final Widget? Function(BoxConstraints constraints) image;
   final Color color;
   final ScoreKeeper? scoreKeeper;
 
@@ -418,31 +418,33 @@ class _HueTypingScreen extends StatelessWidget {
           bars,
           Expanded(
             child: SafeArea(
-              child: Column(
-                children: <Widget>[
-                  const Spacer(),
-                  if (sk is! TutorialScoreKeeper) const GoBack(),
-                  const Spacer(),
-                  if (image == null) ...[
-                    SuperContainer(
-                      width: colorBoxWidth,
-                      height: min(colorBoxWidth, context.safeHeight - 500),
-                      color: color,
-                    )
-                  ] else
-                    image!,
-                  const Spacer(),
-                  const Text(
-                    "What's the hue?",
-                    textAlign: TextAlign.center,
-                    style: SuperStyle.sans(size: 24, letterSpacing: 0),
-                  ),
-                  ...userInput,
-                  const Spacer(),
-                  scoreKeeper?.midRoundDisplay ?? empty,
-                  if (scoreKeeper != null) const Spacer(),
-                ],
-              ),
+              child: LayoutBuilder(builder: (context, constraints) {
+                return Column(
+                  children: <Widget>[
+                    const Spacer(),
+                    if (sk is! TutorialScoreKeeper) const GoBack(),
+                    const Spacer(),
+                    if (image(constraints) == null) ...[
+                      SuperContainer(
+                        width: colorBoxWidth,
+                        height: min(colorBoxWidth, constraints.maxHeight - 400),
+                        color: color,
+                      )
+                    ] else
+                      image(constraints)!,
+                    const Spacer(),
+                    const Text(
+                      "What's the hue?",
+                      textAlign: TextAlign.center,
+                      style: SuperStyle.sans(size: 24, letterSpacing: 0),
+                    ),
+                    ...userInput,
+                    const Spacer(),
+                    scoreKeeper?.midRoundDisplay ?? empty,
+                    if (scoreKeeper != null) const Spacer(),
+                  ],
+                );
+              }),
             ),
           ),
           bars,
@@ -463,7 +465,7 @@ class KeyboardGame extends StatelessWidget {
     required this.hueDialogBuilder,
     required this.scoreKeeper,
     required this.generateHue,
-    this.image,
+    required this.image,
     super.key,
   });
   final Color color;
@@ -472,7 +474,7 @@ class KeyboardGame extends StatelessWidget {
   final WidgetBuilder hueDialogBuilder;
   final ScoreKeeper? scoreKeeper;
   final void Function() generateHue;
-  final Widget? image;
+  final Widget? Function(BoxConstraints constraints) image;
 
   @override
   Widget build(BuildContext context) {
@@ -544,7 +546,7 @@ class NumPadGame extends StatelessWidget {
     required this.hueDialogBuilder,
     required this.scoreKeeper,
     required this.generateHue,
-    this.image,
+    required this.image,
     super.key,
   });
   final Color color;
@@ -553,7 +555,7 @@ class NumPadGame extends StatelessWidget {
   final WidgetBuilder hueDialogBuilder;
   final ScoreKeeper? scoreKeeper;
   final void Function() generateHue;
-  final Widget? image;
+  final Widget? Function(BoxConstraints constraints) image;
 
   @override
   Widget build(BuildContext context) {
@@ -627,7 +629,7 @@ class CircleGame extends StatefulWidget {
     required this.updateGuess,
     required this.hueDialogBuilder,
     required this.scoreKeeper,
-    this.image,
+    required this.image,
   });
   final int numColors;
   final SuperColor color;
@@ -635,7 +637,7 @@ class CircleGame extends StatefulWidget {
   final ValueChanged<int> updateGuess;
   final WidgetBuilder hueDialogBuilder;
   final ScoreKeeper? scoreKeeper;
-  final Widget? image;
+  final Widget? Function(BoxConstraints constraints) image;
 
   @override
   State<CircleGame> createState() => _CircleGameState();
@@ -681,126 +683,152 @@ class _CircleGameState extends State<CircleGame> {
 
   @override
   Widget build(BuildContext context) {
-    final circleSize = context.calcSize((w, h) => switch (widget.scoreKeeper) {
-          MasterScoreKeeper() => min(w - 100, h - 200),
-          _ when widget.image != null => min(w - 50, h / 2 - 100),
-          _ => min(w - 50, h - 200),
-        });
-    void touchRecognition(details) {
-      final Offset offset = details.localPosition;
-      final int angle = computeAngle(offset.dx - circleSize / 2, -offset.dy + circleSize / 2);
-      setState(() {
-        guess = angle.roundToNearest(360 ~/ widget.numColors);
-        lastGuess = guess!;
-      });
-    }
-
-    // TODO: make this the colored triangle thing
-    final hueLine = SuperContainer(
-      height: circleSize / 25,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(100),
-          bottomLeft: Radius.circular(100),
-        ),
-        color: SuperColors.darkBackground,
-      ),
-    );
-
+    const duration = Duration(milliseconds: 100);
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            const Spacer(flex: 2),
-            const GoBack(),
-            const Spacer(flex: 2),
-            if (widget.image case final Widget img) ...[
-              Expanded(flex: 16, child: img),
-              const Spacer(flex: 3),
-            ],
-            GestureDetector(
-              onPanStart: touchRecognition,
-              onPanUpdate: touchRecognition,
-              onPanEnd: submit,
-              child: SuperContainer(
-                width: circleSize,
-                height: circleSize,
-                decoration: BoxDecoration(
-                  color: widget.color,
-                  shape: BoxShape.circle,
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Transform.rotate(
-                      angle: -lastGuess * pi / 180,
-                      child: Row(
+      body: SafeArea(
+        child: LayoutBuilder(builder: (context, constraints) {
+          final circleSize = constraints.calcSize((w, h) => switch (widget.scoreKeeper) {
+                MasterScoreKeeper() => min(w - 100, h - 200),
+                _ when widget.image(constraints) != null => min(w - 66, h / 2 - 100),
+                _ => min(w - 66, h - 200),
+              });
+          final margin = circleSize / 32;
+          void touchRecognition(details) {
+            final Offset offset = details.localPosition;
+            final int angle = computeAngle(
+              offset.dx - circleSize / 2,
+              -offset.dy + circleSize / 2,
+            );
+            setState(() {
+              guess = angle.roundToNearest(360 ~/ widget.numColors);
+              lastGuess = guess!;
+            });
+          }
+
+          return Center(
+            child: Column(
+              children: [
+                const Spacer(flex: 2),
+                const GoBack(),
+                const Spacer(flex: 2),
+                if (widget.image(constraints) case final Widget img) ...[
+                  Expanded(flex: 16, child: img),
+                  const Spacer(flex: 3),
+                ],
+                GestureDetector(
+                  onPanStart: touchRecognition,
+                  onPanUpdate: touchRecognition,
+                  onPanEnd: submit,
+                  child: SuperContainer(
+                    width: circleSize,
+                    height: circleSize,
+                    padding: EdgeInsets.all(margin),
+                    child: SuperContainer(
+                      decoration: BoxDecoration(
+                        color: widget.color,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
-                          Expanded(child: Opacity(opacity: 0, child: hueLine)),
                           Transform.rotate(
-                            angle: lastGuess * pi / 180,
-                            child: SuperContainer(
-                              width: circleSize / 2,
-                              height: circleSize / 2,
-                              alignment: Alignment.center,
-                              child: guess == null || !hueRuler
-                                  ? null
-                                  : SuperText(
-                                      '$guess°',
-                                      style: SuperStyle.sans(
-                                        size: circleSize / 8,
-                                        weight: 600,
-                                        color: SuperColors.darkBackground,
+                            angle: -lastGuess * pi / 180,
+                            child: Row(
+                              children: [
+                                const Spacer(),
+                                Transform.rotate(
+                                  angle: lastGuess * pi / 180,
+                                  child: SuperContainer(
+                                    width: circleSize / 2,
+                                    height: circleSize / 2,
+                                    alignment: Alignment.center,
+                                    child: Fader(
+                                      hueRuler && guess != null,
+                                      duration: duration,
+                                      child: SuperText(
+                                        '$lastGuess°',
+                                        style: SuperStyle.sans(
+                                          size: circleSize / 6,
+                                          weight: 600,
+                                          color: widget.color.computeLuminance() < 0.0722
+                                              ? SuperColors.lightBackground
+                                              : SuperColors.darkBackground,
+                                        ),
                                       ),
                                     ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Fader(
+                                    guess != null,
+                                    duration: duration,
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Transform.translate(
+                                        offset: Offset(circleSize * 0.13, 0),
+                                        child: RotatedBox(
+                                          quarterTurns: 1,
+                                          child: Icon(
+                                            Icons.arrow_drop_down,
+                                            size: circleSize / 6,
+                                            color: widget.color,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Expanded(
-                            child: Fader(
-                              guess != null,
-                              duration: quarterSec,
-                              child:
-                                  Transform.translate(offset: const Offset(1, 0), child: hueLine),
-                            ),
-                          ),
+                          if (hueRuler)
+                            for (int i = 0;
+                                i < 360;
+                                i += switch (widget.numColors) {
+                              3 || 6 || 12 || 24 => 360 ~/ widget.numColors,
+                              _ when Tutorial.mastered() => 15,
+                              _ => 30,
+                            })
+                              _TickMark(i, circleSize),
                         ],
                       ),
                     ),
-                    if (hueRuler)
-                      for (int i = 0; i < 360; i += 30) _TickMark(i, circleSize),
-                  ],
+                  ),
                 ),
-              ),
+                const Spacer(flex: 2),
+                if (widget.scoreKeeper case final ScoreKeeper sk)
+                  AnimatedSize(duration: quarterSec, child: sk.midRoundDisplay),
+                const Spacer(),
+              ],
             ),
-            const Spacer(flex: 2),
-            if (widget.scoreKeeper case final ScoreKeeper sk)
-              AnimatedSize(duration: quarterSec, child: sk.midRoundDisplay),
-            const Spacer(),
-          ],
-        ),
+          );
+        }),
       ),
     );
   }
 }
 
 class _TickMark extends StatelessWidget {
-  const _TickMark(this.i, this.circleSize);
-  final int i;
+  const _TickMark(this.hue, this.circleSize);
+  final int hue;
   final double circleSize;
-
-  bool isPrimary(int hue) => hue % 60 == 0;
 
   @override
   Widget build(BuildContext context) {
+    final (double width, double height) = switch (hue % 60) {
+      0 => (12, 24),
+      30 => (36, 48),
+      _ => (108, 72),
+    };
     return Transform.rotate(
-      angle: i * pi / 180,
+      angle: hue * pi / 180,
       child: Align(
         alignment: Alignment.centerRight,
         child: Transform.translate(
           offset: const Offset(1, 0),
           child: SuperContainer(
-            width: circleSize / (isPrimary(i) ? 16 : 32),
-            height: circleSize / (isPrimary(i) ? 30 : 60),
+            width: circleSize / width,
+            height: circleSize / height,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(100),

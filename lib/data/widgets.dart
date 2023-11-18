@@ -317,18 +317,18 @@ class MenuCheckbox extends StatelessWidget {
 }
 
 class DismissibleDialog extends StatelessWidget {
-  const DismissibleDialog({
-    super.key,
-    required this.title,
-    required this.content,
-    required this.actions,
-    this.actionsAlignment,
-    this.backgroundColor,
-  });
+  const DismissibleDialog(
+      {super.key,
+      required this.title,
+      required this.content,
+      this.actions,
+      this.actionsAlignment,
+      this.backgroundColor,
+      this.surfaceTintColor});
   final Widget title, content;
-  final List<Widget> actions;
+  final List<Widget>? actions;
   final MainAxisAlignment? actionsAlignment;
-  final SuperColor? backgroundColor;
+  final Color? backgroundColor, surfaceTintColor;
 
   @override
   Widget build(BuildContext context) {
@@ -345,6 +345,7 @@ class DismissibleDialog extends StatelessWidget {
           content: content,
           actions: actions,
           actionsAlignment: actionsAlignment,
+          surfaceTintColor: surfaceTintColor,
         ),
       ),
     );
@@ -375,23 +376,21 @@ class WarnButton extends StatelessWidget {
   const WarnButton({this.action, super.key});
   final VoidCallback? action;
 
-  bool get proceed => action != null;
-
   @override
   Widget build(BuildContext context) {
+    final bool proceed = action != null;
+
     return TextButton(
       style: TextButton.styleFrom(
         backgroundColor: inverted ? const Color(0x10000000) : const Color(0x10FFFFFF),
         foregroundColor: inverted ? Colors.black : Colors.white,
+        padding: const EdgeInsets.fromLTRB(15, 13, 15, 15),
       ),
       onPressed: () {
         Navigator.pop(context);
         if (proceed) action!();
       },
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 3, 10, 5) + context.iOSpadding,
-        child: Text(proceed ? 'continue' : 'go back', style: const SuperStyle.sans(size: 16)),
-      ),
+      child: Text(proceed ? 'continue' : 'go back', style: const SuperStyle.sans(size: 16)),
     );
   }
 }
@@ -406,17 +405,17 @@ class GoBack extends StatelessWidget {
       style: TextButton.styleFrom(
         foregroundColor: inverted ? SuperColors.black80 : Colors.white60,
         backgroundColor: inverted ? Colors.white54 : const SuperColor(0x0D0D0D),
+        padding: const EdgeInsets.fromLTRB(18, 13, 18, 14),
       ),
       onPressed: context.menu,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 1, 8, 2) + context.iOSpadding,
-        child: Text(text,
-            style: SuperStyle.sans(
-              weight: inverted ? 300 : 100,
-              width: 96,
-              size: 16,
-              letterSpacing: 0.5,
-            )),
+      child: Text(
+        text,
+        style: SuperStyle.sans(
+          weight: inverted ? 300 : 100,
+          width: 96,
+          size: 16,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
@@ -540,6 +539,7 @@ class ColorLabel extends StatelessWidget {
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: inverted ? Colors.black : Colors.white,
+                padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
               ),
               onPressed: () => ManualColorCode.run(
                 context,
@@ -719,9 +719,9 @@ class Rive extends StatelessWidget {
 
 // ignore: camel_case_types
 class K_glitch extends StatefulWidget {
-  const K_glitch({super.key}) : padded = false;
-  const K_glitch.destroyer({super.key}) : padded = true;
-  final bool padded;
+  const K_glitch({super.key}) : theEnd = false;
+  const K_glitch.destroyer({super.key}) : theEnd = true;
+  final bool theEnd;
 
   @override
   State<K_glitch> createState() => _KGlitchState();
@@ -750,14 +750,15 @@ class _KGlitchState extends State<K_glitch> {
       30 => 2 / 3,
       33 => 0,
       40 => -0.5,
-      41 => 0,
+      42 => -1,
+      43 => 0,
       > 75 && < 125 => -0.5 - .2 * (counter % 2),
       125 => 1,
       _ => null,
     });
 
     if (counter != 150) return;
-    if (!widget.padded) {
+    if (!widget.theEnd) {
       newOpacity(0.02);
     } else if (!kDebugMode) {
       exit(0);
@@ -768,7 +769,7 @@ class _KGlitchState extends State<K_glitch> {
   void initState() {
     super.initState();
     ticker = Ticker(tick)..start();
-    if (widget.padded) Tutorial.worldEnd.complete();
+    if (widget.theEnd) Tutorial.worldEnd.complete();
   }
 
   @override
@@ -779,15 +780,13 @@ class _KGlitchState extends State<K_glitch> {
 
   @override
   Widget build(BuildContext context) {
-    final (sides, bottom) = (context.screenWidth / 8, context.safeHeight / 8);
     return Opacity(
       opacity: opacity,
-      child: SuperContainer(
-        padding: widget.padded
-            ? EdgeInsets.fromLTRB(sides, 0, sides, bottom)
-            : const EdgeInsets.all(15),
+      child: Center(
+          child: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Image.asset('assets/k_$filename.png'),
-      ),
+      )),
     );
   }
 }

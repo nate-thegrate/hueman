@@ -200,8 +200,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
               useMaterial3: true,
               dialogBackgroundColor: SuperColors.lightBackground,
             ),
-            // TODO: every button-less dialog should dismiss by tapping the dialog
-            child: const AlertDialog(
+            child: const DismissibleDialog(
               title: Text(
                 'Tense mode',
                 style: SuperStyle.sans(weight: 600, width: 87.5),
@@ -240,8 +239,8 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     height: 5 / 3,
   );
 
-  Widget get tensionDesc {
-    final double height = min(800, context.safeHeight - 400);
+  Widget tensionDesc(BoxConstraints constraints) {
+    final double height = min(800, constraints.maxHeight - 400);
     return AnimatedContainer(
       duration: expandDuration,
       curve: curve,
@@ -266,7 +265,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     );
   }
 
-  Widget get target => FittedBox(
+  Widget target(BoxConstraints constraints) => FittedBox(
         fit: BoxFit.scaleDown,
         child: SuperContainer(
           margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -289,7 +288,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
               Target('color_code', SuperColor(color.value - SuperColor.opaque).hexCode),
               Target('tension', tension[name]),
               casualMode ? empty : Target('round', scoreKeeper!.round),
-              tensionDesc,
+              tensionDesc(constraints),
             ]),
           ),
         ),
@@ -308,10 +307,10 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
         buttonData[j].controller.reverse();
       };
 
-  Widget get button2by2 => AnimatedContainer(
+  Widget button2by2(BoxConstraints constraints) => AnimatedContainer(
         duration: expandDuration,
         curve: curve,
-        height: showDetails ? 0 : context.calcSize((w, h) => min(w, min(h - 350, 420))),
+        height: showDetails ? 0 : constraints.calcSize((w, h) => min(w, min(h - 250, 420))),
         child: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
           child: Column(
@@ -321,6 +320,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                 Row(mainAxisSize: MainAxisSize.min, children: [
                   for (int j = i; j < i + 2; j++)
                     _TenseButton(
+                      constraints: constraints,
                       targetHue: hue,
                       buttonHue: buttonData[j].hue,
                       selectedHue: selectedHue,
@@ -345,47 +345,48 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
       ),
       child: Scaffold(
         body: SafeArea(
-          child: Stack(
-            children: [
-              Center(
-                child: Column(
-                  children: [
-                    const Spacer(),
-                    const GoBack(),
-                    const Spacer(),
-                    target,
-                    const Spacer(),
-                    button2by2,
-                    const Spacer(flex: 2),
-                    TextButton(
+          child: LayoutBuilder(builder: (context, constraints) {
+            return Stack(
+              children: [
+                Center(
+                  child: Column(
+                    children: [
+                      const Spacer(),
+                      const GoBack(),
+                      const Spacer(),
+                      target(constraints),
+                      const Spacer(),
+                      button2by2(constraints),
+                      const Spacer(flex: 2),
+                      TextButton(
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.black12,
                           foregroundColor: SuperColors.darkBackground,
+                          padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
                         ),
                         onPressed: () => setState(() => showDetails = !showDetails),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 5, 15, 5) + context.iOSpadding,
-                          child: Text(
-                            showDetails ? '[hide details]' : '[show tension details]',
-                            style: const SuperStyle.mono(size: 16),
-                          ),
-                        )),
-                    const FixedSpacer(15),
-                    AnimatedSize(
-                      duration: const Duration(milliseconds: 100),
-                      child: casualMode || showDetails ? flat : scoreKeeper!.midRoundDisplay,
-                    ),
-                    const FixedSpacer(15),
-                  ],
+                        child: Text(
+                          showDetails ? '[hide details]' : '[tension details]',
+                          style: const SuperStyle.mono(size: 12),
+                        ),
+                      ),
+                      const FixedSpacer(15),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 100),
+                        child: casualMode || showDetails ? flat : scoreKeeper!.midRoundDisplay,
+                      ),
+                      const FixedSpacer(15),
+                    ],
+                  ),
                 ),
-              ),
-              if (showReaction)
-                Splendid(
-                  correct: selectedHue == hue,
-                  onTap: tapReaction,
-                ),
-            ],
-          ),
+                if (showReaction)
+                  Splendid(
+                    correct: selectedHue == hue,
+                    onTap: tapReaction,
+                  ),
+              ],
+            );
+          }),
         ),
         backgroundColor: SuperColors.lightBackground,
       ),
@@ -395,6 +396,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
 
 class _TenseButton extends StatelessWidget {
   const _TenseButton({
+    required this.constraints,
     required this.targetHue,
     required this.buttonHue,
     required this.selectedHue,
@@ -404,6 +406,7 @@ class _TenseButton extends StatelessWidget {
     required this.showReaction,
   });
 
+  final BoxConstraints constraints;
   final int targetHue, buttonHue;
   final int? selectedHue;
   final AnimationController controller;
@@ -416,8 +419,8 @@ class _TenseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double shadowSize = 2;
-    final double width = context.calcSize(
-      (w, h) => min((w / 2) - 20, min((h - 350) / 2 - 20, 200)),
+    final double width = constraints.calcSize(
+      (w, h) => min((w / 2) - 20, min((h - 250) / 2 - 20, 200)),
     );
     return GestureDetector(
       onTap: select,

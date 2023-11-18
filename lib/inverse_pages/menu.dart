@@ -405,12 +405,10 @@ class _InverseMenuState extends InverseState<InverseMenu>
         style: TextButton.styleFrom(
           foregroundColor: color,
           backgroundColor: Colors.white,
+          padding: const EdgeInsets.fromLTRB(15, 13, 15, 15),
         ),
         onPressed: () => setState(() => menuPage = MenuPage.settings),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 3) + context.iOSpadding,
-          child: const Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
-        ),
+        child: const Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
       );
       if (Tutorial.master() && !Tutorial.sawInversion()) {
         settingsButton = BrandNew(color: color, child: settingsButton);
@@ -420,12 +418,10 @@ class _InverseMenuState extends InverseState<InverseMenu>
         style: TextButton.styleFrom(
           foregroundColor: color,
           backgroundColor: Colors.white54,
+          padding: const EdgeInsets.fromLTRB(18, 13, 18, 14),
         ),
         onPressed: () => setState(() => menuPage = MenuPage.main),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 1) + context.iOSpadding,
-          child: const Text('back', style: SuperStyle.sans(size: 16, weight: 100)),
-        ),
+        child: const Text('back', style: SuperStyle.sans(size: 16, weight: 100)),
       );
     }
 

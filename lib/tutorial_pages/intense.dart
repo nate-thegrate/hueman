@@ -8,8 +8,8 @@ import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 
-extension _BallSpacing on BuildContext {
-  double get ballSpacing => (safeHeight - 150) / 30;
+extension _BallSpacing on BoxConstraints {
+  double get ballSpacing => (maxHeight - 150) / 30;
 }
 
 class IntenseTutorial extends StatefulWidget {
@@ -79,113 +79,124 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
 
     return Scaffold(
       body: SafeArea(
-        child: FadeIn(
-          child: Center(
-            child: Column(
-              children: [
-                const Spacer(flex: 4),
-                Stack(
-                  children: [
-                    if (doTheWave)
-                      const _ColorWave()
-                    else if (tellTheTruth)
-                      for (int startHue = 29; startHue >= 0; startHue -= 1)
-                        _ColorRow(startHue, showAllRows ? context.ballSpacing : 0)
-                    else
-                      for (int startHue = 20; startHue >= 0; startHue -= 10)
-                        _ColorRow(startHue, showAllRows ? context.screenWidth / 120 : 0)
-                  ],
-                ),
-                const Spacer(flex: 2),
-                SexyBox(
-                  child: tellTheTruth
-                      ? empty
-                      : Fader(
-                          textVisible >= 1,
-                          child: const SuperText(
-                            'To identify and keep track of twelve different hues,',
-                          ),
-                        ),
-                ),
-                Fader(
-                  textVisible >= 2,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: switch (tellTheTruth) {
-                      _ when makingTheJump => Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            SuperRichText(pad: false, [
-                              const TextSpan(text: 'this is the jump from '),
-                              TextSpan(
-                                text: 'sharp',
-                                style: SuperStyle.sans(
-                                  color: color,
-                                  weight: 100,
-                                  width: 87.5,
-                                  letterSpacing: -0.2,
-                                ),
-                              ),
-                            ]),
-                            SlideItIn(
-                              madeTheJump,
-                              duration: const Duration(milliseconds: 750),
-                              direction: AxisDirection.right,
-                              child: jumpTo,
-                            )
-                          ],
-                        ),
-                      true => const SuperText('Sorry, did I say 36?'),
-                      false => SuperRichText([
-                          const TextSpan(text: 'you have to be '),
-                          TextSpan(
-                            text: 'sharp',
-                            style: SuperStyle.sans(
-                              color: color,
-                              weight: 100,
-                              width: 87.5,
-                              letterSpacing: -0.2,
+        child: LayoutBuilder(builder: (context, constraints) {
+          return FadeIn(
+            child: Center(
+              child: Column(
+                children: [
+                  const Spacer(flex: 4),
+                  Stack(
+                    children: [
+                      if (doTheWave)
+                        _ColorWave(constraints)
+                      else if (tellTheTruth)
+                        for (int startHue = 29; startHue >= 0; startHue -= 1)
+                          _ColorRow(
+                            startHue,
+                            showAllRows ? constraints.ballSpacing : 0,
+                            constraints: constraints,
+                          )
+                      else
+                        for (int startHue = 20; startHue >= 0; startHue -= 10)
+                          _ColorRow(
+                            startHue,
+                            showAllRows ? constraints.maxWidth / 120 : 0,
+                            constraints: constraints,
+                          )
+                    ],
+                  ),
+                  const Spacer(flex: 2),
+                  SexyBox(
+                    child: tellTheTruth
+                        ? empty
+                        : Fader(
+                            textVisible >= 1,
+                            child: const SuperText(
+                              'To identify and keep track of twelve different hues,',
                             ),
                           ),
-                          const TextSpan(text: '.'),
-                        ]),
-                    },
                   ),
-                ),
-                const Spacer(),
-                Fader(textVisible >= 3,
-                    child: SuperText(
-                      switch (makingTheJump) {
-                        _ when !tellTheTruth => "But now it's time to try 36.",
-                        true => "Let's see if you got what it takes.",
-                        false => 'I meant 360.',
+                  Fader(
+                    textVisible >= 2,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: switch (tellTheTruth) {
+                        _ when makingTheJump => Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              SuperRichText(pad: false, [
+                                const TextSpan(text: 'this is the jump from '),
+                                TextSpan(
+                                  text: 'sharp',
+                                  style: SuperStyle.sans(
+                                    color: color,
+                                    weight: 100,
+                                    width: 87.5,
+                                    letterSpacing: -0.2,
+                                  ),
+                                ),
+                              ]),
+                              SlideItIn(
+                                madeTheJump,
+                                duration: const Duration(milliseconds: 750),
+                                direction: AxisDirection.right,
+                                child: jumpTo,
+                              )
+                            ],
+                          ),
+                        true => const SuperText('Sorry, did I say 36?'),
+                        false => SuperRichText([
+                            const TextSpan(text: 'you have to be '),
+                            TextSpan(
+                              text: 'sharp',
+                              style: SuperStyle.sans(
+                                color: color,
+                                weight: 100,
+                                width: 87.5,
+                                letterSpacing: -0.2,
+                              ),
+                            ),
+                            const TextSpan(text: '.'),
+                          ]),
                       },
-                    )),
-                const Spacer(flex: 3),
-                SexyBox(
-                  child: Fader(
-                    textVisible >= 4,
-                    child: tellTheTruth ? empty : ContinueButton(onPressed: ready),
+                    ),
                   ),
-                ),
-                const Spacer(),
-              ],
+                  const Spacer(),
+                  Fader(textVisible >= 3,
+                      child: SuperText(
+                        switch (makingTheJump) {
+                          _ when !tellTheTruth => "But now it's time to try 36.",
+                          true => "Let's see if you got what it takes.",
+                          false => 'I meant 360.',
+                        },
+                      )),
+                  const Spacer(flex: 3),
+                  SexyBox(
+                    child: Fader(
+                      textVisible >= 4,
+                      child: tellTheTruth ? empty : ContinueButton(onPressed: ready),
+                    ),
+                  ),
+                  const Spacer(),
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        }),
       ),
     );
   }
 }
 
 class _ColorDot extends StatelessWidget {
-  const _ColorDot(this.hue);
+  const _ColorDot(this.hue, {required this.constraints});
+  final BoxConstraints constraints;
   final int hue;
 
   @override
   Widget build(BuildContext context) {
-    final width = context.ballSpacing * 3 / 4;
+    final width = constraints.ballSpacing * 3 / 4;
     return Center(
       child: SuperContainer(
         width: width,
@@ -200,7 +211,8 @@ class _ColorDot extends StatelessWidget {
 }
 
 class _ColorWave extends StatefulWidget {
-  const _ColorWave();
+  const _ColorWave(this.constraints);
+  final BoxConstraints constraints;
 
   @override
   State<_ColorWave> createState() => _ColorWaveState();
@@ -256,7 +268,7 @@ class _ColorWaveState extends SuperState<_ColorWave> {
             offset: Offset(0, dy),
             duration: duration,
             curve: curve,
-            child: _ColorDot(hue),
+            child: _ColorDot(hue, constraints: widget.constraints),
           )
       ],
     );
@@ -271,7 +283,8 @@ class _ColorDotData {
 }
 
 class _ColorRow extends StatelessWidget {
-  const _ColorRow(this.startHue, this.topPadding);
+  const _ColorRow(this.startHue, this.topPadding, {required this.constraints});
+  final BoxConstraints constraints;
   final int startHue;
   final double topPadding;
 
@@ -283,7 +296,13 @@ class _ColorRow extends StatelessWidget {
       padding: EdgeInsets.only(top: topPadding * startHue),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [for (int hue = startHue; hue < 360; hue += 30) _ColorDot(hue)],
+        children: [
+          for (int hue = startHue; hue < 360; hue += 30)
+            _ColorDot(
+              hue,
+              constraints: constraints,
+            )
+        ],
       ),
     );
   }

@@ -138,33 +138,39 @@ class _Page2State extends SuperState<_Page2> {
 
   @override
   Widget build(BuildContext context) {
-    final imgSize = context.calcSize((w, h) => min(w * .8, (h - 120) * .6));
-    return Column(
-      children: [
-        const Spacer(flex: 2),
-        const SuperRichText([
-          ColorTextSpan(SuperColors.cyan, fontWeight: 900),
-          TextSpan(text: ', '),
-          ColorTextSpan(SuperColors.magenta, fontWeight: 900),
-          TextSpan(text: ', and '),
-          ColorTextSpan(SuperColors.yellow, fontWeight: 900),
-          TextSpan(text: '.'),
-        ]),
-        const Spacer(),
-        Fader(
-          showPrinter,
-          child: const SuperText("That's what printers use!"),
-        ),
-        const Spacer(),
-        Fader(
-          showPrinter,
-          child: SizedBox(width: imgSize, child: Image.asset('assets/ink_cartridge.jpg')),
-        ),
-        const Spacer(flex: 2),
-        Fader(showButton, child: ContinueButton(onPressed: widget.nextPage)),
-        const Spacer(),
-      ],
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      final imgSize = constraints.calcSize((w, h) => min(w * .8, (h - 20) * .6));
+      return Column(
+        children: [
+          const Spacer(flex: 2),
+          const SuperRichText([
+            ColorTextSpan(SuperColors.cyan, fontWeight: 900),
+            TextSpan(text: ', '),
+            ColorTextSpan(SuperColors.magenta, fontWeight: 900),
+            TextSpan(text: ', and '),
+            ColorTextSpan(SuperColors.yellow, fontWeight: 900),
+            TextSpan(text: '.'),
+          ]),
+          const Spacer(),
+          Fader(
+            showPrinter,
+            child: const SuperText("That's what printers use!"),
+          ),
+          const Spacer(),
+          Fader(
+            showPrinter,
+            child: SizedBox(
+              width: imgSize,
+              height: imgSize * 1.2,
+              child: Image.asset('assets/ink_cartridge.jpg'),
+            ),
+          ),
+          const Spacer(flex: 2),
+          Fader(showButton, child: ContinueButton(onPressed: widget.nextPage)),
+          const Spacer(),
+        ],
+      );
+    });
   }
 }
 
@@ -489,7 +495,8 @@ class _SplashCMYState extends State<_SplashCMY> {
 
   @override
   Widget build(BuildContext context) {
-    final circleSize = context.calcSize((w, h) => max(w, h * .75) / 10);
+    final size = context.screenSize;
+    final circleSize = max(size.width, size.height * .75) / 10;
     return Expanded(
       child: Align(
         alignment: widget.color == SuperColors.cyan
@@ -568,12 +575,11 @@ class _Page5State extends SuperState<_Page5> {
             ),
           ),
         ),
-        Align(
-          alignment: const Alignment(0, -7 / 8),
-          child: Fader(
-            showText,
-            child: Padding(
-              padding: Platform.isIOS ? const EdgeInsets.only(top: 20) : EdgeInsets.zero,
+        SafeArea(
+          child: Align(
+            alignment: const Alignment(0, -7 / 8),
+            child: Fader(
+              showText,
               child: const SuperText("There isn't just one set of primary colors:"),
             ),
           ),
@@ -605,8 +611,9 @@ class _Page5State extends SuperState<_Page5> {
                   Fader(
                     showButton,
                     child: Theme(
-                        data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
-                        child: ContinueButton(onPressed: widget.nextPage)),
+                      data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
+                      child: ContinueButton(onPressed: widget.nextPage),
+                    ),
                   ),
                   const Spacer(),
                 ],
@@ -620,9 +627,10 @@ class _Page5State extends SuperState<_Page5> {
 }
 
 class _ColorBubble extends StatefulWidget {
-  const _ColorBubble(this.counter, {required this.color});
+  const _ColorBubble(this.counter, this.size, {required this.color});
   final int counter;
   final SuperColor color;
+  final double size;
 
   @override
   State<_ColorBubble> createState() => _ColorBubbleState();
@@ -641,16 +649,15 @@ class _ColorBubbleState extends State<_ColorBubble> {
 
   @override
   Widget build(BuildContext context) {
-    final bubbleSize = context.calcSize((w, h) => min(w, h / 2 - 50) / 4);
     final counter = widget.counter;
     final iOS = Platform.isIOS;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: bubbleSize / 2.5),
-      child: Transform.translate(
+    return LayoutBuilder(builder: (context, constraints) {
+      final bubbleSize = widget.size;
+      return Transform.translate(
         offset: Offset(
           offset.dx * bubbleSize / 3,
-          (iOS ? 0 : sin(counter / 25) * 6) + offset.dy * bubbleSize / 3,
+          (iOS ? 0 : sin(counter / 25) * 6) + offset.dy * bubbleSize / 3 + bubbleSize / 2,
         ),
         child: Transform.scale(
           scaleY: iOS ? 1 : 1 + sin(counter / 25 + pi / 6) * .025,
@@ -669,8 +676,8 @@ class _ColorBubbleState extends State<_ColorBubble> {
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 
@@ -699,12 +706,18 @@ class _ColorBubbles extends StatelessWidget {
             style: SuperStyle.sans(size: 24, color: subtract ? Colors.black : null),
           ),
         ),
-        Stack(
-          children: [
-            _ColorBubble(counter, color: colors[0]),
-            _ColorBubble(counter - 10, color: colors[1]),
-            _ColorBubble(counter - 16, color: colors[2]),
-          ],
+        SizedBox(
+          height: context.screenHeight / 2 - 300,
+          child: LayoutBuilder(builder: (context, constraints) {
+            final size = constraints.maxHeight - 110;
+            return Stack(
+              children: [
+                _ColorBubble(counter, size, color: colors[0]),
+                _ColorBubble(counter - 10, size, color: colors[1]),
+                _ColorBubble(counter - 16, size, color: colors[2]),
+              ],
+            );
+          }),
         ),
         SexyBox(
           child: showArrows ? FadeIn(child: _ColorArrows(colors[cycle], subtract)) : empty,
@@ -887,7 +900,7 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Spacer(flex: 6),
+        const Spacer(flex: 5),
         const SuperText('But this knowledge gap ends now.'),
         const Spacer(),
         SuperRichText([
@@ -904,7 +917,7 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
           ),
           const TextSpan(text: '\nof the primary color hues.'),
         ]),
-        const Spacer(flex: 4),
+        const Spacer(flex: 3),
         Fader(
           showButton,
           child: OutlinedButton(

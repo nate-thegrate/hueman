@@ -34,36 +34,31 @@ class _RGBSlider extends StatelessWidget {
       'blue' => SuperColor.rgb(0, 0, value),
       _ => throw Error(),
     };
-    final bool horizontal = context.squished;
 
-    return Flex(
-      direction: horizontal ? Axis.horizontal : Axis.vertical,
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        RotatedBox(
-          quarterTurns: horizontal ? 0 : 3,
-          child: SizedBox(
-            width: min(384, horizontal ? context.screenWidth - 65 : double.infinity),
-            child: SliderTheme(
-              data: const SliderThemeData(
-                trackHeight: 15,
-                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
-              ),
-              child: Slider(
-                thumbColor: color,
-                activeColor: color.withAlpha(0x80),
-                inactiveColor: Colors.white24,
-                max: 255,
-                value: value.toDouble(),
-                onChanged: onChanged,
-              ),
+        SizedBox(
+          width: min(384, context.screenWidth - 65),
+          child: SliderTheme(
+            data: const SliderThemeData(
+              trackHeight: 15,
+              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
+            ),
+            child: Slider(
+              thumbColor: color,
+              activeColor: color.withAlpha(0x80),
+              inactiveColor: Colors.white24,
+              max: 255,
+              value: value.toDouble(),
+              onChanged: onChanged,
             ),
           ),
         ),
         SuperContainer(
           width: 50,
           margin: const EdgeInsets.only(right: 15),
-          alignment: horizontal ? Alignment.centerRight : Alignment.center,
+          alignment: Alignment.centerRight,
           child: Text(
             value.hexByte,
             style: const SuperStyle.mono(size: 18, weight: 500),
@@ -150,15 +145,16 @@ enum _ColorPicker {
 }
 
 class _ColorSelection extends StatelessWidget {
-  const _ColorSelection({required this.updateColor});
+  const _ColorSelection({required this.constraints, required this.updateColor});
+  final BoxConstraints constraints;
   final void Function(Color rgb, HSVColor hsv) updateColor;
 
   @override
   Widget build(BuildContext context) {
     return SuperContainer(
       decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
-      padding: const EdgeInsets.symmetric(vertical: 50),
-      constraints: BoxConstraints.loose(Size.fromHeight(context.safeHeight - 400)),
+      padding: const EdgeInsets.symmetric(vertical: 25),
+      constraints: BoxConstraints.loose(Size.fromHeight(constraints.maxHeight - 300)),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -223,6 +219,11 @@ void updateColor(SuperColor color) {
   _r = color.red;
   _g = color.green;
   _b = color.blue;
+
+  final hsv = HSVColor.fromColor(color);
+  _h = hsv.hue;
+  _s = hsv.saturation;
+  _v = hsv.value;
 }
 
 enum _HSV {
@@ -264,157 +265,160 @@ class _SandboxState extends State<Sandbox> {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = context.screenSize;
-    final horizontal = context.squished;
-    final double width = min(size.width - 50, 500);
-    final double height = context.calcSize((w, h) => min(h - (horizontal ? 600 : 820), 500));
-    final double colorBarHeight = context.safeHeight < 900 ? 0 : 100;
-    final double planeSize = context.calcSize((w, h) => min(w - 50, h - 450 - colorBarHeight));
-    void touchRecognition(details) {
-      final Offset offset = details.localPosition;
-      double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);
-      setState(() => _s = val(offset.dx));
-      setState(() => _v = 1 - val(offset.dy));
-    }
+    return Scaffold(
+      body: SafeArea(
+        child: LayoutBuilder(builder: (context, constraints) {
+          final horizontal = constraints.maxHeight < 1000;
+          final double width = min(constraints.maxWidth - 50, 500);
+          final double height =
+              constraints.calcSize((w, h) => min(h - (horizontal ? 420 : 720), 500));
+          final double colorBarHeight = constraints.maxHeight < 800 ? 0 : 100;
+          final double planeSize =
+              constraints.calcSize((w, h) => min(w - 50, h - 350 - colorBarHeight));
+          void touchRecognition(details) {
+            final Offset offset = details.localPosition;
+            double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);
+            setState(() => _s = val(offset.dx));
+            setState(() => _v = 1 - val(offset.dy));
+          }
 
-    final bool isK = _color.colorCode == 0x8080FF;
+          final bool isK = _color.colorCode == 0x8080FF;
 
-    final colorPicker = switch (_colorPicker) {
-      _ColorPicker.rgb => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SuperContainer(
-              width: width,
-              height: height,
-              color: _color,
-              alignment: Alignment.center,
-              child: isK ? const K_glitch() : null,
-            ),
-            const FixedSpacer(30),
-            Flex(
-              direction: horizontal ? Axis.vertical : Axis.horizontal,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _RGBSlider('red', _r, (value) => setState(() => _r = value.round())),
-                _RGBSlider('green', _g, (value) => setState(() => _g = value.round())),
-                _RGBSlider('blue', _b, (value) => setState(() => _b = value.round())),
-              ],
-            ),
-          ],
-        ),
-      _ColorPicker.hsv => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: planeSize,
-              height: planeSize,
-              child: Stack(
+          final colorPicker = switch (_colorPicker) {
+            _ColorPicker.rgb => Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
+                  SuperContainer(
+                    width: width,
+                    height: height,
+                    color: _color,
+                    alignment: Alignment.center,
+                    child: isK ? const K_glitch() : null,
+                  ),
+                  const FixedSpacer(30),
+                  Flex(
+                    direction: horizontal ? Axis.vertical : Axis.horizontal,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _RGBSlider('red', _r, (value) => setState(() => _r = value.round())),
+                      _RGBSlider('green', _g, (value) => setState(() => _g = value.round())),
+                      _RGBSlider('blue', _b, (value) => setState(() => _b = value.round())),
+                    ],
+                  ),
+                ],
+              ),
+            _ColorPicker.hsv => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: planeSize,
+                    height: planeSize,
                     child: Stack(
                       children: [
-                        SuperContainer(
-                          margin: const EdgeInsets.all(0.5),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [Colors.white, SuperColor.hue(_h)],
-                            ),
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Stack(
+                            children: [
+                              SuperContainer(
+                                margin: const EdgeInsets.all(0.5),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [Colors.white, SuperColor.hue(_h)],
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onPanStart: touchRecognition,
+                                onPanUpdate: touchRecognition,
+                                child: const SuperContainer(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [Colors.transparent, Colors.black],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        GestureDetector(
-                          onPanStart: touchRecognition,
-                          onPanUpdate: touchRecognition,
-                          child: const SuperContainer(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [Colors.transparent, Colors.black],
-                              ),
-                            ),
+                        SuperContainer(
+                          margin: const EdgeInsets.fromLTRB(1, 0, 0, 1),
+                          alignment: Alignment(2 * _s - 1, 1 - 2 * _v),
+                          child: Icon(
+                            Icons.add,
+                            color: contrastWith(_color),
+                            size: 40,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SuperContainer(
-                    margin: const EdgeInsets.fromLTRB(1, 0, 0, 1),
-                    alignment: Alignment(2 * _s - 1, 1 - 2 * _v),
-                    child: Icon(
-                      Icons.add,
-                      color: contrastWith(_color),
-                      size: 40,
+                  _HSVSlider(_HSV.hue, (value) => setState(() => _h = value)),
+                  _HSVSlider(_HSV.saturation, (value) => setState(() => _s = value)),
+                  _HSVSlider(_HSV.value, (value) => setState(() => _v = value)),
+                  if (colorBarHeight > 0)
+                    SuperContainer(width: constraints.maxWidth, height: 100, color: _color),
+                ],
+              ),
+            _ColorPicker.select => _ColorSelection(
+                constraints: constraints,
+                updateColor: (rgb, hsv) => setState(() {
+                  _r = rgb.red;
+                  _g = rgb.green;
+                  _b = rgb.blue;
+
+                  _h = hsv.hue;
+                  _s = hsv.saturation;
+                  _v = hsv.value;
+                }),
+              ),
+          };
+          return Center(
+            child: Column(
+              children: [
+                const Spacer(),
+                backButton,
+                const Spacer(),
+                Text(_colorPicker.desc, style: const SuperStyle.sans(size: 24)),
+                const Spacer(),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.easeInOutCubic,
+                  child: colorPicker,
+                ),
+                const Spacer(flex: 2),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ColorLabel('hue', _color.hue.round().toString()),
+                    ColorLabel(
+                      'color name',
+                      _color.rounded.name,
+                      style: SuperStyle.sans(color: _color, size: 20, weight: 900, shadows: [
+                        Shadow(
+                          color: contrastWith(_color, threshold: 0.01).withAlpha(64),
+                          blurRadius: 3,
+                        )
+                      ]),
                     ),
-                  ),
-                ],
-              ),
+                    ColorLabel.colorCode(
+                      'color code',
+                      _color.hexCode,
+                      (color) => setState(() => updateColor(color)),
+                    ),
+                  ],
+                ),
+                const Spacer(flex: 2),
+              ],
             ),
-            _HSVSlider(_HSV.hue, (value) => setState(() => _h = value)),
-            _HSVSlider(_HSV.saturation, (value) => setState(() => _s = value)),
-            _HSVSlider(_HSV.value, (value) => setState(() => _v = value)),
-            const FixedSpacer(25),
-            if (colorBarHeight > 0) SuperContainer(width: size.width, height: 100, color: _color),
-          ],
-        ),
-      _ColorPicker.select => _ColorSelection(
-          updateColor: (rgb, hsv) => setState(() {
-            _r = rgb.red;
-            _g = rgb.green;
-            _b = rgb.blue;
-
-            _h = hsv.hue;
-            _s = hsv.saturation;
-            _v = hsv.value;
-          }),
-        ),
-    };
-
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            children: [
-              const Spacer(),
-              backButton,
-              const Spacer(),
-              Text(_colorPicker.desc, style: const SuperStyle.sans(size: 24)),
-              const Spacer(),
-              AnimatedSize(
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.easeInOutCubic,
-                child: colorPicker,
-              ),
-              const Spacer(flex: 2),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ColorLabel('hue', _color.hue.round().toString()),
-                  ColorLabel(
-                    'color name',
-                    _color.rounded.name,
-                    style: SuperStyle.sans(color: _color, size: 20, weight: 900, shadows: [
-                      Shadow(
-                        color: contrastWith(_color, threshold: 0.01).withAlpha(64),
-                        blurRadius: 3,
-                      )
-                    ]),
-                  ),
-                  ColorLabel.colorCode(
-                    'color code',
-                    _color.hexCode,
-                    (color) => setState(() => updateColor(color)),
-                  ),
-                ],
-              ),
-              const Spacer(flex: 2),
-            ],
-          ),
-        ),
+          );
+        }),
       ),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0,

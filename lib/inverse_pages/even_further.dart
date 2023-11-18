@@ -136,27 +136,29 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
         child: Scaffold(
           backgroundColor: Colors.white,
           body: SafeArea(
-            child: Center(
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                children: [
-                  const Balls(),
-                  ConstrainedBox(
-                    constraints: BoxConstraints.loose(const Size.fromWidth(550)),
-                    child: Stack(children: _buttons),
-                  ),
-                  if (selectedTopic case final int topic)
-                    FadeIn(
-                      duration: quarterSec,
-                      curve: Curves.easeInExpo,
-                      child: SizedBox(
-                        height: context.safeHeight - 190,
-                        child: topics[topic].details,
-                      ),
-                    )
-                ],
-              ),
-            ),
+            child: LayoutBuilder(builder: (context, constraints) {
+              return Center(
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    const Balls(),
+                    ConstrainedBox(
+                      constraints: BoxConstraints.loose(const Size.fromWidth(550)),
+                      child: Stack(children: _buttons),
+                    ),
+                    if (selectedTopic case final int topic)
+                      FadeIn(
+                        duration: quarterSec,
+                        curve: Curves.easeInExpo,
+                        child: SizedBox(
+                          height: constraints.maxHeight - 190,
+                          child: topics[topic].details,
+                        ),
+                      )
+                  ],
+                ),
+              );
+            }),
           ),
           floatingActionButton: selectedTopic == null
               ? const Padding(
@@ -295,15 +297,11 @@ const topics = [
                         "And it's open-source, so you never have to pay for it!\n\n",
                   ),
                   TextSpan(
-                    text: 'For those who want to focus on making games, '
-                        "you can look up Flutter's Flame engine, "
-                        'or if you need something that can handle 3D graphics, '
-                        'then ditch Flutter completely and check out Bevy :)\n\n',
-                  ),
-                  TextSpan(
                     text: 'I animated this game using Rive '
                         "(plus Flutter's built-in animated widgets). "
-                        'Rive is really fun to use, and it works with Bevy too!\n\n',
+                        'If you want to focus on making games, '
+                        'Rive works with lots of great open-source options, including '
+                        "Defold, Bevy, and Flutter's Flame engine.\n\n",
                   ),
                   TextSpan(
                     text: "I'm excited to see all the cool stuff people make in the future "
@@ -901,6 +899,7 @@ class _GameDevButtons extends StatelessWidget {
     const Map<String, String> links = {
       'hueman': 'https://github.com/nate-thegrate/hueman',
       'Flutter': 'https://flutter.dev/',
+      'Defold': 'https://defold.com/',
       'Bevy': 'https://bevyengine.org/',
       'Rive': 'https://rive.app/',
     };
@@ -914,20 +913,23 @@ class _GameDevButtons extends StatelessWidget {
               style: TextButton.styleFrom(
                 backgroundColor: Colors.black,
                 foregroundColor: const SuperColor(0x20FFF0),
+                padding: const EdgeInsets.fromLTRB(10, 14, 10, 15),
               ),
               onPressed: () => gotoWebsite(url),
-              child: Padding(
-                padding: const EdgeInsets.all(5) + context.iOSpadding,
-                child: name == 'hueman'
-                    ? const Text.rich(TextSpan(children: [
-                        TextSpan(
-                          text: 'HUE',
-                          style: SuperStyle.sans(size: 10, weight: 800, extraBold: true),
+              child: name == 'hueman'
+                  ? const Text.rich(TextSpan(children: [
+                      TextSpan(
+                        text: 'HUE',
+                        style: SuperStyle.sans(
+                          size: 10,
+                          weight: 800,
+                          extraBold: true,
+                          height: 2,
                         ),
-                        TextSpan(text: 'man', style: SuperStyle.sans(size: 14)),
-                      ]))
-                    : Text(name, style: const SuperStyle.sans()),
-              ),
+                      ),
+                      TextSpan(text: 'man', style: SuperStyle.sans(size: 14)),
+                    ]))
+                  : Text(name, style: const SuperStyle.sans()),
             )
         ],
       ),
