@@ -565,42 +565,40 @@ class _InverseSandboxState extends State<InverseSandbox> {
     return Theme(
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
-        body: SafeArea(
-          child: LayoutBuilder(builder: (context, constraints) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Spacer(),
-                  const GoBack(),
-                  const Spacer(),
-                  Text(_colorPicker.desc, style: titleStyle),
-                  const Spacer(),
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 100),
-                    curve: Curves.easeInOutCubic,
-                    child: switch (_colorPicker) {
-                      _ColorPicker.cmyk => _CMYKScreen(updateCMYKval, constraints),
-                      _ColorPicker.hsl => _HSLScreen(onChangedHSL, constraints),
-                      _ColorPicker.select => _ColorWheel(updateFromWheel, constraints),
-                    },
-                  ),
-                  const Spacer(flex: 2),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ColorLabel('hue', hue),
-                      ColorLabel('color name', _color.rounded.name, style: colorNameStyle),
-                      ColorLabel.colorCode('color code', _color.hexCode, updateColorCode),
-                    ],
-                  ),
-                  const Spacer(flex: 2),
-                ],
-              ),
-            );
-          }),
-        ),
+        body: SafeLayout((context, constraints) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Spacer(),
+                const GoBack(),
+                const Spacer(),
+                Text(_colorPicker.desc, style: titleStyle),
+                const Spacer(),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.easeInOutCubic,
+                  child: switch (_colorPicker) {
+                    _ColorPicker.cmyk => _CMYKScreen(updateCMYKval, constraints),
+                    _ColorPicker.hsl => _HSLScreen(onChangedHSL, constraints),
+                    _ColorPicker.select => _ColorWheel(updateFromWheel, constraints),
+                  },
+                ),
+                const Spacer(flex: 2),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ColorLabel('hue', hue),
+                    ColorLabel('color name', _color.rounded.name, style: colorNameStyle),
+                    ColorLabel.colorCode('color code', _color.hexCode, updateColorCode),
+                  ],
+                ),
+                const Spacer(flex: 2),
+              ],
+            ),
+          );
+        }),
         bottomNavigationBar: BottomNavigationBar(
           elevation: 0,
           type: BottomNavigationBarType.shifting,

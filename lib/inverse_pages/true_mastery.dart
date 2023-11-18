@@ -122,7 +122,8 @@ class _TrueMasteryState extends State<TrueMastery> {
   @override
   Widget build(BuildContext context) {
     // ignore: avoid_print
-    print(color);
+    if (casualMode) print(color);
+
     return Theme(
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
@@ -179,22 +180,27 @@ class _TrueMasteryState extends State<TrueMastery> {
                               'color code:',
                               style: SuperStyle.mono(size: 20),
                             ),
-                            const FixedSpacer.horizontal(10),
-                            TextButton(
-                              style: TextButton.styleFrom(foregroundColor: Colors.black),
-                              onPressed: () {
-                                if (casualMode) setState(() => giveHint = true);
-                                ManualColorCode.run(
-                                  context,
-                                  color: color,
-                                  updateColor: updateUserColor,
-                                ).then((_) {
-                                  if (casualMode) setState(() => giveHint = false);
-                                });
-                              },
-                              child: Text(
-                                userColorCode,
-                                style: const SuperStyle.mono(size: 20),
+                            SizedBox(
+                              height: 33,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.black,
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                ),
+                                onPressed: () {
+                                  if (casualMode) setState(() => giveHint = true);
+                                  ManualColorCode.run(
+                                    context,
+                                    color: color,
+                                    updateColor: updateUserColor,
+                                  ).then((_) {
+                                    if (casualMode) setState(() => giveHint = false);
+                                  });
+                                },
+                                child: Text(
+                                  userColorCode,
+                                  style: const SuperStyle.mono(size: 20),
+                                ),
                               ),
                             ),
                           ],
@@ -216,7 +222,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                             foregroundColor: contrastWith(color),
                           ),
                           child: const Padding(
-                            padding: EdgeInsets.only(bottom: 4),
+                            padding: EdgeInsets.only(bottom: 1),
                             child: Text('submit', style: SuperStyle.sans(size: 24)),
                           ),
                         ),

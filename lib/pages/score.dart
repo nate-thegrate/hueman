@@ -35,14 +35,17 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          Widget circleLoveButton(bool lovinIt) => TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: inverted ? const Color(0x10000000) : const Color(0x10FFFFFF),
-                  foregroundColor: inverted ? Colors.black : Colors.white,
-                  padding: const EdgeInsets.fromLTRB(15, 13, 15, 15),
+          Widget circleLoveButton(bool lovinIt) => SizedBox(
+                height: 33,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: const Color(0x10FFFFFF),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                  ),
+                  onPressed: () => Navigator.pop(context, lovinIt),
+                  child: Text(lovinIt ? 'yes' : 'no', style: const SuperStyle.sans(size: 16)),
                 ),
-                onPressed: () => Navigator.pop(context, lovinIt),
-                child: Text(lovinIt ? 'yes' : 'no', style: const SuperStyle.sans(size: 16)),
               );
           return AlertDialog(
             title: const Text('How was that?', style: SuperStyle.sans()),

@@ -618,22 +618,25 @@ class _Page3State extends SuperState<_Page3> {
                         style: SuperStyle.sans(size: 20, weight: 100),
                         softWrap: false,
                       ),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: SuperColors.azure,
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                        ),
-                        onPressed: () => gotoWebsite(
-                          'https://en.wikipedia.org/wiki/Tertiary_color#RGB_or_CMYK_primary,_secondary,_and_tertiary_colors',
-                        ),
-                        child: const Text(
-                          'Wikipedia',
-                          style: SuperStyle.sans(
-                            size: 20,
-                            weight: 100,
-                            width: 87.5,
-                            letterSpacing: 1 / 3,
-                            extraBold: true,
+                      SizedBox(
+                        height: 33,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            foregroundColor: SuperColors.azure,
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                          ),
+                          onPressed: () => gotoWebsite(
+                            'https://en.wikipedia.org/wiki/Tertiary_color#RGB_or_CMYK_primary,_secondary,_and_tertiary_colors',
+                          ),
+                          child: const Text(
+                            'Wikipedia',
+                            style: SuperStyle.sans(
+                              size: 20,
+                              weight: 100,
+                              width: 87.5,
+                              letterSpacing: 1 / 3,
+                              extraBold: true,
+                            ),
                           ),
                         ),
                       )

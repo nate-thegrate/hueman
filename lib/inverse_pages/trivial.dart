@@ -387,58 +387,56 @@ class _TriviaModeState extends State<TriviaMode> {
     return Theme(
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
-        body: SafeArea(
-          child: LayoutBuilder(builder: (context, constraints) {
-            final Widget questionText = SuperContainer(
-              height: 200,
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              alignment: Alignment.center,
-              child: Text(
-                triviaQuestions.first.question,
-                textAlign: TextAlign.center,
-                style: SuperStyle.sans(
-                  color: Colors.black,
-                  size: constraints.calcSize((w, h) => min(w, h / 2) / 20),
-                  weight: 600,
+        body: SafeLayout((context, constraints) {
+          final Widget questionText = SuperContainer(
+            height: 200,
+            padding: const EdgeInsets.symmetric(horizontal: 50),
+            alignment: Alignment.center,
+            child: Text(
+              triviaQuestions.first.question,
+              textAlign: TextAlign.center,
+              style: SuperStyle.sans(
+                color: Colors.black,
+                size: constraints.calcSize((w, h) => min(w, h / 2) / 20),
+                weight: 600,
+              ),
+            ),
+          );
+
+          final Widget multipleColorsReminder = SizedBox(
+            height: 30,
+            child: switch (selected.isEmpty) {
+              _ when correctAnswers.length == 1 => empty,
+              true => Text(
+                  'Select ${correctAnswers.length} colors.',
+                  style: const SuperStyle.sans(size: 20),
                 ),
-              ),
-            );
+              false => Text(
+                  'Select ${correctAnswers.length - selected.length} more.',
+                  style: const SuperStyle.sans(size: 20),
+                ),
+            },
+          );
 
-            final Widget multipleColorsReminder = SizedBox(
-              height: 30,
-              child: switch (selected.isEmpty) {
-                _ when correctAnswers.length == 1 => empty,
-                true => Text(
-                    'Select ${correctAnswers.length} colors.',
-                    style: const SuperStyle.sans(size: 20),
-                  ),
-                false => Text(
-                    'Select ${correctAnswers.length - selected.length} more.',
-                    style: const SuperStyle.sans(size: 20),
-                  ),
-              },
-            );
-
-            final Widget score = Text(
-              (casualMode || totalAnswers == 0)
-                  ? ''
-                  : 'Score: $totalCorrect / $totalAnswers correct',
-              style: const SuperStyle.sans(size: 18),
-            );
-            return Center(
-              child: Column(
-                children: [
-                  const Spacer(),
-                  const GoBack(),
-                  questionText,
-                  multipleColorsReminder,
-                  ...buttons(constraints),
-                  score,
-                ],
-              ),
-            );
-          }),
-        ),
+          final Widget score = Text(
+            (casualMode || totalAnswers == 0)
+                ? ''
+                : 'Score: $totalCorrect / $totalAnswers correct',
+            style: const SuperStyle.sans(size: 18),
+          );
+          return Center(
+            child: Column(
+              children: [
+                const Spacer(),
+                const GoBack(),
+                questionText,
+                multipleColorsReminder,
+                ...buttons(constraints),
+                score,
+              ],
+            ),
+          );
+        }),
         backgroundColor: SuperColors.lightBackground,
       ),
     );

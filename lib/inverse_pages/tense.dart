@@ -344,25 +344,26 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
         textTheme: const TextTheme(bodyMedium: style),
       ),
       child: Scaffold(
-        body: SafeArea(
-          child: LayoutBuilder(builder: (context, constraints) {
-            return Stack(
-              children: [
-                Center(
-                  child: Column(
-                    children: [
-                      const Spacer(),
-                      const GoBack(),
-                      const Spacer(),
-                      target(constraints),
-                      const Spacer(),
-                      button2by2(constraints),
-                      const Spacer(flex: 2),
-                      TextButton(
+        body: SafeLayout((context, constraints) {
+          return Stack(
+            children: [
+              Center(
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    const GoBack(),
+                    const Spacer(),
+                    target(constraints),
+                    const Spacer(),
+                    button2by2(constraints),
+                    const Spacer(flex: 2),
+                    SizedBox(
+                      height: 30,
+                      child: TextButton(
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.black12,
                           foregroundColor: SuperColors.darkBackground,
-                          padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                         ),
                         onPressed: () => setState(() => showDetails = !showDetails),
                         child: Text(
@@ -370,24 +371,24 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                           style: const SuperStyle.mono(size: 12),
                         ),
                       ),
-                      const FixedSpacer(15),
-                      AnimatedSize(
-                        duration: const Duration(milliseconds: 100),
-                        child: casualMode || showDetails ? flat : scoreKeeper!.midRoundDisplay,
-                      ),
-                      const FixedSpacer(15),
-                    ],
-                  ),
+                    ),
+                    const FixedSpacer(15),
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 100),
+                      child: casualMode || showDetails ? flat : scoreKeeper!.midRoundDisplay,
+                    ),
+                    const FixedSpacer(15),
+                  ],
                 ),
-                if (showReaction)
-                  Splendid(
-                    correct: selectedHue == hue,
-                    onTap: tapReaction,
-                  ),
-              ],
-            );
-          }),
-        ),
+              ),
+              if (showReaction)
+                Splendid(
+                  correct: selectedHue == hue,
+                  onTap: tapReaction,
+                ),
+            ],
+          );
+        }),
         backgroundColor: SuperColors.lightBackground,
       ),
     );

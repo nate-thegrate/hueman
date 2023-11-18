@@ -401,28 +401,36 @@ class _InverseMenuState extends InverseState<InverseMenu>
 
     Widget settingsButton;
     if (mainMenu) {
-      // TODO: SizedBoxes to normalized TextButton height, then publish to Google Play!
-      settingsButton = TextButton(
-        style: TextButton.styleFrom(
-          foregroundColor: color,
-          backgroundColor: Colors.white,
-          padding: const EdgeInsets.fromLTRB(15, 13, 15, 15),
+      settingsButton = SizedBox(
+        height: 33,
+        child: TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: color,
+            backgroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+          onPressed: () => setState(() => menuPage = MenuPage.settings),
+          child: const Text(
+            'settings',
+            style: SuperStyle.sans(size: 16, width: 87.5, height: 2),
+          ),
         ),
-        onPressed: () => setState(() => menuPage = MenuPage.settings),
-        child: const Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
       );
       if (Tutorial.master() && !Tutorial.sawInversion()) {
         settingsButton = BrandNew(color: color, child: settingsButton);
       }
     } else {
-      settingsButton = TextButton(
-        style: TextButton.styleFrom(
-          foregroundColor: color,
-          backgroundColor: Colors.white54,
-          padding: const EdgeInsets.fromLTRB(18, 13, 18, 14),
+      settingsButton = SizedBox(
+        height: 33,
+        child: TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: color,
+            backgroundColor: Colors.white54,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+          onPressed: () => setState(() => menuPage = MenuPage.main),
+          child: const Text('back', style: SuperStyle.sans(size: 16, weight: 100, height: 2)),
         ),
-        onPressed: () => setState(() => menuPage = MenuPage.main),
-        child: const Text('back', style: SuperStyle.sans(size: 16, weight: 100)),
       );
     }
 

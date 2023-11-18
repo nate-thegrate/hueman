@@ -406,9 +406,9 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Center(
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
           child: Fader(
             showStuff,
             duration: const Duration(milliseconds: 600),
@@ -578,90 +578,88 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
     );
 
     return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(builder: (context, constraints) {
-          if (counter < 360 * 3) {
-            final double x = counter / 3;
-            const int peak = 345;
-            final double val =
-                x < peak ? x.squared / peak : (x - peak) * peak / (peak - 360) + peak;
-            final girth = val * min(constraints.maxWidth, constraints.maxHeight) / 350;
-            return Center(
-              child: SuperContainer(
-                margin: const EdgeInsets.only(top: 39),
-                width: girth,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: epicColor),
-                alignment: Alignment.center,
-                child: _Squares(girth * 16 / (16 * root2over2 - 1) * root2over2),
-              ),
-            );
-          }
-          return Stack(
-            children: [
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 220,
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: AnimatedPadding(
-                              duration: oneSec,
-                              curve: Curves.easeInOutQuart,
-                              padding: padding,
-                              child: SuperHUEman(epicColor),
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              buffer2,
-                              AnimatedSize(
-                                duration: showAllDuration,
-                                curve: curve,
-                                child: SizedBox(width: showAll ? 200 : 0),
-                              ),
-                              buffer2,
-                              const FixedSpacer.horizontal(20),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    SuperContainer(
-                      decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
-                      child: SexyBox(
-                        child: SizedBox(
-                          width: expanded ? 300 : context.screenWidth,
-                          height: expanded2 ? 200 : 0,
-                          child: introButton,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Row(
+      body: SafeLayout((context, constraints) {
+        if (counter < 360 * 3) {
+          final double x = counter / 3;
+          const int peak = 345;
+          final double val =
+              x < peak ? x.squared / peak : (x - peak) * peak / (peak - 360) + peak;
+          final girth = val * min(constraints.maxWidth, constraints.maxHeight) / 350;
+          return Center(
+            child: SuperContainer(
+              margin: const EdgeInsets.only(top: 39),
+              width: girth,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: epicColor),
+              alignment: Alignment.center,
+              child: _Squares(girth * 16 / (16 * root2over2 - 1) * root2over2),
+            ),
+          );
+        }
+        return Stack(
+          children: [
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  buffer,
-                  AnimatedSize(
-                    duration: showAllDuration,
-                    curve: curve,
-                    child: SizedBox(width: showAll ? context.screenWidth : 45),
+                  SizedBox(
+                    width: 220,
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: AnimatedPadding(
+                            duration: oneSec,
+                            curve: Curves.easeInOutQuart,
+                            padding: padding,
+                            child: SuperHUEman(epicColor),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            buffer2,
+                            AnimatedSize(
+                              duration: showAllDuration,
+                              curve: curve,
+                              child: SizedBox(width: showAll ? 200 : 0),
+                            ),
+                            buffer2,
+                            const FixedSpacer.horizontal(20),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  buffer,
+                  SuperContainer(
+                    decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
+                    child: SexyBox(
+                      child: SizedBox(
+                        width: expanded ? 300 : context.screenWidth,
+                        height: expanded2 ? 200 : 0,
+                        child: introButton,
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              Fader(
-                !showAll,
-                duration: showAllDuration,
-                child: Center(child: transparentHUEman),
-              ),
-            ],
-          );
-        }),
-      ),
+            ),
+            Row(
+              children: [
+                buffer,
+                AnimatedSize(
+                  duration: showAllDuration,
+                  curve: curve,
+                  child: SizedBox(width: showAll ? context.screenWidth : 45),
+                ),
+                buffer,
+              ],
+            ),
+            Fader(
+              !showAll,
+              duration: showAllDuration,
+              child: Center(child: transparentHUEman),
+            ),
+          ],
+        );
+      }),
     );
   }
 }

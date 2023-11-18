@@ -1143,17 +1143,24 @@ class _TheEndState extends EpicState<_TheEnd> with SinglePress {
               const Spacer(),
               Fader(
                 showQuit,
-                child: TextButton(
-                  style: TextButton.styleFrom(backgroundColor: Colors.white10),
-                  onPressed: singlePress(() => exit(0)),
-                  child: const Padding(
-                    padding: EdgeInsets.only(bottom: 2),
-                    child: Text(
-                      'quit',
-                      style: SuperStyle.sans(
-                        weight: 300,
-                        size: 16,
-                        color: Colors.white70,
+                child: SizedBox(
+                  height: 33,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.white10,
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                    ),
+                    onPressed: singlePress(() => exit(0)),
+                    child: const Padding(
+                      padding: EdgeInsets.only(bottom: 2),
+                      child: Text(
+                        'quit',
+                        style: SuperStyle.sans(
+                          weight: 300,
+                          size: 16,
+                          color: Colors.white70,
+                          height: 2,
+                        ),
                       ),
                     ),
                   ),

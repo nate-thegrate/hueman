@@ -135,31 +135,29 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
         onTap: selectedTopic == 6 ? null : () => setState(deselect),
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: SafeArea(
-            child: LayoutBuilder(builder: (context, constraints) {
-              return Center(
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    const Balls(),
-                    ConstrainedBox(
-                      constraints: BoxConstraints.loose(const Size.fromWidth(550)),
-                      child: Stack(children: _buttons),
-                    ),
-                    if (selectedTopic case final int topic)
-                      FadeIn(
-                        duration: quarterSec,
-                        curve: Curves.easeInExpo,
-                        child: SizedBox(
-                          height: constraints.maxHeight - 190,
-                          child: topics[topic].details,
-                        ),
-                      )
-                  ],
-                ),
-              );
-            }),
-          ),
+          body: SafeLayout((context, constraints) {
+            return Center(
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  const Balls(),
+                  ConstrainedBox(
+                    constraints: BoxConstraints.loose(const Size.fromWidth(550)),
+                    child: Stack(children: _buttons),
+                  ),
+                  if (selectedTopic case final int topic)
+                    FadeIn(
+                      duration: quarterSec,
+                      curve: Curves.easeInExpo,
+                      child: SizedBox(
+                        height: constraints.maxHeight - 190,
+                        child: topics[topic].details,
+                      ),
+                    )
+                ],
+              ),
+            );
+          }),
           floatingActionButton: selectedTopic == null
               ? const Padding(
                   padding: EdgeInsets.only(top: 25),
@@ -723,18 +721,22 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
         else if (!tellMeMore)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 30),
-            child: TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: SuperColors.chartreuse,
-                backgroundColor: Colors.black,
-              ),
-              onPressed: () =>
-                  setState(goodQuestion ? () => tellMeMore = true : () => goodQuestion = true),
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(6, 6, 6, 7),
-                child: Text(
-                  'please, tell me more!',
-                  style: SuperStyle.sans(size: 20, weight: 300, extraBold: true),
+            child: SizedBox(
+              height: 42,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: SuperColors.chartreuse,
+                  backgroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                ),
+                onPressed: () =>
+                    setState(goodQuestion ? () => tellMeMore = true : () => goodQuestion = true),
+                child: const Padding(
+                  padding: EdgeInsets.fromLTRB(6, 6, 6, 7),
+                  child: Text(
+                    'please, tell me more!',
+                    style: SuperStyle.sans(size: 20, weight: 300, extraBold: true),
+                  ),
                 ),
               ),
             ),
@@ -862,21 +864,26 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
         if (mindBlown)
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
-            child: TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.black54,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () => gotoWebsite(
-                'https://en.wikipedia.org/wiki/File:CIE1931xy_gamut_comparison_of_sRGB_P3_Rec2020.svg',
-              ),
-              child: SuperText(
-                'tap here for image source',
-                style: SuperStyle.sans(
-                  size: min(20, context.screenWidth / 32),
-                  width: 96,
-                  extraBold: true,
-                  weight: 300,
+            child: SizedBox(
+              height: 30,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.black54,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                ),
+                onPressed: () => gotoWebsite(
+                  'https://en.wikipedia.org/wiki/File:CIE1931xy_gamut_comparison_of_sRGB_P3_Rec2020.svg',
+                ),
+                child: SuperText(
+                  'tap here for image source',
+                  style: SuperStyle.sans(
+                    size: min(20, context.screenWidth / 32),
+                    width: 96,
+                    extraBold: true,
+                    weight: 300,
+                    height: 2,
+                  ),
                 ),
               ),
             ),
@@ -909,27 +916,30 @@ class _GameDevButtons extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           for (final MapEntry(key: name, value: url) in links.entries)
-            TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: const SuperColor(0x20FFF0),
-                padding: const EdgeInsets.fromLTRB(10, 14, 10, 15),
-              ),
-              onPressed: () => gotoWebsite(url),
-              child: name == 'hueman'
-                  ? const Text.rich(TextSpan(children: [
-                      TextSpan(
-                        text: 'HUE',
-                        style: SuperStyle.sans(
-                          size: 10,
-                          weight: 800,
-                          extraBold: true,
-                          height: 2,
+            SizedBox(
+              height: 30,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: const SuperColor(0x20FFF0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                ),
+                onPressed: () => gotoWebsite(url),
+                child: name == 'hueman'
+                    ? const Text.rich(TextSpan(children: [
+                        TextSpan(
+                          text: 'HUE',
+                          style: SuperStyle.sans(
+                            size: 10,
+                            weight: 800,
+                            extraBold: true,
+                            height: 2,
+                          ),
                         ),
-                      ),
-                      TextSpan(text: 'man', style: SuperStyle.sans(size: 14)),
-                    ]))
-                  : Text(name, style: const SuperStyle.sans()),
+                        TextSpan(text: 'man', style: SuperStyle.sans(size: 14)),
+                      ]))
+                    : Text(name, style: const SuperStyle.sans(height: 2)),
+              ),
             )
         ],
       ),

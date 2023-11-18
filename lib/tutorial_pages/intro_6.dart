@@ -53,18 +53,15 @@ class _Intro6TutorialState extends SuperState<Intro6Tutorial> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        top: page != 5,
-        bottom: page != 5,
-        child: Center(
-          child: Fader(
-            visible,
-            duration: duration,
-            child: pages[page - 1],
-          ),
-        ),
+    final mainContent = Center(
+      child: Fader(
+        visible,
+        duration: duration,
+        child: pages[page - 1],
       ),
+    );
+    return Scaffold(
+      body: page == 5 ? mainContent : SafeArea(child: mainContent),
     );
   }
 }
