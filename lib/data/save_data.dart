@@ -51,7 +51,7 @@ Future<void> loadData() async {
   Score.init(prefs);
   Tutorial.init(prefs);
 
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 }
 
 Future<void> reset() async {
@@ -136,6 +136,7 @@ enum Score {
   intro18,
   intense,
   master,
+  trivial,
   tenseVibrant,
   tenseVolatile,
   trueMastery,
@@ -152,6 +153,7 @@ enum Score {
         intro18 => 'intro_0x18',
         intense => 'intense_mode',
         master => 'master_mode',
+        trivial => 'color_trivia',
         tenseVibrant => 'tense_vibrant',
         tenseVolatile => 'tense_volatile',
         trueMastery => 'true_mastery',
@@ -178,6 +180,7 @@ enum Score {
     intro18: 1944,
     intense: 14280,
     master: 162,
+    trivial: 15,
     tenseVibrant: 23940,
     tenseVolatile: 7740,
     trueMastery: 140,

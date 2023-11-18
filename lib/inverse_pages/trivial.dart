@@ -357,6 +357,7 @@ class _TriviaModeState extends State<TriviaMode> {
                 ? 'perfect!'
                 : '${(totalCorrect / totalAnswers * 100).toStringAsFixed(1)}%';
             final score = '$scorePercent ($totalCorrect / $totalAnswers)';
+            if (!casualMode) Score.trivial.set(totalCorrect);
             showDialog(
               context: context,
               builder: (context) => AnsweredEveryQuestion(score),
