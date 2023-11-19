@@ -34,15 +34,19 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
   Duration duration = oneSec;
 
   void nextPage() async {
-    setState(() => duration = halfSec);
-    if (page == 6) setState(() => backgroundColor = Colors.black);
-    setState(() => visible = false);
-    if (page != 2) await sleep(1);
+    setState(() {
+      duration = halfSec;
+      if (page == 6) backgroundColor = Colors.black;
+    });
+    if (page != 2) {
+      await quickly(() => setState(() => visible = false));
+      await sleep(1);
+    }
     setState(() {
       page++;
       if (page < 7) duration = oneSec;
     });
-    setState(() => visible = true);
+    await quickly(() => setState(() => visible = true));
   }
 
   @override
@@ -164,94 +168,87 @@ class _Page2State extends SuperState<_Page2> {
   @override
   Widget build(BuildContext context) {
     final double width = expanded ? 0 : context.screenWidth / 25;
-    return Stack(
+    return Column(
       children: [
-        Column(
-          children: [
-            const Spacer(flex: 3),
-            AnimatedSize(
-              duration: duration,
-              curve: curve,
-              child: SizedBox(
-                height: expanded ? 0 : null,
-                child: FittedBox(
-                  clipBehavior: Clip.hardEdge,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Fader(
-                        visible || !buttonVisible,
-                        duration: duration,
-                        child: const SuperText(
-                          'These 3 cone cell types\nreact to different light frequencies.',
-                        ),
-                      ),
-                      const FixedSpacer(48),
-                      Fader(
-                        visible,
-                        duration: duration,
-                        child: const SuperText(
-                          'They send signals to the brain,\nwhich we perceive as 3 colors.',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const Spacer(),
-            AnimatedPadding(
-              duration: squeezeDuration,
-              curve: Curves.easeInExpo,
-              padding: squeezed
-                  ? EdgeInsets.symmetric(horizontal: context.screenWidth / 2)
-                  : EdgeInsets.zero,
-              child: AnimatedContainer(
-                duration: squeezeDuration,
-                curve: Curves.easeInQuad,
-                height: expanded ? context.screenHeight : 300,
-                child: Stack(
+        const Spacer(flex: 3),
+        AnimatedSize(
+          duration: duration,
+          curve: curve,
+          child: expanded
+              ? null
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Row(
-                      children: [
-                        for (final color in SuperColors.primaries)
-                          _RGBAnimation(
-                            color,
-                            colorVisible: colorVisible[color]!,
-                            textVisible: visible,
-                            duration: duration,
-                            margin: width,
-                          ),
-                        AnimatedSize(
-                          duration: duration,
-                          curve: curve,
-                          child: SizedBox(width: width),
-                        ),
-                      ],
+                    Fader(
+                      visible || !buttonVisible,
+                      duration: duration,
+                      child: const SuperText(
+                        'These 3 cone cell types\nreact to different light frequencies.\n',
+                      ),
                     ),
-                    Center(
-                      child: AnimatedContainer(
-                        duration: squeezeDuration,
-                        curve: Curves.easeInExpo,
-                        color: squeezed ? Colors.white : const Color(0x00FFFFFF),
+                    Fader(
+                      visible,
+                      duration: duration,
+                      child: const SuperText(
+                        'They send signals to the brain,\nwhich we perceive as 3 colors.',
                       ),
                     ),
                   ],
                 ),
-              ),
-            ),
-            const Spacer(flex: 2),
-            SexyBox(
-              child: buttonVisible && !visible
-                  ? null
-                  : Fader(
-                      buttonVisible,
-                      child: ContinueButton(onPressed: endTransition),
-                    ),
-            ),
-            const Spacer(flex: 2),
-          ],
         ),
+        const Spacer(),
+        AnimatedPadding(
+          duration: squeezeDuration,
+          curve: Curves.easeInExpo,
+          padding: squeezed
+              ? EdgeInsets.symmetric(horizontal: context.screenWidth / 2)
+              : EdgeInsets.zero,
+          child: AnimatedContainer(
+            duration: squeezeDuration,
+            curve: Curves.easeInQuad,
+            height: expanded ? context.screenHeight : 300,
+            child: Stack(
+              children: [
+                Row(
+                  children: [
+                    for (final color in SuperColors.primaries)
+                      _RGBAnimation(
+                        color,
+                        colorVisible: colorVisible[color]!,
+                        textVisible: visible,
+                        duration: duration,
+                        margin: width,
+                      ),
+                    AnimatedSize(
+                      duration: duration,
+                      curve: curve,
+                      child: SizedBox(width: width),
+                    ),
+                  ],
+                ),
+                Center(
+                  child: AnimatedContainer(
+                    duration: squeezeDuration,
+                    curve: Curves.easeInExpo,
+                    color: squeezed ? Colors.white : const Color(0x00FFFFFF),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const Spacer(flex: 2),
+        AnimatedSize(
+          duration: duration,
+          curve: curve,
+          child: buttonVisible && !visible
+              ? null
+              : Fader(
+                  buttonVisible,
+                  child: ContinueButton(onPressed: endTransition),
+                ),
+        ),
+        const Spacer(flex: 2),
       ],
     );
   }
@@ -759,6 +756,7 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
       final tileWidth = constraints.calcSize(
         (w, h) => min(w / hsvWidth, (h - 50) / hsvHeight),
       );
+      final double size = min(context.screenWidth / 22, 20);
       return Stack(
         alignment: Alignment.center,
         children: [
@@ -781,15 +779,20 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
               const Spacer(),
               Fader(
                 wishVisible,
-                child: const SuperText(
+                child: SuperText(
                   'I just wish I could describe every shade\n'
                   'with a single name (that isn\'t "chartreuse").',
+                  style: SuperStyle.sans(size: size),
+                  pad: false,
                 ),
               ),
               const Spacer(),
               Fader(
                 tooBadVisible,
-                child: const SuperText("Too bad there's no way to do that…"),
+                child: SuperText(
+                  "Too bad there's no way to do that…",
+                  style: SuperStyle.sans(size: size),
+                ),
               ),
               const Spacer(flex: 2),
             ],

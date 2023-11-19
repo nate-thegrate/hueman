@@ -70,7 +70,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
     );
     const hints = [
       'enable ☑ casual mode, and go to\n"true mastery".',
-      'tap the color code button, and\nsee how the RGB values change.',
+      'tap the color code button and\nsee how the RGB values change.',
       'convert each value to hexadecimal,\nthen type them in and "submit".',
       'to get help with converting, you\ncan Google "base 10 to base 16".',
     ];

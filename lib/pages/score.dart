@@ -96,11 +96,17 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
               children: [
                 const Expanded(flex: 4, child: empty),
                 SuperContainer(
+                  margin: const EdgeInsets.symmetric(horizontal: 33),
                   decoration: BoxDecoration(
                       border: Border.all(color: color, width: 2),
                       borderRadius: BorderRadius.circular(25)),
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 36),
-                  child: Text('Finished!', style: SuperStyle.sans(size: 54, color: color)),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 36),
+                      child: Text('Finished!', style: SuperStyle.sans(size: 54, color: color)),
+                    ),
+                  ),
                 ),
                 const Spacer(),
                 Row(
