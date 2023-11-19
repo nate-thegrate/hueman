@@ -178,7 +178,7 @@ class _TrueFinalChallenge extends StatefulWidget {
   State<_TrueFinalChallenge> createState() => _TrueFinalChallengeState();
 }
 
-class _TrueFinalChallengeState extends EpicState<_TrueFinalChallenge> {
+class _TrueFinalChallengeState extends EpicState<_TrueFinalChallenge> with SinglePress {
   bool showAdmissionOfGuilt = true,
       daVinciAppear = false,
       showDaVinciLayer = true,
@@ -253,10 +253,10 @@ class _TrueFinalChallengeState extends EpicState<_TrueFinalChallenge> {
                 'go even further',
                 buttonVisible: finalButton,
                 color: epicColor,
-                onPressed: () async {
+                onPressed: singlePress(() async {
                   await Tutorial.evenFurther.complete();
                   context.goto(Pages.evenFurther);
-                },
+                }),
               ),
           ],
         ),

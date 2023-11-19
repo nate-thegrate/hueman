@@ -179,11 +179,13 @@ class _Page2State extends SuperState<_Page2> {
               : Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Fader(
-                      visible || !buttonVisible,
-                      duration: duration,
-                      child: const SuperText(
-                        'These 3 cone cell types\nreact to different light frequencies.\n',
+                    FadeIn(
+                      child: Fader(
+                        visible || !buttonVisible,
+                        duration: duration,
+                        child: const SuperText(
+                          'These 3 cone cell types\nreact to different light frequencies.\n',
+                        ),
                       ),
                     ),
                     Fader(
@@ -519,7 +521,7 @@ class _Page4State extends SuperState<_Page4> {
           showScreenshot,
           child: ConstrainedBox(
             constraints: BoxConstraints.loose(Size.fromHeight(context.screenHeight / 3)),
-            // Image is a little out of date, but it looked nicer then so we keeping it
+            // Image is out of date, but it looked nicer then so we're just keeping it
             child: Image.asset('assets/picture_of_itself.png', width: 1000),
           ),
         ),
