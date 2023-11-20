@@ -176,10 +176,10 @@ enum Score {
 
   static late final Map<Score, int?> highScores;
   static const Map<Score, int> myScores = {
-    introC: 3774,
-    intro18: 1944,
+    introC: 4390,
+    intro18: 3589,
     intense: 14280,
-    master: 162,
+    master: 492,
     trivial: 15,
     tenseVibrant: 23940,
     tenseVolatile: 7740,
