@@ -70,7 +70,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
     );
     const hints = [
       'enable ☑ casual mode, and go to\n"true mastery".',
-      'tap the color code button, and\nsee how the RGB values change.',
+      'tap the color code button and\nsee how the RGB values change.',
       'convert each value to hexadecimal,\nthen type them in and "submit".',
       'to get help with converting, you\ncan Google "base 10 to base 16".',
     ];
@@ -87,7 +87,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
           } else if (!Tutorial.trueMastery() && !Platform.isIOS) {
             setState(() => trueMastery = true);
             sleep(
-              6,
+              7,
               then: () => context.noTransition(const TrueMasteryTutorial()),
             );
           } else {
@@ -401,27 +401,36 @@ class _InverseMenuState extends InverseState<InverseMenu>
 
     Widget settingsButton;
     if (mainMenu) {
-      settingsButton = TextButton(
-        style: TextButton.styleFrom(
-          foregroundColor: color,
-          backgroundColor: Colors.white,
-          padding: const EdgeInsets.fromLTRB(15, 13, 15, 15),
+      settingsButton = SizedBox(
+        height: 33,
+        child: TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: color,
+            backgroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+          onPressed: () => setState(() => menuPage = MenuPage.settings),
+          child: const Text(
+            'settings',
+            style: SuperStyle.sans(size: 16, width: 87.5, height: 2),
+          ),
         ),
-        onPressed: () => setState(() => menuPage = MenuPage.settings),
-        child: const Text('settings', style: SuperStyle.sans(size: 16, width: 87.5)),
       );
       if (Tutorial.master() && !Tutorial.sawInversion()) {
         settingsButton = BrandNew(color: color, child: settingsButton);
       }
     } else {
-      settingsButton = TextButton(
-        style: TextButton.styleFrom(
-          foregroundColor: color,
-          backgroundColor: Colors.white54,
-          padding: const EdgeInsets.fromLTRB(18, 13, 18, 14),
+      settingsButton = SizedBox(
+        height: 33,
+        child: TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: color,
+            backgroundColor: Colors.white54,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+          onPressed: () => setState(() => menuPage = MenuPage.main),
+          child: const Text('back', style: SuperStyle.sans(size: 16, weight: 100, height: 2)),
         ),
-        onPressed: () => setState(() => menuPage = MenuPage.main),
-        child: const Text('back', style: SuperStyle.sans(size: 16, weight: 100)),
       );
     }
 
@@ -552,24 +561,25 @@ class _TrueMasteryAnimation extends StatefulWidget {
 }
 
 class _TrueMasteryAnimationState extends SuperState<_TrueMasteryAnimation> {
-  bool showHues = false;
+  bool fadeToWhite = false;
   @override
-  void animate() => quickly(() => setState(() => showHues = true));
+  void animate() => sleepState(1, () => fadeToWhite = true);
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       alignment: Alignment.center,
       children: [
-        Fader(
-          showHues,
-          duration: const Duration(seconds: 2),
+        FadeIn(
+          duration: oneSec,
           curve: Curves.easeOutCubic,
           child: SuperContainer(color: widget.color),
         ),
-        const Padding(
-          padding: EdgeInsets.only(top: 210),
-          child: Text(
+        Fader(
+          fadeToWhite,
+          duration: const Duration(seconds: 6),
+          curve: Curves.easeOutQuad,
+          child: const Text(
             'true\nmastery',
             textAlign: TextAlign.center,
             style: SuperStyle.sans(
@@ -584,7 +594,7 @@ class _TrueMasteryAnimationState extends SuperState<_TrueMasteryAnimation> {
           ),
         ),
         Fader(
-          showHues,
+          fadeToWhite,
           duration: const Duration(seconds: 6),
           child: const SuperContainer(color: Colors.white),
         ),

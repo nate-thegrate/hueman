@@ -53,18 +53,15 @@ class _Intro6TutorialState extends SuperState<Intro6Tutorial> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        top: page != 5,
-        bottom: page != 5,
-        child: Center(
-          child: Fader(
-            visible,
-            duration: duration,
-            child: pages[page - 1],
-          ),
-        ),
+    final mainContent = Center(
+      child: Fader(
+        visible,
+        duration: duration,
+        child: pages[page - 1],
       ),
+    );
+    return Scaffold(
+      body: page == 5 ? mainContent : SafeArea(child: mainContent),
     );
   }
 }
@@ -195,28 +192,37 @@ class _Page3State extends SuperState<_Page3> with SinglePress {
 
   @override
   Widget build(BuildContext context) {
+    final double size = min(context.screenWidth / 19, 20);
     return Column(
       children: [
         const Spacer(flex: 2),
         _PrinterAnimation(showcase, printing),
         const Spacer(),
-        const SuperRichText([
-          TextSpan(text: "But shouldn't they use "),
-          ColorTextSpan.red,
-          TextSpan(text: '/'),
-          ColorTextSpan.green,
-          TextSpan(text: '/'),
-          ColorTextSpan.blue,
-          TextSpan(text: "\nif that's what human eyes are built for?"),
-        ]),
+        SuperRichText(
+          style: SuperStyle.sans(size: size),
+          pad: false,
+          const [
+            TextSpan(text: "But shouldn't they use "),
+            ColorTextSpan.red,
+            TextSpan(text: '/'),
+            ColorTextSpan.green,
+            TextSpan(text: '/'),
+            ColorTextSpan.blue,
+            TextSpan(text: "\nif that's what human eyes are built for?"),
+          ],
+        ),
         const Spacer(flex: 2),
         Fader(
           showQuestion,
-          child: const SuperRichText([
-            TextSpan(text: 'How do you print '),
-            ColorTextSpan.red,
-            TextSpan(text: ', a primary color,\nwithout any red ink?'),
-          ]),
+          child: SuperRichText(
+            style: SuperStyle.sans(size: size),
+            pad: false,
+            const [
+              TextSpan(text: 'How do you print '),
+              ColorTextSpan.red,
+              TextSpan(text: ', a primary color,\nwithout any red ink?'),
+            ],
+          ),
         ),
         const Spacer(flex: 2),
         Fader(
@@ -709,7 +715,7 @@ class _ColorBubbles extends StatelessWidget {
         SizedBox(
           height: context.screenHeight / 2 - 300,
           child: LayoutBuilder(builder: (context, constraints) {
-            final size = constraints.maxHeight - 110;
+            final size = constraints.maxHeight / 2 + 10;
             return Stack(
               children: [
                 _ColorBubble(counter, size, color: colors[0]),

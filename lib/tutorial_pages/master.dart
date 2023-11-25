@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
@@ -75,17 +77,22 @@ class _Page1State extends SuperState<_Page1> {
 
   @override
   Widget build(BuildContext context) {
+    final double size = min(context.screenWidth / 18.5, 20);
     return Column(
       children: [
         const Spacer(flex: 2),
-        const SuperText(
+        SuperText(
           "By finding the right hue out of 360,\nyou've proven your mettle.",
+          pad: false,
+          style: SuperStyle.sans(size: size),
         ),
         const Spacer(),
         Fader(
           finalStep,
-          child: const SuperText(
+          child: SuperText(
             "But there's one more step on the path\nto fully unlocking this superpower.",
+            pad: false,
+            style: SuperStyle.sans(size: size),
           ),
         ),
         const Spacer(flex: 2),
@@ -124,10 +131,15 @@ class _Page2State extends SuperState<_Page2> {
 
   @override
   Widget build(BuildContext context) {
+    final double size = min(context.screenWidth / 20, 20);
     return Column(
       children: [
         const Spacer(flex: 2),
-        const SuperText("Thus far, we've only worked with vibrant,\nfully saturated colors."),
+        SuperText(
+          "Thus far, we've only worked with vibrant,\nfully saturated colors.",
+          pad: false,
+          style: SuperStyle.sans(size: size),
+        ),
         const Spacer(),
         Expanded(
           flex: 4,
@@ -160,7 +172,10 @@ class _Page2State extends SuperState<_Page2> {
         const Spacer(),
         Fader(
           timeToChange,
-          child: const SuperText("It's time to change that."),
+          child: SuperText(
+            "It's time to change that.",
+            style: SuperStyle.sans(size: size),
+          ),
         ),
         const Spacer(flex: 2),
         Fader(buttonVisible, child: ContinueButton(onPressed: widget.nextPage)),

@@ -38,6 +38,8 @@ Future<void> saveData(String key, Object value) async {
 /// using an enum probably would have been better haha
 Future<void> loadData() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+
   final prefs = await SharedPreferences.getInstance();
   casualMode = prefs.getBool('casualMode') ?? true;
   hueTyping = prefs.getBool('hueTyping') ?? true;
@@ -50,8 +52,6 @@ Future<void> loadData() async {
 
   Score.init(prefs);
   Tutorial.init(prefs);
-
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 }
 
 Future<void> reset() async {
@@ -136,6 +136,7 @@ enum Score {
   intro18,
   intense,
   master,
+  trivial,
   tenseVibrant,
   tenseVolatile,
   trueMastery,
@@ -152,6 +153,7 @@ enum Score {
         intro18 => 'intro_0x18',
         intense => 'intense_mode',
         master => 'master_mode',
+        trivial => 'color_trivia',
         tenseVibrant => 'tense_vibrant',
         tenseVolatile => 'tense_volatile',
         trueMastery => 'true_mastery',
@@ -174,10 +176,11 @@ enum Score {
 
   static late final Map<Score, int?> highScores;
   static const Map<Score, int> myScores = {
-    introC: 3774,
-    intro18: 1944,
+    introC: 4390,
+    intro18: 3589,
     intense: 14280,
-    master: 162,
+    master: 492,
+    trivial: 15,
     tenseVibrant: 23940,
     tenseVolatile: 7740,
     trueMastery: 140,

@@ -417,35 +417,33 @@ class _HueTypingScreen extends StatelessWidget {
         children: [
           bars,
           Expanded(
-            child: SafeArea(
-              child: LayoutBuilder(builder: (context, constraints) {
-                return Column(
-                  children: <Widget>[
-                    const Spacer(),
-                    if (sk is! TutorialScoreKeeper) const GoBack(),
-                    const Spacer(),
-                    if (image(constraints) == null) ...[
-                      SuperContainer(
-                        width: colorBoxWidth,
-                        height: min(colorBoxWidth, constraints.maxHeight - 400),
-                        color: color,
-                      )
-                    ] else
-                      image(constraints)!,
-                    const Spacer(),
-                    const Text(
-                      "What's the hue?",
-                      textAlign: TextAlign.center,
-                      style: SuperStyle.sans(size: 24, letterSpacing: 0),
-                    ),
-                    ...userInput,
-                    const Spacer(),
-                    scoreKeeper?.midRoundDisplay ?? empty,
-                    if (scoreKeeper != null) const Spacer(),
-                  ],
-                );
-              }),
-            ),
+            child: SafeLayout((context, constraints) {
+              return Column(
+                children: <Widget>[
+                  const Spacer(),
+                  if (sk is! TutorialScoreKeeper) const GoBack(),
+                  const Spacer(),
+                  if (image(constraints) == null) ...[
+                    SuperContainer(
+                      width: colorBoxWidth,
+                      height: min(colorBoxWidth, constraints.maxHeight - 400),
+                      color: color,
+                    )
+                  ] else
+                    image(constraints)!,
+                  const Spacer(),
+                  const Text(
+                    "What's the hue?",
+                    textAlign: TextAlign.center,
+                    style: SuperStyle.sans(size: 24, letterSpacing: 0),
+                  ),
+                  ...userInput,
+                  const Spacer(),
+                  scoreKeeper?.midRoundDisplay ?? empty,
+                  if (scoreKeeper != null) const Spacer(),
+                ],
+              );
+            }),
           ),
           bars,
         ],
@@ -685,125 +683,123 @@ class _CircleGameState extends State<CircleGame> {
   Widget build(BuildContext context) {
     const duration = Duration(milliseconds: 100);
     return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(builder: (context, constraints) {
-          final circleSize = constraints.calcSize((w, h) => switch (widget.scoreKeeper) {
-                MasterScoreKeeper() => min(w - 100, h - 200),
-                _ when widget.image(constraints) != null => min(w - 66, h / 2 - 100),
-                _ => min(w - 66, h - 200),
-              });
-          final margin = circleSize / 32;
-          void touchRecognition(details) {
-            final Offset offset = details.localPosition;
-            final int angle = computeAngle(
-              offset.dx - circleSize / 2,
-              -offset.dy + circleSize / 2,
-            );
-            setState(() {
-              guess = angle.roundToNearest(360 ~/ widget.numColors);
-              lastGuess = guess!;
+      body: SafeLayout((context, constraints) {
+        final circleSize = constraints.calcSize((w, h) => switch (widget.scoreKeeper) {
+              MasterScoreKeeper() => min(w - 100, h - 200),
+              _ when widget.image(constraints) != null => min(w - 66, h / 2 - 100),
+              _ => min(w - 66, h - 200),
             });
-          }
+        final margin = circleSize / 32;
+        void touchRecognition(details) {
+          final Offset offset = details.localPosition;
+          final int angle = computeAngle(
+            offset.dx - circleSize / 2,
+            -offset.dy + circleSize / 2,
+          );
+          setState(() {
+            guess = angle.roundToNearest(360 ~/ widget.numColors);
+            lastGuess = guess!;
+          });
+        }
 
-          return Center(
-            child: Column(
-              children: [
-                const Spacer(flex: 2),
-                const GoBack(),
-                const Spacer(flex: 2),
-                if (widget.image(constraints) case final Widget img) ...[
-                  Expanded(flex: 16, child: img),
-                  const Spacer(flex: 3),
-                ],
-                GestureDetector(
-                  onPanStart: touchRecognition,
-                  onPanUpdate: touchRecognition,
-                  onPanEnd: submit,
+        return Center(
+          child: Column(
+            children: [
+              const Spacer(flex: 2),
+              const GoBack(),
+              const Spacer(flex: 2),
+              if (widget.image(constraints) case final Widget img) ...[
+                Expanded(flex: 16, child: img),
+                const Spacer(flex: 3),
+              ],
+              GestureDetector(
+                onPanStart: touchRecognition,
+                onPanUpdate: touchRecognition,
+                onPanEnd: submit,
+                child: SuperContainer(
+                  width: circleSize,
+                  height: circleSize,
+                  padding: EdgeInsets.all(margin),
                   child: SuperContainer(
-                    width: circleSize,
-                    height: circleSize,
-                    padding: EdgeInsets.all(margin),
-                    child: SuperContainer(
-                      decoration: BoxDecoration(
-                        color: widget.color,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Transform.rotate(
-                            angle: -lastGuess * pi / 180,
-                            child: Row(
-                              children: [
-                                const Spacer(),
-                                Transform.rotate(
-                                  angle: lastGuess * pi / 180,
-                                  child: SuperContainer(
-                                    width: circleSize / 2,
-                                    height: circleSize / 2,
-                                    alignment: Alignment.center,
-                                    child: Fader(
-                                      hueRuler && guess != null,
-                                      duration: duration,
-                                      child: SuperText(
-                                        '$lastGuess°',
-                                        style: SuperStyle.sans(
-                                          size: circleSize / 6,
-                                          weight: 600,
-                                          color: widget.color.computeLuminance() < 0.0722
-                                              ? SuperColors.lightBackground
-                                              : SuperColors.darkBackground,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
+                    decoration: BoxDecoration(
+                      color: widget.color,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Transform.rotate(
+                          angle: -lastGuess * pi / 180,
+                          child: Row(
+                            children: [
+                              const Spacer(),
+                              Transform.rotate(
+                                angle: lastGuess * pi / 180,
+                                child: SuperContainer(
+                                  width: circleSize / 2,
+                                  height: circleSize / 2,
+                                  alignment: Alignment.center,
                                   child: Fader(
-                                    guess != null,
+                                    hueRuler && guess != null,
                                     duration: duration,
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Transform.translate(
-                                        offset: Offset(circleSize * 0.13, 0),
-                                        child: RotatedBox(
-                                          quarterTurns: 1,
-                                          child: Icon(
-                                            Icons.arrow_drop_down,
-                                            size: circleSize / 6,
-                                            color: widget.color,
-                                          ),
+                                    child: SuperText(
+                                      '$lastGuess°',
+                                      style: SuperStyle.sans(
+                                        size: circleSize / 6,
+                                        weight: 600,
+                                        color: widget.color.computeLuminance() < 0.0722
+                                            ? SuperColors.lightBackground
+                                            : SuperColors.darkBackground,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Fader(
+                                  guess != null,
+                                  duration: duration,
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Transform.translate(
+                                      offset: Offset(circleSize * 0.13, 0),
+                                      child: RotatedBox(
+                                        quarterTurns: 1,
+                                        child: Icon(
+                                          Icons.arrow_drop_down,
+                                          size: circleSize / 6,
+                                          color: widget.color,
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          if (hueRuler)
-                            for (int i = 0;
-                                i < 360;
-                                i += switch (widget.numColors) {
-                              3 || 6 || 12 || 24 => 360 ~/ widget.numColors,
-                              _ when Tutorial.mastered() => 15,
-                              _ => 30,
-                            })
-                              _TickMark(i, circleSize),
-                        ],
-                      ),
+                        ),
+                        if (hueRuler)
+                          for (int i = 0;
+                              i < 360;
+                              i += switch (widget.numColors) {
+                            3 || 6 || 12 || 24 => 360 ~/ widget.numColors,
+                            _ when Tutorial.mastered() => 15,
+                            _ => 30,
+                          })
+                            _TickMark(i, circleSize),
+                      ],
                     ),
                   ),
                 ),
-                const Spacer(flex: 2),
-                if (widget.scoreKeeper case final ScoreKeeper sk)
-                  AnimatedSize(duration: quarterSec, child: sk.midRoundDisplay),
-                const Spacer(),
-              ],
-            ),
-          );
-        }),
-      ),
+              ),
+              const Spacer(flex: 2),
+              if (widget.scoreKeeper case final ScoreKeeper sk)
+                AnimatedSize(duration: quarterSec, child: sk.midRoundDisplay),
+              const Spacer(),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

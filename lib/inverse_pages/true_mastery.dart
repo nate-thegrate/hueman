@@ -13,19 +13,6 @@ import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/widgets.dart';
 
-const _errorRecoveryText = '''\
-DIV_0 ERROR
-
-
-rebuilding window
-
-(_) => Navigator.pushReplacement<void, void>(
-        context,
-        MaterialPageRoute<void>(
-          builder: (BuildContext context) => const ThanksForPlaying(),
-        ),
-      );''';
-
 class TrueMasteryScoreKeeper implements ScoreKeeper {
   TrueMasteryScoreKeeper();
 
@@ -68,9 +55,10 @@ class TrueMasteryScoreKeeper implements ScoreKeeper {
     String text = 'round ${round + 1}/$_maxRounds\nscore: ${score.toStringAsFixed(1)}';
     if (superCount > 0) text += ', $superCount superscore${superCount > 1 ? 's' : ''}!';
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Text(text, textAlign: TextAlign.center, style: const SuperStyle.sans()),
+    return SuperContainer(
+      height: 75,
+      alignment: Alignment.bottomCenter,
+      child: SuperText(text, pad: false, style: const SuperStyle.sans()),
     );
   }
 
@@ -122,7 +110,8 @@ class _TrueMasteryState extends State<TrueMastery> {
   @override
   Widget build(BuildContext context) {
     // ignore: avoid_print
-    print(color);
+    if (casualMode) print(color);
+
     return Theme(
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
@@ -134,7 +123,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                 children: [
                   const Spacer(),
                   const GoBack(),
-                  const Spacer(flex: 3),
+                  const Spacer(),
                   SuperContainer(
                     decoration: const BoxDecoration(
                         color: SuperColors.lightBackground,
@@ -179,22 +168,27 @@ class _TrueMasteryState extends State<TrueMastery> {
                               'color code:',
                               style: SuperStyle.mono(size: 20),
                             ),
-                            const FixedSpacer.horizontal(10),
-                            TextButton(
-                              style: TextButton.styleFrom(foregroundColor: Colors.black),
-                              onPressed: () {
-                                if (casualMode) setState(() => giveHint = true);
-                                ManualColorCode.run(
-                                  context,
-                                  color: color,
-                                  updateColor: updateUserColor,
-                                ).then((_) {
-                                  if (casualMode) setState(() => giveHint = false);
-                                });
-                              },
-                              child: Text(
-                                userColorCode,
-                                style: const SuperStyle.mono(size: 20),
+                            SizedBox(
+                              height: 33,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.black,
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                ),
+                                onPressed: () {
+                                  if (casualMode) setState(() => giveHint = true);
+                                  ManualColorCode.run(
+                                    context,
+                                    color: color,
+                                    updateColor: updateUserColor,
+                                  ).then((_) {
+                                    if (casualMode) setState(() => giveHint = false);
+                                  });
+                                },
+                                child: Text(
+                                  userColorCode,
+                                  style: const SuperStyle.mono(size: 20),
+                                ),
                               ),
                             ),
                           ],
@@ -216,7 +210,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                             foregroundColor: contrastWith(color),
                           ),
                           child: const Padding(
-                            padding: EdgeInsets.only(bottom: 4),
+                            padding: EdgeInsets.only(bottom: 1),
                             child: Text('submit', style: SuperStyle.sans(size: 24)),
                           ),
                         ),
@@ -614,11 +608,21 @@ class _ErrorScreen extends StatefulWidget {
 }
 
 class _ErrorScreenState extends SuperState<_ErrorScreen> {
+  static const errorRecoveryText = ''
+      'DIV_0 ERROR\n\n\n'
+      'rebuilding window\n\n'
+      '(_) => Navigator.pushReplacement<void, void>(\n'
+      '        context,\n'
+      '        MaterialPageRoute<void>(\n'
+      '          builder: (BuildContext context) => const ThanksForPlaying(),\n'
+      '        ),\n'
+      '      );';
+
   String text = 'DIV_0 ERROR';
 
   @override
   void animate() async {
-    await sleepState(4, () => text = _errorRecoveryText);
+    await sleepState(4, () => text = errorRecoveryText);
     await sleep(6, then: () => context.noTransition(const ThanksForPlaying()));
   }
 
@@ -690,7 +694,7 @@ class _RGBSlider extends StatelessWidget {
         RotatedBox(
           quarterTurns: 3,
           child: SizedBox(
-            width: constraints.maxHeight - 280,
+            width: constraints.maxHeight - (casualMode ? 325 : 400),
             child: SliderTheme(
               data: const SliderThemeData(
                 trackHeight: 15,

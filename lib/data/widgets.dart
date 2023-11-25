@@ -17,6 +17,16 @@ import 'package:hueman/data/super_text.dart';
 const Widget empty = SizedBox.shrink();
 const Widget flat = SizedBox(width: double.infinity);
 
+class SafeLayout extends StatelessWidget {
+  const SafeLayout(this.builder, {super.key});
+  final Widget Function(BuildContext context, BoxConstraints constraints) builder;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(child: LayoutBuilder(builder: builder));
+  }
+}
+
 class FixedSpacer extends StatelessWidget {
   const FixedSpacer(this.size, {super.key}) : horizontal = false;
   const FixedSpacer.horizontal(this.size, {super.key}) : horizontal = true;
@@ -380,17 +390,23 @@ class WarnButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool proceed = action != null;
 
-    return TextButton(
-      style: TextButton.styleFrom(
-        backgroundColor: inverted ? const Color(0x10000000) : const Color(0x10FFFFFF),
-        foregroundColor: inverted ? Colors.black : Colors.white,
-        padding: const EdgeInsets.fromLTRB(15, 13, 15, 15),
+    return SizedBox(
+      height: 33,
+      child: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: inverted ? const Color(0x10000000) : const Color(0x10FFFFFF),
+          foregroundColor: inverted ? Colors.black : Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+          if (proceed) action!();
+        },
+        child: Text(
+          proceed ? 'continue' : 'go back',
+          style: const SuperStyle.sans(size: 16, height: 2),
+        ),
       ),
-      onPressed: () {
-        Navigator.pop(context);
-        if (proceed) action!();
-      },
-      child: Text(proceed ? 'continue' : 'go back', style: const SuperStyle.sans(size: 16)),
     );
   }
 }
@@ -401,20 +417,24 @@ class GoBack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      style: TextButton.styleFrom(
-        foregroundColor: inverted ? SuperColors.black80 : Colors.white60,
-        backgroundColor: inverted ? Colors.white54 : const SuperColor(0x0D0D0D),
-        padding: const EdgeInsets.fromLTRB(18, 13, 18, 14),
-      ),
-      onPressed: context.menu,
-      child: Text(
-        text,
-        style: SuperStyle.sans(
-          weight: inverted ? 300 : 100,
-          width: 96,
-          size: 16,
-          letterSpacing: 0.5,
+    return SizedBox(
+      height: 33,
+      child: TextButton(
+        style: TextButton.styleFrom(
+          foregroundColor: inverted ? SuperColors.black80 : Colors.white60,
+          backgroundColor: inverted ? Colors.white54 : const SuperColor(0x0D0D0D),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+        ),
+        onPressed: context.menu,
+        child: Text(
+          text,
+          style: SuperStyle.sans(
+            weight: inverted ? 300 : 100,
+            width: 96,
+            size: 16,
+            letterSpacing: 0.5,
+            height: 2,
+          ),
         ),
       ),
     );
@@ -536,17 +556,20 @@ class ColorLabel extends StatelessWidget {
             child: Text('$property:', style: defaultStyle, textAlign: TextAlign.right),
           ),
           if (colorCode)
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: inverted ? Colors.black : Colors.white,
-                padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+            SizedBox(
+              height: 33,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: inverted ? Colors.black : Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                ),
+                onPressed: () => ManualColorCode.run(
+                  context,
+                  color: SuperColor(int.parse(value.substring(1), radix: 16)),
+                  updateColor: update!,
+                ),
+                child: Text(value, style: const SuperStyle.mono(size: 18)),
               ),
-              onPressed: () => ManualColorCode.run(
-                context,
-                color: SuperColor(int.parse(value.substring(1), radix: 16)),
-                updateColor: update!,
-              ),
-              child: Text(value, style: const SuperStyle.mono(size: 18)),
             )
           else ...[
             const FixedSpacer.horizontal(15),
@@ -751,9 +774,9 @@ class _KGlitchState extends State<K_glitch> {
       33 => 0,
       40 => -0.5,
       42 => -1,
-      43 => 0,
-      > 75 && < 125 => -0.5 - .2 * (counter % 2),
-      125 => 1,
+      44 => 0,
+      > 66 && < 120 => -2 / 3 * rng.nextDouble(),
+      120 => 1,
       _ => null,
     });
 

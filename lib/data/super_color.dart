@@ -84,7 +84,9 @@ class SuperColor extends Color {
 
     int snapToVals(int rgbVal) {
       const int tolerance = 0x0F;
-      for (final int snappable in [0x00, 0x80, 0xFF]) {
+      final List<int> snapVals = [0x00, 0x80, 0xFF];
+      if (Tutorial.mastered()) snapVals.addAll(const [0x40, 0xC0]);
+      for (final int snappable in snapVals) {
         if (diff(rgbVal, snappable) <= tolerance) return snappable;
       }
       return rgbVal;
@@ -146,7 +148,7 @@ abstract final class SuperColors {
   ];
   static const allNamedHues = [
     red,
-    SuperColor.named('vermillion', 0xFF4000),
+    SuperColor.named('vermilion', 0xFF4000),
     orange,
     SuperColor.named('amber', 0xFFC000),
     yellow,

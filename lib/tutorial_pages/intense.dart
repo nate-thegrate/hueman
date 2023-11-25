@@ -78,113 +78,111 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
     ]);
 
     return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(builder: (context, constraints) {
-          return FadeIn(
-            child: Center(
-              child: Column(
-                children: [
-                  const Spacer(flex: 4),
-                  Stack(
-                    children: [
-                      if (doTheWave)
-                        _ColorWave(constraints)
-                      else if (tellTheTruth)
-                        for (int startHue = 29; startHue >= 0; startHue -= 1)
-                          _ColorRow(
-                            startHue,
-                            showAllRows ? constraints.ballSpacing : 0,
-                            constraints: constraints,
-                          )
-                      else
-                        for (int startHue = 20; startHue >= 0; startHue -= 10)
-                          _ColorRow(
-                            startHue,
-                            showAllRows ? constraints.maxWidth / 120 : 0,
-                            constraints: constraints,
-                          )
-                    ],
-                  ),
-                  const Spacer(flex: 2),
-                  SexyBox(
-                    child: tellTheTruth
-                        ? empty
-                        : Fader(
-                            textVisible >= 1,
-                            child: const SuperText(
-                              'To identify and keep track of twelve different hues,',
-                            ),
+      body: SafeLayout((context, constraints) {
+        return FadeIn(
+          child: Center(
+            child: Column(
+              children: [
+                const Spacer(flex: 4),
+                Stack(
+                  children: [
+                    if (doTheWave)
+                      _ColorWave(constraints)
+                    else if (tellTheTruth)
+                      for (int startHue = 29; startHue >= 0; startHue -= 1)
+                        _ColorRow(
+                          startHue,
+                          showAllRows ? constraints.ballSpacing : 0,
+                          constraints: constraints,
+                        )
+                    else
+                      for (int startHue = 20; startHue >= 0; startHue -= 10)
+                        _ColorRow(
+                          startHue,
+                          showAllRows ? constraints.maxWidth / 120 : 0,
+                          constraints: constraints,
+                        )
+                  ],
+                ),
+                const Spacer(flex: 2),
+                SexyBox(
+                  child: tellTheTruth
+                      ? empty
+                      : Fader(
+                          textVisible >= 1,
+                          child: const SuperText(
+                            'To identify and keep track of twelve different hues,',
                           ),
-                  ),
-                  Fader(
-                    textVisible >= 2,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: switch (tellTheTruth) {
-                        _ when makingTheJump => Row(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              SuperRichText(pad: false, [
-                                const TextSpan(text: 'this is the jump from '),
-                                TextSpan(
-                                  text: 'sharp',
-                                  style: SuperStyle.sans(
-                                    color: color,
-                                    weight: 100,
-                                    width: 87.5,
-                                    letterSpacing: -0.2,
-                                  ),
+                        ),
+                ),
+                Fader(
+                  textVisible >= 2,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: switch (tellTheTruth) {
+                      _ when makingTheJump => Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            SuperRichText(pad: false, [
+                              const TextSpan(text: 'this is the jump from '),
+                              TextSpan(
+                                text: 'sharp',
+                                style: SuperStyle.sans(
+                                  color: color,
+                                  weight: 100,
+                                  width: 87.5,
+                                  letterSpacing: -0.2,
                                 ),
-                              ]),
-                              SlideItIn(
-                                madeTheJump,
-                                duration: const Duration(milliseconds: 750),
-                                direction: AxisDirection.right,
-                                child: jumpTo,
-                              )
-                            ],
-                          ),
-                        true => const SuperText('Sorry, did I say 36?'),
-                        false => SuperRichText([
-                            const TextSpan(text: 'you have to be '),
-                            TextSpan(
-                              text: 'sharp',
-                              style: SuperStyle.sans(
-                                color: color,
-                                weight: 100,
-                                width: 87.5,
-                                letterSpacing: -0.2,
                               ),
+                            ]),
+                            SlideItIn(
+                              madeTheJump,
+                              duration: const Duration(milliseconds: 750),
+                              direction: AxisDirection.right,
+                              child: jumpTo,
+                            )
+                          ],
+                        ),
+                      true => const SuperText('Sorry, did I say 36?'),
+                      false => SuperRichText([
+                          const TextSpan(text: 'you have to be '),
+                          TextSpan(
+                            text: 'sharp',
+                            style: SuperStyle.sans(
+                              color: color,
+                              weight: 100,
+                              width: 87.5,
+                              letterSpacing: -0.2,
                             ),
-                            const TextSpan(text: '.'),
-                          ]),
+                          ),
+                          const TextSpan(text: '.'),
+                        ]),
+                    },
+                  ),
+                ),
+                const Spacer(),
+                Fader(textVisible >= 3,
+                    child: SuperText(
+                      switch (makingTheJump) {
+                        _ when !tellTheTruth => "But now it's time to try 36.",
+                        true => "Let's see if you got what it takes.",
+                        false => 'I meant 360.',
                       },
-                    ),
+                    )),
+                const Spacer(flex: 3),
+                SexyBox(
+                  child: Fader(
+                    textVisible >= 4,
+                    child: tellTheTruth ? empty : ContinueButton(onPressed: ready),
                   ),
-                  const Spacer(),
-                  Fader(textVisible >= 3,
-                      child: SuperText(
-                        switch (makingTheJump) {
-                          _ when !tellTheTruth => "But now it's time to try 36.",
-                          true => "Let's see if you got what it takes.",
-                          false => 'I meant 360.',
-                        },
-                      )),
-                  const Spacer(flex: 3),
-                  SexyBox(
-                    child: Fader(
-                      textVisible >= 4,
-                      child: tellTheTruth ? empty : ContinueButton(onPressed: ready),
-                    ),
-                  ),
-                  const Spacer(),
-                ],
-              ),
+                ),
+                const Spacer(),
+              ],
             ),
-          );
-        }),
-      ),
+          ),
+        );
+      }),
     );
   }
 }
