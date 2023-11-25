@@ -905,43 +905,47 @@ class _GameDevButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     const Map<String, String> links = {
       'hueman': 'https://github.com/nate-thegrate/hueman',
-      'Flutter': 'https://flutter.dev/',
+      'Flutter': 'https://flutter.dev/games',
       'Defold': 'https://defold.com/',
       'Bevy': 'https://bevyengine.org/',
       'Rive': 'https://rive.app/',
     };
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          for (final MapEntry(key: name, value: url) in links.entries)
-            SizedBox(
-              height: 30,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: const SuperColor(0x20FFF0),
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                ),
-                onPressed: () => gotoWebsite(url),
-                child: name == 'hueman'
-                    ? const Text.rich(TextSpan(children: [
-                        TextSpan(
-                          text: 'HUE',
-                          style: SuperStyle.sans(
-                            size: 10,
-                            weight: 800,
-                            extraBold: true,
-                            height: 2,
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 3),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            for (final MapEntry(key: name, value: url) in links.entries)
+              SuperContainer(
+                height: 30,
+                padding: const EdgeInsets.symmetric(horizontal: 3),
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: const SuperColor(0x20FFF0),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                  ),
+                  onPressed: () => gotoWebsite(url),
+                  child: name == 'hueman'
+                      ? const Text.rich(TextSpan(children: [
+                          TextSpan(
+                            text: 'HUE',
+                            style: SuperStyle.sans(
+                              size: 10,
+                              weight: 800,
+                              extraBold: true,
+                              height: 2,
+                            ),
                           ),
-                        ),
-                        TextSpan(text: 'man', style: SuperStyle.sans(size: 14)),
-                      ]))
-                    : Text(name, style: const SuperStyle.sans(height: 2)),
-              ),
-            )
-        ],
+                          TextSpan(text: 'man', style: SuperStyle.sans(size: 14)),
+                        ]))
+                      : Text(name, style: const SuperStyle.sans(height: 2)),
+                ),
+              )
+          ],
+        ),
       ),
     );
   }
