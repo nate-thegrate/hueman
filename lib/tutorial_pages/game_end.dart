@@ -1089,6 +1089,27 @@ class _TheEndState extends EpicState<_TheEnd> with SinglePress {
               Fader(
                 showQuit,
                 child: switch (Theme.of(context).platform) {
+                  TargetPlatform.android => OutlinedButton(
+                      onPressed: () => gotoWebsite(
+                        'https://play.google.com/store/apps/details?id=com.natethegrate.hueman',
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: color, width: 2),
+                        foregroundColor: color,
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.fromLTRB(5, 10, 5, 12),
+                        child: Text(
+                          'rate on the Play Store',
+                          style: SuperStyle.sans(
+                            size: 18,
+                            width: 96,
+                            letterSpacing: 1 / 3,
+                            extraBold: true,
+                          ),
+                        ),
+                      ),
+                    ),
                   TargetPlatform.iOS || TargetPlatform.macOS => OutlinedButton(
                       onPressed: () => gotoWebsite(
                         'https://apps.apple.com/us/app/hueman-a-game-about-colors/id6471395924',

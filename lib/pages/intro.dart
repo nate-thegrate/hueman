@@ -218,7 +218,7 @@ class _IntroModeState extends State<IntroMode> {
     }
 
     if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.start();
-    hueQueue = scoreKeeper is TutorialScoreKeeper || widget.numColors == 0x18
+    hueQueue = scoreKeeper is TutorialScoreKeeper || (widget.numColors == 0x18 && !casualMode)
         ? TutorialQueue(widget.numColors)
         : HueQueue(widget.numColors);
     if (hueQueue case TutorialQueue()) hueQueue.choices.shuffle();
