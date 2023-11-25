@@ -684,11 +684,9 @@ class _CircleGameState extends State<CircleGame> {
     const duration = Duration(milliseconds: 100);
     return Scaffold(
       body: SafeLayout((context, constraints) {
-        final circleSize = constraints.calcSize((w, h) => switch (widget.scoreKeeper) {
-              MasterScoreKeeper() => min(w - 100, h - 200),
-              _ when widget.image(constraints) != null => min(w - 66, h / 2 - 100),
-              _ => min(w - 66, h - 200),
-            });
+        final circleSize = constraints.calcSize(
+          (w, h) => min(w - 66, (widget.image(constraints) == null ? h : h / 2) - 200),
+        );
         final margin = circleSize / 32;
         void touchRecognition(details) {
           final Offset offset = details.localPosition;

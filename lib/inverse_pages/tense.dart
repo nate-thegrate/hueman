@@ -76,17 +76,12 @@ class TenseScoreKeeper implements ScoreKeeper {
   int get scoreVal => round * (overfills + 1);
 
   @override
-  Widget get finalDetails {
-    String desc = 'survived $round rounds!';
-    if (overfills > 0) {
-      desc += '\n\u00d7${overfills + 1} bonus! '
-          '($overfills health bar overfill${overfills > 1 ? 's' : ''})';
-    }
-    return Text(
-      desc,
-      textAlign: TextAlign.center,
-      style: const SuperStyle.sans(size: 18, color: Colors.black54),
-    );
+  String get finalDetails {
+    final String desc = 'survived $round rounds!';
+    if (overfills == 0) return desc;
+    return '$desc\n'
+        '\u00d7${overfills + 1} bonus! '
+        '($overfills health bar overfill${overfills > 1 ? 's' : ''})';
   }
 }
 

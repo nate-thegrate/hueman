@@ -34,17 +34,12 @@ class TrueMasteryScoreKeeper implements ScoreKeeper {
   }
 
   @override
-  Widget get finalDetails {
-    String scoreDesc = '$_maxRounds rounds, total score = ${score.toStringAsFixed(1)}';
-    if (superCount > 0) {
-      scoreDesc += '\n\u00d7${superCount + 1} bonus! '
-          '($superCount superscore${superCount > 1 ? "s" : ""})';
-    }
-    return Text(
-      scoreDesc,
-      textAlign: TextAlign.center,
-      style: const SuperStyle.sans(size: 18, color: Colors.black54),
-    );
+  String get finalDetails {
+    final String scoreDesc = '$_maxRounds rounds, total score = ${score.toStringAsFixed(1)}';
+    if (superCount == 0) return scoreDesc;
+    return '$scoreDesc\n'
+        '\u00d7${superCount + 1} bonus! '
+        '($superCount superscore${superCount > 1 ? "s" : ""})';
   }
 
   @override

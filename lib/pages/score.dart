@@ -163,7 +163,21 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
                     ],
                   ),
                   const FixedSpacer(10),
-                  sk.finalDetails,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        sk.finalDetails,
+                        textAlign: TextAlign.center,
+                        softWrap: false,
+                        style: SuperStyle.sans(
+                          size: 18,
+                          color: inverted ? Colors.black54 : Colors.white54,
+                        ),
+                      ),
+                    ),
+                  ),
                   const Spacer(flex: 3),
                   SuperButton('play again', color: color, onPressed: () => context.goto(page)),
                   const FixedSpacer(33),

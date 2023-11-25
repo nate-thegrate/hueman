@@ -66,23 +66,17 @@ class IntenseScoreKeeper implements ScoreKeeper {
   int get scoreVal => (30 * scores.average * (superCount + 1)).round();
 
   @override
-  Widget get finalDetails {
-    String scoreDesc = '30 colors, ${scores.average.toStringAsFixed(2)}% accuracy';
-    if (superCount > 0) {
-      scoreDesc += '\n\u00d7${superCount + 1} bonus! '
-          '($superCount superscore${superCount > 1 ? "s" : ""})';
-    }
-    return Text(
-      scoreDesc,
-      style: const SuperStyle.sans(size: 18, color: Colors.white54),
-    );
+  String get finalDetails {
+    final String scoreDesc = '30 colors, ${scores.average.toStringAsFixed(2)}% accuracy';
+    if (superCount == 0) return scoreDesc;
+    return '$scoreDesc\n'
+        '\u00d7${superCount + 1} bonus! '
+        '($superCount superscore${superCount > 1 ? "s" : ""})';
   }
 
   @override
   final Pages page = Pages.intense;
 }
-
-bool squished = false;
 
 class MasterScoreKeeper implements IntenseScoreKeeper {
   MasterScoreKeeper({required this.scoring});
@@ -107,36 +101,13 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
   }
 
   @override
-  Widget get midRoundDisplay {
-    const style = SuperStyle.sans(size: 24);
-    final Color? cardColor = Color.lerp(c, Colors.white, pow(c.computeLuminance(), 2).toDouble());
-
-    final Widget roundLabel = Text('round ${round + 1} / 30', style: style);
-    final Widget rankDesc = Padding(
-      padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
-      child: Text(
-        'rank: $rank',
-        style: rank == 100
-            ? const SuperStyle.sans(size: 30, color: Colors.black, weight: 800)
-            : style,
-      ),
-    );
-    final Widget rankLabel = rank == 100
-        ? Card(color: cardColor, elevation: 8, shadowColor: cardColor, child: rankDesc)
-        : Card(color: Colors.black38, elevation: 0, child: rankDesc);
-
-    return Flex(
-      direction: squished ? Axis.horizontal : Axis.vertical,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [roundLabel, const SizedBox.square(dimension: 15), rankLabel],
-    );
-  }
+  Widget get midRoundDisplay => _MasterScoreDisplay(round, rank);
 
   @override
   int get scoreVal => rank * max(1, turnsAtRank100) * (superCount + 1) as int;
 
   @override
-  Widget get finalDetails {
+  String get finalDetails {
     String finalDesc = 'final rank: $rank';
     if (turnsAtRank100 > 1) {
       finalDesc += '\n\u00d7$turnsAtRank100 ($turnsAtRank100 turns at rank 100)';
@@ -145,15 +116,47 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
       finalDesc +=
           '\n\u00d7${superCount + 1} ($superCount superscore${superCount > 1 ? "s" : ""}!)';
     }
-    return Text(
-      finalDesc,
-      textAlign: TextAlign.center,
-      style: const SuperStyle.sans(size: 18, color: Colors.white54),
-    );
+    return finalDesc;
   }
 
   @override
   final Pages page = Pages.master;
+}
+
+class _MasterScoreDisplay extends StatelessWidget {
+  const _MasterScoreDisplay(this.round, this.rank);
+  final int round, rank;
+
+  @override
+  Widget build(BuildContext context) {
+    const style = SuperStyle.sans(size: 20);
+    final Color? cardColor = Color.lerp(c, Colors.white, pow(c.computeLuminance(), 2).toDouble());
+
+    final Widget roundLabel = Text('round ${round + 1} / 30', style: style);
+    final Widget rankDesc = Padding(
+      padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
+      child: Text(
+        'rank: $rank',
+        style: rank == 100
+            ? const SuperStyle.sans(size: 24, color: Colors.black, weight: 800)
+            : style,
+      ),
+    );
+    final Widget rankLabel = rank == 100
+        ? Card(color: cardColor, elevation: 8, shadowColor: cardColor, child: rankDesc)
+        : Card(color: Colors.black38, elevation: 0, child: rankDesc);
+
+    return Center(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Flex(
+          direction: hueTyping ? Axis.horizontal : Axis.vertical,
+          mainAxisSize: MainAxisSize.min,
+          children: [roundLabel, const SizedBox.square(dimension: 15), rankLabel],
+        ),
+      ),
+    );
+  }
 }
 
 class SawEveryPic extends StatelessWidget {
@@ -437,7 +440,6 @@ class _IntenseModeState extends State<IntenseMode> {
     // ignore: avoid_print
     if (!Score.superHue()) print(hue);
 
-    squished = context.screenHeight < 1080;
     if (!hueTyping) {
       final gameScreen = CircleGame(
         color: color,

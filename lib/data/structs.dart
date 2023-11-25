@@ -32,7 +32,7 @@ Color contrastWith(Color c, {double threshold = .2}) =>
 abstract interface class ScoreKeeper {
   Pages get page;
   Widget get midRoundDisplay;
-  Widget get finalDetails;
+  String get finalDetails;
   int get scoreVal;
   void scoreTheRound();
   void roundCheck(BuildContext context);

@@ -56,7 +56,7 @@ class TutorialScoreKeeper implements ScoreKeeper {
   int get scoreVal => throw Error();
 
   @override
-  Widget get finalDetails => empty;
+  String get finalDetails => '';
 
   @override
   Pages get page => switch (numColors) {
@@ -99,11 +99,8 @@ class IntroScoreKeeper implements ScoreKeeper {
   }
 
   @override
-  Widget get finalDetails => Text(
-        '(${colorsPerMinute.toStringAsFixed(1)} colors per minute) '
-        '\u00d7 (${accuracy.round()}% accuracy)',
-        style: const SuperStyle.sans(size: 18, color: Colors.white54),
-      );
+  String get finalDetails => '(${colorsPerMinute.toStringAsFixed(1)} colors per minute) '
+      '\u00d7 (${accuracy.round()}% accuracy)';
 
   @override
   int get scoreVal => (colorsPerMinute * accuracy).round();
