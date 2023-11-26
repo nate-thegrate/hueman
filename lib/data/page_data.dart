@@ -74,6 +74,8 @@ enum Pages {
         intro18 => 'intro  (24 colors)',
         intense => 'Intense',
         master => 'Master',
+        tenseVibrant when variety => 'Tense (vibrant, 0x18)',
+        tenseVolatile when variety => 'Tense (volatile, 0x18)',
         tenseVibrant => 'Tense (vibrant)',
         tenseVolatile => 'Tense (volatile!)',
         trueMastery => 'True Mastery',

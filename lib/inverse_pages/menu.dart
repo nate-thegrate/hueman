@@ -76,7 +76,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
     ];
 
     final color = inverseColor;
-    final furtherColor = evenFurther ? SuperColor.hue(inverseHue, 0.35) : null;
+    final furtherColor = SuperColors.evenFurther[inverseHue];
 
     final trueMasteryButton = Padding(
       padding: const EdgeInsets.only(top: 33),
@@ -295,10 +295,24 @@ class _InverseMenuState extends InverseState<InverseMenu>
         ],
       MenuPage.tenseSelect => [
           const Text('tense', textAlign: TextAlign.center, style: titleStyle),
-          const FixedSpacer(50),
-          NavigateButton(Pages.tenseVibrant, color: color),
+          FixedSpacer(Tutorial.mastered() ? 25 : 50),
+          if (Tutorial.mastered()) ...[
+            Padding(
+              padding: const EdgeInsets.only(left: 0),
+              child: MenuCheckbox(
+                variety ? 'variety' : 'vanilla',
+                description: ('0x18 colors'.padLeft(25), '0x0C colors'.padLeft(25)),
+                value: variety,
+                toggle: (val) => variety = val,
+              ),
+            ),
+            const FixedSpacer(33),
+          ],
+          NavigateButton(Pages.tenseVibrant,
+              color: variety ? furtherColor : color, further: variety),
           const FixedSpacer(33),
-          NavigateButton(Pages.tenseVolatile, color: color),
+          NavigateButton(Pages.tenseVolatile,
+              color: variety ? furtherColor : color, further: variety),
           const FixedSpacer(20),
           if (!casualMode) ...[
             const FixedSpacer(20),

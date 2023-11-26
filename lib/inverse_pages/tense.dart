@@ -102,6 +102,59 @@ class Target extends StatelessWidget {
   }
 }
 
+class _NoMoreChartreuse extends StatefulWidget {
+  const _NoMoreChartreuse();
+
+  @override
+  State<_NoMoreChartreuse> createState() => _NoMoreChartreuseState();
+}
+
+class _NoMoreChartreuseState extends InverseState<_NoMoreChartreuse> {
+  @override
+  Widget build(BuildContext context) {
+    return DismissibleDialog(
+      title: const Text('Tension Rank 500'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text.rich(
+              textAlign: TextAlign.center,
+              softWrap: false,
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: '"no more chartreuse" unlocked!',
+                    style: SuperStyle.gaegu(
+                      size: 27,
+                      weight: FontWeight.bold,
+                      color: inverseColor,
+                      shadows: const [
+                        Shadow(color: Colors.white, blurRadius: 1),
+                        Shadow(color: Colors.white, blurRadius: 2),
+                        Shadow(color: Colors.white, blurRadius: 3),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Text(
+            Tutorial.gameEnd()
+                ? "go 'even further' to find the button!"
+                : 'find the button after beating the game!',
+            textAlign: TextAlign.left,
+            style: const SuperStyle.sans(),
+          ),
+          const FixedSpacer(6),
+        ],
+      ),
+    );
+  }
+}
+
 class TenseMode extends StatefulWidget {
   const TenseMode(this.mode, {super.key}) : volatile = mode == 'volatile';
   final String mode;
@@ -129,7 +182,10 @@ class _ButtonData {
 }
 
 class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
-  Map<String, int> tension = {for (final color in SuperColors.twelveHues) color.name: 15};
+  Map<String, int> tension = {
+    for (final color in (variety ? SuperColors.allNamedHues : SuperColors.twelveHues))
+      color.name: 15
+  };
 
   List<int> get tensionList => tension.values.toList();
   String get tensionRank => tensionList
@@ -143,7 +199,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   };
 
   late int hue;
-  final HueQueue hueQueue = HueQueue(12);
+  final HueQueue hueQueue = HueQueue(variety ? 24 : 12);
   int? selectedHue;
 
   static const animationTime = 25;
@@ -162,6 +218,10 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     scoreKeeper?.rank = tensionRank;
     scoreKeeper?.roundCheck(context);
     generateHue();
+    if (double.parse(tensionRank) >= 500) {
+      Tutorial.tensed.complete();
+      showDialog(context: context, builder: (context) => const _NoMoreChartreuse());
+    }
   }
 
   void generateHue() {

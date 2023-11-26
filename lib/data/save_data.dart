@@ -22,6 +22,7 @@ late bool externalKeyboard;
 late bool hueRuler;
 late bool casualMode;
 late bool inverted;
+late bool variety;
 late bool evenFurther;
 late bool music;
 late bool sounds;
@@ -46,6 +47,7 @@ Future<void> loadData() async {
   externalKeyboard = prefs.getBool('externalKeyboard') ?? false;
   hueRuler = prefs.getBool('hueRuler') ?? true;
   inverted = prefs.getBool('inverted') ?? false;
+  variety = prefs.getBool('variety') ?? false;
   evenFurther = prefs.getBool('evenFurther') ?? false;
   music = prefs.getBool('music') ?? true;
   sounds = prefs.getBool('sounds') ?? true;
@@ -74,10 +76,12 @@ enum Tutorial {
   sawInversion,
   trivial,
   tense,
+  tensed,
   trueMastery,
   gameEnd,
   evenFurther,
   worldEnd,
+  dawnOfSummer,
   ;
 
   bool call() => data[this]!;
@@ -108,10 +112,12 @@ enum Tutorial {
           sawInversion: false,
           trivial: false,
           tense: false,
+          tensed: false,
           trueMastery: false,
           gameEnd: false,
           evenFurther: false,
           worldEnd: false,
+          dawnOfSummer: false,
         },
     };
     // ignore: dead_code
@@ -139,6 +145,8 @@ enum Score {
   trivial,
   tenseVibrant,
   tenseVolatile,
+  tenseVibrant_0x18,
+  tenseVolatile_0x18,
   trueMastery,
   ;
 
@@ -156,6 +164,8 @@ enum Score {
         trivial => 'color_trivia',
         tenseVibrant => 'tense_vibrant',
         tenseVolatile => 'tense_volatile',
+        tenseVibrant_0x18 => 'tense_vibrant_0x18',
+        tenseVolatile_0x18 => 'tense_volatile_0x18',
         trueMastery => 'true_mastery',
       };
 
@@ -176,13 +186,15 @@ enum Score {
 
   static late final Map<Score, int?> highScores;
   static const Map<Score, int> myScores = {
-    introC: 4390,
+    introC: 5761,
     intro18: 3589,
     intense: 14280,
     master: 492,
     trivial: 15,
     tenseVibrant: 23940,
     tenseVolatile: 7740,
+    tenseVibrant_0x18: 45540,
+    tenseVolatile_0x18: 5112,
     trueMastery: 140,
   };
 
@@ -193,8 +205,11 @@ enum Score {
   static Score? fromScoreKeeper(ScoreKeeper scoreKeeper) => switch (scoreKeeper) {
         final IntroScoreKeeper sk when sk.numColors == 0xC => introC,
         final IntroScoreKeeper sk when sk.numColors == 0x18 => intro18,
-        final TenseScoreKeeper sk when sk.page == Pages.tenseVibrant => tenseVibrant,
-        TenseScoreKeeper() => tenseVolatile,
+        final TenseScoreKeeper sk => switch (sk.page) {
+            Pages.tenseVibrant => variety ? tenseVibrant_0x18 : tenseVibrant,
+            Pages.tenseVolatile => variety ? tenseVolatile_0x18 : tenseVolatile,
+            _ => null,
+          },
         MasterScoreKeeper() => master,
         IntenseScoreKeeper() => intense,
         TrueMasteryScoreKeeper() => trueMastery,

@@ -210,12 +210,13 @@ class SuperButton extends StatefulWidget {
     this.padding,
     this.isNew = false,
     this.noDelay = false,
+    this.further = false,
   });
   final String label;
   final void Function() onPressed;
   final SuperColor color;
   final EdgeInsets? padding;
-  final bool isNew, noDelay;
+  final bool isNew, noDelay, further;
 
   @override
   State<SuperButton> createState() => _SuperButtonState();
@@ -224,11 +225,12 @@ class SuperButton extends StatefulWidget {
 class _SuperButtonState extends State<SuperButton> with SinglePress {
   @override
   Widget build(BuildContext context) {
+    final contrasted = inverted ? Colors.white : Colors.black;
     final button = ElevatedButton(
       onPressed: singlePress(widget.onPressed, noDelay: widget.noDelay),
       style: ElevatedButton.styleFrom(
-        backgroundColor: widget.color,
-        foregroundColor: inverted ? Colors.white : Colors.black,
+        backgroundColor: widget.further ? contrasted : widget.color,
+        foregroundColor: widget.further ? widget.color : contrasted,
       ),
       child: Padding(
         padding: widget.padding ?? const EdgeInsets.only(bottom: 2),
@@ -259,11 +261,12 @@ class NavigateButton extends StatelessWidget {
     this.padding,
     this.isNew = false,
     this.noDelay = false,
+    this.further = false,
   });
   final Pages page;
   final SuperColor color;
   final EdgeInsets? padding;
-  final bool isNew, noDelay;
+  final bool isNew, noDelay, further;
 
   @override
   Widget build(BuildContext context) {
@@ -274,6 +277,7 @@ class NavigateButton extends StatelessWidget {
       padding: padding,
       isNew: isNew,
       noDelay: noDelay,
+      further: further,
     );
   }
 }

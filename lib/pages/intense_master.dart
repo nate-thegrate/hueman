@@ -221,17 +221,12 @@ class _NewHuesUnlockedState extends EpicState<_NewHuesUnlocked> {
                 size: 27,
                 weight: FontWeight.bold,
                 color: epicColor,
-                height: 5 / 3,
                 shadows: const [
                   Shadow(blurRadius: 1),
                   Shadow(blurRadius: 2),
                   Shadow(blurRadius: 3),
                 ],
               ),
-            ),
-            const TextSpan(
-              text: 'find them in intro & sandbox mode',
-              style: SuperStyle.sans(size: 12, height: -0.01, color: Colors.white54),
             ),
           ],
         ),

@@ -130,7 +130,7 @@ const List<TriviaQuestion> _allQuestions = [
     "Which 2 color names are different from the names on Wikipedia's color wheel?",
     [SuperColors.chartreuse, SuperColors.spring],
     explanation: "On Wikipedia's color wheel, "
-        'chartreuse and spring show up as "chartreuse green" and "spring green" respectively.\n\n'
+        'these two show up as "chartreuse green" and "spring green" respectively.\n\n'
         'Maybe they thought that "chartreuse" by itself isn\'t a great color name '
         '(which, to be fair, is a valid point) '
         'and that everyone refers to "spring" as a season rather than a color.\n\n'

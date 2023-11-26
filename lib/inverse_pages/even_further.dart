@@ -141,6 +141,34 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
                 alignment: Alignment.bottomCenter,
                 children: [
                   const Balls(),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        elevation: 0,
+                      ),
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('no more "chartreuse".'),
+                          content: const Text(
+                            "Take a look at the chartreuse bubble one last time, if you'd like.",
+                          ),
+                          actions: [
+                            const WarnButton(),
+                            WarnButton(action: () => context.noTransition(const _DawnOfSummer())),
+                          ],
+                          actionsAlignment: MainAxisAlignment.spaceEvenly,
+                        ),
+                      ),
+                      child: const Text(
+                        'no more chartreuse',
+                        style: SuperStyle.sans(extraBold: true),
+                      ),
+                    ),
+                  ),
                   ConstrainedBox(
                     constraints: BoxConstraints.loose(const Size.fromWidth(550)),
                     child: Stack(children: _buttons),
@@ -915,7 +943,6 @@ class _GameDevButtons extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 3),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             for (final MapEntry(key: name, value: url) in links.entries)
               SuperContainer(
@@ -945,6 +972,339 @@ class _GameDevButtons extends StatelessWidget {
                 ),
               )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+extension _ASCII on Random {
+  String get nextAscii => String.fromCharCode(nextInt(94) + 33);
+}
+
+class _DawnOfSummer extends StatefulWidget {
+  const _DawnOfSummer();
+
+  @override
+  State<_DawnOfSummer> createState() => _DawnOfSummerState();
+}
+
+class _DawnOfSummerState extends SuperState<_DawnOfSummer> {
+  String name = '"chartreuse"';
+  static const newName = '   summer   ';
+
+  void updateName(int index, String value) =>
+      setState(() => name = name.substring(0, index) + value + name.substring(index + 1));
+
+  int textProgress = 0;
+
+  @override
+  void animate() async {
+    for (final (_, sleepyTime) in text) {
+      await sleepState(sleepyTime, () => textProgress++);
+    }
+    for (double sleepyTime = 2 / 3; sleepyTime > 0.01; sleepyTime *= 0.9) {
+      await sleep(sleepyTime);
+      updateName(rng.nextInt(12), rng.nextAscii);
+    }
+    for (int i = 0; i < 500; i++) {
+      await sleep(0.01);
+      updateName(rng.nextInt(12), rng.nextAscii);
+    }
+    final indices = List.generate(12, (index) => index)..shuffle();
+    for (final i in indices) {
+      await sleep(0.01);
+      updateName(i, newName[i]);
+    }
+    await sleep(0.1);
+    context.noTransition(const _ShowTheWheelAgain());
+  }
+
+  static const List<(Widget line, double timeToRead)> text = [
+    (
+      SuperRichText([
+        TextSpan(text: "Let's take "),
+        ColorTextSpan.green,
+      ]),
+      2.5
+    ),
+    (
+      SuperRichText([
+        TextSpan(text: 'and make it just a little bit '),
+        ColorTextSpan.yellow,
+        TextSpan(text: '.'),
+      ]),
+      2
+    ),
+    (Spacer(), 2),
+    (SuperText('How do we describe this color?'), 2),
+    (Spacer(), 2),
+    (SuperText('We could use its color code'), 3.5),
+    (SuperText('or its hue,'), 5),
+    (SuperText('or we could make a new name for it.'), 1.5),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: FadeIn(
+        duration: const Duration(seconds: 2),
+        child: Center(
+          child: Column(
+            children: [
+              const Spacer(flex: 2),
+              for (int i = 0; i < text.length; i++)
+                switch (text[i].$1) {
+                  final Spacer s => s,
+                  _ => Fader(i <= textProgress, child: text[i].$1),
+                },
+              const Spacer(),
+              Expanded(
+                  flex: 4,
+                  child: FittedBox(
+                    child: SizedBox(
+                      width: 500,
+                      height: 300,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          const SuperContainer(color: SuperColors.green),
+                          Fader(
+                            textProgress > 0,
+                            curve: curve,
+                            child: AnimatedSlide(
+                              duration: halfSec,
+                              offset: textProgress > 1 ? Offset.zero : const Offset(0, -1),
+                              curve: Curves.easeInQuad,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: AnimatedSize(
+                                  duration: const Duration(seconds: 3),
+                                  curve: curve,
+                                  child: Opacity(
+                                    opacity: 0.5,
+                                    child: SuperContainer(
+                                      width: textProgress > 2 ? 500 : 250,
+                                      color: SuperColors.yellow,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Fader(
+                                textProgress > 4,
+                                child: const SuperRichText(
+                                  style: SuperStyle.mono(size: 40, color: Colors.black),
+                                  [
+                                    TextSpan(
+                                      text: '#',
+                                      style: SuperStyle.mono(weight: 700),
+                                    ),
+                                    TextSpan(
+                                      text: '80',
+                                      style: SuperStyle.mono(
+                                        weight: 500,
+                                        color: SuperColor(0x800000),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: 'FF',
+                                      style: SuperStyle.mono(
+                                        weight: 500,
+                                        color: SuperColors.green,
+                                        shadows: [
+                                          Shadow(blurRadius: 1),
+                                          Shadow(color: SuperColor(0x808000), blurRadius: 1),
+                                        ],
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '00',
+                                      style: SuperStyle.mono(weight: 500),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const FixedSpacer(15),
+                              Fader(
+                                textProgress > 5,
+                                child: const SuperText(
+                                  '90°',
+                                  style: SuperStyle.sans(
+                                    size: 45,
+                                    color: Colors.black,
+                                    extraBold: true,
+                                  ),
+                                ),
+                              ),
+                              Fader(
+                                textProgress > 6,
+                                child: Text(
+                                  name,
+                                  style: const SuperStyle.mono(
+                                    size: 64,
+                                    color: Colors.black,
+                                    extraBold: true,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  )),
+              const Spacer(flex: 2),
+            ],
+          ),
+        ),
+      ),
+      backgroundColor: Colors.black,
+    );
+  }
+}
+
+class _ShowTheWheelAgain extends StatefulWidget {
+  const _ShowTheWheelAgain();
+
+  @override
+  State<_ShowTheWheelAgain> createState() => _ShowTheWheelAgainState();
+}
+
+class _ShowTheWheelAgainState extends SuperState<_ShowTheWheelAgain> {
+  late final Ticker animateHue;
+  int step = 0;
+  double hue = 0;
+  static const duration = Duration(seconds: 3);
+
+  void smoothHue(Duration elapsed) {
+    final double t, newHue;
+    t = min(elapsed.inMilliseconds / duration.inMilliseconds, 1);
+    newHue = 90 * curve.transform(t);
+    setState(() => hue = newHue);
+
+    if (t == 1) animateHue.dispose();
+  }
+
+  @override
+  void animate() async {
+    const List<double> sleepyTime = [3, 3, 1, 5, 3, 1];
+    for (final time in sleepyTime) {
+      await sleepState(time, () => step++);
+      if (step == 4) animateHue = Ticker(smoothHue)..start();
+    }
+
+    await sleep(4.5);
+    await Tutorial.dawnOfSummer.complete();
+    inverted = false;
+    context.invert();
+  }
+
+  static const step1 = 'Step 1: Find a color wheel.';
+  static const step2 = 'Step 2: Measure the angle to your color, starting at red.';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeLayout((context, constraints) {
+        final width = constraints.calcSize((w, h) => min(w * 0.8, h * 0.8 - 250));
+        return Column(
+          children: [
+            const Spacer(flex: 4),
+            const SuperText(step1),
+            const Spacer(),
+            Fader(step >= 2, child: const SuperText(step2)),
+            const Spacer(flex: 4),
+            Stack(
+              children: [
+                // TODO: fade in summer over it - AnimatedContainer that expands & turns to lightBackground
+                // also, make a hidden webpage about summer
+                MeasuringOrb(
+                  step: step,
+                  width: width,
+                  duration: duration,
+                  hue: 90,
+                  lineColor: Colors.black,
+                ),
+              ],
+            ),
+            const Spacer(flex: 4),
+            _HueBox(step: step, width: width, hue: hue.ceil()),
+            const Spacer(flex: 4),
+          ],
+        );
+      }),
+      backgroundColor: Colors.black,
+    );
+  }
+}
+
+class _HueBox extends StatelessWidget {
+  const _HueBox({
+    required this.step,
+    required this.width,
+    required this.hue,
+  });
+  final int step;
+  final double width;
+  final int hue;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = SuperColor.hue(hue);
+
+    return SuperContainer(
+      height: width / 4,
+      alignment: Alignment.center,
+      child: Fader(
+        step >= 2,
+        duration: const Duration(milliseconds: 400),
+        child: SexyBox(
+          child: SuperContainer(
+            width: step < 2 ? 20 : width,
+            color: color,
+            padding: EdgeInsets.all(width / 48),
+            child: SexyBox(
+              child: step < 3
+                  ? empty
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SexyBox(
+                          child: step < 6
+                              ? const SizedBox(height: 75)
+                              : SizedBox(
+                                  width: width / 2,
+                                  child: Center(
+                                    child: Text(
+                                      'summer',
+                                      style: SuperStyle.sans(
+                                        color: Colors.black,
+                                        size: width * 0.0667,
+                                        weight: 800,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                        ),
+                        Expanded(
+                          child: SuperContainer(
+                            color: SuperColors.darkBackground,
+                            alignment: Alignment.center,
+                            child: Text(
+                              'hue = $hue',
+                              style: SuperStyle.sans(color: color, size: width * 0.06),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
         ),
       ),
     );
