@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hueman/data/save_data.dart';
@@ -208,6 +209,14 @@ class SuperRichText extends StatelessWidget {
     );
   }
 }
+
+GestureRecognizer hyperlink(String url) => TapGestureRecognizer()..onTap = () => gotoWebsite(url);
+const linkStyle = SuperStyle.sans(
+  extraBold: true,
+  color: SuperColors.azure,
+  decoration: TextDecoration.underline,
+  decorationColor: SuperColors.azure,
+);
 
 class SuperHUEman extends StatefulWidget {
   /// The majestic game logo.

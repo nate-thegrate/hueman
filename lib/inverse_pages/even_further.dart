@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hueman/data/big_balls.dart';
@@ -20,6 +19,8 @@ class EvenFurther extends StatefulWidget {
 }
 
 class _EvenFurtherState extends SuperState<EvenFurther> {
+  late final List<Topic> topics;
+
   int? selectedTopic;
   void deselect() => selectedTopic = null;
 
@@ -35,6 +36,207 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
     super.initState();
     showK = theEndApproaches;
     if (!theEndApproaches && !Tutorial.worldEnd()) theEndApproaches = true;
+    topics = [
+      const Topic(
+        name: 'high\nscores',
+        defaultColor: Color(0xCCFFAAFF),
+        details: _HighScores(),
+      ),
+      const Topic(
+        name: 'black\nlight',
+        defaultColor: SuperColors.black,
+        accentColor: SuperColors.violet,
+        details: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: SuperContainer(
+            margin: EdgeInsets.symmetric(horizontal: 33),
+            width: 1080,
+            height: 1500,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 100),
+                  child: Image(image: AssetImage('assets/black_light.jpg')),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    empty,
+                    empty,
+                    empty,
+                    Text(
+                      '"Black lights" mostly give off ultraviolet radiation, '
+                      'which is outside the visible spectrum.',
+                      style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
+                    ),
+                    Text(
+                      'So if a material is glowing under a black light, '
+                      "that means it's somehow able to collect the energy from ultraviolet radiation "
+                      'and then re-emit it as light we can see.',
+                      style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
+                    ),
+                    Text(
+                      'I have no idea how any of that works, '
+                      "but someone who's into chemical engineering might understand what's going on.",
+                      style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
+                    ),
+                    Text.rich(
+                      style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Maybe one day, we'll have a ",
+                          ),
+                          ColorTextSpan.red,
+                          TextSpan(
+                            text: " pigment that doesn't absorb/reflect different frequencies, "
+                                'but instead captures the energy from all electro-magnetic radiation '
+                                'and releases it as red light: ',
+                          ),
+                          TextSpan(
+                            text: 'the brightest red imaginable!',
+                            style: SuperStyle.sans(
+                              size: 50,
+                              weight: 800,
+                              color: SuperColor(0xFF2020),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      if (Tutorial.dawnOfSummer())
+        const Topic(
+          name: 'blend\nmodes',
+          defaultColor: Color(0x80808080),
+          accentColor: SuperColors.white80,
+          details: _BlendModes(),
+        )
+      else
+        const Topic(
+          name: 'chartreuse',
+          defaultColor: SuperColors.chartreuse,
+          details: _ChartreuseSucks(),
+        ),
+      const Topic(
+        name: 'color\nspaces',
+        defaultColor: Colors.white54,
+        accentColor: Colors.black54,
+        details: _ColorSpaceInfo(),
+      ),
+      const Topic(
+        name: 'your own\ngame',
+        defaultColor: SuperColor(0x20FFF0),
+        details: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: SuperContainer(
+                  margin: EdgeInsets.symmetric(horizontal: 33),
+                  width: 1060,
+                  height: 975,
+                  child: Text.rich(
+                    style: SuperStyle.sans(size: 36, color: Colors.black),
+                    TextSpan(children: [
+                      TextSpan(
+                        text: 'Flutter is an open-source app framework made by Google.\n\n',
+                      ),
+                      TextSpan(
+                        text: "I really like Flutter's flexibility—it lets you make a game "
+                            '(or any other type of application) and then publish it to any platform.\n'
+                            "And it's open-source, so you never have to pay for it!\n\n",
+                      ),
+                      TextSpan(
+                        text: 'I animated this game using Rive '
+                            "(plus Flutter's built-in animated widgets). "
+                            'If you want to focus on making games, '
+                            'Rive works with lots of great open-source options, including '
+                            "Defold, Bevy, and Flutter's Flame engine.\n\n",
+                      ),
+                      TextSpan(
+                        text: "I'm excited to see all the cool stuff people make in the future "
+                            '(even if this game ends up feeling not-so-cool by comparison).\n\n',
+                      ),
+                      TextSpan(text: 'Oh, and '),
+                      TextSpan(
+                        text: 'HUEman',
+                        style: SuperStyle.gaegu(
+                          size: 48,
+                          weight: FontWeight.bold,
+                          letterSpacing: -1 / 3,
+                          height: 0,
+                        ),
+                      ),
+                      TextSpan(
+                        text: " is open-source too! This game's source code "
+                            'is linked below, along with some other resources '
+                            'for getting started as a cross-platform game dev.',
+                      ),
+                    ]),
+                  ),
+                ),
+              ),
+            ),
+            _GameDevButtons(),
+          ],
+        ),
+      ),
+      if (showK)
+        const Topic(
+          name: 'end of\nthe world',
+          defaultColor: SuperColors.k,
+          details: K_glitch.destroyer(),
+        )
+      else
+        const Topic(
+          name: 'be a\nteacher',
+          defaultColor: SuperColors.azure,
+          accentColor: SuperColor(0xFFCC99),
+          details: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SuperText(
+                  "I don't usually interact with groups of kids, but if you do then this'll be easy.",
+                ),
+                SuperRichText([
+                  TextSpan(text: 'Go back to the main menu and tap on "'),
+                  TextSpan(
+                      text: 'settings',
+                      style: TextStyle(
+                        color: SuperColor(0xFFCC99),
+                        shadows: [Shadow(color: Colors.black38, blurRadius: 3)],
+                      )),
+                  TextSpan(text: '".\n'),
+                  TextSpan(text: "There's an option to "),
+                  TextSpan(
+                      text: 'reset',
+                      style: TextStyle(
+                        color: SuperColor(0xFFCC99),
+                        shadows: [Shadow(color: Colors.black38, blurRadius: 3)],
+                      )),
+                  TextSpan(
+                      text: ' all your progress, so you can play through the tutorials again.'),
+                ]),
+                SuperText(
+                  'The next time a kid asks "you got games on your phone?",\nyou know what to do.',
+                ),
+                empty,
+                empty,
+              ],
+            ),
+          ),
+        ),
+    ];
     ticker = Ticker(cycle)..start();
   }
 
@@ -54,75 +256,70 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
 
   List<Widget> get _buttons {
     final List<Widget> buttons = [];
-    final buttonToYeet = showK ? 2 : 1;
     for (final (i, Topic(:name, :defaultColor, :accentColor)) in topics.indexed) {
       bool selected() => i == selectedTopic;
       bool somethingElseSelected() => selectedTopic != null && !selected();
       void select() => setState(selected() ? deselect : () => selectedTopic = i);
       final accent = accentColor ?? contrastWith(defaultColor);
       final sine = funSine(i);
-      if (i != topics.length - buttonToYeet) {
-        final iAlign = min(i, topics.length - 2);
-        buttons.add(
-          Fader(
-            !somethingElseSelected(),
-            duration: quarterSec,
-            child: SlideItIn(
-              buttonsInPlace > iAlign,
-              direction: iAlign % 2 == 0 ? AxisDirection.right : AxisDirection.left,
-              duration: const Duration(seconds: 2),
-              child: AnimatedAlign(
-                duration: quarterSec,
-                curve: Curves.easeOutQuart,
-                alignment: selected()
-                    ? Alignment.topCenter
-                    : Alignment(iAlign % 2 - .5, (iAlign + .6) / (topics.length - 1) * 2 - 1),
-                child: Padding(
-                  padding: selected()
-                      ? const EdgeInsets.only(top: 20)
-                      : EdgeInsets.only(top: sine, bottom: 10 - sine),
-                  child: SizedBox.fromSize(
-                    size: const Size.square(150),
-                    child: Stack(
-                      children: [
-                        AnimatedScale(
-                          scale: selected() ? 50 : 0.99,
-                          duration: quarterSec,
-                          curve: selected() ? Curves.easeInExpo : Curves.easeOutExpo,
-                          child: DecoratedBox(
-                            decoration:
-                                BoxDecoration(shape: BoxShape.circle, color: defaultColor),
-                            child: const SizedBox.expand(),
-                          ),
+      buttons.add(
+        Fader(
+          !somethingElseSelected(),
+          duration: quarterSec,
+          child: SlideItIn(
+            buttonsInPlace > i,
+            direction: i % 2 == 0 ? AxisDirection.right : AxisDirection.left,
+            duration: const Duration(seconds: 2),
+            child: AnimatedAlign(
+              duration: quarterSec,
+              curve: Curves.easeOutQuart,
+              alignment: selected()
+                  ? Alignment.topCenter
+                  : Alignment(i % 2 - .5, (i + .6) / topics.length * 2 - 1),
+              child: Padding(
+                padding: selected()
+                    ? const EdgeInsets.only(top: 20)
+                    : EdgeInsets.only(top: sine, bottom: 10 - sine),
+                child: SizedBox.fromSize(
+                  size: const Size.square(150),
+                  child: Stack(
+                    children: [
+                      AnimatedScale(
+                        scale: selected() ? 50 : 0.99,
+                        duration: quarterSec,
+                        curve: selected() ? Curves.easeInExpo : Curves.easeOutExpo,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(shape: BoxShape.circle, color: defaultColor),
+                          child: const SizedBox.expand(),
                         ),
-                        SizedBox.expand(
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              backgroundColor: selected() ? accent : defaultColor,
-                              foregroundColor: selected() ? defaultColor.withAlpha(0xFF) : accent,
-                              surfaceTintColor: Colors.transparent,
-                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 36),
-                            ),
-                            onPressed: somethingElseSelected() ? null : select,
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                name,
-                                textAlign: TextAlign.center,
-                                style: const SuperStyle.sans(size: 100, extraBold: true),
-                              ),
+                      ),
+                      SizedBox.expand(
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: selected() ? accent : defaultColor,
+                            foregroundColor: selected() ? defaultColor.withAlpha(0xFF) : accent,
+                            surfaceTintColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 36),
+                          ),
+                          onPressed: somethingElseSelected() ? null : select,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              name,
+                              textAlign: TextAlign.center,
+                              style: const SuperStyle.sans(size: 100, extraBold: true),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
-        );
-      }
+        ),
+      );
     }
     return buttons;
   }
@@ -132,7 +329,7 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
     return Theme(
       data: ThemeData(brightness: Brightness.light, useMaterial3: true),
       child: GestureDetector(
-        onTap: selectedTopic == 6 ? null : () => setState(deselect),
+        onTap: selectedTopic == 5 && showK ? null : () => setState(deselect),
         child: Scaffold(
           backgroundColor: Colors.white,
           body: SafeLayout((context, constraints) {
@@ -141,34 +338,37 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
                 alignment: Alignment.bottomCenter,
                 children: [
                   const Balls(),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        elevation: 0,
-                      ),
-                      onPressed: () => showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('no more "chartreuse".'),
-                          content: const Text(
-                            "Take a look at the chartreuse bubble one last time, if you'd like.",
+                  if (Tutorial.tensed() && !Tutorial.dawnOfSummer())
+                    Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          elevation: 0,
+                        ),
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('no more "chartreuse".'),
+                            content: const Text(
+                              "Take a look at the chartreuse bubble one last time, if you'd like.",
+                            ),
+                            actions: [
+                              const WarnButton(),
+                              WarnButton(
+                                action: () => context.noTransition(const _DawnOfSummer()),
+                              ),
+                            ],
+                            actionsAlignment: MainAxisAlignment.spaceEvenly,
                           ),
-                          actions: [
-                            const WarnButton(),
-                            WarnButton(action: () => context.noTransition(const _DawnOfSummer())),
-                          ],
-                          actionsAlignment: MainAxisAlignment.spaceEvenly,
+                        ),
+                        child: const Text(
+                          'no more chartreuse',
+                          style: SuperStyle.sans(extraBold: true),
                         ),
                       ),
-                      child: const Text(
-                        'no more chartreuse',
-                        style: SuperStyle.sans(extraBold: true),
-                      ),
                     ),
-                  ),
                   ConstrainedBox(
                     constraints: BoxConstraints.loose(const Size.fromWidth(550)),
                     child: Stack(children: _buttons),
@@ -211,197 +411,6 @@ class Topic {
   final Color? accentColor;
   final Widget details;
 }
-
-const topics = [
-  Topic(
-    name: 'high\nscores',
-    defaultColor: SuperColor(0xFFAAFF),
-    details: _HighScores(),
-  ),
-  Topic(
-    name: 'black\nlight',
-    defaultColor: SuperColors.black,
-    accentColor: SuperColors.violet,
-    details: FittedBox(
-      fit: BoxFit.scaleDown,
-      child: SuperContainer(
-        margin: EdgeInsets.symmetric(horizontal: 33),
-        width: 1080,
-        height: 1500,
-        child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 100),
-              child: Image(image: AssetImage('assets/black_light.jpg')),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                empty,
-                empty,
-                empty,
-                Text(
-                  '"Black lights" mostly give off ultraviolet radiation, '
-                  'which is outside the visible spectrum.',
-                  style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
-                ),
-                Text(
-                  'So if a material is glowing under a black light, '
-                  "that means it's somehow able to collect the energy from ultraviolet radiation "
-                  'and then re-emit it as light we can see.',
-                  style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
-                ),
-                Text(
-                  'I have no idea how any of that works, '
-                  "but someone who's into chemical engineering might understand what's going on.",
-                  style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
-                ),
-                Text.rich(
-                  style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "Maybe one day, we'll have a ",
-                      ),
-                      ColorTextSpan.red,
-                      TextSpan(
-                        text: " pigment that doesn't absorb/reflect different frequencies, "
-                            'but instead captures the energy from all electro-magnetic radiation '
-                            'and releases it as red light: ',
-                      ),
-                      TextSpan(
-                        text: 'the brightest red imaginable!',
-                        style: SuperStyle.sans(
-                          size: 50,
-                          weight: 800,
-                          color: SuperColor(0xFF2020),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    ),
-  ),
-  Topic(
-    name: 'chartreuse',
-    defaultColor: SuperColors.chartreuse,
-    details: _ChartreuseSucks(),
-  ),
-  Topic(
-    name: 'color\nspaces',
-    defaultColor: Colors.white54,
-    accentColor: Colors.black54,
-    details: _ColorSpaceInfo(),
-  ),
-  Topic(
-    name: 'your own\ngame',
-    defaultColor: SuperColor(0x20FFF0),
-    details: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: SuperContainer(
-              margin: EdgeInsets.symmetric(horizontal: 33),
-              width: 1060,
-              height: 975,
-              child: Text.rich(
-                style: SuperStyle.sans(size: 36, color: Colors.black),
-                TextSpan(children: [
-                  TextSpan(
-                    text: 'Flutter is an open-source app framework made by Google.\n\n',
-                  ),
-                  TextSpan(
-                    text: "I really like Flutter's flexibility—it lets you make a game "
-                        '(or any other type of application) and then publish it to any platform.\n'
-                        "And it's open-source, so you never have to pay for it!\n\n",
-                  ),
-                  TextSpan(
-                    text: 'I animated this game using Rive '
-                        "(plus Flutter's built-in animated widgets). "
-                        'If you want to focus on making games, '
-                        'Rive works with lots of great open-source options, including '
-                        "Defold, Bevy, and Flutter's Flame engine.\n\n",
-                  ),
-                  TextSpan(
-                    text: "I'm excited to see all the cool stuff people make in the future "
-                        '(even if this game ends up feeling not-so-cool by comparison).\n\n',
-                  ),
-                  TextSpan(text: 'Oh, and '),
-                  TextSpan(
-                    text: 'HUEman',
-                    style: SuperStyle.gaegu(
-                      size: 48,
-                      weight: FontWeight.bold,
-                      letterSpacing: -1 / 3,
-                      height: 0,
-                    ),
-                  ),
-                  TextSpan(
-                    text: " is open-source too! This game's source code "
-                        'is linked below, along with some other resources '
-                        'for getting started as a cross-platform game dev.',
-                  ),
-                ]),
-              ),
-            ),
-          ),
-        ),
-        _GameDevButtons(),
-      ],
-    ),
-  ),
-  Topic(
-    name: 'be a\nteacher',
-    defaultColor: SuperColors.azure,
-    accentColor: SuperColor(0xFFCC99),
-    details: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SuperText(
-            "I don't usually interact with groups of kids, but if you do then this'll be easy.",
-          ),
-          SuperRichText([
-            TextSpan(text: 'Go back to the main menu and tap on "'),
-            TextSpan(
-                text: 'settings',
-                style: TextStyle(
-                  color: SuperColor(0xFFCC99),
-                  shadows: [Shadow(color: Colors.black38, blurRadius: 3)],
-                )),
-            TextSpan(text: '".\n'),
-            TextSpan(text: "There's an option to "),
-            TextSpan(
-                text: 'reset',
-                style: TextStyle(
-                  color: SuperColor(0xFFCC99),
-                  shadows: [Shadow(color: Colors.black38, blurRadius: 3)],
-                )),
-            TextSpan(text: ' all your progress, so you can play through the tutorials again.'),
-          ]),
-          SuperText(
-            'The next time a kid asks "you got games on your phone?",\nyou know what to do.',
-          ),
-          empty,
-          empty,
-        ],
-      ),
-    ),
-  ),
-  Topic(
-    name: 'end of\nthe world',
-    defaultColor: SuperColors.k,
-    details: K_glitch.destroyer(),
-  ),
-];
 
 class _HighScores extends StatelessWidget {
   const _HighScores();
@@ -502,8 +511,6 @@ class _ChartreuseSucks extends StatefulWidget {
 
 class _ChartreuseSucksState extends State<_ChartreuseSucks> {
   bool goodQuestion = false, tellMeMore = false;
-  GestureRecognizer hyperlink(String url) =>
-      TapGestureRecognizer()..onTap = () => gotoWebsite(url);
 
   @override
   Widget build(BuildContext context) {
@@ -605,12 +612,7 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                   const TextSpan(text: ', which comes from the Wikipedia articles for '),
                   TextSpan(
                     text: 'shades of chartreuse',
-                    style: const SuperStyle.sans(
-                      extraBold: true,
-                      color: SuperColors.azure,
-                      decoration: TextDecoration.underline,
-                      decorationColor: SuperColors.azure,
-                    ),
+                    style: linkStyle,
                     recognizer: hyperlink(
                       'https://en.wikipedia.org/w/index.php?title=Shades_of_chartreuse&oldid=1184863956',
                     ),
@@ -618,12 +620,7 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                   const TextSpan(text: ' and '),
                   TextSpan(
                     text: 'tertiary color',
-                    style: const SuperStyle.sans(
-                      extraBold: true,
-                      color: SuperColors.azure,
-                      decoration: TextDecoration.underline,
-                      decorationColor: SuperColors.azure,
-                    ),
+                    style: linkStyle,
                     recognizer: hyperlink(
                       'https://en.wikipedia.org/w/index.php?title=Tertiary_color&oldid=1182085196#RGB_or_CMYK_primary,_secondary,_and_tertiary_colors',
                     ),
@@ -632,12 +629,7 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                   const TextSpan(text: 'But the main '),
                   TextSpan(
                     text: 'chartreuse',
-                    style: const SuperStyle.sans(
-                      extraBold: true,
-                      color: SuperColors.azure,
-                      decoration: TextDecoration.underline,
-                      decorationColor: SuperColors.azure,
-                    ),
+                    style: linkStyle,
                     recognizer: hyperlink(
                       'https://en.wikipedia.org/w/index.php?title=Chartreuse_(color)&oldid=1184724573',
                     ),
@@ -656,12 +648,7 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                   const TextSpan(text: " (but apparently it's based on the color of a "),
                   TextSpan(
                     text: 'liqueur',
-                    style: const SuperStyle.sans(
-                      extraBold: true,
-                      color: SuperColors.azure,
-                      decoration: TextDecoration.underline,
-                      decorationColor: SuperColors.azure,
-                    ),
+                    style: linkStyle,
                     recognizer: hyperlink(
                       'https://en.wikipedia.org/wiki/Chartreuse_(liqueur)',
                     ),
@@ -670,12 +657,7 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                   const TextSpan(text: 'And on the '),
                   TextSpan(
                     text: 'color term',
-                    style: const SuperStyle.sans(
-                      extraBold: true,
-                      color: SuperColors.azure,
-                      decoration: TextDecoration.underline,
-                      decorationColor: SuperColors.azure,
-                    ),
+                    style: linkStyle,
                     recognizer: hyperlink(
                       'https://en.wikipedia.org/w/index.php?title=Color_term&oldid=1182771422',
                     ),
@@ -696,12 +678,7 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                   ),
                   TextSpan(
                     text: 'RGB color wheel',
-                    style: const SuperStyle.sans(
-                      extraBold: true,
-                      color: SuperColors.azure,
-                      decoration: TextDecoration.underline,
-                      decorationColor: SuperColors.azure,
-                    ),
+                    style: linkStyle,
                     recognizer:
                         hyperlink('https://en.wikipedia.org/wiki/File:RGB_color_wheel.svg'),
                   ),
@@ -709,12 +686,7 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
                   const TextSpan(text: 'That color wheel is also shown on the '),
                   TextSpan(
                     text: 'tertiary color',
-                    style: const SuperStyle.sans(
-                      extraBold: true,
-                      color: SuperColors.azure,
-                      decoration: TextDecoration.underline,
-                      decorationColor: SuperColors.azure,
-                    ),
+                    style: linkStyle,
                     recognizer: hyperlink(
                       'https://en.wikipedia.org/w/index.php?title=Tertiary_color&oldid=1182085196#RGB_or_CMYK_primary,_secondary,_and_tertiary_colors',
                     ),
@@ -769,6 +741,70 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
               ),
             ),
           ),
+      ],
+    );
+  }
+}
+
+class _BlendModes extends StatelessWidget {
+  const _BlendModes();
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Image(image: AssetImage('assets/blend_modes.png')),
+        Expanded(
+          child: LayoutBuilder(builder: (context, constraints) {
+            return SuperRichText(
+              align: TextAlign.left,
+              style: SuperStyle.sans(size: min(constraints.maxWidth / 16, 20)),
+              [
+                const TextSpan(text: 'If you open a picture in '),
+                TextSpan(
+                  text: 'Photoshop',
+                  style: linkStyle,
+                  recognizer: hyperlink('https://www.adobe.com/products/photoshop.html'),
+                ),
+                const TextSpan(text: ', '),
+                TextSpan(
+                  text: 'Photopea',
+                  style: linkStyle,
+                  recognizer: hyperlink('https://www.photopea.com/'),
+                ),
+                const TextSpan(text: ' (my favorite), or '),
+                TextSpan(
+                  text: 'GIMP',
+                  style: linkStyle,
+                  recognizer: hyperlink('https://www.gimp.org/'),
+                ),
+                const TextSpan(
+                  text: ' (a great open-source option!), '
+                      'you can find a bunch of different ways to blend layers together.\n\n'
+                      'If you click ',
+                ),
+                const TextSpan(
+                  text: 'Multiply',
+                  style: SuperStyle.sans(
+                    color: Colors.white,
+                    shadows: [Shadow(blurRadius: 2)],
+                  ),
+                ),
+                const TextSpan(text: ', you can do subtractive mixing, and '),
+                const TextSpan(
+                  text: 'Screen',
+                  style: SuperStyle.sans(
+                    color: Colors.white,
+                    shadows: [Shadow(blurRadius: 2)],
+                  ),
+                ),
+                const TextSpan(
+                  text: ' will let you do additive mixing.\n\n'
+                      "At some point, maybe I'll figure out what all those other options do too.",
+                ),
+              ],
+            );
+          }),
+        ),
       ],
     );
   }
@@ -1026,7 +1062,7 @@ class _DawnOfSummerState extends SuperState<_DawnOfSummer> {
         TextSpan(text: "Let's take "),
         ColorTextSpan.green,
       ]),
-      2.5
+      5
     ),
     (
       SuperRichText([
@@ -1192,13 +1228,13 @@ class _ShowTheWheelAgainState extends SuperState<_ShowTheWheelAgain> {
 
   @override
   void animate() async {
-    const List<double> sleepyTime = [3, 3, 1, 5, 3, 1];
+    const List<double> sleepyTime = [3, 3, 1, 5, 3, 1, 2, 1];
     for (final time in sleepyTime) {
       await sleepState(time, () => step++);
       if (step == 4) animateHue = Ticker(smoothHue)..start();
     }
 
-    await sleep(4.5);
+    await sleep(1.5);
     await Tutorial.dawnOfSummer.complete();
     inverted = false;
     context.invert();
@@ -1220,9 +1256,8 @@ class _ShowTheWheelAgainState extends SuperState<_ShowTheWheelAgain> {
             Fader(step >= 2, child: const SuperText(step2)),
             const Spacer(flex: 4),
             Stack(
+              alignment: Alignment.center,
               children: [
-                // TODO: fade in summer over it - AnimatedContainer that expands & turns to lightBackground
-                // also, make a hidden webpage about summer
                 MeasuringOrb(
                   step: step,
                   width: width,
@@ -1230,10 +1265,28 @@ class _ShowTheWheelAgainState extends SuperState<_ShowTheWheelAgain> {
                   hue: 90,
                   lineColor: Colors.black,
                 ),
+                Fader(
+                  step >= 6,
+                  duration: const Duration(seconds: 2),
+                  child: AnimatedScale(
+                    duration: const Duration(seconds: 2),
+                    scale: step >= 7 ? 5 : 1,
+                    curve: Curves.easeInExpo,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 1500),
+                      width: width,
+                      height: width,
+                      decoration: BoxDecoration(
+                        color: step >= 7 ? SuperColors.lightBackground : SuperColors.chartreuse,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
             const Spacer(flex: 4),
-            _HueBox(step: step, width: width, hue: hue.ceil()),
+            Fader(step < 7, child: _HueBox(step: step, width: width, hue: hue.ceil())),
             const Spacer(flex: 4),
           ],
         );
