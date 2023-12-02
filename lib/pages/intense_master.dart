@@ -178,14 +178,17 @@ class SawEveryPic extends StatelessWidget {
       ),
       actions: [
         Center(
-          child: TextButton(
-            style: TextButton.styleFrom(backgroundColor: Colors.black38),
-            onPressed: context.menu,
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
-              child: Text(
-                'back to menu',
-                style: SuperStyle.sans(size: 16),
+          child: SizedBox(
+            height: 33,
+            child: TextButton(
+              style: TextButton.styleFrom(backgroundColor: Colors.black38),
+              onPressed: context.menu,
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
+                child: Text(
+                  'back to menu',
+                  style: SuperStyle.sans(size: 16),
+                ),
               ),
             ),
           ),

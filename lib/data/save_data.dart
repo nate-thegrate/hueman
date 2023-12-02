@@ -193,7 +193,7 @@ enum Score {
     trivial: 15,
     tenseVibrant: 23940,
     tenseVolatile: 7740,
-    tenseVibrant_0x18: 45540,
+    tenseVibrant_0x18: 69179,
     tenseVolatile_0x18: 5112,
     trueMastery: 140,
   };

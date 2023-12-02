@@ -218,7 +218,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     scoreKeeper?.rank = tensionRank;
     scoreKeeper?.roundCheck(context);
     generateHue();
-    if (double.parse(tensionRank) >= 500) {
+    if (!Tutorial.tensed() && double.parse(tensionRank) >= 500) {
       Tutorial.tensed.complete();
       showDialog(context: context, builder: (context) => const _NoMoreChartreuse());
     }

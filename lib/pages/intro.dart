@@ -226,7 +226,7 @@ class _IntroModeState extends State<IntroMode> {
         1,
         then: () => showDialog(
           context: context,
-          builder: (context) => const AlertDialog(
+          builder: (context) => const DismissibleDialog(
             title: Text(
               'playing in casual mode',
               textAlign: TextAlign.center,

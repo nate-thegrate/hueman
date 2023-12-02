@@ -182,7 +182,7 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
                   SuperButton('play again', color: color, onPressed: () => context.goto(page)),
                   const FixedSpacer(33),
                   SuperButton(
-                    'play in casual mode',
+                    'casual mode',
                     color: color,
                     onPressed: () {
                       casualMode = true;

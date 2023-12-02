@@ -191,7 +191,7 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
       ),
       if (showK)
         const Topic(
-          name: 'end of\nthe world',
+          name: 'the\nend',
           defaultColor: SuperColors.k,
           details: K_glitch.destroyer(),
         )

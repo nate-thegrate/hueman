@@ -199,6 +199,7 @@ class _Page2State extends SuperState<_Page2> {
                 ),
         ),
         const Spacer(),
+        // TODO: better animation here
         AnimatedPadding(
           duration: squeezeDuration,
           curve: Curves.easeInExpo,
