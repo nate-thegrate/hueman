@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -754,7 +752,7 @@ class K_glitch extends StatefulWidget {
   State<K_glitch> createState() => _KGlitchState();
 }
 
-class _KGlitchState extends State<K_glitch> {
+class _KGlitchState extends SuperState<K_glitch> {
   double opacity = 0;
   bool glitched = false;
   String get filename => glitched ? 'glitched' : 'art';
@@ -784,19 +782,16 @@ class _KGlitchState extends State<K_glitch> {
       _ => null,
     });
 
-    if (counter != 150) return;
-    if (!widget.theEnd) {
-      newOpacity(0.02);
-    } else if (!kDebugMode) {
-      exit(0);
-    }
+    if (counter == 150 && !widget.theEnd) newOpacity(0.02);
   }
 
   @override
-  void initState() {
-    super.initState();
+  void animate() async {
+    if (widget.theEnd) {
+      await Tutorial.worldEnd.complete();
+      await sleep(4);
+    }
     ticker = Ticker(tick)..start();
-    if (widget.theEnd) Tutorial.worldEnd.complete();
   }
 
   @override

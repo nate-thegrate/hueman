@@ -46,6 +46,7 @@ class _MainMenuState extends EpicState<MainMenu>
         booted = true;
       }
     }
+    playMusic(once: 'verity_1', loop: 'verity_2');
   }
 
   @override

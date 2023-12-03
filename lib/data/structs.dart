@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hueman/data/page_data.dart';
@@ -25,6 +26,28 @@ const quarterSec = Duration(milliseconds: 250);
 const Curve curve = Curves.easeOutCubic;
 
 final rng = Random();
+final musicPlayer = AudioPlayer();
+
+Future<void> playMusic({String? once, String? loop}) async {
+  assert((once ?? loop) != null);
+  await musicPlayer.stop();
+
+  void playOnce() => musicPlayer
+    ..play(AssetSource('audio/$once.mp3'))
+    ..setReleaseMode(ReleaseMode.release);
+
+  void playLoop() => musicPlayer
+    ..play(AssetSource('audio/$loop.mp3'))
+    ..setReleaseMode(ReleaseMode.loop);
+
+  if (once == null) {
+    playLoop();
+    return;
+  }
+
+  playOnce();
+  if (loop != null) musicPlayer.onPlayerComplete.listen((_) => playLoop());
+}
 
 Color contrastWith(Color c, {double threshold = .2}) =>
     (c.computeLuminance() > threshold) ? Colors.black : Colors.white;

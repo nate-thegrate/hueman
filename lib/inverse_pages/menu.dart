@@ -59,6 +59,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
       quickly(() => setState(() => visible = false));
       sleepState(0.6, () => exists = false);
     }
+    playMusic(once: 'invert_1', loop: 'invert_2');
   }
 
   @override

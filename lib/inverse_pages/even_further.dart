@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hueman/data/big_balls.dart';
@@ -35,7 +37,11 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
   void initState() {
     super.initState();
     showK = theEndApproaches;
-    if (!theEndApproaches && !Tutorial.worldEnd()) theEndApproaches = true;
+    if (showK) {
+      musicPlayer.play(AssetSource('audio/the_end_approaches.mp3'));
+    } else if (!Tutorial.worldEnd()) {
+      theEndApproaches = true;
+    }
     topics = [
       const Topic(
         name: 'high\nscores',
@@ -259,7 +265,16 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
     for (final (i, Topic(:name, :defaultColor, :accentColor)) in topics.indexed) {
       bool selected() => i == selectedTopic;
       bool somethingElseSelected() => selectedTopic != null && !selected();
-      void select() => setState(selected() ? deselect : () => selectedTopic = i);
+      void select() {
+        if (showK && i == 5) {
+          if (selected()) return;
+          musicPlayer.stop();
+          musicPlayer.play(AssetSource('audio/the_end_arrives.mp3'));
+          musicPlayer.onPlayerComplete.listen((_) => exit(0));
+        }
+        setState(selected() ? deselect : () => selectedTopic = i);
+      }
+
       final accent = accentColor ?? contrastWith(defaultColor);
       final sine = funSine(i);
       buttons.add(

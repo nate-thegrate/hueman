@@ -103,19 +103,19 @@ enum Tutorial {
           intro3: true,
           intro6: true,
           introC: true,
-          casual: false,
-          intense: false,
-          master: false,
-          mastered: false,
+          casual: true,
+          intense: true,
+          master: true,
+          mastered: true,
           sandbox: true,
           aiCertificate: false,
-          sawInversion: false,
-          trivial: false,
-          tense: false,
-          tensed: false,
-          trueMastery: false,
-          gameEnd: false,
-          evenFurther: false,
+          sawInversion: true,
+          trivial: true,
+          tense: true,
+          tensed: true,
+          trueMastery: true,
+          gameEnd: true,
+          evenFurther: true,
           worldEnd: false,
           dawnOfSummer: false,
         },
@@ -124,7 +124,7 @@ enum Tutorial {
     if (!localStorage) {
       casualMode = true;
       hueRuler = true;
-      inverted = false;
+      inverted = true;
       music = true;
       sounds = true;
 

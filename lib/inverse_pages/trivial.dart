@@ -262,6 +262,7 @@ class _TriviaModeState extends State<TriviaMode> {
     inverted = true;
     resetButtons();
     triviaQuestions.shuffle();
+    playMusic(loop: 'color_trivia');
     if (!Tutorial.trivial()) {
       Tutorial.trivial.complete();
       sleep(
@@ -406,7 +407,8 @@ class _TriviaModeState extends State<TriviaMode> {
           final Widget multipleColorsReminder = SizedBox(
             height: 30,
             child: switch (selected.isEmpty) {
-              _ when correctAnswers.length == 1 => empty,
+              _ when correctAnswers.length == 1 || correctAnswers.length == selected.length =>
+                empty,
               true => Text(
                   'Select ${correctAnswers.length} colors.',
                   style: const SuperStyle.sans(size: 20),
