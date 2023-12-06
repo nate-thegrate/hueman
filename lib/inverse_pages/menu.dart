@@ -18,11 +18,13 @@ enum MenuPage {
   tenseSelect,
   howToWin,
   highScores,
+  fullCompletion,
   reset;
 
   EdgeInsets get padding => switch (this) {
         main => const EdgeInsets.symmetric(vertical: 50),
-        howToWin => const EdgeInsets.all(25),
+        howToWin || highScores => const EdgeInsets.all(25),
+        fullCompletion => const EdgeInsets.all(33),
         _ => const EdgeInsets.all(50),
       };
 }
@@ -81,49 +83,76 @@ class _InverseMenuState extends InverseState<InverseMenu>
     final color = inverseColor;
     final furtherColor = SuperColors.evenFurther[inverseHue];
 
+    final currentCompletion = [
+      Tutorial.mastered(),
+      Tutorial.tensed(),
+      Score.scoresToBeat.isEmpty,
+    ];
+    const completionDesc = [
+      'see every "master" pic',
+      'tension rank 500',
+      'beat my high scores',
+    ];
+    const completionDetails = [
+      "Slow down and enjoy the sights. Or speed through them, that's fine too!",
+      'Easiest to achieve when "variety" & "casual mode" are enabled.\n'
+          'Or turn casual mode off to get a head start on the last item here!',
+      "No worries if you don't beat me at my own game (literally).\n"
+          "But if you do, that's super impressive.",
+    ];
+
     final trueMasteryButton = Padding(
       padding: const EdgeInsets.only(top: 33),
       child: ElevatedButton(
-        onPressed: singlePress(() {
-          if (evenFurther) {
-            context.goto(Pages.evenFurther);
-          } else if (!Tutorial.trueMastery() && !Platform.isIOS) {
-            setState(() => trueMastery = true);
-            sleep(
-              7,
-              then: () => context.noTransition(const TrueMasteryTutorial()),
-            );
-          } else {
-            context.goto(Pages.trueMastery);
-          }
-        }),
-        style: evenFurther
-            ? ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: furtherColor,
-                surfaceTintColor: Colors.transparent,
-                elevation: 0,
-                shadowColor: furtherColor,
-              )
-            : ElevatedButton.styleFrom(
-                backgroundColor: color,
-                foregroundColor: Colors.white,
-              ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 8, 0, 13),
-          child: SizedBox(
-            width: 85,
-            child: Text(
-              evenFurther ? 'even\nfurther' : 'true\nmastery',
-              textAlign: TextAlign.center,
-              style: SuperStyle.sans(
-                size: 24,
-                width: 87.5,
-                weight: evenFurther ? 450 : 350,
-                extraBold: true,
-                letterSpacing: 2 / 3,
-                height: 0.95,
-              ),
+        onPressed: fullCompletion
+            ? () => setState(() => menuPage = MenuPage.fullCompletion)
+            : singlePress(() {
+                if (showEvenFurther) {
+                  context.goto(Pages.evenFurther);
+                } else if (!Tutorial.trueMastery() && !Platform.isIOS) {
+                  setState(() => trueMastery = true);
+                  sleep(
+                    7,
+                    then: () => context.noTransition(const TrueMasteryTutorial()),
+                  );
+                } else {
+                  context.goto(Pages.trueMastery);
+                }
+              }),
+        style: switch (showEvenFurther) {
+          _ when fullCompletion => ElevatedButton.styleFrom(
+              backgroundColor: furtherColor,
+              foregroundColor: Colors.white,
+            ),
+          true => ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: furtherColor,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+              shadowColor: furtherColor,
+            ),
+          false => ElevatedButton.styleFrom(
+              backgroundColor: color,
+              foregroundColor: Colors.white,
+            ),
+        },
+        child: SuperContainer(
+          margin: const EdgeInsets.fromLTRB(0, 8, 0, 13),
+          width: fullCompletion ? null : 85,
+          child: Text(
+            fullCompletion
+                ? 'full\ncompletion'
+                : showEvenFurther
+                    ? 'even\nfurther'
+                    : 'true\nmastery',
+            textAlign: TextAlign.center,
+            style: SuperStyle.sans(
+              size: 24,
+              width: 87.5,
+              weight: showEvenFurther ? 450 : 350,
+              extraBold: true,
+              letterSpacing: 2 / 3,
+              height: 0.95,
             ),
           ),
         ),
@@ -169,8 +198,20 @@ class _InverseMenuState extends InverseState<InverseMenu>
                               child: IconButton(
                                 style: IconButton.styleFrom(foregroundColor: color),
                                 onPressed: () {
-                                  setState(() => evenFurther = !evenFurther);
-                                  saveData('evenFurther', evenFurther);
+                                  if (fullCompletion) {
+                                    setState(() => fullCompletion = false);
+                                    saveData('fullCompletion', fullCompletion);
+                                  } else if (showEvenFurther && Tutorial.evenFurther()) {
+                                    setState(() {
+                                      showEvenFurther = false;
+                                      fullCompletion = true;
+                                    });
+                                    saveData('showEvenFurther', false);
+                                    saveData('fullCompletion', true);
+                                  } else {
+                                    setState(() => showEvenFurther = !showEvenFurther);
+                                    saveData('showEvenFurther', showEvenFurther);
+                                  }
                                 },
                                 icon: const Icon(Icons.autorenew),
                               ),
@@ -376,6 +417,56 @@ class _InverseMenuState extends InverseState<InverseMenu>
             child: _ScoreLog(),
           ),
         ],
+      MenuPage.fullCompletion => [
+          if (currentCompletion.contains(false)) ...[
+            for (final (i, done) in currentCompletion.indexed) ...[
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Row(
+                  children: [
+                    Opacity(
+                      opacity: 2 / 3,
+                      child: SizedBox(width: 25, child: Checkbox(value: done, onChanged: null)),
+                    ),
+                    const FixedSpacer.horizontal(5),
+                    Text(completionDesc[i], style: const SuperStyle.sans()),
+                  ],
+                ),
+              ),
+              if (!done)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    completionDetails[i],
+                    style: const SuperStyle.sans(color: Colors.black54, size: 11),
+                  ),
+                ),
+            ],
+            if (Tutorial.mastered() && Tutorial.tensed())
+              Align(
+                alignment: Alignment.centerLeft,
+                child: SuperRichText(
+                  pad: false,
+                  align: TextAlign.left,
+                  style: const SuperStyle.mono(size: 10, weight: 500, color: Colors.black54),
+                  [
+                    const TextSpan(text: '\n-------- scores to beat --------'),
+                    for (final score in Score.scoresToBeat)
+                      TextSpan(
+                        text: '\n${score.label.padRight(19)} ${score.value}/${score.mine}',
+                      ),
+                  ],
+                ),
+              ),
+          ] else
+            const SuperRichText(
+              pad: false,
+              [
+                TextSpan(text: 'This is for you, champ.\n\n', style: SuperStyle.sans(size: 18)),
+                TextSpan(text: '🏆', style: SuperStyle.sans(size: 125)),
+              ],
+            ),
+        ],
       MenuPage.reset => [
           Text(
             'Reset?',
@@ -539,7 +630,7 @@ class _ScoreLogState extends SuperState<_ScoreLog> {
       ? '[no scores set]'
       : [
           for (final score in Score.allScores)
-            if (score()) '${(score.label).padRight(14)} -> ${score.value}'
+            if (score()) '${(score.label).padRight(19)} -> ${score.value}'
         ].join('\n');
   String cursor = '';
   void blink() => cursor.isEmpty ? cursor = '▌' : cursor = '';

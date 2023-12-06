@@ -426,7 +426,11 @@ class _HueTypingScreen extends StatelessWidget {
                   if (image(constraints) == null) ...[
                     SuperContainer(
                       width: colorBoxWidth,
-                      height: min(colorBoxWidth, constraints.maxHeight - 400),
+                      height: min(
+                        colorBoxWidth,
+                        constraints.maxHeight -
+                            (sk is MasterScoreKeeper && !externalKeyboard ? 530 : 400),
+                      ),
                       color: color,
                     )
                   ] else

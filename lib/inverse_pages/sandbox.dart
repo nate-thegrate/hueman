@@ -38,13 +38,12 @@ void updateRGB() {
 }
 
 enum _ColorPicker {
-  cmyk(Icons.tune, 'sliders'),
-  hsl(Icons.gradient, 'plane'),
-  select(Icons.motion_photos_on, 'from color wheel');
+  cmyk(Icons.tune),
+  hsl(Icons.gradient),
+  select(Icons.motion_photos_on);
 
-  const _ColorPicker(this.icon, this.tag);
+  const _ColorPicker(this.icon);
   final IconData icon;
-  final String tag;
 
   String get upperName => name == 'select' ? 'Select' : name.toUpperCase();
 
@@ -53,12 +52,10 @@ enum _ColorPicker {
           BottomNavigationBarItem(
             icon: Transform.flip(flipX: value == cmyk, child: Icon(value.icon, size: 50)),
             label: value.upperName,
-            tooltip: value.desc,
+            tooltip: value.upperName,
             backgroundColor: contrastWith(_color, threshold: 0.8).withAlpha(64),
           )
       ];
-
-  String get desc => '$upperName $tag';
 }
 
 _ColorPicker _colorPicker = _ColorPicker.cmyk;
@@ -190,7 +187,7 @@ class _HSLScreenState extends State<_HSLScreen> {
     final constraints = widget.constraints;
     final double colorBarHeight = constraints.maxHeight < 800 ? 0 : 100;
     final double planeSize =
-        constraints.calcSize((w, h) => min(w - 50, h - 450 - colorBarHeight));
+        constraints.calcSize((w, h) => min(w - 50, h - 420 - colorBarHeight));
     void touchRecognition(details) {
       final Offset offset = details.localPosition;
       double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);
@@ -221,15 +218,6 @@ class _HSLScreenState extends State<_HSLScreen> {
                         ),
                       ),
                     ),
-                    const SuperContainer(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.white, Color(0x00FFFFFF), Color(0x00FFFFFF)],
-                        ),
-                      ),
-                    ),
                     GestureDetector(
                       onPanStart: touchRecognition,
                       onPanUpdate: touchRecognition,
@@ -238,7 +226,13 @@ class _HSLScreenState extends State<_HSLScreen> {
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Colors.transparent, Colors.black],
+                            colors: [
+                              Colors.white,
+                              Color(0x00FFFFFF),
+                              Colors.transparent,
+                              Colors.black,
+                            ],
+                            stops: [0, 0.5, 0.5, 1],
                           ),
                         ),
                       ),
@@ -573,7 +567,8 @@ class _InverseSandboxState extends State<InverseSandbox> {
                 const Spacer(),
                 const GoBack(),
                 const Spacer(),
-                Text(_colorPicker.desc, style: titleStyle),
+                if (_colorPicker != _ColorPicker.select)
+                  Text(_colorPicker.upperName, style: titleStyle),
                 const Spacer(),
                 AnimatedSize(
                   duration: const Duration(milliseconds: 100),

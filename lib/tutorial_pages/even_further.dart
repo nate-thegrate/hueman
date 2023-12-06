@@ -24,6 +24,7 @@ class _EvenFurtherTutorialState extends EpicState<EvenFurtherTutorial> {
       showButton = false;
   @override
   void animate() async {
+    musicPlayer.stop();
     await sleepState(1, () => visible = true);
     await sleepState(1.5, () => showTop = true);
     await sleepState(6, () => showBottom = true);

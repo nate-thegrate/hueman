@@ -121,27 +121,26 @@ class _HSVSlider extends StatelessWidget {
 }
 
 enum _ColorPicker {
-  rgb(icon: Icons.tune, tag: 'sliders'),
-  hsv(icon: Icons.gradient, tag: 'plane'),
-  select(icon: Icons.list, tag: 'a color');
+  rgb(Icons.tune),
+  hsv(Icons.gradient),
+  select(Icons.list);
 
-  const _ColorPicker({required this.icon, required this.tag});
+  const _ColorPicker(this.icon);
   final IconData icon;
-  final String tag;
   String get upperName => name == 'select' ? 'Select' : name.toUpperCase();
 
   static List<BottomNavigationBarItem> get navBarItems => [
         for (final value in values)
           BottomNavigationBarItem(
-            icon:
-                RotatedBox(quarterTurns: value == hsv ? 2 : 0, child: Icon(value.icon, size: 50)),
+            icon: RotatedBox(
+              quarterTurns: value == hsv ? 2 : 0,
+              child: Icon(value.icon, size: 50),
+            ),
             label: value.upperName,
-            tooltip: value.desc,
+            tooltip: value.upperName,
             backgroundColor: contrastWith(_color, threshold: 0.01).withAlpha(64),
           )
       ];
-
-  String get desc => '$upperName $tag';
 }
 
 class _ColorSelection extends StatelessWidget {
@@ -261,7 +260,7 @@ class _SandboxState extends State<Sandbox> {
             constraints.calcSize((w, h) => min(h - (horizontal ? 420 : 720), 500));
         final double colorBarHeight = constraints.maxHeight < 800 ? 0 : 100;
         final double planeSize =
-            constraints.calcSize((w, h) => min(w - 50, h - 350 - colorBarHeight));
+            constraints.calcSize((w, h) => min(w - 50, h - 420 - colorBarHeight));
         void touchRecognition(details) {
           final Offset offset = details.localPosition;
           double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);
@@ -348,8 +347,7 @@ class _SandboxState extends State<Sandbox> {
                 _HSVSlider(_HSV.hue, (value) => setState(() => _h = value)),
                 _HSVSlider(_HSV.saturation, (value) => setState(() => _s = value)),
                 _HSVSlider(_HSV.value, (value) => setState(() => _v = value)),
-                if (colorBarHeight > 0)
-                  SuperContainer(width: constraints.maxWidth, height: 100, color: _color),
+                if (colorBarHeight > 0) SuperContainer(width: 500, height: 100, color: _color),
               ],
             ),
           _ColorPicker.select => _ColorSelection(
@@ -371,7 +369,8 @@ class _SandboxState extends State<Sandbox> {
               const Spacer(),
               const GoBack(),
               const Spacer(),
-              Text(_colorPicker.desc, style: const SuperStyle.sans(size: 24)),
+              if (_colorPicker != _ColorPicker.select)
+                Text(_colorPicker.upperName, style: const SuperStyle.sans(size: 24)),
               const Spacer(),
               AnimatedSize(
                 duration: const Duration(milliseconds: 100),

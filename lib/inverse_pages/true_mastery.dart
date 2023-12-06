@@ -51,6 +51,7 @@ class TrueMasteryScoreKeeper implements ScoreKeeper {
     if (superCount > 0) text += ', $superCount superscore${superCount > 1 ? 's' : ''}!';
 
     return SuperContainer(
+      width: 150,
       height: 75,
       alignment: Alignment.bottomCenter,
       child: SuperText(text, pad: false, style: const SuperStyle.sans()),
@@ -267,12 +268,12 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
 
     thisRoundScore = 765 / offBy;
     thisRoundSuperCount = 0;
-    for (final val in [
+    for (final perfecto in [
       guess.red == actual.red,
       guess.green == actual.green,
       guess.blue == actual.blue,
     ]) {
-      if (val) thisRoundSuperCount++;
+      if (perfecto) thisRoundSuperCount++;
     }
 
     if (offBy == 0) {
@@ -533,14 +534,14 @@ class _Flicker extends StatelessWidget {
     return Align(
       alignment: const Alignment(1, -0.25),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          const Spacer(flex: 2),
           SuperContainer(width: context.screenWidth, height: 1, color: color),
           SuperContainer(width: context.screenWidth * .75, height: 2, color: color),
           const FixedSpacer(4),
           SuperContainer(
-            width: context.screenWidth * .5,
+            width: double.infinity,
             height: 25,
             color: flickerValue ? color : null,
           ),
@@ -572,6 +573,38 @@ class _Flicker extends StatelessWidget {
               ),
             ),
             child: empty,
+          ),
+          Expanded(
+            flex: 3,
+            child: FittedBox(
+              alignment: Alignment.topCenter,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  for (int row = 0; row < 15; row++)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (int i = 0; i < 33; i++)
+                          SuperContainer(
+                            width: 10,
+                            height: 10,
+                            color: switch ((i + row) % 2) {
+                              _ when i < row - 5 => null,
+                              0 when rng.nextBool() && rng.nextBool() =>
+                                SuperColors.darkBackground,
+                              1 when rng.nextBool() && rng.nextBool() =>
+                                SuperColors.lightBackground,
+                              0 => color,
+                              _ => null,
+                            },
+                          ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

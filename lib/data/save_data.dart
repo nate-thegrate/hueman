@@ -26,7 +26,7 @@ late bool hueRuler;
 late bool casualMode;
 late bool inverted;
 late bool variety;
-late bool evenFurther;
+late bool showEvenFurther;
 late bool fullCompletion;
 late bool music;
 late bool sounds;
@@ -52,7 +52,7 @@ Future<void> loadData() async {
   hueRuler = prefs.getBool('hueRuler') ?? true;
   inverted = prefs.getBool('inverted') ?? false;
   variety = prefs.getBool('variety') ?? false;
-  evenFurther = prefs.getBool('evenFurther') ?? false;
+  showEvenFurther = prefs.getBool('showEvenFurther') ?? false;
   fullCompletion = prefs.getBool('fullCompletion') ?? false;
   music = prefs.getBool('music') ?? true;
   sounds = prefs.getBool('sounds') ?? true;
@@ -100,7 +100,7 @@ enum Tutorial {
   static late final Map<Tutorial, bool> data;
 
   static void init(SharedPreferences prefs) {
-    const bool localStorage = false;
+    const bool localStorage = true;
     data = switch (localStorage) {
       true => {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false},
       false => {
@@ -202,6 +202,10 @@ enum Score {
     tenseVolatile_0x18: 5112,
     trueMastery: 140,
   };
+  static List<Score> get scoresToBeat => [
+        for (final score in allScores)
+          if ((highScores[score] ?? 0) < myScores[score]!) score
+      ];
 
   static void init(SharedPreferences prefs) {
     highScores = {for (final value in values) value: prefs.getInt(value.scoreKey)};
