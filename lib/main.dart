@@ -1,9 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
+import 'package:hueman/data/structs.dart';
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state case AppLifecycleState.inactive || AppLifecycleState.hidden) {
+      musicPlayer.pause();
+      paused = true;
+    } else if (paused) {
+      musicPlayer.resume();
+      paused = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

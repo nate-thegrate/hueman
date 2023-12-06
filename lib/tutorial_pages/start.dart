@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -46,8 +45,6 @@ class _StartScreenState extends SuperState<StartScreen> {
   String artboard = 'start button screen';
   Widget callOutTheLie = empty;
   SuperColor backgroundColor = SuperColors.lightBackground;
-  bool betaScreen = true;
-  void exitBeta() => setState(() => betaScreen = false);
 
   void start() async {
     externalKeyboard =
@@ -88,73 +85,11 @@ class _StartScreenState extends SuperState<StartScreen> {
                 controllers: controllers,
               ),
             ),
-            betaScreen ? _BetaScreen(exitBeta) : const _Logo(),
+            const _Logo(),
           ],
         ),
       ),
       backgroundColor: backgroundColor,
-    );
-  }
-}
-
-class _BetaScreen extends StatelessWidget {
-  const _BetaScreen(this.onPressed);
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            children: [
-              const Spacer(flex: 3),
-              const SuperRichText(
-                style: SuperStyle.gaegu(),
-                [
-                  TextSpan(text: 'Thanks for playing the preliminary '),
-                  TextSpan(
-                    text: 'H',
-                    style: SuperStyle.gaegu(
-                      color: SuperColors.red,
-                      weight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(
-                    text: 'U',
-                    style: SuperStyle.gaegu(
-                      color: SuperColor(0xF0F000),
-                      weight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(
-                    text: 'E',
-                    style: SuperStyle.gaegu(
-                      color: SuperColor(0x0060FF),
-                      weight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(
-                    text: 'man',
-                    style: SuperStyle.gaegu(size: 27, color: SuperColor(0x6C4B00), height: 0),
-                  ),
-                  TextSpan(
-                    text: ' release!\n\n'
-                        'The full release arrives in early December '
-                        'and will include an original soundtrack.\n\n'
-                        'Feel free to screenshot anything that looks weird '
-                        'or that you think could be improved.\n\n'
-                        '(There\'s a "feedback" option in the settings menu.)',
-                  ),
-                ],
-              ),
-              const Spacer(),
-              ContinueButton(onPressed: onPressed),
-              const Spacer(flex: 3),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
@@ -339,8 +274,9 @@ class _LogoState extends SuperState<_Logo> {
   @override
   void animate() async {
     await sleep(1.5);
+    sleep(0.75, then: () => playSound('ryb'));
     for (int i = 0; i < 4; i++) {
-      await sleepState(0.5, () => lettersVisible++);
+      await sleepState(0.75, () => lettersVisible++);
     }
     await sleepState(1, () => dy = 0.5);
     await sleepState(0.5, () {
@@ -435,18 +371,19 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
                   showButton,
                   child: SizedBox(
                     height: 60,
-                    child: _TruthButton(
-                      // child: headphones
-                      //     ? Center(
-                      //         child: ContinueButton(
-                      onPressed: () {
-                        setState(() => showStuff = false);
-                        sleep(2, then: () => context.noTransition(const _FirstLaunchMenu()));
-                      },
-                      //         ),
-                      //       )
-                      //     : _TruthButton(onPressed: seeTheTruth),
-                    ),
+                    child: headphones
+                        ? Center(
+                            child: ContinueButton(
+                              onPressed: () {
+                                setState(() => showStuff = false);
+                                sleep(
+                                  2,
+                                  then: () => context.noTransition(const _FirstLaunchMenu()),
+                                );
+                              },
+                            ),
+                          )
+                        : _TruthButton(onPressed: seeTheTruth),
                   ),
                 ),
                 const Spacer(),
@@ -492,34 +429,36 @@ class _FirstLaunchMenu extends StatefulWidget {
   State<_FirstLaunchMenu> createState() => _FirstLaunchMenuState();
 }
 
-class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
+class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
   late final Ticker ticker;
-  int counter = 1;
+  double progress = 0;
   Widget? introButton;
   bool showAll = false, expanded = false, expanded2 = false;
-  static const showAllDuration = Duration(milliseconds: 1200),
-      expandDuration = Duration(milliseconds: 600);
+  static const showAllDuration = Duration(milliseconds: 1200);
+  // ,
+  //     expandDuration = Duration(milliseconds: 600);
 
-  void expand() {
-    setState(() => expanded = true);
-    sleep(1, then: () => setState(() => expanded2 = true));
+  void expand() async {
+    setState(() => showAll = true);
+    await sleepState(2, () => expanded = true);
+    await sleepState(1, () => expanded2 = true);
+    await sleepState(
+      1,
+      () => setState(() => introButton = const _IntroButton()),
+    );
   }
 
   @override
-  void initState() {
-    super.initState();
+  void animate() {
     inverted = false;
     epicHue = 0;
+    playMusic(once: 'see_the_truth', loop: 'verity_1');
+    sleep(18, then: expand);
     ticker = Ticker(
-      (elapsed) => setState(() {
-        if (++counter % 3 == 0) epicHue = (epicHue + 1) % 360;
-        return switch (counter) {
-          1400 => setState(() => showAll = true),
-          1600 => expand(),
-          1650 => setState(() => introButton = const _IntroButton(expandDuration)),
-          _ => null,
-        };
-      }),
+      (elapsed) {
+        setState(() => progress = elapsed.inMilliseconds / 14000);
+        if (progress >= 1) ticker.stop();
+      },
     )..start();
   }
 
@@ -561,7 +500,7 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
             style: SuperStyle.sans(
               size: size * 0.7,
               color: epicColor,
-              weight: Platform.isIOS ? 800 : (counter * 8 / 5 - 1440).stayInRange(200, 800),
+              weight: 800, //Platform.isIOS ? 800 : (progress * 575 - 1440).stayInRange(200, 800),
             ),
           ),
           space,
@@ -579,8 +518,8 @@ class _FirstLaunchMenuState extends State<_FirstLaunchMenu> {
 
     return Scaffold(
       body: SafeLayout((context, constraints) {
-        if (counter < 360 * 3) {
-          final double x = counter / 3;
+        if (progress < 1) {
+          final double x = progress * 360;
           const int peak = 345;
           final double val =
               x < peak ? x.squared / peak : (x - peak) * peak / (peak - 360) + peak;
@@ -673,7 +612,7 @@ class _Squares extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderWidth = width / 32;
-    final size = width * root2over2 - 2 * borderWidth;
+    final double size = max(width * root2over2 - 2 * borderWidth, 1);
     return Transform.rotate(
       angle: 64 / size + pi / 6,
       child: SuperContainer(
@@ -690,8 +629,7 @@ class _Squares extends StatelessWidget {
 }
 
 class _IntroButton extends StatefulWidget {
-  const _IntroButton(this.duration);
-  final Duration duration;
+  const _IntroButton();
 
   @override
   State<_IntroButton> createState() => _IntroButtonState();
@@ -718,7 +656,6 @@ class _IntroButtonState extends State<_IntroButton> {
   Widget build(BuildContext context) {
     return Center(
       child: FadeIn(
-        duration: widget.duration,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

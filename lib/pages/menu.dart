@@ -19,7 +19,7 @@ enum MenuPage { main, settings, introSelect }
 
 class _MainMenuState extends EpicState<MainMenu>
     with SingleTickerProviderStateMixin, SinglePress {
-  late final AnimationController controller;
+  late final AnimationController controller = AnimationController(duration: oneSec, vsync: this);
   MenuPage menuPage = MenuPage.main;
   bool get mainMenu => menuPage == MenuPage.main;
   bool showMasteryText = false,
@@ -31,7 +31,7 @@ class _MainMenuState extends EpicState<MainMenu>
 
   @override
   void animate() async {
-    controller = AnimationController(duration: oneSec, vsync: this);
+    musicPlayer.stop();
     if (inverted) {
       saveData('inverted', false);
       inverted = false;
@@ -46,6 +46,7 @@ class _MainMenuState extends EpicState<MainMenu>
         booted = true;
       }
     }
+    await sleep(1.5);
     playMusic(once: 'verity_1', loop: 'verity_2');
   }
 
@@ -112,9 +113,11 @@ class _MainMenuState extends EpicState<MainMenu>
         const FixedSpacer(18),
         OutlinedButton(
           onPressed: () async {
+            await musicPlayer.stop();
             Tutorial.sawInversion.complete();
             setState(() => inverting = true);
             controller.forward();
+            playSound('invert_button');
             await sleepState(0.7, () => darkBackground = false);
             await sleepState(0.1, () => visible = true);
             await sleep(0.5, then: context.invert);

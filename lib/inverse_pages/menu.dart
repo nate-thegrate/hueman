@@ -45,6 +45,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
 
   @override
   void animate() async {
+    musicPlayer.stop();
     if (inverted) {
       visible = false;
       exists = false;
@@ -59,6 +60,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
       quickly(() => setState(() => visible = false));
       sleepState(0.6, () => exists = false);
     }
+    await sleep(1.5);
     playMusic(once: 'invert_1', loop: 'invert_2');
   }
 
@@ -257,7 +259,9 @@ class _InverseMenuState extends InverseState<InverseMenu>
           Center(
             child: OutlinedButton(
               onPressed: () async {
+                await musicPlayer.stop();
                 controller.forward();
+                playSound('revert_button');
                 await sleepState(0.5, () => inverting = true);
                 await sleep(0.6, then: context.invert);
               },

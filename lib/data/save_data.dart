@@ -13,6 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// do a menu animation on boot
 bool booted = false;
 
+/// pause music when app is inactive
+bool paused = false;
+
 /// K
 bool theEndApproaches = false;
 
@@ -24,6 +27,7 @@ late bool casualMode;
 late bool inverted;
 late bool variety;
 late bool evenFurther;
+late bool fullCompletion;
 late bool music;
 late bool sounds;
 
@@ -49,6 +53,7 @@ Future<void> loadData() async {
   inverted = prefs.getBool('inverted') ?? false;
   variety = prefs.getBool('variety') ?? false;
   evenFurther = prefs.getBool('evenFurther') ?? false;
+  fullCompletion = prefs.getBool('fullCompletion') ?? false;
   music = prefs.getBool('music') ?? true;
   sounds = prefs.getBool('sounds') ?? true;
 
@@ -95,27 +100,27 @@ enum Tutorial {
   static late final Map<Tutorial, bool> data;
 
   static void init(SharedPreferences prefs) {
-    const bool localStorage = true;
+    const bool localStorage = false;
     data = switch (localStorage) {
       true => {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false},
       false => {
-          started: true,
-          intro3: true,
-          intro6: true,
-          introC: true,
-          casual: true,
-          intense: true,
-          master: true,
-          mastered: true,
-          sandbox: true,
+          started: false,
+          intro3: false,
+          intro6: false,
+          introC: false,
+          casual: false,
+          intense: false,
+          master: false,
+          mastered: false,
+          sandbox: false,
           aiCertificate: false,
-          sawInversion: true,
-          trivial: true,
-          tense: true,
-          tensed: true,
-          trueMastery: true,
-          gameEnd: true,
-          evenFurther: true,
+          sawInversion: false,
+          trivial: false,
+          tense: false,
+          tensed: false,
+          trueMastery: false,
+          gameEnd: false,
+          evenFurther: false,
           worldEnd: false,
           dawnOfSummer: false,
         },

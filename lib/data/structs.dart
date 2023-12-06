@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -26,27 +27,34 @@ const quarterSec = Duration(milliseconds: 250);
 const Curve curve = Curves.easeOutCubic;
 
 final rng = Random();
+final sfxPlayer = AudioPlayer();
 final musicPlayer = AudioPlayer();
+StreamSubscription? _loop;
+
+extension _PlayAsset on AudioPlayer {
+  Future<void> playAsset(String name) => play(AssetSource('audio/$name.mp3'));
+}
+
+Future<void> playSound(String name) => sfxPlayer.playAsset(name);
 
 Future<void> playMusic({String? once, String? loop}) async {
   assert((once ?? loop) != null);
   await musicPlayer.stop();
+  await _loop?.cancel();
 
-  void playOnce() => musicPlayer
-    ..play(AssetSource('audio/$once.mp3'))
-    ..setReleaseMode(ReleaseMode.release);
-
-  void playLoop() => musicPlayer
-    ..play(AssetSource('audio/$loop.mp3'))
-    ..setReleaseMode(ReleaseMode.loop);
-
-  if (once == null) {
-    playLoop();
-    return;
+  Future<void> playLoop() async {
+    await musicPlayer.playAsset(loop!);
+    await _loop?.cancel();
+    return musicPlayer.setReleaseMode(ReleaseMode.loop);
   }
 
-  playOnce();
-  if (loop != null) musicPlayer.onPlayerComplete.listen((_) => playLoop());
+  Future<void> playOnce() async {
+    await musicPlayer.playAsset(once!);
+    if (loop != null) _loop = musicPlayer.onPlayerComplete.listen((_) => playLoop());
+    return musicPlayer.setReleaseMode(ReleaseMode.release);
+  }
+
+  return once == null ? playLoop() : playOnce();
 }
 
 Color contrastWith(Color c, {double threshold = .2}) =>
