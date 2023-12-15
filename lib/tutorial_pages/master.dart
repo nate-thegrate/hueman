@@ -41,7 +41,10 @@ class _MasterTutorialState extends SuperState<MasterTutorial> {
   }
 
   @override
-  void animate() => sleepState(1, () => visible = true);
+  void animate() {
+    musicPlayer.stop();
+    sleepState(1, () => visible = true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,41 +118,38 @@ class _Page1State extends EpicState<_Page1> {
         ),
         Expanded(
           flex: 4,
-          child: SexyBox(
+          child: Fader(
+            showSkills,
             child: FittedBox(
               alignment: Alignment.topCenter,
               child: Padding(
                 padding: const EdgeInsets.all(20),
-                child: SexyBox(
-                  child: showSkills
-                      ? SuperContainer(
-                          width: 250,
-                          height: 75,
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                          ),
-                          alignment: Alignment.center,
-                          child: showTheBestOne
-                              ? Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SuperText(
-                                      'vision',
-                                      style: SuperStyle.sans(size: 32, color: epicColor),
-                                    ),
-                                    Fader(
-                                      buttonVisible,
-                                      child: const SuperText(
-                                        'I might be a little biased',
-                                        style: SuperStyle.sans(size: 8, color: Colors.white54),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : SuperText(skills[skill]),
+                child: SuperContainer(
+                  width: 250,
+                  height: 75,
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                  ),
+                  alignment: Alignment.center,
+                  child: showTheBestOne
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SuperText(
+                              'vision',
+                              style: SuperStyle.sans(size: 32, color: epicColor),
+                            ),
+                            Fader(
+                              buttonVisible,
+                              child: const SuperText(
+                                '(I might be a little biased)',
+                                style: SuperStyle.sans(size: 8, color: Colors.white54),
+                              ),
+                            ),
+                          ],
                         )
-                      : null,
+                      : SuperText(skills[skill]),
                 ),
               ),
             ),
@@ -171,17 +171,17 @@ class _Page2 extends StatefulWidget {
 }
 
 class _Page2State extends SuperState<_Page2> {
-  bool timeToChange = false, buttonVisible = false, showK = false;
+  bool buttonVisible = false, showK = false;
 
   @override
   void animate() async {
     await sleepState(5, () {
-      timeToChange = true;
       buttonVisible = true;
       yellow = const SuperColor(0x404000);
       blue = const SuperColor(0x8080FF);
     });
     await sleepState(5, () => showK = true);
+    if (mounted) playSound('k_color');
   }
 
   SuperColor yellow = SuperColors.yellow;
@@ -230,7 +230,7 @@ class _Page2State extends SuperState<_Page2> {
         ),
         const Spacer(),
         Fader(
-          timeToChange,
+          buttonVisible,
           child: SuperText(
             "It's time to change that.",
             style: SuperStyle.sans(size: size),
@@ -258,7 +258,7 @@ class _Page3State extends EpicState<_Page3> {
   @override
   void animate() async {
     await sleepState(6, () => finalMessage = true);
-    await sleepState(7, () => fadeAway = true);
+    await sleepState(8, () => fadeAway = true);
     await Tutorial.master.complete();
     await sleep(1.5);
     if (casualMode) playMusic(once: 'verity_1', loop: 'verity_2');

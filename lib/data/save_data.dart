@@ -100,26 +100,26 @@ enum Tutorial {
   static late final Map<Tutorial, bool> data;
 
   static void init(SharedPreferences prefs) {
-    const bool localStorage = true;
+    const bool localStorage = false;
     data = switch (localStorage) {
       true => {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false},
       false => {
-          started: false,
-          intro3: false,
-          intro6: false,
-          introC: false,
-          sandbox: false,
-          casual: false,
-          intense: false,
-          master: false,
-          mastered: false,
-          aiCertificate: false,
-          sawInversion: false,
-          trivial: false,
-          tense: false,
-          tensed: false,
-          trueMastery: false,
-          gameEnd: false,
+          started: true,
+          intro3: true,
+          intro6: true,
+          introC: true,
+          sandbox: true,
+          casual: true,
+          intense: true,
+          master: true,
+          mastered: true,
+          aiCertificate: true,
+          sawInversion: true,
+          trivial: true,
+          tense: true,
+          tensed: true,
+          trueMastery: true,
+          gameEnd: true,
           evenFurther: false,
           worldEnd: false,
           dawnOfSummer: false,
@@ -129,7 +129,7 @@ enum Tutorial {
     if (!localStorage) {
       casualMode = true;
       hueRuler = true;
-      inverted = false;
+      inverted = true;
       music = true;
       sounds = true;
 

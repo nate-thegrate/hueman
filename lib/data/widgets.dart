@@ -563,7 +563,6 @@ class ColorLabel extends StatelessWidget {
                   context,
                   color: SuperColor(int.parse(value.substring(1), radix: 16)),
                   updateColor: update!,
-                  kSound: true,
                 ),
                 child: Text(value, style: const SuperStyle.mono(size: 18)),
               ),
@@ -586,21 +585,20 @@ class ManualColorCode extends StatefulWidget {
     BuildContext context, {
     required SuperColor color,
     required void Function(SuperColor) updateColor,
-    bool kSound = false,
   }) =>
       showDialog(
         context: context,
         builder: (context) => ManualColorCode(color),
-      ).then(verifyHexCode(context, updateColor, kSound));
+      ).then(verifyHexCode(context, updateColor));
 
   static void Function(dynamic) verifyHexCode(
-          BuildContext context, void Function(SuperColor) updateColor, bool kSound) =>
+          BuildContext context, void Function(SuperColor) updateColor) =>
       (value) {
         if (value is! String) return;
         if (value.length == 6) {
           final int colorCode = int.parse(value, radix: 16);
           updateColor(SuperColor(colorCode));
-          if (kSound && colorCode == 0x8080FF) playSound('k_color');
+          if (colorCode == 0x8080FF) playSound('k_color');
         } else if (value.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('invalid hex code: $value')),

@@ -51,6 +51,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
     await sleepState(3, () => showSuperHue = true);
     await sleepState(0.1, () => hideSuperHue = false);
     await sleep(1);
+    playSound('game_end'); // using playSound so it doesn't auto-pause when not focused
     await textCycle(4, 'Remember this?');
     await textCycle(4, 'This was the first time you chose correctly\nout of 360 options.');
     await sleepState(1, () {
@@ -58,7 +59,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
         const TextSpan(text: 'Your super'),
         TextSpan(
           text: 'HUE',
-          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 32),
+          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 45),
         ),
         const TextSpan(text: '.'),
       ], style: style);
@@ -73,23 +74,23 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       ], style: style);
       showText = true;
     });
-    await sleepState(8, () => showText = false);
+    await sleepState(7, () => showText = false);
     await sleepState(1, () {
       text = SuperRichText([
         const TextSpan(text: 'Fun fact: your super'),
         TextSpan(
           text: 'HUE',
-          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 32),
+          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 45),
         ),
         const TextSpan(text: ' actually says a lot about you,\njust like a zodiac sign.'),
       ], style: style);
       showText = true;
     });
-    await sleepState(6, () => showText = false);
+    await sleepState(5.5, () => showText = false);
     await textCycle(4, 'Wanna know what your hue says?');
-    await textCycle(6, '$superHue°:\n\n$hueZodiac');
+    await textCycle(5.5, '$superHue°:\n\n$hueZodiac');
     setState(() => hideSuperHue = true);
-    await sleepState(3, () {
+    await sleepState(1, () {
       text = SuperText('This game is 100% free & open-source software.', style: style);
       showText = true;
       showSuperHue = false;
@@ -99,7 +100,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       text = SuperText("If you want to show support,\nhere's what you can do:", style: style);
       showText = true;
     });
-    await sleepState(5, () {
+    await sleepState(4, () {
       text = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -110,27 +111,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       );
       showText = true;
     });
-    await sleepState(10, () => showText = false);
-    await sleepState(1, () {
-      text = SuperText(
-        'When I say "telling people about color theory is really fun",',
-        style: style,
-      );
-      showText = true;
-    });
-    await sleepState(4, () {
-      text = Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          text,
-          const FixedSpacer(10),
-          FadeIn(child: SuperText("that's me speaking from experience.", style: style)),
-        ],
-      );
-      showText = true;
-    });
-    await sleepState(6, () => showText = false);
-    await sleep(1);
+    await sleep(14);
     context.noTransition(const _TheEnd());
   }
 
@@ -1008,15 +989,15 @@ class _HowToSupport extends StatefulWidget {
   State<_HowToSupport> createState() => _HowToSupportState();
 }
 
-class _HowToSupportState extends SuperState<_HowToSupport> {
+class _HowToSupportState extends EpicState<_HowToSupport> {
   static const text = 'Just randomly bring up color theory\n'
-      'in your next conversation with your friends.';
+      'in your next conversation with your friends!';
 
   int visibleLetters = 0;
   @override
   void animate() async {
     for (int i = 0; i < text.length; i++) {
-      await sleepState(0.04, () => visibleLetters++);
+      await sleepState(0.08, () => visibleLetters++);
     }
   }
 
@@ -1027,7 +1008,14 @@ class _HowToSupportState extends SuperState<_HowToSupport> {
         TextSpan(
           text: letter,
           style: TextStyle(
-            color: visibleLetters > i ? Colors.white : Colors.transparent,
+            color: visibleLetters > i ? epicColor : Colors.transparent,
+            shadows: visibleLetters > i
+                ? const [
+                    Shadow(blurRadius: 1),
+                    Shadow(blurRadius: 2),
+                    Shadow(blurRadius: 2),
+                  ]
+                : null,
           ),
         )
     ], style: widget.style);
@@ -1042,12 +1030,11 @@ class _TheEnd extends StatefulWidget {
 }
 
 class _TheEndState extends EpicState<_TheEnd> with SinglePress {
-  bool seeYa = false, showQuit = false;
+  bool showQuit = false;
 
   @override
   void animate() async {
     await Tutorial.gameEnd.complete();
-    await sleepState(3, () => seeYa = true);
     await sleepState(3, () => showQuit = true);
   }
 
@@ -1060,37 +1047,32 @@ class _TheEndState extends EpicState<_TheEnd> with SinglePress {
           child: Column(
             children: [
               const Spacer(flex: 4),
-              FadeIn(
-                child: SuperContainer(
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  width: 250,
-                  height: 100,
-                  alignment: Alignment.center,
-                  child: const Text(
-                    'The End',
-                    style: SuperStyle.sans(
-                      color: Colors.black,
-                      size: 50,
-                      weight: 800,
-                    ),
+              SuperContainer(
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                width: 250,
+                height: 100,
+                alignment: Alignment.center,
+                child: const Text(
+                  'The End',
+                  style: SuperStyle.sans(
+                    color: Colors.black,
+                    size: 50,
+                    weight: 800,
                   ),
                 ),
               ),
               const Spacer(),
-              Fader(
-                seeYa,
-                child: SuperRichText([
-                  const TextSpan(text: 'see '),
-                  TextSpan(
-                    text: 'HUE',
-                    style: SuperStyle.sans(color: color, weight: 800, size: 15),
-                  ),
-                  const TextSpan(text: ' later  :)'),
-                ]),
-              ),
+              SuperRichText([
+                const TextSpan(text: 'see '),
+                TextSpan(
+                  text: 'HUE',
+                  style: SuperStyle.sans(color: color, weight: 800, size: 15),
+                ),
+                const TextSpan(text: ' later  :)'),
+              ]),
               const Spacer(),
               Fader(
                 showQuit,

@@ -195,6 +195,7 @@ class _TrueFinalChallengeState extends EpicState<_TrueFinalChallenge> with Singl
   @override
   void animate() async {
     await sleepState(2, () => daVinciAppear = true);
+    playSound('liar');
     await sleepState(5, () => showTop = true);
     await sleepState(2, () => showBottom = true);
   }
@@ -256,6 +257,7 @@ class _TrueFinalChallengeState extends EpicState<_TrueFinalChallenge> with Singl
                 color: epicColor,
                 onPressed: singlePress(() async {
                   await Tutorial.evenFurther.complete();
+                  playMusic(once: 'invert_1', loop: 'invert_2');
                   context.goto(Pages.evenFurther);
                 }),
               ),
