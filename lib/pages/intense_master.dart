@@ -380,14 +380,23 @@ class _IntenseModeState extends State<IntenseMode> {
       true => MasterScoreKeeper(scoring: masterScore),
       false => IntenseScoreKeeper(scoring: intenseScore),
     };
-    if (externalKeyboard) {
-      hueFocusNode = FocusNode();
+    if (scoreKeeper != null) {
+      musicPlayer.stop();
+    } else if (!masterMode) {
+      playMusic(loop: 'casual');
+    }
+    if (!hueTyping) {
+      hueFocusNode = null;
+      hueController = null;
+      numPadController = null;
+    } else if (externalKeyboard) {
+      hueFocusNode = FocusNode()..requestFocus();
       hueController = TextEditingController();
       numPadController = null;
     } else {
       hueFocusNode = null;
       hueController = null;
-      numPadController = externalKeyboard ? null : NumPadController(setState);
+      numPadController = NumPadController(setState);
     }
     if (showPics) {
       final ogPics = allImages.toList();
@@ -399,7 +408,6 @@ class _IntenseModeState extends State<IntenseMode> {
       }
       hue = HSVColor.fromColor(pics.first.$2).hue.round();
     }
-    hueFocusNode?.requestFocus();
   }
 
   static const List<Color> oranges = [

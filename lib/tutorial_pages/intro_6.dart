@@ -48,6 +48,7 @@ class _Intro6TutorialState extends SuperState<Intro6Tutorial> {
   @override
   void initState() {
     super.initState();
+    musicPlayer.stop();
     sleep(1, then: () => setState(() => visible = true));
   }
 
@@ -83,8 +84,12 @@ class _Page1State extends SuperState<_Page1> {
 
   bool get stagnant => !controllers[1].isActive;
   void weBallin() => controllers[1].isActive = true;
-  void bestPart() => controllers[2].isActive = true;
   void noSpins() => controllers[0].isActive = false;
+  void bestPart() async {
+    setState(() => controllers[2].isActive = true);
+    await sleep(1.25);
+    playMusic(once: 'cmy');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,12 +105,28 @@ class _Page1State extends SuperState<_Page1> {
                 const SuperText("Let's combine the primary colors,\nfor real this time."),
                 const Spacer(flex: 4),
                 ContinueButton(onPressed: () async {
+                  playMusic(once: 'speedup_tapered');
                   setState(weBallin);
                   await sleepState(5, noSpins);
-                  setState(bestPart);
+                  bestPart();
                   await sleep(8, then: widget.nextPage);
                 }),
                 const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: SizedBox(
+                    height: 25,
+                    child: TextButton(
+                      onPressed: () => gotoWebsite(
+                        'https://freesound.org/people/Timbre/sounds/140038/',
+                      ),
+                      child: const Text(
+                        'audio source: Timbre / FreeSound.org',
+                        style: SuperStyle.sans(color: Colors.white38),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -127,10 +148,9 @@ class _Page2State extends SuperState<_Page2> {
   bool showPrinter = false, showButton = false;
 
   @override
-  void initState() {
-    super.initState();
-    sleep(3.25, then: () => setState(() => showPrinter = true));
-    sleep(4.5, then: () => setState(() => showButton = true));
+  void animate() async {
+    await sleep(3.25, then: () => setState(() => showPrinter = true));
+    await sleep(1.25, then: () => setState(() => showButton = true));
   }
 
   @override
@@ -586,7 +606,9 @@ class _Page5State extends SuperState<_Page5> {
             alignment: const Alignment(0, -7 / 8),
             child: Fader(
               showText,
-              child: const SuperText("There isn't just one set of primary colors:"),
+              child: const FadeIn(
+                child: SuperText("There isn't just one set of primary colors:"),
+              ),
             ),
           ),
         ),
@@ -713,9 +735,9 @@ class _ColorBubbles extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: context.screenHeight / 2 - 300,
+          height: context.screenHeight * .45 - 200,
           child: LayoutBuilder(builder: (context, constraints) {
-            final size = constraints.maxHeight / 2 + 10;
+            final size = constraints.maxHeight * .55;
             return Stack(
               children: [
                 _ColorBubble(counter, size, color: colors[0]),
@@ -839,9 +861,11 @@ class _Page6State extends SuperState<_Page6> {
     return Column(
       children: [
         const Spacer(flex: 4),
-        SuperText(
-          'You know what rustles my jimmies?',
-          style: SuperStyle.sans(size: size),
+        FadeIn(
+          child: SuperText(
+            'You know what rustles my jimmies?',
+            style: SuperStyle.sans(size: size),
+          ),
         ),
         const Spacer(flex: 4),
         Fader(

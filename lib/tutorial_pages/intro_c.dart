@@ -47,6 +47,7 @@ class _IntroCTutorialState extends SuperState<IntroCTutorial> {
   @override
   void initState() {
     super.initState();
+    musicPlayer.stop();
     sleep(1, then: () => setState(() => visible = true));
   }
 

@@ -555,6 +555,12 @@ class _InverseSandboxState extends State<InverseSandbox> {
       });
 
   @override
+  void initState() {
+    super.initState();
+    musicPlayer.stop();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),

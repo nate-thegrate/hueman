@@ -52,6 +52,7 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
   @override
   void initState() {
     super.initState();
+    musicPlayer.stop();
     sleep(1, then: () => setState(() => visible = true));
   }
 
@@ -150,7 +151,10 @@ class _Page2State extends SuperState<_Page2> {
   }
 
   void endTransition() async {
-    setState(() => visible = false);
+    setState(() {
+      visible = false;
+      buttonVisible = false;
+    });
 
     final secs = duration.inMilliseconds / 1000;
     await sleepState(secs, () => expanded = true);
@@ -170,36 +174,35 @@ class _Page2State extends SuperState<_Page2> {
     final double width = expanded ? 0 : context.screenWidth / 25;
     return Column(
       children: [
-        const Spacer(flex: 3),
-        AnimatedSize(
-          duration: duration,
-          curve: curve,
-          child: expanded
-              ? null
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    FadeIn(
-                      child: Fader(
-                        visible || !buttonVisible,
-                        duration: duration,
-                        child: const SuperText(
-                          'These 3 cone cell types\nreact to different light frequencies.\n',
-                        ),
-                      ),
-                    ),
-                    Fader(
-                      visible,
+        Expanded(
+          flex: 3,
+          child: Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FadeIn(
+                    child: Fader(
+                      visible || buttonVisible,
                       duration: duration,
                       child: const SuperText(
-                        'They send signals to the brain,\nwhich we perceive as 3 colors.',
+                        'These 3 cone cell types\nreact to different light frequencies.\n',
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Fader(
+                    visible,
+                    duration: duration,
+                    child: const SuperText(
+                      'They send signals to the brain,\nwhich we perceive as 3 colors.',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        const Spacer(),
-        // TODO: better animation here
         AnimatedPadding(
           duration: squeezeDuration,
           curve: Curves.easeInExpo,
@@ -240,18 +243,18 @@ class _Page2State extends SuperState<_Page2> {
             ),
           ),
         ),
-        const Spacer(flex: 2),
-        AnimatedSize(
-          duration: duration,
-          curve: curve,
-          child: buttonVisible && !visible
-              ? null
-              : Fader(
-                  buttonVisible,
-                  child: ContinueButton(onPressed: endTransition),
-                ),
+        Expanded(
+          flex: 2,
+          child: Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Fader(
+                buttonVisible,
+                child: ContinueButton(onPressed: endTransition),
+              ),
+            ),
+          ),
         ),
-        const Spacer(flex: 2),
       ],
     );
   }

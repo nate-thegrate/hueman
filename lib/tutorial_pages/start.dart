@@ -12,6 +12,15 @@ import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 
+extension _Direction on DragEndDetails {
+  AxisDirection get direction => switch (velocity.pixelsPerSecond.direction) {
+        > 3 / 4 * pi || < -3 / 4 * pi => AxisDirection.left,
+        > pi / 4 => AxisDirection.down,
+        < -pi / 4 => AxisDirection.up,
+        _ => AxisDirection.right,
+      };
+}
+
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
 
@@ -37,7 +46,10 @@ class _StartScreenState extends SuperState<StartScreen> {
     rive.OneShotAnimation(
       'mixing',
       autoplay: false,
-      onStop: () => sleep(9.85, then: () => context.noTransition(const _CallOutTheLie())),
+      onStop: () {
+        sleep(4, then: () => playMusic(once: 'speedup'));
+        sleep(9.85, then: () => context.noTransition(const _CallOutTheLie()));
+      },
     ),
     rive.OneShotAnimation('complete lie', autoplay: false),
   ];
@@ -70,6 +82,31 @@ class _StartScreenState extends SuperState<StartScreen> {
     );
   }
 
+  int konamiSwipes = 0;
+  bool speedrun = false;
+
+  void updateKonami(DragEndDetails details) {
+    konamiSwipes = switch ((konamiSwipes, details.direction)) {
+      (1 || 2, AxisDirection.up) => 2,
+      (_, AxisDirection.up) => 1,
+      (2 || 3, AxisDirection.down) => konamiSwipes + 1,
+      (4 || 6, AxisDirection.left) => konamiSwipes + 1,
+      (5 || 7, AxisDirection.right) => konamiSwipes + 1,
+      _ => 0,
+    };
+    if (konamiSwipes == 8) setState(() => speedrun = true);
+  }
+
+  void konamiButton() {
+    if (konamiSwipes < 10) {
+      setState(() => konamiSwipes++);
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(builder: (context) => const _TheGoodStuff()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,6 +116,7 @@ class _StartScreenState extends SuperState<StartScreen> {
           children: [
             GestureDetector(
               onTap: start,
+              onPanEnd: updateKonami,
               child: Rive(
                 name: 'color_bs',
                 artboard: artboard,
@@ -86,10 +124,136 @@ class _StartScreenState extends SuperState<StartScreen> {
               ),
             ),
             const _Logo(),
+            if (speedrun)
+              SuperContainer(
+                color: Colors.black45,
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    for (final (i, text) in ['b', 'a', 'start'].indexed)
+                      SizedBox(
+                        height: 40,
+                        child: ElevatedButton(
+                          onPressed: i + 8 == konamiSwipes ? konamiButton : null,
+                          style: ElevatedButton.styleFrom(backgroundColor: SuperColors.bsBrown),
+                          child: Text(
+                            text,
+                            style: const SuperStyle.sans(size: 24),
+                          ),
+                        ),
+                      )
+                  ],
+                ),
+              ),
           ],
         ),
       ),
       backgroundColor: backgroundColor,
+    );
+  }
+}
+
+class _TheGoodStuff extends StatefulWidget {
+  const _TheGoodStuff();
+
+  @override
+  State<_TheGoodStuff> createState() => _TheGoodStuffState();
+}
+
+class _TheGoodStuffState extends State<_TheGoodStuff> with SinglePress {
+  int numToSkip = 0;
+  @override
+  Widget build(BuildContext context) {
+    const labels = [
+      'starting animation',
+      '3 colors',
+      '6 colors',
+      '12 colors',
+      'sandbox',
+    ];
+    final style = ElevatedButton.styleFrom(
+      backgroundColor: SuperColors.bsBrown,
+      foregroundColor: Colors.white,
+    );
+    return Theme(
+      data: ThemeData(
+        useMaterial3: true,
+        checkboxTheme: const CheckboxThemeData(
+          fillColor: MaterialStatePropertyAll(SuperColors.bsBrown),
+          side: BorderSide.none,
+        ),
+      ),
+      child: Scaffold(
+        body: Center(
+          child: Column(
+            children: [
+              const Spacer(flex: 4),
+              const SuperText(
+                "Let's skip to\nthe good stuff!",
+                style: SuperStyle.gaegu(size: 32),
+              ),
+              const Spacer(),
+              const SuperText(
+                "Mark the tutorials you've already seen, and jump right into the action.",
+                style: SuperStyle.gaegu(size: 18),
+              ),
+              const Spacer(),
+              for (final (i, label) in labels.indexed)
+                GestureDetector(
+                  onTap: () => setState(() => numToSkip = i),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 30,
+                          child: Checkbox(
+                              value: i <= numToSkip,
+                              onChanged: (_) => setState(() => numToSkip = i)),
+                        ),
+                        const FixedSpacer.horizontal(10),
+                        SizedBox(
+                          width: 200,
+                          child: Text(
+                            label,
+                            style: const SuperStyle.sans(size: 18),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              const Spacer(),
+              Row(
+                children: [
+                  const Spacer(flex: 4),
+                  ElevatedButton(
+                    onPressed: () => context.noTransition(const StartScreen()),
+                    style: style,
+                    child: const Text('go back', style: SuperStyle.sans(size: 18)),
+                  ),
+                  const Spacer(),
+                  ElevatedButton(
+                    onPressed: singlePress(noDelay: true, () async {
+                      for (int i = 0; i <= numToSkip; i++) {
+                        await Tutorial.values[i].complete();
+                      }
+                      context.goto(Pages.menu);
+                    }),
+                    style: style,
+                    child: const Text('continue', style: SuperStyle.sans(size: 18)),
+                  ),
+                  const Spacer(flex: 4),
+                ],
+              ),
+              const Spacer(flex: 4),
+            ],
+          ),
+        ),
+        backgroundColor: SuperColors.bsBackground,
+      ),
     );
   }
 }
@@ -327,6 +491,7 @@ class _CallOutTheLie extends StatefulWidget {
 class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
   @override
   void animate() async {
+    await musicPlayer.stop();
     await sleepState(3, () => showButton = true);
   }
 

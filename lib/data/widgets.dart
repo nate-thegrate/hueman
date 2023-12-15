@@ -333,13 +333,9 @@ class DismissibleDialog extends StatelessWidget {
       {super.key,
       required this.title,
       required this.content,
-      this.actions,
-      this.actionsAlignment,
       this.backgroundColor,
       this.surfaceTintColor});
   final Widget title, content;
-  final List<Widget>? actions;
-  final MainAxisAlignment? actionsAlignment;
   final Color? backgroundColor, surfaceTintColor;
 
   @override
@@ -355,8 +351,6 @@ class DismissibleDialog extends StatelessWidget {
         child: AlertDialog(
           title: title,
           content: content,
-          actions: actions,
-          actionsAlignment: actionsAlignment,
           surfaceTintColor: surfaceTintColor,
         ),
       ),
@@ -569,6 +563,7 @@ class ColorLabel extends StatelessWidget {
                   context,
                   color: SuperColor(int.parse(value.substring(1), radix: 16)),
                   updateColor: update!,
+                  kSound: true,
                 ),
                 child: Text(value, style: const SuperStyle.mono(size: 18)),
               ),
@@ -591,19 +586,21 @@ class ManualColorCode extends StatefulWidget {
     BuildContext context, {
     required SuperColor color,
     required void Function(SuperColor) updateColor,
+    bool kSound = false,
   }) =>
       showDialog(
         context: context,
         builder: (context) => ManualColorCode(color),
-      ).then(verifyHexCode(context, updateColor: updateColor));
+      ).then(verifyHexCode(context, updateColor, kSound));
 
-  static void Function(dynamic) verifyHexCode(BuildContext context,
-          {required void Function(SuperColor) updateColor}) =>
+  static void Function(dynamic) verifyHexCode(
+          BuildContext context, void Function(SuperColor) updateColor, bool kSound) =>
       (value) {
         if (value is! String) return;
         if (value.length == 6) {
           final int colorCode = int.parse(value, radix: 16);
           updateColor(SuperColor(colorCode));
+          if (kSound && colorCode == 0x8080FF) playSound('k_color');
         } else if (value.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('invalid hex code: $value')),
@@ -805,10 +802,11 @@ class _KGlitchState extends SuperState<K_glitch> {
     return Opacity(
       opacity: opacity,
       child: Center(
-          child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Image.asset('assets/k_$filename.png'),
-      )),
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Image.asset('assets/k_$filename.png'),
+        ),
+      ),
     );
   }
 }

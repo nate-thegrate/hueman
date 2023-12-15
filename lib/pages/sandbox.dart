@@ -251,6 +251,12 @@ class _SandboxState extends State<Sandbox> {
       });
 
   @override
+  void initState() {
+    super.initState();
+    musicPlayer.stop();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeLayout((context, constraints) {

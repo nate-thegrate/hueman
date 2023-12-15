@@ -214,6 +214,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
 
   bool showDetails = false, showReaction = false;
   void tapReaction() {
+    playSound('tense_reset');
     setState(() => showReaction = false);
     scoreKeeper?.rank = tensionRank;
     scoreKeeper?.roundCheck(context);
@@ -246,6 +247,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     inverted = true;
+    musicPlayer.stop();
     generateHue();
     if (!Tutorial.tense()) {
       Tutorial.tense.complete();
@@ -355,6 +357,16 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   void Function() _select(int j) => () async {
         final bool correct = buttonData[j].hue == hue;
         buttonData[j].controller.forward(from: 1);
+
+        if (correct) {
+          playSound(
+            scoreKeeper?.health == TenseScoreKeeper.maxHealth
+                ? 'tense_overfill'
+                : 'tense_correct',
+          );
+        } else {
+          playSound('tense_wrong');
+        }
         await sleep(.1);
         setState(() {
           selectedHue = buttonData[j].hue;

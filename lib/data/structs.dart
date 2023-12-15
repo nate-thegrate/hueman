@@ -38,6 +38,7 @@ extension _PlayAsset on AudioPlayer {
 Future<void> playSound(String name) => sfxPlayer.playAsset(name);
 
 Future<void> playMusic({String? once, String? loop}) async {
+  if (!music) return;
   assert((once ?? loop) != null);
   await musicPlayer.stop();
   await _loop?.cancel();
@@ -87,8 +88,6 @@ extension ContextStuff on BuildContext {
   Size get screenSize => MediaQuery.of(this).size;
   double get screenWidth => screenSize.width;
   double get screenHeight => screenSize.height;
-
-  // bool get squished => safeHeight < 1080;
 }
 
 extension CalcSize on BoxConstraints {

@@ -212,6 +212,7 @@ class _IntroModeState extends State<IntroMode> {
       default:
         scoreKeeper =
             casualMode ? null : IntroScoreKeeper(scoring: giveScore, numColors: widget.numColors);
+        if (casualMode) playMusic(loop: 'casual');
     }
 
     if (scoreKeeper case final IntroScoreKeeper sk) sk.stopwatch.start();

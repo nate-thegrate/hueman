@@ -72,11 +72,11 @@ enum Tutorial {
   intro3,
   intro6,
   introC,
+  sandbox,
   casual,
   intense,
   master,
   mastered,
-  sandbox,
   aiCertificate,
   sawInversion,
   trivial,
@@ -108,11 +108,11 @@ enum Tutorial {
           intro3: false,
           intro6: false,
           introC: false,
+          sandbox: false,
           casual: false,
           intense: false,
           master: false,
           mastered: false,
-          sandbox: false,
           aiCertificate: false,
           sawInversion: false,
           trivial: false,
@@ -129,7 +129,7 @@ enum Tutorial {
     if (!localStorage) {
       casualMode = true;
       hueRuler = true;
-      inverted = true;
+      inverted = false;
       music = true;
       sounds = true;
 
