@@ -681,7 +681,7 @@ class _ColorBubbleState extends State<_ColorBubble> {
   @override
   Widget build(BuildContext context) {
     final counter = widget.counter;
-    final iOS = Platform.isIOS;
+    final iOS = Platform.isIOS; // idk why but the animation is choppy on iOS, so it's disabled
 
     return LayoutBuilder(builder: (context, constraints) {
       final bubbleSize = widget.size;
