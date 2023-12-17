@@ -47,7 +47,7 @@ class _MainMenuState extends EpicState<MainMenu>
       }
     }
     await sleep(1.5);
-    playMusic(once: 'verity_1', loop: 'verity_2');
+    if (mounted) playMusic(once: 'verity_1', loop: 'verity_2');
   }
 
   @override
@@ -258,8 +258,8 @@ class _MainMenuState extends EpicState<MainMenu>
             'music',
             value: music,
             description: ('', ''),
-            toggle: (musicOn) {
-              if (musicOn) {
+            toggle: (checked) {
+              if (checked) {
                 if (paused) {
                   musicPlayer.resume();
                 } else {
@@ -269,7 +269,7 @@ class _MainMenuState extends EpicState<MainMenu>
                 musicPlayer.pause();
                 paused = true;
               }
-              setState(() => music = musicOn);
+              setState(() => music = checked);
             },
           ),
           if (Tutorial.intro6()) ...[

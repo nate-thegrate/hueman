@@ -201,10 +201,12 @@ class _TheGoodStuffState extends State<_TheGoodStuff> with SinglePress {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(
-                          width: 30,
+                          width: 20,
+                          height: 20,
                           child: Checkbox(
-                              value: i <= numToSkip,
-                              onChanged: (_) => setState(() => numToSkip = i)),
+                            value: i <= numToSkip,
+                            onChanged: (_) => setState(() => numToSkip = i),
+                          ),
                         ),
                         const FixedSpacer.horizontal(10),
                         SizedBox(

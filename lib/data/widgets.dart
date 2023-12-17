@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -305,12 +306,15 @@ class MenuCheckbox extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Checkbox(
-                  value: value,
-                  onChanged: (_) => toggle(!value),
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: Checkbox(
+                    value: value,
+                    onChanged: (_) => toggle(!value),
+                  ),
                 ),
-                if (Theme.of(context).platform != TargetPlatform.iOS)
-                  const FixedSpacer.horizontal(10),
+                const FixedSpacer.horizontal(10),
                 Text(
                   label,
                   style: const SuperStyle.sans(size: 17),
@@ -463,7 +467,7 @@ class JustKidding extends StatelessWidget {
               const Spacer(),
               const Text(
                 'just kidding  :)',
-                style: SuperStyle.sans(size: 16, weight: 100),
+                style: SuperStyle.sans(size: 20, weight: 200),
               ),
               const Spacer(flex: 3),
               Fader(
@@ -786,6 +790,7 @@ class _KGlitchState extends SuperState<K_glitch> {
     if (widget.theEnd) {
       await Tutorial.worldEnd.complete();
       await sleep(4);
+      exit(0);
     }
     ticker = Ticker(tick)..start();
   }

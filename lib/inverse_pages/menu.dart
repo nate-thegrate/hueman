@@ -63,7 +63,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
       sleepState(0.6, () => exists = false);
     }
     await sleep(1.5);
-    playMusic(once: 'invert_1', loop: 'invert_2');
+    if (mounted) playMusic(once: 'invert_1', loop: 'invert_2');
   }
 
   @override
@@ -232,8 +232,8 @@ class _InverseMenuState extends InverseState<InverseMenu>
             'music',
             value: music,
             description: ('', ''),
-            toggle: (musicOn) {
-              if (musicOn) {
+            toggle: (checked) {
+              if (checked) {
                 if (paused) {
                   musicPlayer.resume();
                 } else {
@@ -243,7 +243,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 musicPlayer.pause();
                 paused = true;
               }
-              setState(() => music = musicOn);
+              setState(() => music = checked);
             },
           ),
           MenuCheckbox(
@@ -427,9 +427,13 @@ class _InverseMenuState extends InverseState<InverseMenu>
                   children: [
                     Opacity(
                       opacity: 2 / 3,
-                      child: SizedBox(width: 25, child: Checkbox(value: done, onChanged: null)),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: Checkbox(value: done, onChanged: null),
+                      ),
                     ),
-                    const FixedSpacer.horizontal(5),
+                    const FixedSpacer.horizontal(10),
                     Text(completionDesc[i], style: const SuperStyle.sans()),
                   ],
                 ),
@@ -442,6 +446,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                     style: const SuperStyle.sans(color: Colors.black54, size: 11),
                   ),
                 ),
+              const FixedSpacer(10),
             ],
             if (Tutorial.mastered() && Tutorial.tensed())
               Align(
