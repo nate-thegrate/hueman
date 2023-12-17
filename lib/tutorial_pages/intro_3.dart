@@ -68,7 +68,7 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
       ),
     );
     return Scaffold(
-      body: page == 2 ? mainContent : SafeArea(child: mainContent),
+      body: page == 2 || page == 6 ? mainContent : SafeArea(child: mainContent),
       backgroundColor: backgroundColor,
     );
   }
@@ -761,15 +761,14 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final tileWidth = constraints.calcSize(
-        (w, h) => min(w / hsvWidth, (h - 50) / hsvHeight),
-      );
-      final double size = min(context.screenWidth / 22, 20);
-      return Stack(
-        alignment: Alignment.center,
-        children: [
-          Column(
+    return Stack(
+      children: [
+        SafeLayout((context, constraints) {
+          final tileWidth = constraints.calcSize(
+            (w, h) => min(w / hsvWidth, (h - 50) / hsvHeight),
+          );
+          final double size = min(context.screenWidth / 22, 20);
+          return Column(
             children: [
               const Spacer(flex: 2),
               SizedBox(
@@ -805,17 +804,17 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
               ),
               const Spacer(flex: 2),
             ],
+          );
+        }),
+        if (justKidding)
+          JustKidding(
+            'HUE',
+            buttonVisible: buttonVisible,
+            color: epicColor,
+            onPressed: singlePress(widget.nextPage),
           ),
-          if (justKidding)
-            JustKidding(
-              'HUE',
-              buttonVisible: buttonVisible,
-              color: epicColor,
-              onPressed: singlePress(widget.nextPage),
-            ),
-        ],
-      );
-    });
+      ],
+    );
   }
 }
 

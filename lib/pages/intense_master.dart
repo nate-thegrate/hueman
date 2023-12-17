@@ -439,9 +439,6 @@ class _IntenseModeState extends State<IntenseMode> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: avoid_print
-    if (!Score.superHue()) print(hue);
-
     if (!hueTyping) {
       final gameScreen = CircleGame(
         color: color,

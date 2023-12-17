@@ -767,7 +767,7 @@ class _KGlitchState extends SuperState<K_glitch> {
   }
 
   int counter = 0;
-  late final Ticker ticker;
+  late final Ticker ticker = Ticker(tick);
 
   void tick(_) {
     counter++;
@@ -787,12 +787,16 @@ class _KGlitchState extends SuperState<K_glitch> {
 
   @override
   void animate() async {
-    if (widget.theEnd) {
-      await Tutorial.worldEnd.complete();
-      await sleep(4);
-      exit(0);
+    if (!widget.theEnd) {
+      ticker.start();
+      return;
     }
-    ticker = Ticker(tick)..start();
+
+    Tutorial.worldEnd.complete();
+    await sleep(4);
+    ticker.start();
+    await sleep(3.33);
+    exit(0);
   }
 
   @override
