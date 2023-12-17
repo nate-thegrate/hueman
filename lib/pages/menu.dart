@@ -254,19 +254,24 @@ class _MainMenuState extends EpicState<MainMenu>
           ),
         ],
       MenuPage.settings => [
-          // MenuCheckbox(
-          //   'music',
-          //   value: music,
-          //   description: ('', ''),
-          //   toggle: (value) => setState(() => music = value),
-          // ),
-          // MenuCheckbox(
-          //   'sounds',
-          //   value: sounds,
-          //   description: ('', ''),
-          //   toggle: (value) => setState(() => sounds = value),
-          // ),
-          // const FixedSpacer(33),
+          MenuCheckbox(
+            'music',
+            value: music,
+            description: ('', ''),
+            toggle: (musicOn) {
+              if (musicOn) {
+                if (paused) {
+                  musicPlayer.resume();
+                } else {
+                  playMusic(once: 'verity_1', loop: 'verity_2');
+                }
+              } else {
+                musicPlayer.pause();
+                paused = true;
+              }
+              setState(() => music = musicOn);
+            },
+          ),
           if (Tutorial.intro6()) ...[
             MenuCheckbox(
               'hue typing',
@@ -395,7 +400,9 @@ class _MainMenuState extends EpicState<MainMenu>
                 SuperContainer(
                   decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
                   width: 300,
-                  padding: const EdgeInsets.all(50),
+                  padding: menuPage == MenuPage.settings
+                      ? const EdgeInsets.symmetric(horizontal: 50, vertical: 33)
+                      : const EdgeInsets.all(50),
                   child: AnimatedSize(
                     duration: quarterSec,
                     curve: curve,

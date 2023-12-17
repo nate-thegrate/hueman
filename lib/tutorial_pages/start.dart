@@ -59,19 +59,12 @@ class _StartScreenState extends SuperState<StartScreen> {
   SuperColor backgroundColor = SuperColors.lightBackground;
 
   void start() async {
-    externalKeyboard =
-        ![TargetPlatform.android, TargetPlatform.iOS].contains(Theme.of(context).platform);
+    externalKeyboard = switch (Theme.of(context).platform) {
+      TargetPlatform.android || TargetPlatform.iOS => false,
+      _ => true,
+    };
     saveData('externalKeyboard', externalKeyboard);
 
-    final size = context.screenSize;
-    if ((size.width < 350 || size.height < 667) &&
-        ![TargetPlatform.android, TargetPlatform.iOS].contains(Theme.of(context).platform)) {
-      await showDialog(
-        context: context,
-        builder: (context) => const _ScreenSizeAlert(),
-        barrierDismissible: false,
-      );
-    }
     setState(() => controllers[1].isActive = true);
     sleep(
       1.48,
@@ -109,6 +102,9 @@ class _StartScreenState extends SuperState<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return const _CallOutTheLie();
+
+    // ignore: dead_code
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -253,163 +249,6 @@ class _TheGoodStuffState extends State<_TheGoodStuff> with SinglePress {
           ),
         ),
         backgroundColor: SuperColors.bsBackground,
-      ),
-    );
-  }
-}
-
-class _ScreenSizeAlert extends StatefulWidget {
-  const _ScreenSizeAlert();
-
-  @override
-  State<_ScreenSizeAlert> createState() => _ScreenSizeAlertState();
-}
-
-class _ScreenSizeAlertState extends State<_ScreenSizeAlert> {
-  bool showRecommendation = false;
-
-  bool get looksGood => context.screenWidth >= 350 && context.screenHeight >= 667;
-
-  static const color = SuperColors.bsBrown;
-  late final continueButton = SizedBox(
-    width: 50,
-    height: 50,
-    child: Stack(
-      children: [
-        const Center(child: Icon(Icons.arrow_forward, color: color)),
-        SizedBox.expand(
-          child: OutlinedButton(
-            style: OutlinedButton.styleFrom(side: const BorderSide(color: color)),
-            onPressed: () => setState(() => showRecommendation = true),
-            child: empty,
-          ),
-        ),
-      ],
-    ),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    final size = context.screenSize;
-    final (String width, String height) = (
-      size.width.toStringAsFixed(1),
-      size.height.toStringAsFixed(1),
-    );
-    final List<Widget> children = switch (Theme.of(context).platform) {
-      _ when !showRecommendation => const [
-          Text(
-            '(this is measured in "logical pixels": '
-            'values may be smaller than actual display specs '
-            'on a high-resolution screen.)\n\n',
-            style: SuperStyle.sans(size: 12),
-          ),
-          Text("The game should work fine, but there's no guarantee.", style: SuperStyle.sans()),
-        ],
-      TargetPlatform.android || TargetPlatform.iOS => throw UnimplementedError(),
-      TargetPlatform.linux => const [
-          Text(
-            "It looks like you're running linux. "
-            'I was thinking about typing out instructions '
-            'for how to increase your display resolution, '
-            'but you probably know how to do that better than I do lol',
-            style: SuperStyle.sans(),
-          )
-        ],
-      TargetPlatform.macOS => const [
-          Text(
-            'If you want to play on this Mac, here are a few ideas:\n',
-            style: SuperStyle.sans(),
-          ),
-          Text(
-            ' • Click the green button to make this a full-screen window.',
-            style: SuperStyle.sans(),
-          ),
-          Text(
-            ' • Go to System Settings → Displays and select "more space".',
-            style: SuperStyle.sans(),
-          ),
-        ],
-      TargetPlatform.windows => const [
-          Text(
-            'If you want to play on this PC, here are a few ideas:\n',
-            style: SuperStyle.sans(),
-          ),
-          Text(
-            " • Maximize the size of this window, if it isn't already filling up your screen.",
-            style: SuperStyle.sans(),
-          ),
-          Text(
-            ' • Go to Display Settings. '
-            'Reduce "Scale" to 100% and change "Display Resolution" to the biggest size.',
-            style: SuperStyle.sans(),
-          ),
-          Text(
-            ' • Taskbar Settings → Taskbar behaviors → "Automatically hide the taskbar"',
-            style: SuperStyle.sans(),
-          ),
-        ],
-      TargetPlatform.fuchsia => const [
-          Text(
-            'If you built this from source code on Fuscia, '
-            "hopefully you know what you're doing lol",
-            style: SuperStyle.sans(),
-          ),
-        ],
-    };
-
-    final popButton = OutlinedButton(
-      style: OutlinedButton.styleFrom(side: const BorderSide(color: SuperColors.bsBrown)),
-      onPressed: Navigator.of(context).pop,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 2),
-        child: Text(
-          looksGood ? 'looks good!' : "I'll just risk it",
-          style: const SuperStyle.sans(weight: 200, extraBold: true, letterSpacing: 0.5),
-        ),
-      ),
-    );
-
-    return Theme(
-      data: ThemeData(
-        useMaterial3: true,
-        fontFamily: 'nunito sans',
-        colorScheme: const ColorScheme(
-          brightness: Brightness.light,
-          primary: color,
-          onPrimary: color,
-          secondary: color,
-          onSecondary: color,
-          error: color,
-          onError: color,
-          background: SuperColors.bsBackground,
-          onBackground: SuperColors.bsBackground,
-          surface: color,
-          onSurface: color,
-        ),
-      ),
-      child: AlertDialog(
-        title: const Text(
-          'screen size alert!',
-          style: SuperStyle.sans(extraBold: true, letterSpacing: 1 / 3),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('minimum recommended size:', style: SuperStyle.sans()),
-            const Text('350 x 667 pixels\n', style: SuperStyle.mono(weight: 700)),
-            const Text('this screen:', style: SuperStyle.sans()),
-            Text(
-              '$width x $height pixels\n',
-              style: const SuperStyle.mono(weight: 700),
-            ),
-            ...children
-          ],
-        ),
-        actionsAlignment: MainAxisAlignment.center,
-        actions: [
-          if (showRecommendation || looksGood) popButton else continueButton,
-        ],
       ),
     );
   }
@@ -597,34 +436,29 @@ class _FirstLaunchMenu extends StatefulWidget {
 class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
   late final Ticker ticker;
   double progress = 0;
-  Widget? introButton;
-  bool showAll = false, expanded = false, expanded2 = false;
+  bool showAll = false, expanded = false, expanded2 = false, showButton = false;
   static const showAllDuration = Duration(milliseconds: 1200);
-  // ,
-  //     expandDuration = Duration(milliseconds: 600);
 
   void expand() async {
     setState(() => showAll = true);
     await sleepState(2, () => expanded = true);
     await sleepState(1, () => expanded2 = true);
-    await sleepState(
-      1,
-      () => setState(() => introButton = const _IntroButton()),
-    );
+    await sleepState(1, () => showButton = true);
   }
 
   @override
   void animate() {
     inverted = false;
     epicHue = 0;
-    playMusic(once: 'see_the_truth', loop: 'verity_1');
+    playSound('see_the_truth');
     sleep(18, then: expand);
     ticker = Ticker(
       (elapsed) {
-        setState(() => progress = elapsed.inMilliseconds / 14000);
+        setState(() => progress = (elapsed.inMilliseconds - 4000) / 10000);
         if (progress >= 1) ticker.stop();
       },
     )..start();
+    Tutorial.started.complete();
   }
 
   @override
@@ -646,6 +480,7 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
         expanded ? const EdgeInsets.only(bottom: 34) : const EdgeInsets.only(right: 17);
     const double size = 30;
     const space = TextSpan(text: ' ', style: SuperStyle.sans(size: 1));
+    final color = epicColor;
     final transparentHUEman = Padding(
       padding: padding + const EdgeInsets.only(bottom: 5),
       child: SuperRichText(
@@ -664,7 +499,7 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
             text: 'HUE',
             style: SuperStyle.sans(
               size: size * 0.7,
-              color: epicColor,
+              color: color,
               weight: 800, //Platform.isIOS ? 800 : (progress * 575 - 1440).stayInRange(200, 800),
             ),
           ),
@@ -683,7 +518,20 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
 
     return Scaffold(
       body: SafeLayout((context, constraints) {
-        if (progress < 1) {
+        if (progress < 0) {
+          final double x = progress * -2.5;
+          final double size = constraints.calcSize((w, h) => min(w, h) * x);
+          return Center(
+            child: SuperContainer(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                border: Border.all(color: color, width: 2),
+                color: x > .5 ? null : color.withOpacity((1 - 2 * x).squared),
+              ),
+            ),
+          );
+        } else if (progress < 1) {
           final double x = progress * 360;
           const int peak = 345;
           final double val =
@@ -693,7 +541,7 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
             child: SuperContainer(
               margin: const EdgeInsets.only(top: 39),
               width: girth,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: epicColor),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: color),
               alignment: Alignment.center,
               child: _Squares(girth * 16 / (16 * root2over2 - 1) * root2over2),
             ),
@@ -714,7 +562,7 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
                             duration: oneSec,
                             curve: Curves.easeInOutQuart,
                             padding: padding,
-                            child: SuperHUEman(epicColor),
+                            child: SuperHUEman(color),
                           ),
                         ),
                         Row(
@@ -733,12 +581,12 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
                     ),
                   ),
                   SuperContainer(
-                    decoration: BoxDecoration(border: Border.all(color: epicColor, width: 2)),
+                    decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
                     child: SexyBox(
                       child: SizedBox(
                         width: expanded ? 300 : context.screenWidth,
                         height: expanded2 ? 200 : 0,
-                        child: introButton,
+                        child: showButton ? _IntroButton(color) : null,
                       ),
                     ),
                   ),
@@ -793,29 +641,9 @@ class _Squares extends StatelessWidget {
   }
 }
 
-class _IntroButton extends StatefulWidget {
-  const _IntroButton();
-
-  @override
-  State<_IntroButton> createState() => _IntroButtonState();
-}
-
-class _IntroButtonState extends State<_IntroButton> {
-  late final Ticker epicHues;
-  SuperColor color = epicColor;
-
-  @override
-  void initState() {
-    super.initState();
-    Tutorial.started.complete();
-    epicHues = Ticker((elapsed) => setState(() => color = epicColor))..start();
-  }
-
-  @override
-  void dispose() {
-    epicHues.dispose();
-    super.dispose();
-  }
+class _IntroButton extends StatelessWidget {
+  const _IntroButton(this.color);
+  final SuperColor color;
 
   @override
   Widget build(BuildContext context) {

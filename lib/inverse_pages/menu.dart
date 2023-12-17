@@ -228,23 +228,24 @@ class _InverseMenuState extends InverseState<InverseMenu>
           )
         ],
       MenuPage.settings => [
-          // MenuCheckbox(
-          //   'music',
-          //   value: music,
-          //   description: const ('', ''),
-          //   toggle: (value) => saveData('music', value).then(
-          //     (_) => setState(() => music = value),
-          //   ),
-          // ),
-          // MenuCheckbox(
-          //   'sounds',
-          //   value: sounds,
-          //   description: const ('', ''),
-          //   toggle: (value) => saveData('sounds', value).then(
-          //     (_) => setState(() => sounds = value),
-          //   ),
-          // ),
-          // const FixedSpacer(33),
+          MenuCheckbox(
+            'music',
+            value: music,
+            description: ('', ''),
+            toggle: (musicOn) {
+              if (musicOn) {
+                if (paused) {
+                  musicPlayer.resume();
+                } else {
+                  playMusic(once: 'verity_1', loop: 'verity_2');
+                }
+              } else {
+                musicPlayer.pause();
+                paused = true;
+              }
+              setState(() => music = musicOn);
+            },
+          ),
           MenuCheckbox(
             'casual mode',
             value: casualMode,

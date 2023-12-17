@@ -29,50 +29,85 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
   @override
   void animate() async {
     if (widget.scoreKeeper case final TutorialScoreKeeper sk) {
-      if (sk.numColors != 6) return;
-      await sleep(0.5);
-      final bool lovinTheCircle = await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          Widget circleLoveButton(bool lovinIt) => SizedBox(
-                height: 33,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color(0x10FFFFFF),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                  ),
-                  onPressed: () => Navigator.pop(context, lovinIt),
-                  child: Text(lovinIt ? 'yes' : 'no', style: const SuperStyle.sans(size: 16)),
-                ),
-              );
-          return AlertDialog(
-            title: const Text('How was that?', style: SuperStyle.sans()),
-            content: const Text(
-              'Did you like the circle better than typing?',
-              style: SuperStyle.sans(),
+      Widget loveButton(bool lovinIt) => SizedBox(
+            height: 33,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0x10FFFFFF),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+              ),
+              onPressed: () => Navigator.pop(context, lovinIt),
+              child: Text(lovinIt ? 'yes' : 'no', style: const SuperStyle.sans(size: 16)),
             ),
-            actions: [circleLoveButton(true), circleLoveButton(false)],
-            actionsAlignment: MainAxisAlignment.spaceEvenly,
           );
-        },
-      );
-      hueTyping = !lovinTheCircle;
-      saveData('hueTyping', hueTyping);
+      switch (sk.numColors) {
+        case 6:
+          await sleep(0.5);
+          final bool lovinTheCircle = await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('How was that?', style: SuperStyle.sans()),
+                content: const Text(
+                  'Did you like the circle better than typing?',
+                  style: SuperStyle.sans(),
+                ),
+                actions: [loveButton(true), loveButton(false)],
+                actionsAlignment: MainAxisAlignment.spaceEvenly,
+              );
+            },
+          );
+          hueTyping = !lovinTheCircle;
+          saveData('hueTyping', hueTyping);
 
-      final soundsGood = hueTyping ? 'You can type out the hues' : "We'll keep the circle going";
-      showDialog(
-        context: context,
-        builder: (context) => DismissibleDialog(
-          title: const Text('Sounds good!', style: SuperStyle.sans()),
-          content: Text(
-            '$soundsGood from now on.\n\n'
-            'If you change your mind, you can switch back in the game settings.',
-            style: const SuperStyle.sans(),
-          ),
-        ),
-      );
+          final soundsGood =
+              hueTyping ? 'You can type out the hues' : "We'll keep the circle going";
+          showDialog(
+            context: context,
+            builder: (context) => DismissibleDialog(
+              title: const Text('Sounds good!', style: SuperStyle.sans()),
+              content: Text(
+                '$soundsGood from now on.\n\n'
+                'If you change your mind, you can switch back in the game settings.',
+                style: const SuperStyle.sans(),
+              ),
+            ),
+          );
+        case 12:
+          await sleep(0.5);
+          final bool lovinTheLoop = await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Music question:', style: SuperStyle.sans()),
+                content: const Text(
+                  'Do you love it when a single song plays on loop, over and over?',
+                  style: SuperStyle.sans(),
+                ),
+                actions: [loveButton(true), loveButton(false)],
+                actionsAlignment: MainAxisAlignment.spaceEvenly,
+              );
+            },
+          );
+
+          showDialog(
+            context: context,
+            builder: (context) => DismissibleDialog(
+              title: Text(
+                lovinTheLoop ? 'Cool, me too!' : "yeah, that's fair.",
+                style: const SuperStyle.sans(),
+              ),
+              content: const Text(
+                'You can switch the music on/off in the game settings.\n\n'
+                "Some game modes have a unique soundtrack, so make sure to check 'em out!",
+                style: SuperStyle.sans(),
+              ),
+            ),
+          );
+      }
     }
   }
 

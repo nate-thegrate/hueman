@@ -12,9 +12,9 @@ import 'package:hueman/data/super_color.dart';
 /// Also adds a handy [sleepState] function.
 abstract class SuperState<T extends StatefulWidget> extends State<T> {
   @override
-  void setState(fn) => mounted ? super.setState(fn) : null;
+  void setState(VoidCallback fn) => mounted ? super.setState(fn) : null;
 
-  void animate() async {}
+  void animate() {}
 
   @override
   void initState() {
