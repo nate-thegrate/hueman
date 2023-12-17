@@ -102,9 +102,6 @@ class _StartScreenState extends SuperState<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const _CallOutTheLie();
-
-    // ignore: dead_code
     return Scaffold(
       body: SafeArea(
         child: Stack(
