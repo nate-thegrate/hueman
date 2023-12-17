@@ -100,7 +100,7 @@ enum Tutorial {
   static late final Map<Tutorial, bool> data;
 
   static void init(SharedPreferences prefs) {
-    const bool localStorage = false;
+    const bool localStorage = true;
     data = switch (localStorage) {
       true => {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false},
       false => {

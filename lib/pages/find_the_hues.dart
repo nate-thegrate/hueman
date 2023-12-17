@@ -708,7 +708,7 @@ class _CircleGameState extends State<CircleGame> {
           child: Column(
             children: [
               const Spacer(flex: 2),
-              const GoBack(),
+              if (widget.scoreKeeper is! TutorialScoreKeeper) const GoBack(),
               const Spacer(flex: 2),
               if (widget.image(constraints) case final Widget img) ...[
                 Expanded(flex: 16, child: img),

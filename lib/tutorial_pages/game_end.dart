@@ -59,7 +59,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
         const TextSpan(text: 'Your super'),
         TextSpan(
           text: 'HUE',
-          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 45),
+          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 32),
         ),
         const TextSpan(text: '.'),
       ], style: style);
@@ -80,7 +80,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
         const TextSpan(text: 'Fun fact: your super'),
         TextSpan(
           text: 'HUE',
-          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 45),
+          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 32),
         ),
         const TextSpan(text: ' actually says a lot about you,\njust like a zodiac sign.'),
       ], style: style);

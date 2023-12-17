@@ -1051,6 +1051,7 @@ class _DawnOfSummerState extends SuperState<_DawnOfSummer> {
 
   @override
   void animate() async {
+    musicPlayer.stop();
     for (final (_, sleepyTime) in text) {
       await sleepState(sleepyTime, () => textProgress++);
     }

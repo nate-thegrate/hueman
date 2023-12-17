@@ -143,12 +143,12 @@ class _Page2State extends SuperState<_Page2> {
   void animate() async {
     await sleepState(4, () => visible = true);
 
-    await sleep(5);
+    await sleep(4);
     playSound('rgb');
     for (final color in SuperColors.primaries) {
-      setState(() => colorVisible[color] = true);
-      await sleep(1);
+      await sleepState(1, () => colorVisible[color] = true);
     }
+    await sleep(1);
     setState(() => buttonVisible = true);
   }
 

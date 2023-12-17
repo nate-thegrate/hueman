@@ -29,6 +29,7 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
 
   @override
   void animate() async {
+    musicPlayer.stop();
     await sleepState(2.3, () => textVisible++);
     await sleepState(2, () => textVisible++);
     await sleepState(3, () {

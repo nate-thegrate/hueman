@@ -17,6 +17,7 @@ class TrueMasteryTutorial extends StatefulWidget {
 class _TrueMasteryTutorialState extends SuperState<TrueMasteryTutorial> {
   @override
   void animate() async {
+    musicPlayer.stop();
     for (final (readTime, sentence) in dialogue) {
       await sleepState(readTime, () => visible = false);
       await sleepState(1, () {
@@ -26,6 +27,7 @@ class _TrueMasteryTutorialState extends SuperState<TrueMasteryTutorial> {
     }
     await sleep(10);
     Tutorial.trueMastery.complete();
+    playMusic(once: 'invert_1', loop: 'invert_2');
     context.goto(Pages.trueMastery);
   }
 
