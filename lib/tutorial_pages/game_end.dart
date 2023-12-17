@@ -32,13 +32,13 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
   @override
   void animate() => sleepState(4, () => showCredits = true);
 
-  SuperStyle get style => SuperStyle.sans(size: min(20, context.screenWidth / 24));
-
   void next() async {
+    final double size = min(20, context.screenWidth / 24);
+
     Future<void> textCycle(double timeToRead, String str) async {
       await sleepState(1, () {
         showText = true;
-        text = SuperText(str, style: style);
+        text = SuperText(str, style: SuperStyle.sans(size: size));
       });
       await sleepState(timeToRead, () => showText = false);
     }
@@ -59,10 +59,10 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
         const TextSpan(text: 'Your super'),
         TextSpan(
           text: 'HUE',
-          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 32),
+          style: SuperStyle.sans(color: superColor, weight: 800, size: size * .75),
         ),
         const TextSpan(text: '.'),
-      ], style: style);
+      ], style: SuperStyle.sans(size: size));
       showText = true;
       showHueVal = true;
     });
@@ -71,19 +71,22 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       text = SuperRichText([
         TextSpan(text: '$superHue degree${superHue == 1 ? '' : 's'}. '),
         ...hueDescription,
-      ], style: style);
+      ], style: SuperStyle.sans(size: size));
       showText = true;
     });
     await sleepState(7, () => showText = false);
     await sleepState(1, () {
-      text = SuperRichText([
-        const TextSpan(text: 'Fun fact: your super'),
-        TextSpan(
-          text: 'HUE',
-          style: SuperStyle.sans(color: superColor, weight: 800, size: context.screenWidth / 32),
-        ),
-        const TextSpan(text: ' actually says a lot about you,\njust like a zodiac sign.'),
-      ], style: style);
+      text = SuperRichText(
+        [
+          const TextSpan(text: 'Fun fact: your super'),
+          TextSpan(
+            text: 'HUE',
+            style: SuperStyle.sans(color: superColor, weight: 800, size: size * .75),
+          ),
+          const TextSpan(text: ' actually says a lot about you,\njust like a zodiac sign.'),
+        ],
+        style: SuperStyle.sans(size: size),
+      );
       showText = true;
     });
     await sleepState(5.5, () => showText = false);
@@ -91,13 +94,19 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
     await textCycle(5.5, '$superHue°:\n\n$hueZodiac');
     setState(() => hideSuperHue = true);
     await sleepState(1, () {
-      text = SuperText('This game is 100% free & open-source software.', style: style);
+      text = SuperText(
+        'This game is 100% free & open-source software.',
+        style: SuperStyle.sans(size: size),
+      );
       showText = true;
       showSuperHue = false;
     });
     await sleepState(5, () => showText = false);
     await sleepState(1, () {
-      text = SuperText("If you want to show support,\nhere's what you can do:", style: style);
+      text = SuperText(
+        "If you want to show support,\nhere's what you can do:",
+        style: SuperStyle.sans(size: size),
+      );
       showText = true;
     });
     await sleepState(4, () {
@@ -106,7 +115,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
         children: [
           text,
           const FixedSpacer(20),
-          _HowToSupport(style),
+          _HowToSupport(SuperStyle.sans(size: size)),
         ],
       );
       showText = true;

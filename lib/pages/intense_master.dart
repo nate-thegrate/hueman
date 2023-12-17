@@ -159,8 +159,8 @@ class _MasterScoreDisplay extends StatelessWidget {
   }
 }
 
-class SawEveryPic extends StatelessWidget {
-  const SawEveryPic({super.key});
+class _SawEveryPic extends StatelessWidget {
+  const _SawEveryPic();
 
   @override
   Widget build(BuildContext context) {
@@ -177,23 +177,19 @@ class SawEveryPic extends StatelessWidget {
         ],
       ),
       actions: [
-        Center(
-          child: SizedBox(
-            height: 33,
-            child: TextButton(
-              style: TextButton.styleFrom(backgroundColor: Colors.black38),
-              onPressed: context.menu,
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
-                child: Text(
-                  'back to menu',
-                  style: SuperStyle.sans(size: 16),
-                ),
-              ),
+        SizedBox(
+          height: 33,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.black38,
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
             ),
+            onPressed: context.menu,
+            child: const Center(child: Text('back to menu', style: SuperStyle.sans(size: 16))),
           ),
         ),
       ],
+      actionsAlignment: MainAxisAlignment.center,
     );
   }
 }
@@ -287,7 +283,7 @@ class _IntenseModeState extends State<IntenseMode> {
     if (pics.length == 1) {
       showDialog(
         context: context,
-        builder: (context) => const SawEveryPic(),
+        builder: (context) => const _SawEveryPic(),
         barrierDismissible: false,
       );
       return;

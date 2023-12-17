@@ -133,7 +133,7 @@ class _Page2 extends StatefulWidget {
 }
 
 class _Page2State extends SuperState<_Page2> {
-  bool visible = false, buttonVisible = false;
+  bool topVisible = true, visible = false, buttonVisible = false;
 
   final Map<SuperColor, bool> colorVisible = {
     for (final color in SuperColors.primaries) color: false
@@ -156,6 +156,7 @@ class _Page2State extends SuperState<_Page2> {
     setState(() {
       visible = false;
       buttonVisible = false;
+      topVisible = false;
     });
 
     final secs = duration.inMilliseconds / 1000;
@@ -186,7 +187,7 @@ class _Page2State extends SuperState<_Page2> {
                 children: [
                   FadeIn(
                     child: Fader(
-                      visible || buttonVisible,
+                      topVisible,
                       duration: duration,
                       child: const SuperText(
                         'These 3 cone cell types\nreact to different light frequencies.\n',
@@ -798,7 +799,7 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
               Fader(
                 tooBadVisible,
                 child: SuperText(
-                  "Too bad there's no way to do that…",
+                  "It's too bad there's no way to do that…",
                   style: SuperStyle.sans(size: size),
                 ),
               ),

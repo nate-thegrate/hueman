@@ -343,6 +343,7 @@ class DismissibleDialog extends StatelessWidget {
     return Theme(
       data: ThemeData(
         useMaterial3: true,
+        colorScheme: inverted ? null : const ColorScheme.dark(primary: Colors.white),
         brightness: inverted ? Brightness.light : Brightness.dark,
         dialogBackgroundColor: backgroundColor,
       ),

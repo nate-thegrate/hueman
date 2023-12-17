@@ -120,9 +120,12 @@ class _Page1State extends SuperState<_Page1> {
                       onPressed: () => gotoWebsite(
                         'https://freesound.org/people/Timbre/sounds/140038/',
                       ),
-                      child: const Text(
-                        'audio source: Timbre / FreeSound.org',
-                        style: SuperStyle.sans(color: Colors.white38),
+                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                      child: const Center(
+                        child: Text(
+                          'audio source: Timbre / FreeSound.org',
+                          style: SuperStyle.sans(color: Colors.white38),
+                        ),
                       ),
                     ),
                   ),
@@ -841,8 +844,7 @@ class _Page6State extends SuperState<_Page6> {
   late final Timer timer;
 
   @override
-  void initState() {
-    super.initState();
+  void animate() {
     timer = Timer.periodic(
       const Duration(seconds: 3),
       (_) => setState(() => textProgress++),

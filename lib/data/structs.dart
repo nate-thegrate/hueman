@@ -58,6 +58,18 @@ Future<void> playMusic({String? once, String? loop}) async {
   return once == null ? playLoop() : playOnce();
 }
 
+extension PauseMusic on AppLifecycleState {
+  void pauseMusic() {
+    if (this == AppLifecycleState.resumed && music && paused) {
+      musicPlayer.resume();
+      paused = false;
+    } else if (musicPlayer.state == PlayerState.playing) {
+      musicPlayer.pause();
+      paused = true;
+    }
+  }
+}
+
 Color contrastWith(Color c, {double threshold = .2}) =>
     (c.computeLuminance() > threshold) ? Colors.black : Colors.white;
 

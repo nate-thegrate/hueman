@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
@@ -19,17 +18,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   }
 
   @override
-  didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state case AppLifecycleState.inactive || AppLifecycleState.hidden) {
-      if (musicPlayer.state == PlayerState.playing) {
-        musicPlayer.pause();
-        paused = true;
-      }
-    } else if (paused && music) {
-      musicPlayer.resume();
-      paused = false;
-    }
-  }
+  void didChangeAppLifecycleState(AppLifecycleState state) => state.pauseMusic();
 
   @override
   Widget build(BuildContext context) {
