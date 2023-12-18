@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -268,9 +267,7 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
       void select() {
         if (showK && i == 5) {
           if (selected()) return;
-          musicPlayer.stop();
-          musicPlayer.play(AssetSource('audio/the_end_arrives.mp3'));
-          musicPlayer.onPlayerComplete.listen((_) => exit(0));
+          playMusic(once: 'the_end_arrives');
         }
         setState(selected() ? deselect : () => selectedTopic = i);
       }
