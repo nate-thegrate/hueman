@@ -2,7 +2,7 @@ name: hueman
 description: An open-source game about color theory.
 publish_to: "none"
 
-version: 2.0.0+4
+version: 2.0.1+5
 
 environment:
   sdk: ">=3.0.0"
@@ -40,7 +40,7 @@ msix_config:
   publisher: CN=45439987-713E-4806-A939-727F9EEB2172
   publisher_display_name: Nate Wilson
   identity_name: 56500NateWilson.HUEmanagameaboutcolors
-  msix_version: 2.0.0.0
+  msix_version: 2.0.1.0
   logo_path: C:\Users\Nate\repos\hueman\assets\app_icon\windows_icon.png
   store: true
 
