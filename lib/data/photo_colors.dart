@@ -23,16 +23,8 @@ class PhotoColors extends StatelessWidget {
 
 const List<PhotoColors> allImages = [
   PhotoColors(
-    'rainbow fish',
-    [0x902511, 0x031068, 0xb76812, 0x597ac9],
-  ),
-  PhotoColors(
     'brown coral',
     [0x794e11, 0x4998b6, 0x301203],
-  ),
-  PhotoColors(
-    'coral dark bg',
-    [0x97ecd0, 0x6c0901, 0xbc8949],
   ),
   PhotoColors(
     'rose coral',
@@ -41,10 +33,6 @@ const List<PhotoColors> allImages = [
   PhotoColors(
     'pink coral',
     [0xff3d61, 0xba7150, 0x9c985c, 0xf3a675],
-  ),
-  PhotoColors(
-    'cylinder coral',
-    [0x7bd28e, 0xd8918b, 0xd17b2d, 0x7aa6c1],
   ),
   PhotoColors(
     'dirt beach',
@@ -57,10 +45,6 @@ const List<PhotoColors> allImages = [
   PhotoColors(
     'blonde reef',
     [0xa75f1a, 0x0066b1, 0x01fdff, 0x266568],
-  ),
-  PhotoColors(
-    'weird lookin reef',
-    [0x0ad9b8, 0xc32732, 0x010136, 0x1a30c0],
   ),
   PhotoColors(
     'orange reef',
@@ -175,10 +159,6 @@ const List<PhotoColors> allImages = [
     [0x4c8066, 0xb19089, 0x032728],
   ),
   PhotoColors(
-    'leaf',
-    [0x367219, 0x608956],
-  ),
-  PhotoColors(
     'ocean',
     [0x011924, 0xb5e3ec],
   ),
@@ -201,10 +181,6 @@ const List<PhotoColors> allImages = [
   PhotoColors(
     'roses dark leaves',
     [0x70162e, 0xa8acc6, 0x233e3d],
-  ),
-  PhotoColors(
-    'earth nighttime',
-    [0x00001a, 0x0f1f50, 0xf0d486],
   ),
   PhotoColors(
     'yellow frog',
@@ -393,10 +369,6 @@ const List<PhotoColors> allImages = [
   PhotoColors(
     'planet earth',
     [0x050d37, 0xca8f71],
-  ),
-  PhotoColors(
-    'bird drawing',
-    [0x48693d, 0xbd382b, 0xe4ae82],
   ),
   PhotoColors(
     'fish painting',
