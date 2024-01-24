@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -276,7 +277,7 @@ class _LogoState extends SuperState<_Logo> {
   @override
   void animate() async {
     await sleep(1.5);
-    sleep(0.75, then: () => playSound('ryb'));
+    if (!Platform.isAndroid) sleep(0.75, then: () => playSound('ryb'));
     for (int i = 0; i < 4; i++) {
       await sleepState(0.75, () => lettersVisible++);
     }
