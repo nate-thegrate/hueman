@@ -160,11 +160,11 @@ class _TheGoodStuffState extends State<_TheGoodStuff> with SinglePress {
   @override
   Widget build(BuildContext context) {
     const labels = [
-      'starting animation',
-      '3 colors',
-      '6 colors',
-      '12 colors',
-      'sandbox',
+      'color misinformation',
+      'additive primaries',
+      'subtractive primaries',
+      'scientific color vocab',
+      'hex color codes',
     ];
     final style = ElevatedButton.styleFrom(
       backgroundColor: SuperColors.bsBrown,
@@ -189,7 +189,7 @@ class _TheGoodStuffState extends State<_TheGoodStuff> with SinglePress {
               ),
               const Spacer(),
               const SuperText(
-                "Mark the tutorials you've already seen, and jump right into the action.",
+                "Select the concepts you're already familiar with, and jump right into the action.",
                 style: SuperStyle.gaegu(size: 18),
               ),
               const Spacer(),
