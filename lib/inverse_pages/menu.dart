@@ -67,6 +67,12 @@ class _InverseMenuState extends InverseState<InverseMenu>
   }
 
   @override
+  void dispose() {
+    paused = false;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     const SuperStyle titleStyle = SuperStyle.sans(
       color: Colors.black,
@@ -233,6 +239,8 @@ class _InverseMenuState extends InverseState<InverseMenu>
             value: music,
             description: ('', ''),
             toggle: (checked) {
+              setState(() => music = checked);
+              saveData('music', music);
               if (checked) {
                 if (paused) {
                   musicPlayer.resume();
@@ -243,7 +251,6 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 musicPlayer.pause();
                 paused = true;
               }
-              setState(() => music = checked);
             },
           ),
           MenuCheckbox(

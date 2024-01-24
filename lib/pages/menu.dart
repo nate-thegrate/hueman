@@ -51,6 +51,12 @@ class _MainMenuState extends EpicState<MainMenu>
   }
 
   @override
+  void dispose() {
+    paused = false;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final color = epicColor;
     final List<Widget> masterSettings = [
@@ -259,6 +265,8 @@ class _MainMenuState extends EpicState<MainMenu>
             value: music,
             description: ('', ''),
             toggle: (checked) {
+              setState(() => music = checked);
+              saveData('music', music);
               if (checked) {
                 if (paused) {
                   musicPlayer.resume();
@@ -269,7 +277,6 @@ class _MainMenuState extends EpicState<MainMenu>
                 musicPlayer.pause();
                 paused = true;
               }
-              setState(() => music = checked);
             },
           ),
           if (Tutorial.intro6()) ...[

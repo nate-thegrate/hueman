@@ -214,7 +214,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
 
   bool showDetails = false, showReaction = false;
   void tapReaction() {
-    playSound('tense_reset');
+    if (!music || !casualMode) playSound('tense_reset');
     setState(() => showReaction = false);
     scoreKeeper?.rank = tensionRank;
     scoreKeeper?.roundCheck(context);
@@ -247,7 +247,11 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     inverted = true;
-    musicPlayer.stop();
+    if (casualMode) {
+      playMusic(loop: 'casual_2');
+    } else {
+      musicPlayer.stop();
+    }
     generateHue();
     if (!Tutorial.tense()) {
       Tutorial.tense.complete();
@@ -380,7 +384,9 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   Widget button2by2(BoxConstraints constraints) => AnimatedContainer(
         duration: expandDuration,
         curve: curve,
-        height: showDetails ? 0 : constraints.calcSize((w, h) => min(w, min(h - 250, 420))),
+        height: showDetails
+            ? 0
+            : constraints.calcSize((w, h) => min(w, min(h - 270 - (casualMode ? 0 : 100), 420))),
         child: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
           child: Column(
@@ -447,7 +453,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                       duration: const Duration(milliseconds: 100),
                       child: casualMode || showDetails ? flat : scoreKeeper!.midRoundDisplay,
                     ),
-                    const FixedSpacer(15),
+                    if (!casualMode) const FixedSpacer(15),
                   ],
                 ),
               ),
@@ -491,7 +497,7 @@ class _TenseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     const double shadowSize = 2;
     final double width = constraints.calcSize(
-      (w, h) => min((w / 2) - 20, min((h - 250) / 2 - 20, 200)),
+      (w, h) => min((w / 2) - 20, min((h - 250) / 2 - (casualMode ? 20 : 70), 200)),
     );
     return GestureDetector(
       onTap: select,

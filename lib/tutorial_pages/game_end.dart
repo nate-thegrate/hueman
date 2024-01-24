@@ -48,6 +48,13 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       showCredits = false;
       colorChange = true;
     });
+    if (!music) {
+      await sleepState(1.5, () {
+        text = _MusicSwitch(next);
+        showText = true;
+      });
+      return;
+    }
     await sleepState(3, () => showSuperHue = true);
     await sleepState(0.1, () => hideSuperHue = false);
     await sleep(1);
@@ -189,7 +196,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
 }
 
 const Map<String, List<_CreditsButton>> _credits = {
-  'author': [
+  'game & music': [
     _CreditsButton(
       name: 'Nate Wilson',
       label: 'github',
@@ -989,6 +996,44 @@ String get hueZodiac => switch (superHue) {
       359 => "You're unique and intelligent. And you like to have fun!",
       _ => "You're unique and intelligent. And you like to have fun!",
     };
+
+class _MusicSwitch extends StatefulWidget {
+  const _MusicSwitch(this.onPressed);
+  final VoidCallback onPressed;
+
+  @override
+  State<_MusicSwitch> createState() => _MusicSwitchState();
+}
+
+class _MusicSwitchState extends SuperState<_MusicSwitch> {
+  /// doesn't save, so music will be off on next boot
+  void musicOn() => music = true;
+
+  @override
+  void animate() => sleepState(2, musicOn);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SuperText('Let\'s turn the music on!'),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 25),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.headphones_outlined, size: 50),
+              const FixedSpacer.horizontal(10),
+              Switch.adaptive(value: music, onChanged: (_) => setState(musicOn)),
+            ],
+          ),
+        ),
+        if (music) FadeIn(child: ContinueButton(onPressed: widget.onPressed)),
+      ],
+    );
+  }
+}
 
 class _HowToSupport extends StatefulWidget {
   const _HowToSupport(this.style);

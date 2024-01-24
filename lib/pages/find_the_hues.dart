@@ -608,7 +608,7 @@ class _IntroGraphicState extends State<IntroGraphic> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (SuperColors.allNamedHues.contains(color)) ColorNameBox(color),
+        if (SuperColors.hueList.contains(color)) ColorNameBox(color),
         MeasuringOrb(
           step: step,
           width: 100,
