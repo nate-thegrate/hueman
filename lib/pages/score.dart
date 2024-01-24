@@ -21,6 +21,7 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
   @override
   void initState() {
     super.initState();
+    musicPlayer.stop();
     final ScoreKeeper sk = widget.scoreKeeper;
     final Score? mode = Score.fromScoreKeeper(sk);
     if (mode != null) mode.set(sk.scoreVal);
@@ -102,7 +103,7 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
               ),
               content: const Text(
                 'You can switch the music on/off in the game settings.\n\n'
-                "Some game modes have a unique soundtrack, so make sure to check 'em out!",
+                "Most game modes have a unique soundtrack, so make sure to check 'em out!",
                 style: SuperStyle.sans(),
               ),
             ),

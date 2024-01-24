@@ -1,3 +1,5 @@
+// ignore_for_file: dead_code
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -97,36 +99,33 @@ enum Tutorial {
     await prefs.setBool(name, true);
   }
 
-  static late final Map<Tutorial, bool> data;
+  static Map<Tutorial, bool> data = {
+    started: true,
+    intro3: true,
+    intro6: true,
+    introC: true,
+    sandbox: true,
+    casual: true,
+    intense: true,
+    master: true,
+    mastered: true,
+    aiCertificate: true,
+    sawInversion: true,
+    trivial: true,
+    tense: true,
+    tensed: true,
+    trueMastery: true,
+    gameEnd: true,
+    evenFurther: true,
+    worldEnd: false,
+    dawnOfSummer: false,
+  };
 
   static void init(SharedPreferences prefs) {
     const bool localStorage = true;
-    data = switch (localStorage) {
-      true => {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false},
-      false => {
-          started: true,
-          intro3: true,
-          intro6: true,
-          introC: true,
-          sandbox: true,
-          casual: true,
-          intense: true,
-          master: true,
-          mastered: true,
-          aiCertificate: true,
-          sawInversion: true,
-          trivial: true,
-          tense: true,
-          tensed: true,
-          trueMastery: true,
-          gameEnd: true,
-          evenFurther: true,
-          worldEnd: false,
-          dawnOfSummer: false,
-        },
-    };
-    // ignore: dead_code
-    if (!localStorage) {
+    if (localStorage) {
+      data = {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false};
+    } else {
       casualMode = true;
       hueRuler = true;
       inverted = true;
