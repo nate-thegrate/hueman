@@ -33,13 +33,9 @@ late bool fullCompletion;
 late bool music;
 late bool sounds;
 
-Future<void> saveData(String key, Object value) async {
+Future<void> saveData(String key, bool value) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (key == 'superHue') {
-    await prefs.setInt(key, value as int);
-    return;
-  }
-  await prefs.setBool(key, value as bool);
+  await prefs.setBool(key, value);
 }
 
 Future<void> loadData() async {
