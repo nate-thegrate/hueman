@@ -414,8 +414,6 @@ class _HueTypingScreen extends StatelessWidget {
     final sk = scoreKeeper;
     final bars = (sk is MasterScoreKeeper) ? RankBars(sk.rank, color: color) : empty;
 
-    final double colorBoxWidth = context.screenWidth * 0.75;
-
     return Scaffold(
       body: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -423,6 +421,7 @@ class _HueTypingScreen extends StatelessWidget {
           bars,
           Expanded(
             child: SafeLayout((context, constraints) {
+              final double colorBoxWidth = constraints.maxWidth * 0.75;
               return Column(
                 children: <Widget>[
                   const Spacer(),
@@ -434,7 +433,11 @@ class _HueTypingScreen extends StatelessWidget {
                       height: min(
                         colorBoxWidth,
                         constraints.maxHeight -
-                            (sk is MasterScoreKeeper && !externalKeyboard ? 530 : 400),
+                            switch (externalKeyboard) {
+                              true => 400,
+                              false when sk is MasterScoreKeeper => 550,
+                              false => 500,
+                            },
                       ),
                       color: color,
                     )

@@ -50,13 +50,20 @@ class _StartScreenState extends SuperState<StartScreen> {
       onStop: () {
         sleep(4, then: () => playMusic(once: 'speedup'));
         sleep(9.85, then: () => context.noTransition(const _CallOutTheLie()));
+        if (Platform.isIOS) {
+          sleep(6.5, then: () {
+            setState(() => glitchy = true);
+            ticker = Ticker((_) => setState(() => flicker = !flicker))..start();
+          });
+        }
       },
     ),
     rive.OneShotAnimation('complete lie', autoplay: false),
   ];
 
   String artboard = 'start button screen';
-  Widget callOutTheLie = empty;
+  bool glitchy = false, flicker = false;
+  Ticker? ticker;
   SuperColor backgroundColor = SuperColors.lightBackground;
 
   void start() async {
@@ -118,6 +125,7 @@ class _StartScreenState extends SuperState<StartScreen> {
               ),
             ),
             const _Logo(),
+            if (glitchy) Flicker(flicker, SuperColors.bsBackground),
             if (speedrun)
               SuperContainer(
                 color: Colors.black45,

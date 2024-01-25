@@ -448,7 +448,7 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
             ),
           ),
           perfectScoreOverlay,
-          showFlicker ? _Flicker(flickerValue, actual) : empty,
+          showFlicker ? Flicker(flickerValue, actual) : empty,
         ],
       ),
     );
@@ -521,94 +521,6 @@ class _ScoreTitleState extends State<_ScoreTitle> {
         height: 50,
         decoration: decoration,
         child: text,
-      ),
-    );
-  }
-}
-
-class _Flicker extends StatelessWidget {
-  const _Flicker(this.flickerValue, this.color);
-  final bool flickerValue;
-  final SuperColor color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: const Alignment(1, -0.25),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          const Spacer(flex: 2),
-          SuperContainer(width: context.screenWidth, height: 1, color: color),
-          SuperContainer(width: context.screenWidth * .75, height: 2, color: color),
-          const FixedSpacer(4),
-          SuperContainer(
-            width: double.infinity,
-            height: 25,
-            color: flickerValue ? color : null,
-          ),
-          const FixedSpacer(3),
-          SuperContainer(width: context.screenWidth / 2, height: 2, color: color),
-          const FixedSpacer(10),
-          const SuperContainer(
-            height: 5,
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            decoration: BoxDecoration(
-              border: Border.symmetric(
-                vertical: BorderSide(color: SuperColors.lightBackground, width: 300),
-              ),
-            ),
-            child: empty,
-          ),
-          SuperContainer(
-            width: context.screenWidth / 2,
-            height: 3,
-            color: SuperColors.lightBackground,
-          ),
-          const FixedSpacer(10),
-          const SuperContainer(
-            height: 3,
-            padding: EdgeInsets.symmetric(horizontal: 40),
-            decoration: BoxDecoration(
-              border: Border.symmetric(
-                vertical: BorderSide(color: SuperColors.lightBackground, width: 250),
-              ),
-            ),
-            child: empty,
-          ),
-          Expanded(
-            flex: 3,
-            child: FittedBox(
-              alignment: Alignment.topCenter,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  for (int row = 0; row < 15; row++)
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        for (int i = 0; i < 33; i++)
-                          SuperContainer(
-                            width: 10,
-                            height: 10,
-                            color: switch ((i + row) % 2) {
-                              _ when i < row - 5 => null,
-                              0 when rng.nextBool() && rng.nextBool() =>
-                                SuperColors.darkBackground,
-                              1 when rng.nextBool() && rng.nextBool() =>
-                                SuperColors.lightBackground,
-                              0 => color,
-                              _ => null,
-                            },
-                          ),
-                      ],
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

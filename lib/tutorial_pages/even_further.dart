@@ -139,7 +139,7 @@ class _EvenFurtherTutorialState extends EpicState<EvenFurtherTutorial> {
                         softWrap: false,
                         TextSpan(
                           children: [
-                            const TextSpan(text: '(And also since I showed a big '),
+                            const TextSpan(text: '(And also since there was a big '),
                             TextSpan(
                               text: '  The End  ',
                               style: SuperStyle.sans(
@@ -288,7 +288,7 @@ class _ILied extends StatelessWidget {
           braceYourself,
           child: const SuperText(
             'brace yourself:\n'
-            "what comes next is more difficult than anything I've shown thus far.",
+            'what comes next is more difficult than anything in this game thus far.',
             style: SuperStyle.sans(color: Colors.black, size: 20),
           ),
         ),

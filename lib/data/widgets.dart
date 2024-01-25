@@ -975,3 +975,91 @@ class _RightAngleBox extends StatelessWidget {
     );
   }
 }
+
+class Flicker extends StatelessWidget {
+  const Flicker(this.flickerValue, this.color, {super.key});
+  final bool flickerValue;
+  final SuperColor color;
+
+  @override
+  Widget build(BuildContext context) {
+    final color2 = inverted ? SuperColors.lightBackground : SuperColors.bsBackground;
+    return Align(
+      alignment: const Alignment(1, -0.25),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const Spacer(flex: 2),
+          SuperContainer(width: context.screenWidth, height: 1, color: color),
+          SuperContainer(width: context.screenWidth * .75, height: 2, color: color),
+          const FixedSpacer(4),
+          SuperContainer(
+            width: double.infinity,
+            height: 25,
+            color: flickerValue ? color : null,
+          ),
+          const FixedSpacer(3),
+          SuperContainer(width: context.screenWidth / 2, height: 2, color: color),
+          const FixedSpacer(10),
+          SuperContainer(
+            height: 5,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              border: Border.symmetric(
+                vertical: BorderSide(color: color2, width: 300),
+              ),
+            ),
+            child: empty,
+          ),
+          SuperContainer(
+            width: context.screenWidth / 2,
+            height: 3,
+            color: color2,
+          ),
+          const FixedSpacer(10),
+          SuperContainer(
+            height: 3,
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            decoration: BoxDecoration(
+              border: Border.symmetric(
+                vertical: BorderSide(color: color2, width: 250),
+              ),
+            ),
+            child: empty,
+          ),
+          Expanded(
+            flex: 3,
+            child: FittedBox(
+              alignment: Alignment.topCenter,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  for (int row = 0; row < 15; row++)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (int i = 0; i < 33; i++)
+                          SuperContainer(
+                            width: 10,
+                            height: 10,
+                            color: switch ((i + row) % 2) {
+                              _ when i < row - 5 => null,
+                              0 when rng.nextBool() && rng.nextBool() =>
+                                SuperColors.darkBackground,
+                              1 when rng.nextBool() && rng.nextBool() => color2,
+                              0 => color,
+                              _ => null,
+                            },
+                          ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
