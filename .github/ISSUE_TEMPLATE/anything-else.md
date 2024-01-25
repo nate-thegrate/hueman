@@ -1,6 +1,6 @@
 ---
 name: anything else
-about: ''
+about: 'post a question, suggestion, or complaint'
 title: ''
 labels: ''
 assignees: ''
