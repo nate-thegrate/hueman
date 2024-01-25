@@ -53,7 +53,7 @@ Refusing to accept your money feeds my ego.
 
 Many bugs have been fixed, thanks to some extensive playtesting :)
 
-If you notice something wrong, feel free to make a [GitHub issue](https://github.com/nate-thegrate/hueman/issues/new?template=report-a-bug.md) for it! Or if you don't have a GitHub account, you can use a [Google form](https://docs.google.com/forms/d/e/1FAIpQLScZgqN19eIaV-MBxDuOAkcLfsZs7HHS_Wu_PCJVdTPBVC9Bkg/viewform) instead.
+If you notice something wrong, feel free to make a [GitHub issue](https://github.com/nate-thegrate/hueman/issues/new?template=bug-report.md) for it! Or if you don't have a GitHub account, you can use a [Google form](https://docs.google.com/forms/d/e/1FAIpQLScZgqN19eIaV-MBxDuOAkcLfsZs7HHS_Wu_PCJVdTPBVC9Bkg/viewform) instead.
 
 Currently, there are a couple of minor platform-specific issues:
 
