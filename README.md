@@ -23,11 +23,11 @@ Download from the official website: [hue-man.app](https://hue-man.app/)
 
 > What's the target age range?
 
-ʜᴜᴇman is for all humans! The ideal target audience is probably people in middle- or high-school. Younger kids might think some parts are too difficult; older people will enjoy it but may find it slightly patronizing.
+ʜᴜᴇman is for all humans! The ideal target audience is probably people in middle- or high-school. Younger kids might think some parts are too difficult; older people will enjoy it (but also may find it sort of patronizing).
 
 <br>
 
-> How did you release it on so many platforms?
+> How can it run on so many platforms?
 
 This game was made using Flutter: an open-source, cross-platform app framework made by Google.
 
@@ -39,7 +39,7 @@ If you're interested in Flutter game development, you can see my code by going t
 
 [MuseScore](https://musescore.org/) is an open-source program for writing sheet music, and it has good sound quality too. [Pro Tools](https://www.avid.com/pro-tools) is an expensive digital audio workstation that I bought back in 2016.
 
-Some songs were just made with MuseScore, and I used Pro Tools for others. If you're interested in music production, I recommend looking at [some options](https://www.google.com/search?q=digital+audio+workstation+options) to see what fits with your goals & budget.
+Some songs were just made with MuseScore, and for others I used Pro Tools. If you're interested in music production, I recommend looking at [some options](https://www.google.com/search?q=digital+audio+workstation+options) to see what fits with your goals & budget.
 
 <br>
 
