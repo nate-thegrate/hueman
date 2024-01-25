@@ -65,7 +65,7 @@ Currently, there are a couple of minor platform-specific issues:
 
 ### feedback & suggestions
 
-If you'd like to give feedback or suggest an improvement for the game, make a [GitHub issue](https://github.com/nate-thegrate/hueman/issues/new?template=report-a-bug.md), or use this [Google form](https://docs.google.com/forms/d/e/1FAIpQLScZgqN19eIaV-MBxDuOAkcLfsZs7HHS_Wu_PCJVdTPBVC9Bkg/viewform) if you don't have a GitHub account.
+If you'd like to give feedback or suggest an improvement for the game, make a [GitHub issue](https://github.com/nate-thegrate/hueman/issues/new?template=anything.md), or use this [Google form](https://docs.google.com/forms/d/e/1FAIpQLScZgqN19eIaV-MBxDuOAkcLfsZs7HHS_Wu_PCJVdTPBVC9Bkg/viewform) if you don't have a GitHub account.
 
 ### copyright info
 
