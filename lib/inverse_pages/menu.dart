@@ -245,7 +245,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 if (paused) {
                   musicPlayer.resume();
                 } else {
-                  playMusic(once: 'verity_1', loop: 'verity_2');
+                  playMusic(once: 'invert_1', loop: 'invert_2');
                 }
               } else {
                 musicPlayer.pause();
