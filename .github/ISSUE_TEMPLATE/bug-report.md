@@ -1,5 +1,5 @@
 ---
-name: report a bug
+name: bug report
 about: a visual glitch, game crash, or anything else going wrong
 title: ''
 labels: 'bug'

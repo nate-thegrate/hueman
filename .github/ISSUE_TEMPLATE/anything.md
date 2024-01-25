@@ -1,5 +1,5 @@
 ---
-name: anything else
+name: anything
 about: 'post a question, suggestion, or complaint'
 title: ''
 labels: ''
