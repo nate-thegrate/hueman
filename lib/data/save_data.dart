@@ -44,7 +44,9 @@ Future<void> saveData(String key, Object value) async {
 
 Future<void> loadData() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
+    if (Platform.isIOS) SystemUiOverlay.bottom,
+  ]);
 
   final prefs = await SharedPreferences.getInstance();
   casualMode = prefs.getBool('casualMode') ?? true;
