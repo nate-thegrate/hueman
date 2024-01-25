@@ -9,11 +9,15 @@ import 'package:hueman/data/widgets.dart';
 
 class Balls extends StatefulWidget {
   /// big and blurry.
+  ///
+  /// (used in the "even further" page.)
   const Balls({super.key})
       : colors = SuperColors.epic,
         cycleSeconds = 6;
 
   /// big. blurry. black.
+  ///
+  /// (used during the "true mastery" tutorial)
   const Balls.bigAndBlack({super.key})
       : colors = const [
           SuperColor(0x3E0000),

@@ -7,6 +7,8 @@ class PhotoColors extends StatelessWidget {
   final String filename;
   final List<int> colors;
 
+  /// 2 color codes are picked at random for each image
+  /// while playing "master" mode.
   (SuperColor, SuperColor) get randomColors {
     SuperColor imageColor(int i) => SuperColor(colors[i]);
     final int index1 = rng.nextInt(colors.length);

@@ -419,6 +419,7 @@ class _Page4State extends SuperState<_Page4> {
   }
 }
 
+/// I admit this class is not well-organized, but if it works, it works
 class _ColorCard extends StatefulWidget {
   const _ColorCard(this.collapsed, this.consolidating, this.showBTS, this.showBinary)
       : showHex = null,

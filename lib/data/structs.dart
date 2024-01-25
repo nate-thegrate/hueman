@@ -27,6 +27,7 @@ const quarterSec = Duration(milliseconds: 250);
 const Curve curve = Curves.easeOutCubic;
 
 final rng = Random();
+
 final sfxPlayer = AudioPlayer();
 final musicPlayer = AudioPlayer();
 StreamSubscription? _loop;
@@ -59,6 +60,7 @@ Future<void> playMusic({String? once, String? loop}) async {
 }
 
 extension PauseMusic on AppLifecycleState {
+  /// pauses the music when the app isn't in use.
   void pauseMusic() {
     if (this == AppLifecycleState.resumed && music && paused) {
       musicPlayer.resume();
@@ -82,6 +84,7 @@ abstract interface class ScoreKeeper {
   void roundCheck(BuildContext context);
 }
 
+/// easy-to-type functions & getters that use the current [BuildContext].
 extension ContextStuff on BuildContext {
   void goto(Pages page) => Navigator.pushReplacementNamed(this, page.name);
   void menu() => goto(Pages.menu);
@@ -108,10 +111,6 @@ extension CalcSize on BoxConstraints {
 }
 
 void gotoWebsite(String url) => launchUrl(Uri.parse(url));
-
-typedef KeyFunc = ValueChanged<RawKeyEvent>;
-void addListener(KeyFunc func) => RawKeyboard.instance.addListener(func);
-void yeetListener(KeyFunc func) => RawKeyboard.instance.removeListener(func);
 
 class HueQueue {
   HueQueue(this.numColors) {

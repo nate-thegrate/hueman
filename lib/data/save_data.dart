@@ -42,7 +42,6 @@ Future<void> saveData(String key, Object value) async {
   await prefs.setBool(key, value as bool);
 }
 
-/// using an enum probably would have been better haha
 Future<void> loadData() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
@@ -69,6 +68,7 @@ Future<void> reset() async {
   exit(0);
 }
 
+/// Tracks game progress.
 enum Tutorial {
   started,
   intro3,
@@ -121,6 +121,10 @@ enum Tutorial {
     dawnOfSummer: false,
   };
 
+  /// Everything in [data] starts out `false` and then updates based on game progress.
+  ///
+  /// Values can be tweaked manually by setting `localStorage = false`
+  /// (helps with testing/debugging).
   static void init(SharedPreferences prefs) {
     const bool localStorage = true;
     if (localStorage) {

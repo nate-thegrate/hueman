@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 
+/// Based on the material [Color] class, but with more functionality.
+///
+/// - Can pass a hexadecimal color code, rgb values, or hsl/hsv
+/// - Full opacity is assumed, so color code is 6 digits instead of 8
+/// - Factory constructors automatically assign a color name, if applicable
+/// - Some extra methods added for utility
 class SuperColor extends Color {
   const SuperColor(this.colorCode)
       : name = '[none]',
@@ -78,6 +84,8 @@ class SuperColor extends Color {
       };
 
   SuperColor get complement => SuperColor.rgb(0xFF - red, 0xFF - green, 0xFF - blue).rounded;
+
+  /// shows the color name in "sandbox" mode, even if the color code is slightly off
   SuperColor get rounded {
     const k = SuperColor.named('[???]', 0x8080FF);
     if (colorCode == k.colorCode) return k;
@@ -99,10 +107,13 @@ class SuperColor extends Color {
 class Chartreuse extends SuperColor {
   const Chartreuse() : super(0x80FF00);
 
+  /// After making significant progress through the game,
+  /// you can swap out "chartreuse" for a better name.
   @override
   String get name => Tutorial.dawnOfSummer() ? 'summer' : 'chartreuse';
 }
 
+/// Similar to [Colors], but each color is fully vibrant.
 abstract final class SuperColors {
   static const red = SuperColor.named('red', 0xFF0000);
   static const orange = SuperColor.named('orange', 0xFF8000);
@@ -187,6 +198,10 @@ abstract final class SuperColors {
     shape: BoxShape.circle,
   );
 
+  /// These lists were created using the [SuperColor] hue factory to get a consistent luminance.
+  ///
+  /// The colors are hard-coded
+  /// since it would be very computationally expensive to calculate them on-the-fly.
   static const epic = [
     SuperColor(0xffa3a3),
     SuperColor(0xffa3a1),

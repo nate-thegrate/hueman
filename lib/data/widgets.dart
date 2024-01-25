@@ -16,6 +16,10 @@ import 'package:hueman/data/super_text.dart';
 const Widget empty = SizedBox.shrink();
 const Widget flat = SizedBox(width: double.infinity);
 
+/// It's extremely useful knowing the maximum width/height inside a [SafeArea],
+/// and [LayoutBuilder] is the only good way to do it.
+///
+/// This class combines the two, so there's less boilerplate.
 class SafeLayout extends StatelessWidget {
   const SafeLayout(this.builder, {super.key});
   final Widget Function(BuildContext context, BoxConstraints constraints) builder;
@@ -26,6 +30,8 @@ class SafeLayout extends StatelessWidget {
   }
 }
 
+/// Used in [Row]s and [Column]s that are set to [MainAxisSize.min]
+/// to add spacing between elements.
 class FixedSpacer extends StatelessWidget {
   const FixedSpacer(this.size, {super.key}) : horizontal = false;
   const FixedSpacer.horizontal(this.size, {super.key}) : horizontal = true;
@@ -40,6 +46,11 @@ class FixedSpacer extends StatelessWidget {
 }
 
 class Fader extends AnimatedOpacity {
+  /// There's a whole lot of [AnimatedOpacity] in this app
+  /// that just alternates between fully opaque and fully transparent
+  /// with a 1-second duration.
+  ///
+  /// So this class makes it easy.
   const Fader(
     this.visible, {
     required super.child,
@@ -51,6 +62,7 @@ class Fader extends AnimatedOpacity {
 }
 
 class FadeIn extends StatefulWidget {
+  /// Makes the child widget smoothly fade in instead of just appearing.
   const FadeIn({
     required this.child,
     this.duration = oneSec,
@@ -86,6 +98,7 @@ class _FadeInState extends State<FadeIn> {
 }
 
 class SlideItIn extends StatelessWidget {
+  /// Similar to [FadeIn], but instead it slides from off the screen.
   const SlideItIn(
     this.isItInYet, {
     super.key,
@@ -122,18 +135,21 @@ class SexyBox extends AnimatedSize {
   const SexyBox({super.child, super.key}) : super(duration: oneSec, curve: Curves.easeInOutQuart);
 }
 
+/// spam-clicking buttons can sometimes crash the app, so this is a handy mixin.
 mixin SinglePress {
   bool pressed = false;
 
   VoidCallback singlePress(VoidCallback? onPressed, {bool noDelay = false}) => () {
         if (pressed) return;
-
         pressed = true;
         Future.delayed(noDelay ? Duration.zero : halfSec, onPressed);
       };
 }
 
 class ContinueButton extends StatefulWidget {
+  /// Circular button with an arrow pointing right.
+  ///
+  /// It's used a whole lot throughout the tutorials.
   const ContinueButton({required this.onPressed, super.key});
   final void Function()? onPressed;
 
@@ -168,6 +184,7 @@ class _ContinueButtonState extends State<ContinueButton> with SinglePress {
 }
 
 class BrandNew extends StatelessWidget {
+  /// Gives a fun little "new!" tag next to things you haven't seen yet.
   const BrandNew({super.key, required this.child, required this.color, this.text = 'new!'});
   final SuperColor color;
   final Widget child;
@@ -201,6 +218,8 @@ class BrandNew extends StatelessWidget {
 }
 
 class SuperButton extends StatefulWidget {
+  /// Colorful buttons that show up in the main menu
+  /// and a few other places.
   const SuperButton(
     this.label, {
     super.key,
@@ -253,6 +272,7 @@ class _SuperButtonState extends State<SuperButton> with SinglePress {
 }
 
 class NavigateButton extends StatelessWidget {
+  /// The [page] member determines both the button's text and its functionality.
   const NavigateButton(
     this.page, {
     super.key,
@@ -307,6 +327,7 @@ class MenuCheckbox extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
+                  // checkbox size is constrained since different platforms lack consistency
                   width: 20,
                   height: 20,
                   child: Checkbox(
@@ -333,6 +354,7 @@ class MenuCheckbox extends StatelessWidget {
 }
 
 class DismissibleDialog extends StatelessWidget {
+  /// lets you tap either inside or outside the dialog to dismiss it.
   const DismissibleDialog(
       {super.key,
       required this.title,
@@ -413,6 +435,7 @@ class WarnButton extends StatelessWidget {
 }
 
 class GoBack extends StatelessWidget {
+  /// takes you back to the menu.
   const GoBack({super.key, this.text = 'back'});
   final String text;
 
@@ -443,6 +466,7 @@ class GoBack extends StatelessWidget {
 }
 
 class JustKidding extends StatelessWidget {
+  /// used in 2 different places :)
   const JustKidding(
     this.text, {
     super.key,
@@ -582,6 +606,7 @@ class ColorLabel extends StatelessWidget {
   }
 }
 
+/// Used in "sandbox" and "true mastery" so you can type in a color code.
 class ManualColorCode extends StatefulWidget {
   const ManualColorCode(this.color, {super.key});
   final SuperColor color;
@@ -696,6 +721,11 @@ class _ManualColorCodeState extends State<ManualColorCode> {
   }
 }
 
+/// ```dart
+///
+/// ColorTextSpan.red
+/// ```
+/// is the word "red" in bold red text.
 class ColorTextSpan extends TextSpan {
   const ColorTextSpan(this.color, {this.fontWeight = 600});
   final SuperColor color;
@@ -744,6 +774,7 @@ class Rive extends StatelessWidget {
 
 // ignore: camel_case_types
 class K_glitch extends StatefulWidget {
+  /// K
   const K_glitch({super.key}) : theEnd = false;
   const K_glitch.destroyer({super.key}) : theEnd = true;
   final bool theEnd;
@@ -819,6 +850,7 @@ class _KGlitchState extends SuperState<K_glitch> {
   }
 }
 
+/// The fun spinny circle that shows up after you submit a hue.
 class MeasuringOrb extends StatelessWidget {
   const MeasuringOrb({
     required this.step,
@@ -924,6 +956,7 @@ class MeasuringOrb extends StatelessWidget {
   }
 }
 
+/// Used when measuring "chartreuse" for the first time.
 class _RightAngleBox extends StatelessWidget {
   const _RightAngleBox({required this.size, required this.thiccness});
   final double size, thiccness;

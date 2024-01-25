@@ -46,6 +46,9 @@ double get epicSine => sin(6 * 2 * pi * (epicHue) / 360) + 1;
 /// It also cycles the reverse way through the hues.
 SuperColor get inverseColor => SuperColors.inverse[inverseHue];
 
+/// Sets up the fancy colors!
+///
+/// Increments the hue every 4 frames.
 Ticker epicSetup(Function setState) {
   int cycle = 0;
   void epicCycle(_) {
@@ -56,6 +59,7 @@ Ticker epicSetup(Function setState) {
   return Ticker(epicCycle)..start();
 }
 
+/// Just like epicSetup, but goes in reverse, and twice as fast.
 Ticker inverseSetup(Function setState) {
   bool cycle = false;
   void inverseCycle(_) {

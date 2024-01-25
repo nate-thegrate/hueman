@@ -11,6 +11,7 @@ import 'package:hueman/data/super_state.dart';
 
 enum FontFamily { sans, mono, gaegu }
 
+/// Made my own class to handle variable font width & font weight in an elegant fashion.
 class SuperStyle extends TextStyle {
   /// ```
   /// ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -162,6 +163,8 @@ class SuperStyle extends TextStyle {
       };
 }
 
+/// I got tired of repeatedly doing [TextAlign.center] and `size: 20`
+/// so I made this class.
 class SuperText extends StatelessWidget {
   const SuperText(
     this.data, {
@@ -183,6 +186,19 @@ class SuperText extends StatelessWidget {
 }
 
 class SuperRichText extends StatelessWidget {
+  /// ```dart
+  ///
+  /// Text.rich(
+  ///   TextSpan(
+  ///     children: someList
+  ///   )
+  /// )
+  /// ```
+  /// can instead be
+  /// ```dart
+  /// SuperRichText(someList)
+  /// ```
+  /// fewer indents is always nice :)
   const SuperRichText(
     this.children, {
     super.key,

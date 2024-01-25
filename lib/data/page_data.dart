@@ -21,6 +21,7 @@ import 'package:hueman/tutorial_pages/start.dart';
 import 'package:hueman/tutorial_pages/even_further.dart';
 import 'package:hueman/tutorial_pages/true_mastery.dart';
 
+/// Using an `enum` works great for organizing app routes.
 enum Pages {
   start(StartScreen()),
   menu(MainMenu()),
@@ -43,6 +44,9 @@ enum Pages {
   const Pages(this._widget);
   final Widget _widget;
 
+  /// returns the appropriate page.
+  ///
+  /// Will take you to the relevant tutorial if you haven't done it yet.
   Widget get widget => switch (this) {
         intro3 when !Tutorial.intro3() => const Intro3Tutorial(),
         intro6 when !Tutorial.intro6() => const Intro6Tutorial(),
@@ -57,7 +61,7 @@ enum Pages {
         _ => _widget,
       };
 
-  /// button text
+  /// Main menu button text.
   String call() => switch (this) {
         intro3 => '3 colors',
         intro6 => '6 colors',
@@ -67,6 +71,7 @@ enum Pages {
         _ => name,
       };
 
+  /// Score screen game mode text.
   String get gameMode => switch (this) {
         intro3 => 'intro  (3 colors)',
         intro6 => 'intro  (6 colors)',
@@ -82,9 +87,11 @@ enum Pages {
         _ => throw Error(),
       };
 
+  /// A map of each route, used in `main.dart`.
   static Map<String, WidgetBuilder> routes = {
     for (final page in values) page.name: (context) => page.widget
   };
 
+  /// Used in `main.dart` to determine which screen to open on boot.
   static String get initialRoute => (Tutorial.started() ? menu : start).name;
 }
