@@ -11,6 +11,10 @@ This is a game for people who:
 - enjoy building real-world skills
 - just want a game with no ads or paywalls
 
+This is **not** a game for people who:
+
+- are colorblind. (sorry.)
+
 <br>
 
 ### free & open-source
