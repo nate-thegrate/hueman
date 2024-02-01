@@ -2,7 +2,7 @@
 
 Cool, go ahead! If you give credit I would very much appreciate it.
 
-Ideally, something like "music is from the ʜᴜᴇman OST by Nate Wilson", with a link to [hue-man.app](https://hue-man.app/).
+Ideally, something like "music is from the ʜᴜᴇman OST", with a link to [hue-man.app](https://hue-man.app/).
 
 <br>
 
