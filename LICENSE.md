@@ -1,18 +1,18 @@
 ### I want to use the game's music
 
-Cool, go ahead! If you give credit I would very much appreciate it.
+Cool, go ahead! The music is published under a [CC Attribution license](https://creativecommons.org/licenses/by/4.0/): if you give credit I would very much appreciate it.
 
 Ideally, something like "music is from the ʜᴜᴇman OST", with a link to [hue-man.app](https://hue-man.app/).
 
 <br>
 
-### I want to copy a small part of the code
+### I want to copy part of the code
 
 Go for it—no need to ask permission or give credit.
 
 <br>
 
-### I want to copy a big part of the game (or copy the entire thing and modify it)
+### I want to copy the whole game and modify it
 
 Sounds like fun! Make a [GitHub issue](https://github.com/nate-thegrate/hueman/issues/new?template=anything.md) and let me know what you want to do.
 
