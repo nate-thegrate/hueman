@@ -21,12 +21,17 @@ const Widget flat = SizedBox(width: double.infinity);
 ///
 /// This class combines the two, so there's less boilerplate.
 class SafeLayout extends StatelessWidget {
-  const SafeLayout(this.builder, {super.key});
+  const SafeLayout(this.builder, {super.key, this.top = true, this.bottom = true});
   final Widget Function(BuildContext context, BoxConstraints constraints) builder;
+  final bool top, bottom;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: LayoutBuilder(builder: builder));
+    return SafeArea(
+      top: top,
+      bottom: bottom,
+      child: LayoutBuilder(builder: builder),
+    );
   }
 }
 

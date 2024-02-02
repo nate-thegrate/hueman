@@ -426,7 +426,7 @@ class _Page4State extends SuperState<_Page4> {
                   child: const SuperRichText([
                     TextSpan(text: 'Printers make '),
                     ColorTextSpan.red,
-                    TextSpan(text: ' by mixing '),
+                    TextSpan(text: '\nby mixing '),
                     ColorTextSpan.magenta,
                     TextSpan(text: ' and '),
                     ColorTextSpan.yellow,
@@ -655,15 +655,20 @@ class _Page5State extends SuperState<_Page5> {
                       ),
                     ),
                   const Spacer(),
-                  SuperContainer(child: _ColorBubbles.subtractive(counter, showArrows)),
+                  SuperContainer(
+                      height: context.screenHeight * .5,
+                      child: _ColorBubbles.subtractive(
+                        counter,
+                        showArrows,
+                        button: Fader(
+                          showButton,
+                          child: Theme(
+                            data: ThemeData(useMaterial3: true),
+                            child: ContinueButton(onPressed: widget.nextPage),
+                          ),
+                        ),
+                      )),
                   const Spacer(),
-                  Fader(
-                    showButton,
-                    child: Theme(
-                      data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
-                      child: ContinueButton(onPressed: widget.nextPage),
-                    ),
-                  ),
                   const Spacer(),
                 ],
               ),
@@ -733,45 +738,53 @@ class _ColorBubbleState extends State<_ColorBubble> {
 class _ColorBubbles extends StatelessWidget {
   const _ColorBubbles.additive(this.counter, this.showArrows)
       : colors = SuperColors.primaries,
-        subtract = false;
-  const _ColorBubbles.subtractive(this.counter, this.showArrows)
+        subtract = false,
+        button = empty;
+  const _ColorBubbles.subtractive(this.counter, this.showArrows, {required this.button})
       : colors = SuperColors.subtractivePrimaries,
         subtract = true;
   final int counter;
   final bool subtract, showArrows;
   final List<SuperColor> colors;
+  final Widget button;
 
   int get cycle => (counter ~/ 200) % 3;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Fader(
-          showArrows,
-          child: Text(
-            subtract ? 'Subtractive primary colors' : 'Additive primary colors',
-            style: SuperStyle.sans(size: 24, color: subtract ? Colors.black : null),
-          ),
-        ),
-        SizedBox(
-          height: context.screenHeight * .45 - 200,
-          child: LayoutBuilder(builder: (context, constraints) {
-            final size = constraints.maxHeight * .55;
-            return Stack(
-              children: [
-                _ColorBubble(counter, size, color: colors[0]),
-                _ColorBubble(counter - 10, size, color: colors[1]),
-                _ColorBubble(counter - 16, size, color: colors[2]),
-              ],
-            );
-          }),
-        ),
-        SexyBox(
-          child: showArrows ? FadeIn(child: _ColorArrows(colors[cycle], subtract)) : empty,
-        ),
-      ],
+    return SafeLayout(
+      top: !subtract,
+      bottom: subtract,
+      (context, constraints) {
+        final height = constraints.maxHeight - (subtract ? 220 : 200);
+        final size = height * .55;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Fader(
+              showArrows,
+              child: Text(
+                subtract ? 'Subtractive primary colors' : 'Additive primary colors',
+                style: SuperStyle.sans(size: 24, color: subtract ? Colors.black : null),
+              ),
+            ),
+            SizedBox(
+              height: height,
+              child: Stack(
+                children: [
+                  _ColorBubble(counter, size, color: colors[0]),
+                  _ColorBubble(counter - 10, size, color: colors[1]),
+                  _ColorBubble(counter - 16, size, color: colors[2]),
+                ],
+              ),
+            ),
+            SexyBox(
+              child: showArrows ? FadeIn(child: _ColorArrows(colors[cycle], subtract)) : empty,
+            ),
+            if (subtract) button,
+          ],
+        );
+      },
     );
   }
 }
