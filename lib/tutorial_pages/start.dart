@@ -153,7 +153,7 @@ class _StartScreenState extends SuperState<StartScreen> {
                 controllers: controllers,
               ),
             ),
-            // const _Logo(),
+            const _Logo(),
             if (glitchy) Flicker(flicker, SuperColors.bsBackground),
             if (speedrun)
               SuperContainer(
