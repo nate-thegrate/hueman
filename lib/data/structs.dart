@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/inverse_pages/menu.dart';
 import 'package:hueman/pages/menu.dart';
@@ -70,6 +71,10 @@ extension PauseMusic on AppLifecycleState {
     }
   }
 }
+
+typedef KeyFunc = ValueChanged<RawKeyEvent>;
+void addListener(KeyFunc func) => RawKeyboard.instance.addListener(func);
+void yeetListener(KeyFunc func) => RawKeyboard.instance.removeListener(func);
 
 Color contrastWith(Color c, {double threshold = .2}) =>
     (c.computeLuminance() > threshold) ? Colors.black : Colors.white;

@@ -246,6 +246,7 @@ class _SandboxState extends State<Sandbox> {
           case _ColorPicker.hsv:
             updateColor(_color);
           default:
+            break;
         }
         _colorPicker = _ColorPicker.values[index];
       });

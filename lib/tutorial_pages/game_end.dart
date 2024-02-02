@@ -198,7 +198,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
 const Map<String, List<_CreditsButton>> _credits = {
   'game & music': [
     _CreditsButton(
-      name: 'Nate Wilson',
+      name: 'nate-thegrate',
       label: 'github',
       website: 'https://github.com/nate-thegrate/hueman',
       color: SuperColor(0x80FFF8),

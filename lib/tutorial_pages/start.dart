@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:rive/rive.dart' as rive;
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
@@ -48,7 +49,7 @@ class _StartScreenState extends SuperState<StartScreen> {
       'mixing',
       autoplay: false,
       onStop: () {
-        sleep(4, then: () => playMusic(once: 'speedup'));
+        sleep(4, then: () => playSound('speedup'));
         sleep(9.85, then: () => context.noTransition(const _CallOutTheLie()));
         if (Platform.isIOS) {
           sleep(6.5, then: () {
@@ -65,6 +66,7 @@ class _StartScreenState extends SuperState<StartScreen> {
   bool glitchy = false, flicker = false;
   Ticker? ticker;
   SuperColor backgroundColor = SuperColors.lightBackground;
+  final FocusNode focusNode = FocusNode();
 
   void start() async {
     externalKeyboard = switch (Theme.of(context).platform) {
@@ -83,11 +85,38 @@ class _StartScreenState extends SuperState<StartScreen> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    addListener(konamiKey);
+  }
+
+  @override
+  void dispose() {
+    yeetListener(konamiKey);
+    super.dispose();
+  }
+
   int konamiSwipes = 0;
   bool speedrun = false;
 
-  void updateKonami(DragEndDetails details) {
-    konamiSwipes = switch ((konamiSwipes, details.direction)) {
+  void konamiKey(RawKeyEvent event) {
+    if (event is RawKeyUpEvent || event.repeat) return;
+
+    final AxisDirection? direction = switch (event.logicalKey) {
+      LogicalKeyboardKey.arrowUp => AxisDirection.up,
+      LogicalKeyboardKey.arrowDown => AxisDirection.down,
+      LogicalKeyboardKey.arrowLeft => AxisDirection.left,
+      LogicalKeyboardKey.arrowRight => AxisDirection.right,
+      _ => null,
+    };
+    if (direction != null) updateKonami(direction);
+  }
+
+  void konamiSwipe(DragEndDetails details) => updateKonami(details.direction);
+
+  void updateKonami(AxisDirection direction) {
+    konamiSwipes = switch ((konamiSwipes, direction)) {
       (1 || 2, AxisDirection.up) => 2,
       (_, AxisDirection.up) => 1,
       (2 || 3, AxisDirection.down) => konamiSwipes + 1,
@@ -117,14 +146,14 @@ class _StartScreenState extends SuperState<StartScreen> {
           children: [
             GestureDetector(
               onTap: start,
-              onPanEnd: updateKonami,
+              onPanEnd: konamiSwipe,
               child: Rive(
                 name: 'color_bs',
                 artboard: artboard,
                 controllers: controllers,
               ),
             ),
-            const _Logo(),
+            // const _Logo(),
             if (glitchy) Flicker(flicker, SuperColors.bsBackground),
             if (speedrun)
               SuperContainer(

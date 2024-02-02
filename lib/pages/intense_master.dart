@@ -371,16 +371,14 @@ class _IntenseModeState extends State<IntenseMode> {
   void initState() {
     super.initState();
     inverted = false;
+    if (!masterMode) playMusic(loop: 'casual');
+
     scoreKeeper = switch (masterMode) {
       _ when casualMode => null,
       true => MasterScoreKeeper(scoring: masterScore),
       false => IntenseScoreKeeper(scoring: intenseScore),
     };
-    if (scoreKeeper != null) {
-      musicPlayer.stop();
-    } else if (!masterMode) {
-      playMusic(loop: 'casual');
-    }
+
     if (!hueTyping) {
       hueFocusNode = null;
       hueController = null;

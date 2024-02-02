@@ -164,6 +164,14 @@ class _IntroModeState extends State<IntroMode> {
   void initState() {
     super.initState();
     inverted = false;
+    playMusic(
+      loop: switch (widget.numColors) {
+        3 => 'intro_3',
+        6 => 'intro_6',
+        0xC => 'intro_c',
+        _ => 'intro_18',
+      },
+    );
     if (externalKeyboard) {
       hueFocusNode = FocusNode();
       textFieldController = TextEditingController();
@@ -216,15 +224,6 @@ class _IntroModeState extends State<IntroMode> {
 
     if (scoreKeeper case final IntroScoreKeeper sk) {
       sk.stopwatch.start();
-    } else {
-      playMusic(
-        loop: switch (widget.numColors) {
-          3 => 'intro_3',
-          6 => 'intro_6',
-          0xC => 'intro_c',
-          _ => 'intro_18',
-        },
-      );
     }
 
     hueQueue = scoreKeeper is TutorialScoreKeeper || (widget.numColors == 0x18 && !casualMode)

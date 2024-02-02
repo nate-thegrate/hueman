@@ -311,13 +311,8 @@ class HueDialog extends StatefulWidget {
   State<HueDialog> createState() => _HueDialogState();
 }
 
-typedef KeyFunc = ValueChanged<RawKeyEvent>;
-
 class _HueDialogState extends State<HueDialog> {
   late final Ticker? epicHues;
-
-  void addListener(KeyFunc func) => RawKeyboard.instance.addListener(func);
-  void yeetListener(KeyFunc func) => RawKeyboard.instance.removeListener(func);
 
   void _listenForEnter(RawKeyEvent value) {
     if (value.logicalKey.keyLabel.contains('Enter')) {

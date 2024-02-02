@@ -36,18 +36,17 @@ class _MainMenuState extends EpicState<MainMenu>
       saveData('inverted', false);
       inverted = false;
       quickly(() => setState(() => visible = false));
-      await sleepState(0.5, () => darkBackground = null);
+      sleepState(0.5, () => darkBackground = null);
     } else {
       visible = false;
       darkBackground = null;
       if (!booted) {
         showButtons = false;
-        await sleepState(1, () => showButtons = true);
+        sleepState(1, () => showButtons = true);
         booted = true;
       }
     }
-    await sleep(1.5);
-    if (mounted) playMusic(once: 'verity_1', loop: 'verity_2');
+    playMusic(once: 'verity_1', loop: 'verity_2');
   }
 
   @override
@@ -244,6 +243,41 @@ class _MainMenuState extends EpicState<MainMenu>
                                 Pages.master,
                                 color: color,
                                 isNew: !Tutorial.master(),
+                              ),
+                            )
+                          else if (Tutorial.intense())
+                            Padding(
+                              padding: const EdgeInsets.only(top: 33),
+                              child: ElevatedButton(
+                                onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (context) => const DismissibleDialog(
+                                    title: Text(
+                                      'For those who prove their mettle…',
+                                      style: SuperStyle.sans(weight: 600, width: 87.5),
+                                    ),
+                                    content: Text(
+                                      'Unlock by finding a hue in "intense" mode!',
+                                      style: SuperStyle.sans(),
+                                    ),
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: color,
+                                  foregroundColor: Colors.black,
+                                ),
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 1),
+                                  child: Text(
+                                    '???',
+                                    style: SuperStyle.sans(
+                                      size: 24,
+                                      weight: 350,
+                                      extraBold: true,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           const FixedSpacer(67),

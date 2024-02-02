@@ -53,7 +53,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
       exists = false;
       if (!booted) {
         showButtons = false;
-        await sleepState(1, () => showButtons = true);
+        sleepState(1, () => showButtons = true);
         booted = true;
       }
     } else {
@@ -62,8 +62,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
       quickly(() => setState(() => visible = false));
       sleepState(0.6, () => exists = false);
     }
-    await sleep(1.5);
-    if (mounted) playMusic(once: 'invert_1', loop: 'invert_2');
+    playMusic(once: 'invert_1', loop: 'invert_2');
   }
 
   @override
@@ -83,7 +82,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
       'enable ☑ casual mode, and go to\n"true mastery".',
       'tap the color code button and\nsee how the RGB values change.',
       'convert each value to hexadecimal,\nthen type them in and "submit".',
-      'to get help with converting, you\ncan Google "base 10 to base 16".',
+      '[link]',
     ];
 
     final color = inverseColor;
@@ -101,7 +100,8 @@ class _InverseMenuState extends InverseState<InverseMenu>
     ];
     const completionDetails = [
       "Slow down and enjoy the sights. Or speed through them, that's fine too!",
-      'Easiest to achieve when "variety" & "casual mode" are enabled.\n'
+      'Easiest to achieve when "variety" and\n'
+          '"casual mode" are enabled.\n'
           'Or turn casual mode off to get a head start on the last item here!',
       "No worries if you don't beat me at my own game (literally).\n"
           "But if you do, that's super impressive.",
@@ -184,7 +184,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                         noDelay: true,
                         isNew: !Tutorial.tense(),
                       ),
-                      if (Tutorial.gameEnd())
+                      if (Tutorial.trueMastery())
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -204,6 +204,11 @@ class _InverseMenuState extends InverseState<InverseMenu>
                               child: IconButton(
                                 style: IconButton.styleFrom(foregroundColor: color),
                                 onPressed: () {
+                                  if (!Tutorial.gameEnd()) {
+                                    hintsVisible = 0;
+                                    setState(() => menuPage = MenuPage.howToWin);
+                                    return;
+                                  }
                                   if (fullCompletion) {
                                     setState(() => fullCompletion = false);
                                     saveData('fullCompletion', fullCompletion);
@@ -219,7 +224,12 @@ class _InverseMenuState extends InverseState<InverseMenu>
                                     saveData('showEvenFurther', showEvenFurther);
                                   }
                                 },
-                                icon: const Icon(Icons.autorenew),
+                                icon: Tutorial.gameEnd()
+                                    ? const Icon(Icons.autorenew)
+                                    : Transform.scale(
+                                        scale: 1.5,
+                                        child: const Icon(Icons.help_outline),
+                                      ),
                               ),
                             ),
                           ],
@@ -277,27 +287,6 @@ class _InverseMenuState extends InverseState<InverseMenu>
                   padding: EdgeInsets.fromLTRB(19, 6, 19, 7),
                   child: Text(
                     'high scores',
-                    style: SuperStyle.sans(size: 16, weight: 600),
-                  ),
-                ),
-              ),
-            ),
-            const FixedSpacer(25),
-          ] else if (Tutorial.trueMastery()) ...[
-            Center(
-              child: OutlinedButton(
-                onPressed: () {
-                  hintsVisible = 0;
-                  setState(() => menuPage = MenuPage.howToWin);
-                },
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: color, width: 2),
-                  foregroundColor: color,
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.fromLTRB(3, 6, 3, 7),
-                  child: Text(
-                    'how to win',
                     style: SuperStyle.sans(size: 16, weight: 600),
                   ),
                 ),
@@ -395,7 +384,19 @@ class _InverseMenuState extends InverseState<InverseMenu>
                   if (hintsVisible > i)
                     Padding(
                       padding: const EdgeInsets.only(top: 1),
-                      child: Text(hint, style: const SuperStyle.sans(width: 96)),
+                      child: hint == '[link]'
+                          ? Text.rich(
+                              TextSpan(children: [
+                                TextSpan(
+                                  text: 'tap here',
+                                  style: linkStyle,
+                                  recognizer:
+                                      hyperlink('https://hue-man.app/tips/#beat-the-game'),
+                                ),
+                                const TextSpan(text: ' for more info.'),
+                              ]),
+                              style: const SuperStyle.sans(width: 96))
+                          : Text(hint, style: const SuperStyle.sans(width: 96)),
                     ),
                 ],
               ),

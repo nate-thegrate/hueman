@@ -88,7 +88,7 @@ class _Page1State extends SuperState<_Page1> {
   void bestPart() async {
     setState(() => controllers[2].isActive = true);
     await sleep(1.25);
-    playMusic(once: 'cmy');
+    playSound('cmy');
   }
 
   @override
@@ -105,7 +105,7 @@ class _Page1State extends SuperState<_Page1> {
                 const SuperText("Let's combine the primary colors,\nfor real this time."),
                 const Spacer(flex: 4),
                 ContinueButton(onPressed: () async {
-                  playMusic(once: 'speedup_tapered');
+                  playSound('speedup_tapered');
                   setState(weBallin);
                   await sleepState(5, noSpins);
                   bestPart();
@@ -328,11 +328,13 @@ class _Page4 extends StatefulWidget {
 }
 
 class _Page4State extends SuperState<_Page4> {
-  bool showThanks = true, expanded = false, showText = true, lightBars = true;
+  bool showThanks = true, showAnswer = false, expanded = false, showText = true, lightBars = true;
 
   @override
-  void animate() async {
-    await sleepState(2.5, () => showThanks = false);
+  void animate() => sleepState(1.5, () => showAnswer = true);
+
+  void screenAndPaper() async {
+    setState(() => showThanks = false);
     await sleepState(2, () => expanded = true);
 
     await sleep(1);
@@ -409,15 +411,31 @@ class _Page4State extends SuperState<_Page4> {
         ),
         Fader(
           showThanks,
-          child: const SuperContainer(
+          child: SuperContainer(
             color: SuperColors.darkBackground,
             alignment: Alignment.center,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                SuperText('Thanks!'),
-                FixedSpacer(30),
-                SuperText("Here's the answer…"),
+                const Spacer(flex: 2),
+                const SuperText('Thanks!'),
+                const FixedSpacer(30),
+                const SuperText("Here's the answer…"),
+                const Spacer(),
+                Fader(
+                  showAnswer,
+                  child: const SuperRichText([
+                    TextSpan(text: 'Printers make '),
+                    ColorTextSpan.red,
+                    TextSpan(text: ' by mixing '),
+                    ColorTextSpan.magenta,
+                    TextSpan(text: ' and '),
+                    ColorTextSpan.yellow,
+                    TextSpan(text: '!'),
+                  ]),
+                ),
+                const Spacer(),
+                Fader(showAnswer, child: ContinueButton(onPressed: screenAndPaper)),
+                const Spacer(flex: 2),
               ],
             ),
           ),

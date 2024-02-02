@@ -247,11 +247,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     inverted = true;
-    if (casualMode) {
-      playMusic(loop: 'casual_2');
-    } else {
-      musicPlayer.stop();
-    }
+    playMusic(loop: 'casual_2');
     generateHue();
     if (!Tutorial.tense()) {
       Tutorial.tense.complete();

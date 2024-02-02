@@ -491,7 +491,7 @@ class JustKidding extends StatelessWidget {
               const Spacer(),
               const Text(
                 'just kidding  :)',
-                style: SuperStyle.sans(size: 20, weight: 200),
+                style: SuperStyle.sans(size: 24, weight: 200),
               ),
               const Spacer(flex: 3),
               Fader(
