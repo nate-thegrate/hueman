@@ -305,7 +305,7 @@ class _MainMenuState extends EpicState<MainMenu>
                 if (paused) {
                   musicPlayer.resume();
                 } else {
-                  playMusic(once: 'verity_1', loop: 'verity_2');
+                  playMusic(loop: 'verity_2');
                 }
               } else {
                 musicPlayer.pause();

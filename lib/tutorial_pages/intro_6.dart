@@ -767,6 +767,7 @@ class _ColorBubbles extends StatelessWidget {
                 style: SuperStyle.sans(size: 24, color: subtract ? Colors.black : null),
               ),
             ),
+            if (subtract) SexyBox(child: showArrows ? empty : button),
             SizedBox(
               height: height,
               child: Stack(
@@ -780,7 +781,7 @@ class _ColorBubbles extends StatelessWidget {
             SexyBox(
               child: showArrows ? FadeIn(child: _ColorArrows(colors[cycle], subtract)) : empty,
             ),
-            if (subtract) button,
+            if (subtract) SexyBox(child: showArrows ? button : empty),
           ],
         );
       },

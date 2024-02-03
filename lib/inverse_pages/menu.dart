@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -115,7 +114,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
             : singlePress(() {
                 if (showEvenFurther) {
                   context.goto(Pages.evenFurther);
-                } else if (!Tutorial.trueMastery() && !Platform.isIOS) {
+                } else if (!Tutorial.trueMastery()) {
                   setState(() => trueMastery = true);
                   sleep(
                     7,
@@ -255,7 +254,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 if (paused) {
                   musicPlayer.resume();
                 } else {
-                  playMusic(once: 'invert_1', loop: 'invert_2');
+                  playMusic(loop: 'invert_2');
                 }
               } else {
                 musicPlayer.pause();
