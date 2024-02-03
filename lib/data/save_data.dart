@@ -183,12 +183,7 @@ enum Score {
   }
 
   static Iterable<Score> get allScores => values.skip(1);
-  static bool get noneSet {
-    for (final score in allScores) {
-      if (score()) return false;
-    }
-    return true;
-  }
+  static bool get noneSet => !allScores.any((score) => score());
 
   static late final Map<Score, int?> highScores;
   static const Map<Score, int> myScores = {
