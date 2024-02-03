@@ -176,7 +176,7 @@ enum Score {
       };
 
   Future<void> set(int score) async {
-    if (score < (value ?? 0)) return;
+    if (score <= (value ?? 0)) return;
     highScores[this] = score;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(scoreKey, score);
