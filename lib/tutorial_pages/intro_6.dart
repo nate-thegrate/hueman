@@ -403,7 +403,7 @@ class _Page4State extends SuperState<_Page4> {
                           width: 3,
                         ),
                       ),
-                    )
+                    ),
                   ],
                 )),
             const Spacer(flex: 2),
@@ -642,35 +642,34 @@ class _Page5State extends SuperState<_Page5> {
             child: SuperContainer(
               color: Colors.white,
               height: context.screenHeight * .52,
-              alignment: Alignment.center,
-              child: Column(
-                children: [
-                  const Spacer(flex: 3),
-                  if (!showArrows)
-                    Fader(
-                      showText,
-                      child: const Text(
-                        "There's two!",
-                        style: SuperStyle.sans(size: 24, color: Colors.black),
-                      ),
-                    ),
-                  const Spacer(),
-                  SuperContainer(
-                      height: context.screenHeight * .5,
-                      child: _ColorBubbles.subtractive(
-                        counter,
-                        showArrows,
-                        button: Fader(
-                          showButton,
-                          child: Theme(
-                            data: ThemeData(useMaterial3: true),
-                            child: ContinueButton(onPressed: widget.nextPage),
-                          ),
-                        ),
-                      )),
-                  const Spacer(),
-                  const Spacer(),
-                ],
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Fader(
+                  showText,
+                  child: const Text(
+                    "There's two!",
+                    style: SuperStyle.sans(size: 24, color: Colors.black),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: SizedBox(
+            width: double.infinity,
+            height: context.screenHeight * .5,
+            child: _ColorBubbles.subtractive(
+              counter,
+              showArrows,
+              button: Fader(
+                showButton,
+                child: Theme(
+                  data: ThemeData(useMaterial3: true),
+                  child: ContinueButton(onPressed: widget.nextPage),
+                ),
               ),
             ),
           ),
@@ -845,7 +844,7 @@ class _ColorArrows extends StatelessWidget {
                   subtract ? 'reflect ${reflectedColors[0]} + ${reflectedColors[1]}' : '',
                   style: const SuperStyle.sans(color: Colors.black),
                 ),
-              )
+              ),
             ],
           ),
           SuperContainer(
