@@ -393,7 +393,7 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
                         height: constraints.maxHeight - 190,
                         child: topics[topic].details,
                       ),
-                    )
+                    ),
                 ],
               ),
             );
@@ -1018,7 +1018,7 @@ class _GameDevButtons extends StatelessWidget {
                         ]))
                       : Text(name, style: const SuperStyle.sans(height: 2)),
                 ),
-              )
+              ),
           ],
         ),
       ),

@@ -497,7 +497,7 @@ class _CreditsState extends SuperState<_Credits> {
                             ),
                           ),
                         ),
-                      )
+                      ),
                   ],
                 ),
               ],
@@ -1071,7 +1071,7 @@ class _HowToSupportState extends EpicState<_HowToSupport> {
                   ]
                 : null,
           ),
-        )
+        ),
     ], style: widget.style);
   }
 }

@@ -173,7 +173,7 @@ class _StartScreenState extends SuperState<StartScreen> {
                             style: const SuperStyle.sans(size: 24),
                           ),
                         ),
-                      )
+                      ),
                   ],
                 ),
               ),
@@ -349,7 +349,7 @@ class _LogoState extends SuperState<_Logo> {
                   size: size,
                   color: lettersVisible > i ? letterData[i].$2 : Colors.transparent,
                 ),
-              )
+              ),
           ]),
         ),
       ),
@@ -399,7 +399,7 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
                           Text(
                             '(headphones recommended)',
                             style: SuperStyle.sans(size: 16, letterSpacing: 0.5),
-                          )
+                          ),
                         ],
                       )
                     : const Text(

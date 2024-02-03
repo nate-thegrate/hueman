@@ -400,7 +400,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                       color: buttonData[j].color,
                       select: _select(j),
                       showReaction: showReaction,
-                    )
+                    ),
                 ])
             ],
           ),

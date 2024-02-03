@@ -756,7 +756,7 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
             ),
           ),
           scale: 0,
-        )
+        ),
   ];
 
   @override

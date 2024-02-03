@@ -640,7 +640,7 @@ class _Page3State extends SuperState<_Page3> {
                             ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -665,7 +665,7 @@ class _Page3State extends SuperState<_Page3> {
                             showLeftLabels,
                             color.name,
                             color.color,
-                          )
+                          ),
                       ],
                     ),
                   ),
@@ -689,7 +689,7 @@ class _Page3State extends SuperState<_Page3> {
                             i < rightLinesExpanded,
                             i < rightLabelsShown,
                             SuperColors.twelveHues[i],
-                          )
+                          ),
                       ],
                     ),
                   ),

@@ -229,7 +229,7 @@ class _NumberRowState extends SuperState<_NumberRow> {
                 ),
               ),
             ),
-          )
+          ),
       ],
     );
   }
@@ -517,12 +517,7 @@ class _BTS extends StatelessWidget {
                   child: showHex ? const Text('#', style: SuperStyle.mono(size: 16)) : empty,
                 ),
                 for (final code in binary)
-                  SexyBox(
-                    child: Text(
-                      code,
-                      style: const SuperStyle.mono(size: 16),
-                    ),
-                  )
+                  SexyBox(child: Text(code, style: const SuperStyle.mono(size: 16))),
               ],
             ),
           )

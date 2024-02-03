@@ -102,7 +102,7 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
                           startHue,
                           showAllRows ? constraints.maxWidth / 120 : 0,
                           constraints: constraints,
-                        )
+                        ),
                   ],
                 ),
                 const Spacer(flex: 2),
@@ -142,7 +142,7 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
                               duration: const Duration(milliseconds: 750),
                               direction: AxisDirection.right,
                               child: jumpTo,
-                            )
+                            ),
                           ],
                         ),
                       true => const SuperText('Sorry, did I say 36?'),
@@ -268,7 +268,7 @@ class _ColorWaveState extends SuperState<_ColorWave> {
             duration: duration,
             curve: curve,
             child: _ColorDot(hue, constraints: widget.constraints),
-          )
+          ),
       ],
     );
   }
@@ -296,11 +296,7 @@ class _ColorRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          for (int hue = startHue; hue < 360; hue += 30)
-            _ColorDot(
-              hue,
-              constraints: constraints,
-            )
+          for (int hue = startHue; hue < 360; hue += 30) _ColorDot(hue, constraints: constraints),
         ],
       ),
     );

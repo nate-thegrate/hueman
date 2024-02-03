@@ -241,7 +241,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                     ],
                   )
                 : const SizedBox(width: 150),
-          )
+          ),
         ],
       MenuPage.settings => [
           MenuCheckbox(

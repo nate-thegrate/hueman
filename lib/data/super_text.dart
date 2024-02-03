@@ -190,8 +190,8 @@ class SuperRichText extends StatelessWidget {
   ///
   /// Text.rich(
   ///   TextSpan(
-  ///     children: someList
-  ///   )
+  ///     children: someList,
+  ///   ),
   /// )
   /// ```
   /// can instead be

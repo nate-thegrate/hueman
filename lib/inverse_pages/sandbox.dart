@@ -54,7 +54,7 @@ enum _ColorPicker {
             label: value.upperName,
             tooltip: value.upperName,
             backgroundColor: contrastWith(_color, threshold: 0.8).withAlpha(64),
-          )
+          ),
       ];
 }
 

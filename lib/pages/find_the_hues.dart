@@ -84,7 +84,7 @@ class NumPad extends StatelessWidget {
               for (int i = row * 3; i < row * 3 + 3; i++)
                 _NumberButton(i, controller: numPadController, submit: submit),
             ],
-          )
+          ),
       ],
     );
   }
@@ -386,7 +386,7 @@ class _HueDialogState extends State<HueDialog> {
                       shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
                     ),
                   ),
-                ]
+                ],
               ],
             ),
           ),

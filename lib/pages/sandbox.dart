@@ -139,7 +139,7 @@ enum _ColorPicker {
             label: value.upperName,
             tooltip: value.upperName,
             backgroundColor: contrastWith(_color, threshold: 0.01).withAlpha(64),
-          )
+          ),
       ];
 }
 
@@ -192,7 +192,7 @@ class _ColorSelection extends StatelessWidget {
                     ),
                   ),
                 ),
-              )
+              ),
           ],
         ),
       ),
@@ -393,12 +393,17 @@ class _SandboxState extends State<Sandbox> {
                   ColorLabel(
                     'color name',
                     _color.rounded.name,
-                    style: SuperStyle.sans(color: _color, size: 20, weight: 900, shadows: [
-                      Shadow(
-                        color: contrastWith(_color, threshold: 0.01).withAlpha(64),
-                        blurRadius: 3,
-                      )
-                    ]),
+                    style: SuperStyle.sans(
+                      color: _color,
+                      size: 20,
+                      weight: 900,
+                      shadows: [
+                        Shadow(
+                          color: contrastWith(_color, threshold: 0.01).withAlpha(64),
+                          blurRadius: 3,
+                        ),
+                      ],
+                    ),
                   ),
                   ColorLabel.colorCode(
                     'color code',
