@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -25,6 +26,7 @@ const oneSec = Duration(seconds: 1);
 const halfSec = Duration(milliseconds: 500);
 const quarterSec = Duration(milliseconds: 250);
 const Curve curve = Curves.easeOutCubic;
+double get androidLatency => Platform.isAndroid ? 0.4 : 0.0;
 
 final rng = Random();
 

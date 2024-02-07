@@ -87,7 +87,7 @@ class _Page1State extends SuperState<_Page1> {
   void noSpins() => controllers[0].isActive = false;
   void bestPart() async {
     setState(() => controllers[2].isActive = true);
-    await sleep(1.25);
+    await sleep(1.25 - androidLatency);
     playSound('cmy');
   }
 

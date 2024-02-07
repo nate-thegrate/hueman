@@ -49,7 +49,7 @@ class _StartScreenState extends SuperState<StartScreen> {
       'mixing',
       autoplay: false,
       onStop: () {
-        sleep(4, then: () => playSound('speedup'));
+        sleep(4 - androidLatency, then: () => playSound('speedup'));
         sleep(9.85, then: () => context.noTransition(const _CallOutTheLie()));
         if (Platform.isIOS) {
           sleep(6.5, then: () {
@@ -488,7 +488,7 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
     inverted = false;
     epicHue = 0;
     playSound('see_the_truth');
-    sleep(18, then: expand);
+    sleep(18 + androidLatency, then: expand);
     ticker = Ticker(
       (elapsed) {
         setState(() => progress = (elapsed.inMilliseconds - 4000) / 10000);

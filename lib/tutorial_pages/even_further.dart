@@ -196,7 +196,7 @@ class _TrueFinalChallengeState extends EpicState<_TrueFinalChallenge> with Singl
   void animate() async {
     await sleepState(2, () => daVinciAppear = true);
     playSound('liar');
-    await sleepState(5, () => showTop = true);
+    await sleepState(5 + androidLatency, () => showTop = true);
     await sleepState(2, () => showBottom = true);
   }
 

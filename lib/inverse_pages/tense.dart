@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -214,7 +215,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
 
   bool showDetails = false, showReaction = false;
   void tapReaction() {
-    if (!music) playSound('tense_reset');
+    if (!music && !Platform.isAndroid) playSound('tense_reset');
     setState(() => showReaction = false);
     scoreKeeper?.rank = tensionRank;
     scoreKeeper?.roundCheck(context);

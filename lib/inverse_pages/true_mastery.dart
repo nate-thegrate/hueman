@@ -256,7 +256,7 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
 
   Future<void> perfectScore() async {
     playSound('div_0');
-    await sleepState(2, () => showFlicker = true);
+    await sleepState(2 + androidLatency, () => showFlicker = true);
     ticker!.start();
     await sleep(1.5);
     ticker!.stop();

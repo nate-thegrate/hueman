@@ -59,7 +59,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
     await sleepState(0.1, () => hideSuperHue = false);
     await sleep(1);
     playSound('game_end'); // using playSound so it doesn't auto-pause when not focused
-    await textCycle(4, 'Remember this?');
+    await textCycle(4 + androidLatency, 'Remember this?');
     await textCycle(4, 'This was the first time you chose correctly\nout of 360 options.');
     await sleepState(1, () {
       text = SuperRichText([
