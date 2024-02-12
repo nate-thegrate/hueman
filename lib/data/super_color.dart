@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
@@ -47,20 +49,44 @@ class SuperColor extends Color {
   /// if a value is passed for [luminance],
   /// the color's lightness will be adjusted to achieve the target luminance.
   factory SuperColor.hue(num hue, [double? luminance]) {
-    if (luminance == null) return SuperColor.hsv(hue % 360, 1, 1);
+    hue %= 360;
+    if (luminance == null) return SuperColor.hsv(hue, 1, 1);
 
-    double max = 1, min = 0;
-    double mid() => (max + min) / 2;
-    SuperColor color() => SuperColor.hsl(hue, 1, mid());
-    for (int i = 0; i < 10; i++) {
-      final double currentLuminance = color().computeLuminance();
-      if (currentLuminance > luminance) {
-        max = mid();
-      } else {
-        min = mid();
+    // same result as SuperColor.hsl(hue, 1, lightness).computeLuminance(),
+    // but more efficient :)
+    double getLuminance(double lightness) {
+      final double chroma = 1 - diff(1, 2 * lightness);
+      final double secondary = chroma * (1 - diff(1, (hue / 60) % 2));
+      final double match = lightness - chroma / 2;
+      final (double red, double green, double blue) = switch (hue) {
+        < 60 => (chroma, secondary, 0),
+        < 120 => (secondary, chroma, 0),
+        < 180 => (0, chroma, secondary),
+        < 240 => (0, secondary, chroma),
+        < 300 => (secondary, 0, chroma),
+        _ => (chroma, 0, secondary),
+      };
+
+      double linearize(double component) {
+        if (component <= 0.03928) return component / 12.92;
+        return pow((component + 0.055) / 1.055, 2.4) as double;
       }
+
+      return 0.2126 * linearize(red + match) +
+          0.7152 * linearize(green + match) +
+          0.0722 * linearize(blue + match);
     }
-    return color();
+
+    double max = 1, min = 0, mid = 0.5;
+    for (int i = 0; i < 10; i++) {
+      if (getLuminance(mid) > luminance) {
+        max = mid;
+      } else {
+        min = mid;
+      }
+      mid = (max + min) / 2;
+    }
+    return SuperColor.hsl(hue, 1, mid);
   }
 
   final int colorCode;
