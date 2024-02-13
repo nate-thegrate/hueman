@@ -25,10 +25,6 @@ class PhotoColors extends StatelessWidget {
 
 const List<PhotoColors> allImages = [
   PhotoColors(
-    'brown coral',
-    [0x794e11, 0x4998b6, 0x301203],
-  ),
-  PhotoColors(
     'rose coral',
     [0xc41d68, 0x122e3a, 0xf3d74c, 0x329b9e],
   ),
