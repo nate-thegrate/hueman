@@ -2,7 +2,7 @@ name: hueman
 description: An open-source game about color theory.
 publish_to: "none"
 
-version: 2.2.0+12
+version: 2.3.0+13
 
 environment:
   sdk: ">=3.0.0"
@@ -10,8 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  url_launcher: ">=6.2.1"
-  rive: ">=0.12.3"
+  url_launcher: ">=6.2.4"
+  url_launcher_android: "<6.3.0"
+  rive: ">=0.12.4"
   shared_preferences: ">=2.2.2"
   audioplayers: ">=5.2.1"
 
@@ -20,8 +21,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   rename: ">=3.0.1"
-  flutter_lints: ">=3.0.0"
-  msix: ">=3.16.6" # https://pub.dev/packages/msix
+  flutter_lints: ">=3.0.1"
+  msix: ">=3.16.7" # https://pub.dev/packages/msix
 
 flutter_launcher_icons:
   android: "launcher_icon"
