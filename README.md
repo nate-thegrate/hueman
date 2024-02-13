@@ -9,7 +9,7 @@ This is a game for people who:
 - have an interest in art, computer science, or graphic design
 - like to learn cool things
 - enjoy building real-world skills
-- just want a game with no ads or paywalls
+- want a free game with no ads
 
 This is **not** a game for people who:
 
@@ -27,7 +27,10 @@ Download from the official website: [hue-man.app](https://hue-man.app/)
 
 > What's the target age range?
 
-ʜᴜᴇman is for all humans! The ideal target audience is probably people in middle- or high-school. Younger kids might think some parts are too difficult; older people will enjoy it (but also may find it sort of patronizing).
+ʜᴜᴇman is for all humans! But there are a couple of caveats:
+
+**You might be too young if** "we can see colors because of cone cells in our eyes" doesn't make any sense.  
+**You might be too old if** "Let's learn about colors!" sounds patronizing.
 
 <br>
 
