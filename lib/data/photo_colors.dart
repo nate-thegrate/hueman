@@ -189,10 +189,6 @@ const List<PhotoColors> allImages = [
     [0xfff282, 0x1c112a, 0x7687b8, 0x689b57],
   ),
   PhotoColors(
-    'blue frog',
-    [0x6e87c9, 0x554c7a, 0x656514],
-  ),
-  PhotoColors(
     'peacock feathers',
     [0x0b0a50, 0x6f6565, 0x3c6757],
   ),
