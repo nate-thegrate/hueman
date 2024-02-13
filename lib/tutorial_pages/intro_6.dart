@@ -148,12 +148,11 @@ class _Page2 extends StatefulWidget {
 }
 
 class _Page2State extends SuperState<_Page2> {
-  bool showPrinter = false, showButton = false;
+  bool showPrinter = false;
 
   @override
   void animate() async {
-    await sleep(3.25, then: () => setState(() => showPrinter = true));
-    await sleep(1.25, then: () => setState(() => showButton = true));
+    await sleepState(3.25, () => showPrinter = true);
   }
 
   @override
@@ -186,7 +185,7 @@ class _Page2State extends SuperState<_Page2> {
             ),
           ),
           const Spacer(flex: 2),
-          Fader(showButton, child: ContinueButton(onPressed: widget.nextPage)),
+          Fader(showPrinter, child: ContinueButton(onPressed: widget.nextPage)),
           const Spacer(),
         ],
       );
@@ -210,7 +209,7 @@ class _Page3State extends SuperState<_Page3> with SinglePress {
     await sleepState(4, () => showQuestion = true);
     await sleepState(4, () => showcase = true);
     await sleepState(1.5, () => printing = true);
-    await sleepState(2.5, () => showButton = true);
+    await sleepState(2.2, () => showButton = true);
   }
 
   @override
@@ -877,7 +876,7 @@ class _Page6State extends SuperState<_Page6> {
   @override
   void animate() {
     timer = Timer.periodic(
-      const Duration(seconds: 3),
+      const Duration(milliseconds: 2600),
       (_) => setState(() => textProgress++),
     );
   }
@@ -957,7 +956,7 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
   bool showButton = false;
 
   @override
-  void animate() => sleepState(4, () => showButton = true);
+  void animate() => sleepState(3, () => showButton = true);
 
   @override
   Widget build(BuildContext context) {

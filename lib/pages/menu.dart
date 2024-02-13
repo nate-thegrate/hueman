@@ -196,7 +196,7 @@ class _MainMenuState extends EpicState<MainMenu>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const FixedSpacer(67),
+                        const FixedSpacer(50),
                         SuperButton(
                           'intro',
                           color: color,

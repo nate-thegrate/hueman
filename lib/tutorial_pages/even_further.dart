@@ -194,9 +194,10 @@ class _TrueFinalChallengeState extends EpicState<_TrueFinalChallenge> with Singl
 
   @override
   void animate() async {
-    await sleepState(2, () => daVinciAppear = true);
+    await sleep(2);
     playSound('liar');
-    await sleepState(5 + androidLatency, () => showTop = true);
+    await sleepState(androidLatency, () => daVinciAppear = true);
+    await sleepState(5, () => showTop = true);
     await sleepState(2, () => showBottom = true);
   }
 
@@ -217,7 +218,7 @@ class _TrueFinalChallengeState extends EpicState<_TrueFinalChallenge> with Singl
 
   void getPranked() async {
     setState(() => justKidding = true);
-    await sleepState(3, () => finalButton = true);
+    await sleepState(1.5, () => finalButton = true);
   }
 
   @override
@@ -256,8 +257,8 @@ class _TrueFinalChallengeState extends EpicState<_TrueFinalChallenge> with Singl
                 buttonVisible: finalButton,
                 color: epicColor,
                 onPressed: singlePress(() async {
-                  await Tutorial.evenFurther.complete();
                   playMusic(once: 'invert_1', loop: 'invert_2');
+                  await Tutorial.evenFurther.complete();
                   context.goto(Pages.evenFurther);
                 }),
               ),

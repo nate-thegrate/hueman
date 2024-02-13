@@ -173,7 +173,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const FixedSpacer(67),
+                      const FixedSpacer(50),
                       NavigateButton(Pages.trivial, color: color, isNew: !Tutorial.trivial()),
                       const FixedSpacer(33),
                       SuperButton(

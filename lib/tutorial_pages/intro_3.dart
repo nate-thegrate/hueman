@@ -83,13 +83,12 @@ class _Page1 extends StatefulWidget {
 }
 
 class _Page1State extends SuperState<_Page1> {
-  bool weSee = false, imageVisible = false, buttonVisible = false;
+  bool weSee = false, imageVisible = false;
 
   @override
   void animate() async {
     await sleepState(4, () => weSee = true);
     await sleepState(3, () => imageVisible = true);
-    await sleepState(2, () => buttonVisible = true);
   }
 
   @override
@@ -117,7 +116,7 @@ class _Page1State extends SuperState<_Page1> {
           ),
         ),
         const Spacer(flex: 2),
-        Fader(buttonVisible, child: ContinueButton(onPressed: widget.nextPage)),
+        Fader(imageVisible, child: ContinueButton(onPressed: widget.nextPage)),
         const Spacer(),
       ],
     );
@@ -143,12 +142,13 @@ class _Page2State extends SuperState<_Page2> {
   void animate() async {
     await sleepState(4, () => visible = true);
 
-    await sleep(4);
+    await sleep(3.5);
     playSound('rgb');
+    await sleep(androidLatency + 0.25);
     for (final color in SuperColors.primaries) {
       await sleepState(1, () => colorVisible[color] = true);
     }
-    await sleep(1);
+    await sleep(0.5);
     setState(() => buttonVisible = true);
   }
 
@@ -327,9 +327,9 @@ class _Page3State extends SuperState<_Page3> {
   void animate() async {
     final List<(double, void Function())> animation = [
       (4, () => eachPixelVisible = true),
-      (8, () => visible = true),
-      (5, () => unleashTheOrb = true),
-      (3, () => buttonVisible = true),
+      (7, () => visible = true),
+      (4, () => unleashTheOrb = true),
+      (0.5, () => buttonVisible = true),
     ];
 
     for (final (sleepFor, action) in animation) {
@@ -368,6 +368,7 @@ class _Page3State extends SuperState<_Page3> {
         const Spacer(flex: 3),
         Fader(
           buttonVisible,
+          duration: const Duration(seconds: 2),
           child: ContinueButton(onPressed: widget.nextPage),
         ),
         const Spacer(flex: 2),
@@ -482,19 +483,12 @@ class _Page4 extends StatefulWidget {
 }
 
 class _Page4State extends SuperState<_Page4> {
-  bool showScreenshot = false, sometimesUgotta = false, showButton = false;
+  bool showScreenshot = false, sometimesUgotta = false;
 
   @override
   void animate() async {
-    final List<VoidCallback> steps = [
-      () => showScreenshot = true,
-      () => sometimesUgotta = true,
-      () => showButton = true,
-    ];
-
-    for (final action in steps) {
-      await sleepState(3, action);
-    }
+    await sleepState(3, () => showScreenshot = true);
+    await sleepState(3, () => sometimesUgotta = true);
   }
 
   @override
@@ -538,7 +532,7 @@ class _Page4State extends SuperState<_Page4> {
           child: const SuperText('sometimes you gotta tell a computer\nwhat color you want.'),
         ),
         const Spacer(flex: 4),
-        Fader(showButton, child: ContinueButton(onPressed: widget.nextPage)),
+        Fader(sometimesUgotta, child: ContinueButton(onPressed: widget.nextPage)),
         const Spacer(flex: 4),
       ],
     );
@@ -561,7 +555,6 @@ class _Page5State extends SuperState<_Page5> {
     for (final (_, sleepyTime) in text) {
       await sleepState(sleepyTime, () => textProgress++);
     }
-    await sleepState(2.5, () => textProgress++);
   }
 
   static const List<(Widget line, double timeToRead)> text = [
@@ -693,7 +686,7 @@ class _Page5State extends SuperState<_Page5> {
             )),
         const Spacer(),
         Fader(
-          textProgress > 7,
+          textProgress > 6,
           child: ContinueButton(onPressed: widget.nextPage),
         ),
         const Spacer(),
@@ -727,7 +720,7 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
     for (int i = 0; i < hsvWidth * hsvHeight; i++) {
       await sleepState(0.05, () => hsvGrid[i] = (tile: hsvGrid[i].tile, scale: 17 / 16));
     }
-    await sleepState(4, () => tooBadVisible = true);
+    await sleepState(3.5, () => tooBadVisible = true);
     await sleepState(4, () => justKidding = true);
     await sleepState(2, () {
       epicHue = 90;

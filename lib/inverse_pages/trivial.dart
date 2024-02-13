@@ -285,7 +285,7 @@ class _TriviaModeState extends State<TriviaMode> {
                 ),
               ),
               content: Text(
-                "It's literally just ${_allQuestions.length} color trivia questions.",
+                "it's literally just ${_allQuestions.length} color trivia questions.",
                 style: const SuperStyle.sans(),
               ),
             ),

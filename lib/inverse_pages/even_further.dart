@@ -432,9 +432,12 @@ class _HighScores extends StatelessWidget {
     return Column(
       children: [
         const Spacer(),
-        const SuperText(
-          "HUEman doesn't have any public leaderboards, "
-          "since it's super easy to cheat if you take screenshots.",
+        const SuperRichText(
+          [
+            TextSpan(text: "HUEman doesn't have any public leaderboards, since it's "),
+            TextSpan(text: 'SUPER', style: SuperStyle.sans(size: 12, weight: 900)),
+            TextSpan(text: ' easy to cheat if you take screenshots.'),
+          ],
           style: SuperStyle.gaegu(size: 18, height: 0),
         ),
         const Spacer(),
@@ -954,11 +957,10 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
                 child: SuperText(
                   'tap here for image source',
                   style: SuperStyle.sans(
-                    size: min(20, context.screenWidth / 32),
+                    size: min(18, context.screenWidth / 32),
                     width: 96,
                     extraBold: true,
                     weight: 300,
-                    height: 2,
                   ),
                 ),
               ),

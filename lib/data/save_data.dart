@@ -130,7 +130,7 @@ enum Tutorial {
     } else {
       casualMode = true;
       hueRuler = true;
-      inverted = true;
+      inverted = false;
       music = true;
       sounds = true;
 

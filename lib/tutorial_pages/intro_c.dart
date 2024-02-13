@@ -86,23 +86,22 @@ class _Page1State extends SuperState<_Page1> with SinglePress {
   void animate() async {
     await sleep(7, then: advance); // somethin funky
     await sleep(4, then: advance); // show questions
-    await sleep(2, then: advance); // show buttons
+    advance(); // show buttons
   }
 
   late VoidCallback trickQuestion = singlePress(() async {
     advance(); // hide everything
 
-    await sleepState(
-      1,
-      () => funkyText = const SuperText('Yeah sorry, that was a trick question.'),
-    );
+    await sleepState(1, () {
+      funkyText = const SuperText('Yeah sorry, that was a trick question.');
+    });
     advance();
 
     await sleepState(2, () => questionText = const SuperText("Here's the RGB:"));
     advance();
 
     await sleep(1, then: advance); // show RGB
-    await sleep(7, then: advance); // show continue button
+    await sleep(5, then: advance); // show continue button
   });
 
   void tryAgain() async {
@@ -117,7 +116,7 @@ class _Page1State extends SuperState<_Page1> with SinglePress {
     await sleep(5, then: advance); // overlay try again
     await sleep(6, then: advance); // hide overlay text
     await sleep(1.5, then: advance); // show orange
-    await sleep(7, then: advance); // finally done
+    await sleep(6, then: advance); // finally done
   }
 
   late final Ticker ticker;
@@ -379,8 +378,8 @@ class _Page2State extends SuperState<_Page2> {
   @override
   Future<void> animate() async {
     await sleep(7, then: advance);
-    await sleep(7, then: advance);
-    await sleep(7, then: advance);
+    await sleep(5, then: advance);
+    await sleep(5.5, then: advance);
 
     await sleepState(3, () => numVisible = 0);
     await sleepState(1, () => showBlue = true);

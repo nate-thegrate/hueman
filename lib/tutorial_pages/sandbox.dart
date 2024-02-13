@@ -80,13 +80,10 @@ class _Page1 extends StatefulWidget {
 }
 
 class _Page1State extends SuperState<_Page1> {
-  bool visible = false, buttonVisible = false;
+  bool visible = false;
 
   @override
-  void animate() async {
-    await sleepState(5, () => visible = true);
-    await sleepState(2, () => buttonVisible = true);
-  }
+  void animate() => sleepState(5, () => visible = true);
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +102,7 @@ class _Page1State extends SuperState<_Page1> {
         const Spacer(),
         Fader(visible, child: const SuperText('But why 256?')),
         const Spacer(flex: 2),
-        Fader(buttonVisible, child: ContinueButton(onPressed: widget.nextPage)),
+        Fader(visible, child: ContinueButton(onPressed: widget.nextPage)),
         const Spacer(),
       ],
     );
@@ -125,7 +122,7 @@ class _Page2State extends SuperState<_Page2> {
 
   @override
   void animate() async {
-    for (final i in <double>[4, 4, 2, 2, 1.5, 1.5]) {
+    for (final i in <double>[3, 3, 2, 2, 1.5, 1]) {
       await sleepState(i, () => progress++);
     }
   }
@@ -253,15 +250,14 @@ class _Page3State extends SuperState<_Page3> {
   int counter = 0;
   @override
   void animate() async {
-    await sleepState(3, () => funDontStop = true);
-    await sleepState(3, () => byteDesc = true);
-    await sleepState(2, () => nibbleDesc = true);
-    await sleepState(3, () => showCounter = true);
+    await sleepState(2.5, () => funDontStop = true);
+    await sleepState(2.5, () => byteDesc = true);
+    await sleepState(1.7, () => nibbleDesc = true);
+    await sleepState(2.5, () => showCounter = true);
 
-    await sleepState(3, () => nibbleStorage = true);
-    await sleep(2);
+    await sleepState(2, () => nibbleStorage = true);
 
-    const delay = 2 / 3;
+    const delay = 0.6;
 
     while (counter < 16) {
       await sleepState(delay, () => counter++);
@@ -270,7 +266,7 @@ class _Page3State extends SuperState<_Page3> {
       await sleepState(delay / 32, () => counter++);
     }
 
-    await sleepState(1, () => showButton = true);
+    setState(() => showButton = true);
   }
 
   @override
@@ -373,7 +369,7 @@ class _Page4State extends SuperState<_Page4> {
     await sleepState(1, () => collapsed = false);
     await sleepState(5, () => showBTS = true);
     await sleepState(2, () => showBinary = true);
-    await sleepState(5, () => showButton = true);
+    await sleepState(1, () => showButton = true);
   }
 
   void consolidate() async {
@@ -383,8 +379,10 @@ class _Page4State extends SuperState<_Page4> {
       showBinary = false;
     });
     await sleepState(4, () => showBinary = true);
-    await sleepState(6, () => kindaHard = true);
-    await sleepState(1, () => showButton = true);
+    await sleepState(6, () {
+      kindaHard = true;
+      showButton = true;
+    });
   }
 
   void leave() async {
@@ -454,7 +452,7 @@ class _ColorCardState extends DynamicState<_ColorCard> {
                       child: Text(
                         widget.haveFun
                             ? 'Have fun in Sandbox mode!'
-                            : 'when you see\ncool stuff like this,',
+                            : 'when you see\nstuff like this,',
                         textAlign: TextAlign.center,
                         style: SuperStyle.sans(
                           color: inverted ? Colors.white : Colors.black,
@@ -579,7 +577,7 @@ class _Page5State extends SuperState<_Page5> {
     await sleepState(3, () => answer = true);
     await sleepState(2, () => hexRows++);
     await sleep(1);
-    const cycleTime = 2 / 3;
+    const cycleTime = 0.6;
     while (hexRows <= 16) {
       await sleepState(cycleTime, () => hexRows++);
     }

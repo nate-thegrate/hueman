@@ -306,8 +306,6 @@ class _LogoState extends SuperState<_Logo> {
     ('man', SuperColor(0x6C4B00)),
   ];
   int lettersVisible = 0;
-  double dy = 0;
-  Curve curve = Curves.easeInOutQuad;
   Duration duration = halfSec;
   bool exists = true, visible = true;
 
@@ -318,13 +316,7 @@ class _LogoState extends SuperState<_Logo> {
     for (int i = 0; i < 4; i++) {
       await sleepState(0.75, () => lettersVisible++);
     }
-    await sleepState(1, () => dy = 0.5);
-    await sleepState(0.5, () {
-      curve = Curves.easeInQuad;
-      duration = oneSec;
-      dy = -8;
-    });
-    await sleepState(1 / 3, () => visible = false);
+    await sleepState(2, () => visible = false);
     await sleepState(1, () => exists = false);
   }
 
@@ -337,21 +329,16 @@ class _LogoState extends SuperState<_Logo> {
       child: SuperContainer(
         color: SuperColors.lightBackground,
         alignment: Alignment.center,
-        child: AnimatedSlide(
-          offset: Offset(0, dy),
-          duration: duration,
-          curve: curve,
-          child: SuperRichText([
-            for (int i = 0; i < 4; i++)
-              TextSpan(
-                text: letterData[i].$1,
-                style: SuperStyle.gaegu(
-                  size: size,
-                  color: lettersVisible > i ? letterData[i].$2 : Colors.transparent,
-                ),
+        child: SuperRichText([
+          for (int i = 0; i < 4; i++)
+            TextSpan(
+              text: letterData[i].$1,
+              style: SuperStyle.gaegu(
+                size: size,
+                color: lettersVisible > i ? letterData[i].$2 : Colors.transparent,
               ),
-          ]),
-        ),
+            ),
+        ]),
       ),
     );
   }
@@ -367,7 +354,7 @@ class _CallOutTheLie extends StatefulWidget {
 class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
   @override
   void animate() async {
-    await musicPlayer.stop();
+    await sfxPlayer.stop();
     await sleepState(3, () => showButton = true);
   }
 
@@ -484,17 +471,17 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
   }
 
   @override
-  void animate() {
+  void animate() async {
     inverted = false;
     epicHue = 0;
     playSound('see_the_truth');
-    sleep(18 + androidLatency, then: expand);
-    ticker = Ticker(
-      (elapsed) {
-        setState(() => progress = (elapsed.inMilliseconds - 4000) / 10000);
-        if (progress >= 1) ticker.stop();
-      },
-    )..start();
+    await sleep(androidLatency);
+    sleep(18, then: expand);
+    ticker = Ticker((elapsed) {
+      setState(() => progress = (elapsed.inMilliseconds - 4000) / 10000);
+      if (progress >= 1) ticker.stop();
+    })
+      ..start();
     Tutorial.started.complete();
   }
 
