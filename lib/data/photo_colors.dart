@@ -37,10 +37,6 @@ const List<PhotoColors> allImages = [
     [0x32d7d7, 0xb07d3c, 0x19404d],
   ),
   PhotoColors(
-    'cyan fish white reef',
-    [0x27b796, 0x047b93, 0xede2ac],
-  ),
-  PhotoColors(
     'blonde reef',
     [0xa75f1a, 0x0066b1, 0x01fdff, 0x266568],
   ),
