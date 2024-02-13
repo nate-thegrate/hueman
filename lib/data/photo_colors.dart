@@ -73,10 +73,6 @@ const List<PhotoColors> allImages = [
     [0x125e5c, 0x1c3921, 0xefd161],
   ),
   PhotoColors(
-    'horses on snow',
-    [0x674d48, 0x3f180d],
-  ),
-  PhotoColors(
     'koala nap',
     [0x3d4b36, 0x765252, 0x27311e, 0x815e48],
   ),
@@ -201,10 +197,6 @@ const List<PhotoColors> allImages = [
     [0x372929, 0x2a5f56, 0xc78b27, 0xf9d5b4],
   ),
   PhotoColors(
-    'autumn forest',
-    [0x31494e, 0xc0883f],
-  ),
-  PhotoColors(
     'dense forest',
     [0x1b2024, 0x272c22],
   ),
@@ -229,14 +221,6 @@ const List<PhotoColors> allImages = [
     [0xf73d54, 0x638101],
   ),
   PhotoColors(
-    'mountain lake yellow flowers',
-    [0x018165, 0x87a046, 0xfdd903],
-  ),
-  PhotoColors(
-    'tall trees',
-    [0xcd793d, 0x26320a, 0xb3fffe],
-  ),
-  PhotoColors(
     'forest road',
     [0x627a28, 0xccbc9d, 0xe1d5c0],
   ),
@@ -247,6 +231,10 @@ const List<PhotoColors> allImages = [
   PhotoColors(
     'gray dock sunset',
     [0x725dc2, 0xfeaf8f, 0xd4b1de],
+  ),
+  PhotoColors(
+    'gold rings',
+    [0x705827, 0xefc16a, 0xbe7409],
   ),
   PhotoColors(
     'red berries',
