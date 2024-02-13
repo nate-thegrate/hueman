@@ -85,10 +85,6 @@ const List<PhotoColors> allImages = [
     [0xe5ba56, 0x363a30, 0xad99a4, 0xa8e2e9],
   ),
   PhotoColors(
-    'palm trees',
-    [0x0494ce, 0x1f3203, 0x88b9fa, 0xfaf0e2],
-  ),
-  PhotoColors(
     'spiky rocks',
     [0x605146, 0xeba568],
   ),
