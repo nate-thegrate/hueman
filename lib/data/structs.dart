@@ -147,8 +147,6 @@ extension HexByte on int {
 
 extension NumStuff<T extends num> on T {
   T get squared => this * this as T;
-  T stayInRange(T lower, T upper) => min(max(this, lower), upper);
-
   int roundToNearest(int roundTo) => ((this / roundTo).round() * roundTo) % 360;
 }
 

@@ -190,7 +190,7 @@ class _HSLScreenState extends State<_HSLScreen> {
         constraints.calcSize((w, h) => min(w - 50, h - 420 - colorBarHeight));
     void touchRecognition(details) {
       final Offset offset = details.localPosition;
-      double val(double position) => (position / (planeSize - 40)).stayInRange(0, 1);
+      double val(double position) => (position / (planeSize - 40)).clamp(0, 1);
       widget.onChanged(1)(val(offset.dx));
       widget.onChanged(2)(1 - val(offset.dy));
     }

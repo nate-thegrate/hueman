@@ -231,8 +231,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
 
     final int offset = rng.nextInt(4);
     final int gap = tension[name]!;
-    final double? luminance =
-        widget.volatile ? rng.nextDouble().squared.stayInRange(.05, .6) : null;
+    final double? luminance = widget.volatile ? rng.nextDouble().squared.clamp(.05, .6) : null;
 
     color = SuperColor.hue(hue, luminance);
     for (int j = 0; j < 4; j++) {
@@ -372,7 +371,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
         setState(() {
           selectedHue = buttonData[j].hue;
           showReaction = true;
-          tension[name] = (tension[name]! + (correct ? -1 : 1)).stayInRange(1, 90);
+          tension[name] = (tension[name]! + (correct ? -1 : 1)).clamp(1, 90);
           scoreKeeper?.updateHealth(correct, setState);
         });
         buttonData[j].controller.reverse();
