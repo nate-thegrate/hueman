@@ -270,7 +270,7 @@ class _SandboxState extends State<Sandbox> {
             constraints.calcSize((w, h) => min(w - 50, h - 420 - colorBarHeight));
         void touchRecognition(details) {
           final Offset offset = details.localPosition;
-          double val(double position) => (position / (planeSize - 40)).clamp(0, 1);
+          double val(double position) => (position / (planeSize - 40)).clamp(0.0, 1.0);
           setState(() => _s = val(offset.dx));
           setState(() => _v = 1 - val(offset.dy));
         }

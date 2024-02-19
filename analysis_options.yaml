@@ -1,4 +1,5 @@
-# https://dart.dev/guides/language/analysis-options
+# more info: https://dart.dev/guides/language/analysis-options
+# all rules: https://dart.dev/tools/linter-rules
 
 include: package:flutter_lints/flutter.yaml
 

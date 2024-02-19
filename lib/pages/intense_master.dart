@@ -327,7 +327,7 @@ class _IntenseModeState extends State<IntenseMode> {
   Widget? image(BoxConstraints constraints) {
     if (!casualMode || !masterMode) return null;
     final height = constraints.calcSize((w, h) => min(h - (externalKeyboard ? 333 : 466), w * 2));
-    final pad = ((constraints.maxWidth - height) / 2 + 50).clamp(0, 50) as double;
+    final pad = ((constraints.maxWidth - height) / 2 + 50).clamp(0.0, 50.0);
     final pic = pics.first.$1;
     if (!hueTyping) return pic;
     return SuperContainer(
