@@ -314,11 +314,13 @@ class HueDialog extends StatefulWidget {
 class _HueDialogState extends State<HueDialog> {
   late final Ticker? epicHues;
 
-  void _listenForEnter(RawKeyEvent value) {
+  bool _listenForEnter(KeyEvent value) {
     if (value.logicalKey.keyLabel.contains('Enter')) {
       yeetListener(_listenForEnter);
       Navigator.pop(context);
+      return true;
     }
+    return false;
   }
 
   @override

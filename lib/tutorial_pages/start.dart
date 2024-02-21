@@ -100,8 +100,8 @@ class _StartScreenState extends SuperState<StartScreen> {
   int konamiSwipes = 0;
   bool speedrun = false;
 
-  void konamiKey(RawKeyEvent event) {
-    if (event is RawKeyUpEvent || event.repeat) return;
+  bool konamiKey(KeyEvent event) {
+    if (event is KeyUpEvent || event is KeyRepeatEvent) return false;
 
     final AxisDirection? direction = switch (event.logicalKey) {
       LogicalKeyboardKey.arrowUp => AxisDirection.up,
@@ -111,6 +111,7 @@ class _StartScreenState extends SuperState<StartScreen> {
       _ => null,
     };
     if (direction != null) updateKonami(direction);
+    return true;
   }
 
   void konamiSwipe(DragEndDetails details) => updateKonami(details.direction);

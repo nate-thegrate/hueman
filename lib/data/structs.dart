@@ -74,9 +74,9 @@ extension PauseMusic on AppLifecycleState {
   }
 }
 
-typedef KeyFunc = ValueChanged<RawKeyEvent>;
-void addListener(KeyFunc func) => RawKeyboard.instance.addListener(func);
-void yeetListener(KeyFunc func) => RawKeyboard.instance.removeListener(func);
+typedef KeyFunc = bool Function(KeyEvent);
+void addListener(KeyFunc func) => HardwareKeyboard.instance.addHandler(func);
+void yeetListener(KeyFunc func) => HardwareKeyboard.instance.removeHandler(func);
 
 Color contrastWith(Color c, {double threshold = .2}) =>
     (c.computeLuminance() > threshold) ? Colors.black : Colors.white;
