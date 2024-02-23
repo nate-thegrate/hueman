@@ -27,7 +27,7 @@ Download from the official website: [hue-man.app](https://hue-man.app/)
 
 > What's the target age range?
 
-ʜᴜᴇman is for all humans! But there are a couple of caveats:
+ʜᴜᴇman is made for all humans! The "educational" portion is very straightforward, but then the difficulty ramps up significantly.
 
 **You might be too young if** "we can see colors because of cone cells in our eyes" doesn't make any sense.  
 **You might be too old if** "Let's learn about colors!" sounds patronizing.
