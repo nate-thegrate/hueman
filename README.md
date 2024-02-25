@@ -1,4 +1,4 @@
-![hueman logo](.github/hueman.gif)
+![let's get colorful!](.github/get-colorful.gif)
 
 <br><br>
 
