@@ -2,7 +2,7 @@
 
 <br><br>
 
-### a game about color theory
+## ʜᴜᴇman: a game about colors
 
 This is a game for people who:
 
@@ -19,7 +19,7 @@ This is **not** a game for people who:
 
 ### free & open-source
 
-Download from the official website: [hue-man.app](https://hue-man.app/)
+Download from the official website: [**ʜᴜᴇ**man.app](https://hue-man.app/)
 
 <br>
 
