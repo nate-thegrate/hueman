@@ -39,7 +39,7 @@ SuperColor get epicColor => SuperColors.epic[epicHue];
 ///
 /// Each peak is a tertiary color,
 /// and each 0-value is the hue of an additive/subtractive primary :)
-double get epicSine => sin(6 * 2 * pi * (epicHue) / 360) + 1;
+double get epicSine => sin(2 * pi * epicHue * 6 / 360) + 1;
 
 /// similar to [epicColor], but the color is darker.
 ///

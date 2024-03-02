@@ -1,13 +1,13 @@
+import 'package:flutter/material.dart';
+
 import 'package:hueman/data/page_data.dart';
-import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_text.dart';
-import 'package:hueman/pages/score.dart';
-import 'package:hueman/pages/find_the_hues.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
+import 'package:hueman/data/super_color.dart';
+import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
-
-import 'package:flutter/material.dart';
+import 'package:hueman/pages/find_the_hues.dart';
+import 'package:hueman/pages/score.dart';
 
 class TutorialQueue extends HueQueue {
   TutorialQueue(super.numColors);
@@ -261,12 +261,14 @@ class _IntroModeState extends State<IntroMode> {
     super.dispose();
   }
 
-  Widget hueDialogBuilder(context) => HueDialog(
-        (hue == guess) ? 'Nice work!' : 'Incorrect…',
-        guess,
-        hue,
-        IntroGraphic(hue: hue, guess: guess),
-      );
+  Widget hueDialogBuilder(BuildContext context) {
+    return HueDialog(
+      (hue == guess) ? 'Nice work!' : 'Incorrect…',
+      guess,
+      hue,
+      IntroGraphic(hue: hue, guess: guess),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

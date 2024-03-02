@@ -87,7 +87,6 @@ class _CMYKScreen extends StatelessWidget {
         const FixedSpacer(30),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _CMYKSlider(
               'cyan',
@@ -154,7 +153,7 @@ class _CMYKSlider extends StatelessWidget {
               thumbColor: color,
               activeColor: color.withAlpha(0x80),
               inactiveColor: Colors.white24,
-              value: value.toDouble(),
+              value: value,
               onChanged: enabled ? onChanged : null,
             ),
           ),
@@ -212,8 +211,6 @@ class _HSLScreenState extends State<_HSLScreen> {
                       margin: const EdgeInsets.all(0.5),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
                           colors: [SuperColors.gray, SuperColor.hue(_h)],
                         ),
                       ),
@@ -577,7 +574,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
                   Text(_colorPicker.upperName, style: titleStyle),
                 const Spacer(),
                 AnimatedSize(
-                  duration: const Duration(milliseconds: 100),
+                  duration: Durations.short2,
                   curve: Curves.easeInOutCubic,
                   child: switch (_colorPicker) {
                     _ColorPicker.cmyk => _CMYKScreen(updateCMYKval, constraints),

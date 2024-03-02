@@ -2,13 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
 import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
-import 'package:hueman/pages/intro.dart';
-import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/widgets.dart';
+import 'package:hueman/pages/intro.dart';
 
 class Intro3Tutorial extends StatefulWidget {
   const Intro3Tutorial({super.key});
@@ -368,7 +368,7 @@ class _Page3State extends SuperState<_Page3> {
         const Spacer(flex: 3),
         Fader(
           buttonVisible,
-          duration: const Duration(seconds: 2),
+          duration: twoSecs,
           child: ContinueButton(onPressed: widget.nextPage),
         ),
         const Spacer(flex: 2),
@@ -391,9 +391,10 @@ class _ColorOrbState extends State<_ColorOrb> {
   @override
   void initState() {
     super.initState();
-    ticker = Ticker((_) => setState(() {
-          if (++counter % 2 == 0) epicHue = (epicHue + 1) % 360;
-        }))
+    ticker = Ticker((_) {
+      counter++;
+      if (counter.isEven) setState(() => epicHue = (epicHue + 1) % 360);
+    })
       ..start();
   }
 
@@ -426,7 +427,7 @@ class _ColorOrbState extends State<_ColorOrb> {
     final SuperColor epic = epicColor;
 
     return Align(
-      alignment: Alignment(0, sin((epicHue) / 360 * 2 * pi * 3)),
+      alignment: Alignment(0, sin(epicHue / 360 * 2 * pi * 3)),
       child: SizedBox(
         height: 330,
         child: SizedBox(
@@ -657,9 +658,8 @@ class _Page5State extends SuperState<_Page5> {
                         offset: textProgress > 1 ? Offset.zero : const Offset(0, -1),
                         curve: Curves.easeInQuad,
                         child: Align(
-                          alignment: Alignment.center,
                           child: AnimatedSize(
-                            duration: const Duration(seconds: 3),
+                            duration: threeSecs,
                             curve: curve,
                             child: Opacity(
                               opacity: 0.5,
@@ -735,7 +735,6 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
 
   /// number of rows/columns in HSV grid
   static const hsvWidth = 9, hsvHeight = 5;
-  static const duration = quarterSec;
 
   final List<({Widget tile, double scale})> hsvGrid = [
     for (int value = hsvHeight; value > 0; value--)
@@ -773,7 +772,7 @@ class _Page6State extends EpicState<_Page6> with SinglePress {
                   crossAxisCount: hsvWidth,
                   children: [
                     for (final item in hsvGrid)
-                      AnimatedScale(scale: item.scale, duration: duration, child: item.tile)
+                      AnimatedScale(scale: item.scale, duration: quarterSec, child: item.tile)
                   ],
                 ),
               ),
@@ -918,7 +917,7 @@ class _HueBox extends StatelessWidget {
       alignment: Alignment.center,
       child: Fader(
         step >= 2,
-        duration: const Duration(milliseconds: 400),
+        duration: Durations.medium4,
         child: SexyBox(
           child: SuperContainer(
             width: step < 2 ? 20 : width,

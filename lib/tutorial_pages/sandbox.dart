@@ -204,7 +204,6 @@ class _NumberRowState extends SuperState<_NumberRow> {
 
   @override
   Widget build(BuildContext context) {
-    const duration = Duration(milliseconds: 150);
     final binary = base == 2;
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -212,10 +211,10 @@ class _NumberRowState extends SuperState<_NumberRow> {
         for (int i = 0; i < base; i++)
           Fader(
             i < visibleNumbers,
-            duration: duration,
+            duration: Durations.short3,
             child: AnimatedSlide(
               offset: i < visibleNumbers ? Offset.zero : const Offset(0, -1),
-              duration: duration,
+              duration: Durations.short3,
               curve: Curves.easeInQuad,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6),

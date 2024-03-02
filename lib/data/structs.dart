@@ -6,9 +6,9 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hueman/data/page_data.dart';
+import 'package:hueman/data/save_data.dart';
 import 'package:hueman/inverse_pages/menu.dart';
 import 'package:hueman/pages/menu.dart';
-import 'package:hueman/data/save_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// ```dart
@@ -23,10 +23,12 @@ Future<void> sleep(double seconds, {Function()? then}) =>
 Future<void> quickly(Function() function) => sleep(0.001, then: function);
 
 const oneSec = Duration(seconds: 1);
+const twoSecs = Duration(seconds: 2);
+const threeSecs = Duration(seconds: 3);
 const halfSec = Duration(milliseconds: 500);
 const quarterSec = Duration(milliseconds: 250);
 const Curve curve = Curves.easeOutCubic;
-double get androidLatency => Platform.isAndroid ? 0.4 : 0.0;
+final double androidLatency = Platform.isAndroid ? 0.4 : 0.0;
 
 final rng = Random();
 

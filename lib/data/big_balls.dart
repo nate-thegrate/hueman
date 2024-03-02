@@ -441,12 +441,10 @@ class _ColorBallState extends SuperState<_ColorBall> {
   void animate() async {
     while (mounted) {
       const startupTime = 2.0;
-      quickly(
-        () => setState(() {
-          alignment = rng.randAlign;
-          visible = true;
-        }),
-      );
+      quickly(() => setState(() {
+            alignment = rng.randAlign;
+            visible = true;
+          }));
       await sleepState(widget.cycleSeconds - startupTime, () => visible = false);
       await sleep(startupTime);
     }
@@ -471,7 +469,7 @@ class _ColorBallState extends SuperState<_ColorBall> {
       alignment: alignment,
       child: Fader(
         visible,
-        duration: const Duration(seconds: 2),
+        duration: twoSecs,
         child: child,
       ),
     );

@@ -102,7 +102,7 @@ class _HSVSlider extends StatelessWidget {
               activeColor: color.withAlpha(128),
               inactiveColor: Colors.white24,
               max: isHue ? 359 : 1,
-              value: hsv.val.toDouble(),
+              value: hsv.val,
               onChanged: onChanged,
             ),
           ),
@@ -292,7 +292,6 @@ class _SandboxState extends State<Sandbox> {
                 Flex(
                   direction: horizontal ? Axis.vertical : Axis.horizontal,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     _RGBSlider('red', _r, (value) => setState(() => _r = value.round())),
                     _RGBSlider('green', _g, (value) => setState(() => _g = value.round())),
@@ -317,8 +316,6 @@ class _SandboxState extends State<Sandbox> {
                               margin: const EdgeInsets.all(0.5),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
                                   colors: [Colors.white, SuperColor.hue(_h)],
                                 ),
                               ),
@@ -380,7 +377,7 @@ class _SandboxState extends State<Sandbox> {
                 Text(_colorPicker.upperName, style: const SuperStyle.sans(size: 24)),
               const Spacer(),
               AnimatedSize(
-                duration: const Duration(milliseconds: 100),
+                duration: Durations.short2,
                 curve: Curves.easeInOutCubic,
                 child: colorPicker,
               ),

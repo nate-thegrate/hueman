@@ -3,14 +3,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hueman/data/page_data.dart';
+import 'package:hueman/data/save_data.dart';
+import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
 import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
-import 'package:hueman/pages/score.dart';
-import 'package:hueman/data/save_data.dart';
-import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/widgets.dart';
+import 'package:hueman/pages/score.dart';
 
 class TenseScoreKeeper implements ScoreKeeper {
   TenseScoreKeeper({required this.page});
@@ -347,7 +347,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
               Target(widget.volatile ? 'source_color' : 'color', name),
               Target('color_code', SuperColor(color.value - SuperColor.opaque).hexCode),
               Target('tension', tension[name]),
-              casualMode ? empty : Target('round', scoreKeeper!.round),
+              if (!casualMode) Target('round', scoreKeeper!.round),
               tensionDesc(constraints),
             ]),
           ),
@@ -446,7 +446,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
                     ),
                     const FixedSpacer(15),
                     AnimatedSize(
-                      duration: const Duration(milliseconds: 100),
+                      duration: Durations.short2,
                       child: casualMode || showDetails ? flat : scoreKeeper!.midRoundDisplay,
                     ),
                     if (!casualMode) const FixedSpacer(15),
@@ -499,7 +499,7 @@ class _TenseButton extends StatelessWidget {
       onTap: select,
       child: SlideTransition(
         position: Tween<Offset>(
-          begin: const Offset(0, 0),
+          begin: Offset.zero,
           end: const Offset(0, 0.01),
         ).animate(controller),
         child: Padding(

@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:rive/rive.dart' as rive;
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
 import 'package:hueman/data/super_container.dart';
@@ -12,6 +11,7 @@ import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 import 'package:hueman/pages/intro.dart';
+import 'package:rive/rive.dart' as rive;
 
 class Intro6Tutorial extends StatefulWidget {
   const Intro6Tutorial({super.key});
@@ -490,11 +490,11 @@ class _NeonRGBState extends State<_NeonRGB> {
   Widget build(BuildContext context) {
     return Expanded(
       child: FadeIn(
-        duration: const Duration(seconds: 2),
+        duration: twoSecs,
         child: Stack(
           children: [
             AnimatedScale(
-              duration: const Duration(milliseconds: 2000),
+              duration: twoSecs,
               scale: scale,
               curve: Curves.easeInQuart,
               child: SuperContainer(
@@ -604,13 +604,14 @@ class _Page5State extends SuperState<_Page5> {
 
   @override
   Widget build(BuildContext context) {
+    final Offset? inPlace = slideIntoPlace ? Offset.zero : null;
     return Stack(
       alignment: Alignment.center,
       children: [
         Align(
           alignment: Alignment.topCenter,
           child: AnimatedSlide(
-            offset: slideIntoPlace ? const Offset(0, 0) : const Offset(0, -1),
+            offset: inPlace ?? const Offset(0, -1),
             duration: halfSec,
             curve: Curves.easeInQuad,
             child: SuperContainer(
@@ -635,7 +636,7 @@ class _Page5State extends SuperState<_Page5> {
         Align(
           alignment: Alignment.bottomCenter,
           child: AnimatedSlide(
-            offset: slideIntoPlace ? const Offset(0, 0) : const Offset(0, 1),
+            offset: inPlace ?? const Offset(0, 1),
             duration: halfSec,
             curve: Curves.easeInQuad,
             child: SuperContainer(

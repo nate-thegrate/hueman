@@ -139,7 +139,7 @@ class _IntenseTutorialState extends EpicState<IntenseTutorial> {
                             ]),
                             SlideItIn(
                               madeTheJump,
-                              duration: const Duration(milliseconds: 750),
+                              duration: Durations.extralong1,
                               direction: AxisDirection.right,
                               child: jumpTo,
                             ),
@@ -218,32 +218,24 @@ class _ColorWave extends StatefulWidget {
 }
 
 class _ColorWaveState extends SuperState<_ColorWave> {
-  static const duration = quarterSec;
-
   final List<_ColorDotData> colorWaveData = [
     for (int hue = 0; hue < 360; hue += 30) _ColorDotData(hue)
   ];
 
   void doTheWave(_ColorDotData dotData) async {
     final List<VoidCallback> actions = [
-      () {
-        dotData.dy = -1.5;
-      },
-      () {
-        dotData.curve = Curves.easeInOutQuad;
-        dotData.dy = 1;
-      },
-      () {
-        dotData.dy = -0.5;
-      },
-      () {
-        dotData.curve = Curves.easeInQuad;
-        dotData.dy = 0;
-      },
+      () => dotData.dy = -1.5,
+      () => dotData
+        ..curve = Curves.easeInOutQuad
+        ..dy = 1,
+      () => dotData.dy = -0.5,
+      () => dotData
+        ..curve = Curves.easeInQuad
+        ..dy = 0,
     ];
 
     for (final action in actions) {
-      await Future.delayed(duration);
+      await Future.delayed(quarterSec);
       setState(action);
     }
   }
@@ -265,7 +257,7 @@ class _ColorWaveState extends SuperState<_ColorWave> {
         for (final _ColorDotData(:hue, :dy, :curve) in colorWaveData)
           AnimatedSlide(
             offset: Offset(0, dy),
-            duration: duration,
+            duration: quarterSec,
             curve: curve,
             child: _ColorDot(hue, constraints: widget.constraints),
           ),

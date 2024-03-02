@@ -43,7 +43,7 @@ class _EvenFurtherTutorialState extends EpicState<EvenFurtherTutorial> {
       child: Scaffold(
         body: Fader(
           visible,
-          duration: const Duration(seconds: 2),
+          duration: twoSecs,
           child: SuperContainer(
             color: SuperColors.bsBackground,
             alignment: Alignment.center,
@@ -52,7 +52,7 @@ class _EvenFurtherTutorialState extends EpicState<EvenFurtherTutorial> {
                 const Spacer(flex: 4),
                 Fader(
                   showTop,
-                  duration: const Duration(seconds: 2),
+                  duration: twoSecs,
                   child: const SuperRichText(
                     style: SuperStyle.gaegu(),
                     [
@@ -321,7 +321,7 @@ class _DaVinci extends StatelessWidget {
           flex: 6,
           child: AnimatedScale(
             scale: fillWithColor ? 5 : 1,
-            duration: const Duration(milliseconds: 3333),
+            duration: threeSecs,
             curve: Curves.easeOutExpo,
             child: SuperContainer(
               color: color,
@@ -335,7 +335,7 @@ class _DaVinci extends StatelessWidget {
         const Spacer(),
         Fader(
           showDaVinci,
-          duration: const Duration(seconds: 3),
+          duration: threeSecs,
           curve: Curves.easeInSine,
           child: const SuperText('This challenge was inspired by Leonardo da Vinci:'),
         ),
@@ -347,7 +347,7 @@ class _DaVinci extends StatelessWidget {
         ),
         Fader(
           showDaVinci,
-          duration: const Duration(seconds: 3),
+          duration: threeSecs,
           curve: Curves.easeInSine,
           child: Fader(
             showQuote,

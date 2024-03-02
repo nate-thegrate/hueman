@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:rive/rive.dart' as rive;
+
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
@@ -13,6 +13,8 @@ import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
+
+import 'package:rive/rive.dart' as rive;
 
 extension _Direction on DragEndDetails {
   AxisDirection get direction => switch (velocity.pixelsPerSecond.direction) {
@@ -376,25 +378,26 @@ class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
         child: Center(
           child: Fader(
             showStuff,
-            duration: const Duration(milliseconds: 600),
+            duration: Durations.long4,
             child: Column(
               children: [
                 const Spacer(flex: 2),
-                headphones
-                    ? const Column(
-                        children: [
-                          Icon(Icons.headphones_outlined, size: 300),
-                          Text(
-                            '(headphones recommended)',
-                            style: SuperStyle.sans(size: 16, letterSpacing: 0.5),
-                          ),
-                        ],
-                      )
-                    : const Text(
-                        'Except that was\na complete lie.',
-                        textAlign: TextAlign.center,
-                        style: SuperStyle.sans(size: 32),
+                if (headphones)
+                  const Column(
+                    children: [
+                      Icon(Icons.headphones_outlined, size: 300),
+                      Text(
+                        '(headphones recommended)',
+                        style: SuperStyle.sans(size: 16, letterSpacing: 0.5),
                       ),
+                    ],
+                  )
+                else
+                  const Text(
+                    'Except that was\na complete lie.',
+                    textAlign: TextAlign.center,
+                    style: SuperStyle.sans(size: 32),
+                  ),
                 const Spacer(),
                 Fader(
                   showButton,

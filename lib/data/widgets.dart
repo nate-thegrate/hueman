@@ -4,14 +4,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:hueman/data/super_state.dart';
-import 'package:rive/rive.dart' as rive;
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
 import 'package:hueman/data/super_container.dart';
+import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
+import 'package:rive/rive.dart' as rive;
 
 const Widget empty = SizedBox.shrink();
 const Widget flat = SizedBox(width: double.infinity);
@@ -329,7 +329,6 @@ class MenuCheckbox extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
                   // checkbox size is constrained since different platforms lack consistency
@@ -971,9 +970,7 @@ class _RightAngleBox extends StatelessWidget {
     return Transform.translate(
       offset: Offset(-thiccness / 2, -(size - thiccness / 2)),
       child: SuperContainer(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: thiccness),
-        ),
+        decoration: BoxDecoration(border: Border.all(width: thiccness)),
         width: size,
         height: size,
       ),

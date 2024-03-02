@@ -6,14 +6,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:hueman/data/save_data.dart';
+import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
 import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
-import 'package:hueman/pages/intense_master.dart';
-import 'package:hueman/data/save_data.dart';
-import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/widgets.dart';
+import 'package:hueman/pages/intense_master.dart';
 import 'package:hueman/pages/intro.dart';
 
 const double _gradeWidth = 200;
@@ -118,8 +118,6 @@ class RankBars extends StatelessWidget {
   final int rank;
   final Color color;
 
-  static const duration = Duration(milliseconds: 750);
-
   int get activeIndex => rank ~/ 25 + 1;
 
   @override
@@ -130,11 +128,11 @@ class RankBars extends StatelessWidget {
           Align(
             alignment: Alignment.bottomCenter,
             child: AnimatedSize(
-              duration: duration,
+              duration: Durations.extralong1,
               curve: curve,
               child: AnimatedContainer(
                 width: 25,
-                duration: duration,
+                duration: Durations.extralong1,
                 curve: curve,
                 color: switch (i) {
                   0 => Colors.black12,
@@ -196,7 +194,7 @@ class _PercentBarState extends State<_PercentBar> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 600),
+      duration: Durations.long4,
       curve: curve,
       color: widget.color,
       width: width,
@@ -385,7 +383,7 @@ class _HueDialogState extends State<HueDialog> {
                       color: epicColor,
                       weight: 800,
                       size: 24,
-                      shadows: const [Shadow(color: Colors.black, blurRadius: 5)],
+                      shadows: const [Shadow(blurRadius: 5)],
                     ),
                   ),
                 ],
@@ -690,7 +688,6 @@ class _CircleGameState extends State<CircleGame> {
 
   @override
   Widget build(BuildContext context) {
-    const duration = Duration(milliseconds: 100);
     return Scaffold(
       body: SafeLayout((context, constraints) {
         final circleSize = constraints.calcSize(
@@ -748,7 +745,7 @@ class _CircleGameState extends State<CircleGame> {
                                   alignment: Alignment.center,
                                   child: Fader(
                                     hueRuler && guess != null,
-                                    duration: duration,
+                                    duration: Durations.short2,
                                     child: SuperText(
                                       '$lastGuess°',
                                       style: SuperStyle.sans(
@@ -765,7 +762,7 @@ class _CircleGameState extends State<CircleGame> {
                               Expanded(
                                 child: Fader(
                                   guess != null,
-                                  duration: duration,
+                                  duration: Durations.short2,
                                   child: Align(
                                     alignment: Alignment.centerRight,
                                     child: Transform.translate(

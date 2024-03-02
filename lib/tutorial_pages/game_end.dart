@@ -368,7 +368,7 @@ class _CreditsState extends SuperState<_Credits> {
       () async {
         resetLines();
         setState(() => lineData[label] = (color, const Offset(-0.5, 0), true));
-        await sleepState(0.2, () => lineData[label] = (color, const Offset(0, 0), true));
+        await sleepState(0.2, () => lineData[label] = (color, Offset.zero, true));
         sleep(0.4);
         if (website == verifyAge) {
           showDialog(
@@ -432,7 +432,7 @@ class _CreditsState extends SuperState<_Credits> {
                   child: SizedBox(
                     child: SuperContainer(
                       width: 100,
-                      margin: const EdgeInsets.only(left: 0, right: 14),
+                      margin: const EdgeInsets.only(right: 14),
                       alignment: Alignment.centerRight,
                       child: Text(
                         label,
@@ -453,7 +453,7 @@ class _CreditsState extends SuperState<_Credits> {
                   curve: Curves.easeOutCubic,
                   offset: lineData[label]!.$2,
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 100),
+                    duration: Durations.short2,
                     width: 8,
                     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
@@ -1017,7 +1017,7 @@ class _MusicSwitchState extends SuperState<_MusicSwitch> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const SuperText('Let\'s turn the music on!'),
+        const SuperText("Let's turn the music on!"),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 25),
           child: Row(

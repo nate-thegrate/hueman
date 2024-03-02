@@ -141,7 +141,7 @@ class _Page1State extends SuperState<_Page1> with SinglePress {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      final double funSine = (sin((counter) / _cycleLength * 2 * pi) + 1) / 2;
+      final double funSine = (sin(2 * pi * counter / _cycleLength) + 1) / 2;
       final int greenVal = (0x40 * (2 - (funSine + funSine.squared))).round();
       final SuperColor funRed, funBlue;
       funRed = progress >= 12
@@ -412,7 +412,7 @@ class _Page2State extends SuperState<_Page2> {
                 Expanded(
                   flex: colorBoxFlex,
                   child: AnimatedContainer(
-                    duration: const Duration(seconds: 3),
+                    duration: threeSecs,
                     decoration: BoxDecoration(
                       color: showBlue ? SuperColors.blue : SuperColors.red,
                       boxShadow: const [BoxShadow(blurRadius: 5, spreadRadius: 2)],
@@ -436,7 +436,7 @@ class _Page2State extends SuperState<_Page2> {
                 Expanded(
                   flex: colorBoxFlex,
                   child: AnimatedContainer(
-                    duration: const Duration(seconds: 3),
+                    duration: threeSecs,
                     decoration: BoxDecoration(
                       color: showBlue ? SuperColors.azure : SuperColors.orange,
                       boxShadow: const [BoxShadow(blurRadius: 5, spreadRadius: 2)],
@@ -728,7 +728,7 @@ class _VocabLine extends StatelessWidget {
         child: Text(
           label ?? color.name,
           style: SuperStyle.sans(
-            size: constraints.calcSize((w, h) => min((w - 75) / 12, (h) / 0x20)),
+            size: constraints.calcSize((w, h) => min((w - 75) / 12, h / 0x20)),
             weight: 100,
             height: -1 / 3,
           ),

@@ -3,15 +3,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hueman/data/page_data.dart';
+import 'package:hueman/data/save_data.dart';
+import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
 import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
+import 'package:hueman/data/widgets.dart';
 import 'package:hueman/pages/score.dart';
 import 'package:hueman/tutorial_pages/game_end.dart';
-import 'package:hueman/data/save_data.dart';
-import 'package:hueman/data/structs.dart';
-import 'package:hueman/data/widgets.dart';
 
 class TrueMasteryScoreKeeper implements ScoreKeeper {
   TrueMasteryScoreKeeper();
@@ -210,7 +210,7 @@ class _TrueMasteryState extends State<TrueMastery> {
                             child: Text('submit', style: SuperStyle.sans(size: 24)),
                           ),
                         ),
-                        scoreKeeper == null ? empty : scoreKeeper!.midRoundDisplay,
+                        if (scoreKeeper case final ScoreKeeper sk) sk.midRoundDisplay,
                       ],
                     ),
                   ),
@@ -448,7 +448,7 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
             ),
           ),
           perfectScoreOverlay,
-          showFlicker ? Flicker(flickerValue, actual) : empty,
+          if (showFlicker) Flicker(flickerValue, actual),
         ],
       ),
     );
@@ -515,7 +515,7 @@ class _ScoreTitleState extends State<_ScoreTitle> {
       width: width,
       alignment: widget.isGuess ? Alignment.centerLeft : Alignment.centerRight,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 600),
+        duration: Durations.long4,
         curve: curve,
         width: expanded ? min(width, 271.5) : 0,
         height: 50,
@@ -550,15 +550,18 @@ class _ErrorScreen extends StatefulWidget {
 }
 
 class _ErrorScreenState extends SuperState<_ErrorScreen> {
-  static const errorRecoveryText = ''
-      'DIV_0 ERROR\n\n\n'
-      'rebuilding window\n\n'
-      '(_) => Navigator.pushReplacement<void, void>(\n'
-      '        context,\n'
-      '        MaterialPageRoute<void>(\n'
-      '          builder: (BuildContext context) => const ThanksForPlaying(),\n'
-      '        ),\n'
-      '      );';
+  static const errorRecoveryText = '''\
+DIV_0 ERROR
+
+
+rebuilding window
+
+(_) => Navigator.pushReplacement<void, void>(
+        context,
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) => const ThanksForPlaying(),
+        ),
+      );''';
 
   String text = 'DIV_0 ERROR';
 

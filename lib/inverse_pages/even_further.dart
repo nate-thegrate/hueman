@@ -280,8 +280,8 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
           duration: quarterSec,
           child: SlideItIn(
             buttonsInPlace > i,
-            direction: i % 2 == 0 ? AxisDirection.right : AxisDirection.left,
-            duration: const Duration(seconds: 2),
+            direction: i.isEven ? AxisDirection.right : AxisDirection.left,
+            duration: twoSecs,
             child: AnimatedAlign(
               duration: quarterSec,
               curve: Curves.easeOutQuart,
@@ -721,7 +721,7 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
           OutlinedButton(
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.black,
-              side: const BorderSide(width: 2, color: Colors.black),
+              side: const BorderSide(width: 2),
             ),
             onPressed: () =>
                 setState(goodQuestion ? () => tellMeMore = true : () => goodQuestion = true),
@@ -729,7 +729,7 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
               padding: EdgeInsets.fromLTRB(6, 6, 6, 7),
               child: Text(
                 'wow, good question!',
-                style: SuperStyle.sans(size: 20, weight: 400, extraBold: true),
+                style: SuperStyle.sans(size: 20, extraBold: true),
               ),
             ),
           )
@@ -877,7 +877,7 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: SuperText(
             mindBlown
-                ? 'And I don\'t fully understand this, '
+                ? "And I don't fully understand this, "
                     'but there are other color spaces '
                     'that claim to be even more vibrant than standard RGB:'
                 : "But ink isn't 100% perfect, "
@@ -1099,7 +1099,7 @@ class _DawnOfSummerState extends SuperState<_DawnOfSummer> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FadeIn(
-        duration: const Duration(seconds: 2),
+        duration: twoSecs,
         child: Center(
           child: Column(
             children: [
@@ -1127,10 +1127,9 @@ class _DawnOfSummerState extends SuperState<_DawnOfSummer> {
                               duration: halfSec,
                               offset: textProgress > 1 ? Offset.zero : const Offset(0, -1),
                               curve: Curves.easeInQuad,
-                              child: Align(
-                                alignment: Alignment.center,
+                              child: Center(
                                 child: AnimatedSize(
-                                  duration: const Duration(seconds: 3),
+                                  duration: threeSecs,
                                   curve: curve,
                                   child: Opacity(
                                     opacity: 0.5,
@@ -1282,9 +1281,9 @@ class _ShowTheWheelAgainState extends SuperState<_ShowTheWheelAgain> {
                 ),
                 Fader(
                   step >= 6,
-                  duration: const Duration(seconds: 2),
+                  duration: twoSecs,
                   child: AnimatedScale(
-                    duration: const Duration(seconds: 2),
+                    duration: twoSecs,
                     scale: step >= 7 ? 5 : 1,
                     curve: Curves.easeInExpo,
                     child: AnimatedContainer(
@@ -1330,7 +1329,7 @@ class _HueBox extends StatelessWidget {
       alignment: Alignment.center,
       child: Fader(
         step >= 2,
-        duration: const Duration(milliseconds: 400),
+        duration: Durations.medium4,
         child: SexyBox(
           child: SuperContainer(
             width: step < 2 ? 20 : width,

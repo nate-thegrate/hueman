@@ -27,7 +27,7 @@ class TriviaButton extends StatelessWidget {
       decoration: selected
           ? BoxDecoration(
               border: Border.all(color: color, width: buttonWidth / 20),
-              boxShadow: const [BoxShadow(color: Colors.black, blurRadius: 10)],
+              boxShadow: const [BoxShadow(blurRadius: 10)],
             )
           : null,
       child: ElevatedButton(
@@ -217,7 +217,6 @@ class AnsweredEveryQuestion extends StatelessWidget {
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const Text(
               "You've answered each trivia question!",

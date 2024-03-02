@@ -11,6 +11,7 @@ import 'package:hueman/pages/intro.dart';
 import 'package:hueman/pages/menu.dart';
 import 'package:hueman/pages/sandbox.dart';
 import 'package:hueman/tutorial_pages/ai_certificate.dart';
+import 'package:hueman/tutorial_pages/even_further.dart';
 import 'package:hueman/tutorial_pages/intense.dart';
 import 'package:hueman/tutorial_pages/intro_3.dart';
 import 'package:hueman/tutorial_pages/intro_6.dart';
@@ -18,7 +19,6 @@ import 'package:hueman/tutorial_pages/intro_c.dart';
 import 'package:hueman/tutorial_pages/master.dart';
 import 'package:hueman/tutorial_pages/sandbox.dart';
 import 'package:hueman/tutorial_pages/start.dart';
-import 'package:hueman/tutorial_pages/even_further.dart';
 import 'package:hueman/tutorial_pages/true_mastery.dart';
 
 /// Using an `enum` works great for organizing app routes.

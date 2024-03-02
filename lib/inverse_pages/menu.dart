@@ -339,14 +339,11 @@ class _InverseMenuState extends InverseState<InverseMenu>
           const Text('tense', textAlign: TextAlign.center, style: titleStyle),
           FixedSpacer(Tutorial.mastered() ? 25 : 50),
           if (Tutorial.mastered()) ...[
-            Padding(
-              padding: const EdgeInsets.only(left: 0),
-              child: MenuCheckbox(
-                variety ? 'variety' : 'vanilla',
-                description: ('0x18 colors'.padLeft(25), '0x0C colors'.padLeft(25)),
-                value: variety,
-                toggle: (val) => variety = val,
-              ),
+            MenuCheckbox(
+              variety ? 'variety' : 'vanilla',
+              description: ('0x18 colors'.padLeft(25), '0x0C colors'.padLeft(25)),
+              value: variety,
+              toggle: (val) => variety = val,
             ),
             const FixedSpacer(33),
           ],
@@ -506,7 +503,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                   foregroundColor: color,
                   backgroundColor: SuperColors.lightBackground,
                   shadowColor: color,
-                  elevation: (sin(6 * 2 * pi * (inverseHue) / 360) + 1) * 5,
+                  elevation: (sin(6 * 2 * pi * inverseHue / 360) + 1) * 5,
                 ),
                 child: SexyBox(
                   child: showResetButton
@@ -611,7 +608,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 alignment: Alignment.center,
                 child: Fader(
                   inverting,
-                  duration: const Duration(milliseconds: 300),
+                  duration: Durations.medium2,
                   child: const SuperContainer(color: SuperColors.darkBackground),
                 ),
               ),
@@ -621,7 +618,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
           if (exists)
             Fader(
               visible,
-              duration: const Duration(milliseconds: 600),
+              duration: Durations.long4,
               curve: Curves.easeInOutQuad,
               child: const SuperContainer(color: SuperColors.lightBackground),
             ),
@@ -643,7 +640,7 @@ class _ScoreLogState extends SuperState<_ScoreLog> {
       ? '[no scores set]'
       : [
           for (final score in Score.allScores)
-            if (score()) '${(score.label).padRight(19)} -> ${score.value}'
+            if (score()) '${score.label.padRight(19)} -> ${score.value}'
         ].join('\n');
   String cursor = '';
   void blink() => cursor.isEmpty ? cursor = '▌' : cursor = '';
@@ -694,7 +691,6 @@ class _TrueMasteryAnimationState extends SuperState<_TrueMasteryAnimation> {
       alignment: Alignment.center,
       children: [
         FadeIn(
-          duration: oneSec,
           curve: Curves.easeOutCubic,
           child: SuperContainer(color: widget.color),
         ),

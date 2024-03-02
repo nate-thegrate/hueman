@@ -1,16 +1,16 @@
 import 'dart:math';
+
+import 'package:flutter/material.dart';
 import 'package:hueman/data/page_data.dart';
-import 'package:hueman/data/super_color.dart';
 import 'package:hueman/data/photo_colors.dart';
+import 'package:hueman/data/save_data.dart';
+import 'package:hueman/data/structs.dart';
+import 'package:hueman/data/super_color.dart';
 import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
-import 'package:hueman/pages/score.dart';
 import 'package:hueman/pages/find_the_hues.dart';
-import 'package:hueman/data/save_data.dart';
-import 'package:hueman/data/structs.dart';
-
-import 'package:flutter/material.dart';
+import 'package:hueman/pages/score.dart';
 
 int hue = rng.nextInt(360);
 SuperColor c = SuperColors.darkBackground;
@@ -308,14 +308,11 @@ class _IntenseModeState extends State<IntenseMode> {
     });
   }
 
-  SuperColor get color {
-    if (showPics) return pics.first.$2;
-
-    c = SuperColor.hsv(hue, saturation, value);
-    return c;
-  }
+  SuperColor get color => showPics ? pics.first.$2 : c = SuperColor.hsv(hue, saturation, value);
 
   String get text => switch (offBy) {
+        0 when isOrange => 'Nice work!',
+        _ when isOrange => 'Incorrect…',
         0 => 'SUPER!',
         1 => 'Just 1 away?!',
         <= 5 => 'Fantastic!',
@@ -393,12 +390,12 @@ class _IntenseModeState extends State<IntenseMode> {
       numPadController = NumPadController(setState);
     }
     if (showPics) {
-      final ogPics = allImages.toList();
-      ogPics.shuffle();
+      final ogPics = allImages.toList()..shuffle();
       for (final ogPic in ogPics) {
         final randomColors = ogPic.randomColors;
-        pics.add((ogPic, randomColors.$1));
-        pics.add((ogPic, randomColors.$2));
+        pics
+          ..add((ogPic, randomColors.$1))
+          ..add((ogPic, randomColors.$2));
       }
       hue = HSVColor.fromColor(pics.first.$2).hue.round();
     }
@@ -411,29 +408,24 @@ class _IntenseModeState extends State<IntenseMode> {
   ];
   bool get isOrange => showPics && oranges.contains(pics.first.$2);
 
-  Widget hueDialogBuilder(context) => isOrange
-      ? HueDialog(
-          (hue == guess) ? 'Nice work!' : 'Incorrect…',
-          guess,
-          hue,
-          IntroGraphic(hue: hue, guess: guess),
-        )
-      : HueDialog(
-          text,
-          guess,
-          hue,
-          switch (offBy) {
-            0 => const HundredPercentGrade(),
-            _ when masterMode => PercentGrade(accuracy: accuracy, color: color),
-            _ => Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  PercentGrade(accuracy: accuracy, color: color),
-                  IntroGraphic(hue: hue, guess: guess),
-                ],
-              ),
-          },
-        );
+  Widget hueDialogBuilder(BuildContext context) {
+    return HueDialog(
+      text,
+      guess,
+      hue,
+      switch ((isOrange, offBy)) {
+        (true, _) => IntroGraphic(hue: hue, guess: guess),
+        (_, 0) => const HundredPercentGrade(),
+        _ => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              PercentGrade(accuracy: accuracy, color: color),
+              if (!masterMode) IntroGraphic(hue: hue, guess: guess),
+            ],
+          ),
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
