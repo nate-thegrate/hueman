@@ -554,7 +554,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
   @override
   void initState() {
     super.initState();
-    musicPlayer.stop();
+    music.stop();
   }
 
   @override

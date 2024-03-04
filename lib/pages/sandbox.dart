@@ -254,7 +254,7 @@ class _SandboxState extends State<Sandbox> {
   @override
   void initState() {
     super.initState();
-    musicPlayer.stop();
+    music.stop();
   }
 
   @override

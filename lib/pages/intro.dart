@@ -164,7 +164,7 @@ class _IntroModeState extends State<IntroMode> {
   void initState() {
     super.initState();
     inverted = false;
-    playMusic(
+    music.play(
       loop: switch (widget.numColors) {
         3 => 'intro_3',
         6 => 'intro_6',

@@ -31,7 +31,7 @@ class _MainMenuState extends EpicState<MainMenu>
 
   @override
   void animate() async {
-    musicPlayer.stop();
+    music.stop();
     if (inverted) {
       saveData('inverted', false);
       inverted = false;
@@ -46,7 +46,7 @@ class _MainMenuState extends EpicState<MainMenu>
         booted = true;
       }
     }
-    playMusic(once: 'verity_1', loop: 'verity_2');
+    music.play(once: 'verity_1', loop: 'verity_2');
   }
 
   @override
@@ -118,11 +118,11 @@ class _MainMenuState extends EpicState<MainMenu>
         const FixedSpacer(18),
         OutlinedButton(
           onPressed: () async {
-            await musicPlayer.stop();
+            await music.stop();
             Tutorial.sawInversion.complete();
             setState(() => inverting = true);
             controller.forward();
-            playSound('invert_button');
+            sfx.play('invert_button');
             await sleepState(0.7, () => darkBackground = false);
             await sleepState(0.1, () => visible = true);
             await sleep(0.5, then: context.invert);
@@ -296,19 +296,19 @@ class _MainMenuState extends EpicState<MainMenu>
       MenuPage.settings => [
           MenuCheckbox(
             'music',
-            value: music,
+            value: enableMusic,
             description: ('', ''),
             toggle: (checked) {
-              setState(() => music = checked);
-              saveData('music', music);
+              setState(() => enableMusic = checked);
+              saveData('music', enableMusic);
               if (checked) {
                 if (paused) {
-                  musicPlayer.resume();
+                  music.resume();
                 } else {
-                  playMusic(loop: 'verity_2');
+                  music.play(loop: 'verity_2');
                 }
               } else {
-                musicPlayer.pause();
+                music.pause();
                 paused = true;
               }
             },

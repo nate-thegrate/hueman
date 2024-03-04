@@ -632,7 +632,7 @@ class ManualColorCode extends StatefulWidget {
         if (value.length == 6) {
           final int colorCode = int.parse(value, radix: 16);
           updateColor(SuperColor(colorCode));
-          if (colorCode == 0x8080FF) playSound('k_color');
+          if (colorCode == 0x8080FF) sfx.play('k_color');
         } else if (value.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('invalid hex code: $value')),

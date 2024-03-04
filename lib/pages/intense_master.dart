@@ -368,7 +368,7 @@ class _IntenseModeState extends State<IntenseMode> {
   void initState() {
     super.initState();
     inverted = false;
-    if (!masterMode) playMusic(loop: 'casual');
+    if (!masterMode) music.play(loop: 'casual');
 
     scoreKeeper = switch (masterMode) {
       _ when casualMode => null,

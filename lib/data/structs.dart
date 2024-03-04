@@ -9,6 +9,7 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/inverse_pages/menu.dart';
 import 'package:hueman/pages/menu.dart';
+import 'package:meta/meta.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// ```dart
@@ -32,53 +33,58 @@ final double androidLatency = Platform.isAndroid ? 0.4 : 0.0;
 
 final rng = Random();
 
-final sfxPlayer = AudioPlayer();
-final musicPlayer = AudioPlayer();
-StreamSubscription? _loop;
+final sfx = AssetPlayer();
+final music = MusicPlayer();
 
-extension _PlayAsset on AudioPlayer {
-  Future<void> playAsset(String name) => play(AssetSource('audio/$name.mp3'));
+extension type AssetPlayer.fromPlayer(AudioPlayer player) implements AudioPlayer {
+  AssetPlayer() : this.fromPlayer(AudioPlayer());
+
+  @redeclare
+  Future<void> play(String name) => player.play(AssetSource('audio/$name.mp3'));
 }
 
-Future<void> playSound(String name) => sfxPlayer.playAsset(name);
+extension type MusicPlayer.fromAssetPlayer(AssetPlayer player) implements AssetPlayer {
+  MusicPlayer() : this.fromAssetPlayer(AssetPlayer());
 
-Future<void> playMusic({String? once, String? loop}) async {
-  if (!music) return;
-  assert((once ?? loop) != null);
-  await musicPlayer.stop();
-  await _loop?.cancel();
+  static StreamSubscription? _loop;
 
-  Future<void> playLoop() async {
-    await musicPlayer.playAsset(loop!);
+  @redeclare
+  Future<void> play({String? once, String? loop}) async {
+    if (!enableMusic) return;
+    assert((once ?? loop) != null);
+    await player.stop();
     await _loop?.cancel();
-    return musicPlayer.setReleaseMode(ReleaseMode.loop);
-  }
 
-  Future<void> playOnce() async {
-    await musicPlayer.playAsset(once!);
-    if (loop != null) _loop = musicPlayer.onPlayerComplete.listen((_) => playLoop());
-    return musicPlayer.setReleaseMode(ReleaseMode.release);
-  }
+    Future<void> playLoop() async {
+      await player.play(loop!);
+      await _loop?.cancel();
+      return player.setReleaseMode(ReleaseMode.loop);
+    }
 
-  return once == null ? playLoop() : playOnce();
+    Future<void> playOnce() async {
+      await player.play(once!);
+      if (loop != null) _loop = player.onPlayerComplete.listen((_) => playLoop());
+      return player.setReleaseMode(ReleaseMode.release);
+    }
+
+    return once == null ? playLoop() : playOnce();
+  }
 }
 
 extension PauseMusic on AppLifecycleState {
   /// pauses the music when the app isn't in use.
   void pauseMusic() {
-    if (this == AppLifecycleState.resumed && music && paused) {
-      musicPlayer.resume();
+    if (this == AppLifecycleState.resumed && enableMusic && paused) {
+      music.resume();
       paused = false;
-    } else if (musicPlayer.state == PlayerState.playing) {
-      musicPlayer.pause();
+    } else if (music.state == PlayerState.playing) {
+      music.pause();
       paused = true;
     }
   }
 }
 
-typedef KeyFunc = bool Function(KeyEvent);
-void addListener(KeyFunc func) => HardwareKeyboard.instance.addHandler(func);
-void yeetListener(KeyFunc func) => HardwareKeyboard.instance.removeHandler(func);
+HardwareKeyboard get keyboard => HardwareKeyboard.instance;
 
 Color contrastWith(Color c, {double threshold = .2}) =>
     (c.computeLuminance() > threshold) ? Colors.black : Colors.white;

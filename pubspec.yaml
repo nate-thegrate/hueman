@@ -5,7 +5,7 @@ publish_to: "none"
 version: 2.3.1+16
 
 environment:
-  sdk: ">=3.0.0"
+  sdk: ">=3.3.0"
 
 dependencies:
   flutter:
@@ -15,6 +15,7 @@ dependencies:
   rive: ">=0.12.4"
   shared_preferences: ">=2.2.2"
   audioplayers: ">=5.2.1"
+  meta: ">=1.11.0"
 
 dev_dependencies:
   flutter_launcher_icons: ">=0.13.1"

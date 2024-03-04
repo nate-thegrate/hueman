@@ -52,7 +52,7 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
   @override
   void initState() {
     super.initState();
-    musicPlayer.stop();
+    music.stop();
     sleep(1, then: () => setState(() => visible = true));
   }
 
@@ -143,7 +143,7 @@ class _Page2State extends SuperState<_Page2> {
     await sleepState(4, () => visible = true);
 
     await sleep(3.5);
-    playSound('rgb');
+    sfx.play('rgb');
     await sleep(androidLatency + 0.25);
     for (final color in SuperColors.primaries) {
       await sleepState(1, () => colorVisible[color] = true);

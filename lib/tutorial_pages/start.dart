@@ -51,7 +51,7 @@ class _StartScreenState extends SuperState<StartScreen> {
       'mixing',
       autoplay: false,
       onStop: () {
-        sleep(4 - androidLatency, then: () => playSound('speedup'));
+        sleep(4 - androidLatency, then: () => sfx.play('speedup'));
         sleep(9.85, then: () => context.noTransition(const _CallOutTheLie()));
         if (Platform.isIOS) {
           sleep(6.5, then: () {
@@ -90,12 +90,12 @@ class _StartScreenState extends SuperState<StartScreen> {
   @override
   void initState() {
     super.initState();
-    addListener(konamiKey);
+    keyboard.addHandler(konamiKey);
   }
 
   @override
   void dispose() {
-    yeetListener(konamiKey);
+    keyboard.removeHandler(konamiKey);
     super.dispose();
   }
 
@@ -315,7 +315,7 @@ class _LogoState extends SuperState<_Logo> {
   @override
   void animate() async {
     await sleep(1.5);
-    if (!Platform.isAndroid) sleep(0.75, then: () => playSound('ryb'));
+    if (!Platform.isAndroid) sleep(0.75, then: () => sfx.play('ryb'));
     for (int i = 0; i < 4; i++) {
       await sleepState(0.75, () => lettersVisible++);
     }
@@ -357,7 +357,7 @@ class _CallOutTheLie extends StatefulWidget {
 class _CallOutTheLieState extends SuperState<_CallOutTheLie> {
   @override
   void animate() async {
-    await sfxPlayer.stop();
+    await sfx.stop();
     await sleepState(3, () => showButton = true);
   }
 
@@ -478,7 +478,7 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
   void animate() async {
     inverted = false;
     epicHue = 0;
-    playSound('see_the_truth');
+    sfx.play('see_the_truth');
     await sleep(androidLatency);
     sleep(18, then: expand);
     ticker = Ticker((elapsed) {

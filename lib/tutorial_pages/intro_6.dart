@@ -48,7 +48,7 @@ class _Intro6TutorialState extends SuperState<Intro6Tutorial> {
   @override
   void initState() {
     super.initState();
-    musicPlayer.stop();
+    music.stop();
     sleep(1, then: () => setState(() => visible = true));
   }
 
@@ -88,7 +88,7 @@ class _Page1State extends SuperState<_Page1> {
   void bestPart() async {
     setState(() => controllers[2].isActive = true);
     await sleep(1.25 - androidLatency);
-    playSound('cmy');
+    sfx.play('cmy');
   }
 
   @override
@@ -105,7 +105,7 @@ class _Page1State extends SuperState<_Page1> {
                 const SuperText("Let's combine the primary colors,\nfor real this time."),
                 const Spacer(flex: 4),
                 ContinueButton(onPressed: () async {
-                  playSound('speedup_tapered');
+                  sfx.play('speedup_tapered');
                   setState(weBallin);
                   await sleepState(5, noSpins);
                   bestPart();

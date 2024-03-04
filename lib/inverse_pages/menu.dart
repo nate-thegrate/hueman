@@ -46,7 +46,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
 
   @override
   void animate() async {
-    musicPlayer.stop();
+    music.stop();
     if (inverted) {
       visible = false;
       exists = false;
@@ -61,7 +61,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
       quickly(() => setState(() => visible = false));
       sleepState(0.6, () => exists = false);
     }
-    playMusic(once: 'invert_1', loop: 'invert_2');
+    music.play(once: 'invert_1', loop: 'invert_2');
   }
 
   @override
@@ -245,19 +245,19 @@ class _InverseMenuState extends InverseState<InverseMenu>
       MenuPage.settings => [
           MenuCheckbox(
             'music',
-            value: music,
+            value: enableMusic,
             description: ('', ''),
             toggle: (checked) {
-              setState(() => music = checked);
-              saveData('music', music);
+              setState(() => enableMusic = checked);
+              saveData('music', enableMusic);
               if (checked) {
                 if (paused) {
-                  musicPlayer.resume();
+                  music.resume();
                 } else {
-                  playMusic(loop: 'invert_2');
+                  music.play(loop: 'invert_2');
                 }
               } else {
-                musicPlayer.pause();
+                music.pause();
                 paused = true;
               }
             },
@@ -296,9 +296,9 @@ class _InverseMenuState extends InverseState<InverseMenu>
           Center(
             child: OutlinedButton(
               onPressed: () async {
-                await musicPlayer.stop();
+                await music.stop();
                 controller.forward();
-                playSound('revert_button');
+                sfx.play('revert_button');
                 await sleepState(0.5, () => inverting = true);
                 await sleep(0.6, then: context.invert);
               },

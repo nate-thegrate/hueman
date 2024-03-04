@@ -21,7 +21,7 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
   @override
   void initState() {
     super.initState();
-    musicPlayer.stop();
+    music.stop();
     final ScoreKeeper sk = widget.scoreKeeper;
     final Score? mode = Score.fromScoreKeeper(sk);
     if (mode != null) mode.set(sk.scoreVal);

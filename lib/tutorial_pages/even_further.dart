@@ -24,7 +24,7 @@ class _EvenFurtherTutorialState extends EpicState<EvenFurtherTutorial> {
       showButton = false;
   @override
   void animate() async {
-    musicPlayer.stop();
+    music.stop();
     await sleepState(1, () => visible = true);
     await sleepState(1.5, () => showTop = true);
     await sleepState(6, () => showBottom = true);
@@ -195,7 +195,7 @@ class _TrueFinalChallengeState extends EpicState<_TrueFinalChallenge> with Singl
   @override
   void animate() async {
     await sleep(2);
-    playSound('liar');
+    sfx.play('liar');
     await sleepState(androidLatency, () => daVinciAppear = true);
     await sleepState(5, () => showTop = true);
     await sleepState(2, () => showBottom = true);
@@ -257,7 +257,7 @@ class _TrueFinalChallengeState extends EpicState<_TrueFinalChallenge> with Singl
                 buttonVisible: finalButton,
                 color: epicColor,
                 onPressed: singlePress(() async {
-                  playMusic(once: 'invert_1', loop: 'invert_2');
+                  music.play(once: 'invert_1', loop: 'invert_2');
                   await Tutorial.evenFurther.complete();
                   context.goto(Pages.evenFurther);
                 }),

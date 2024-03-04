@@ -30,8 +30,7 @@ late bool inverted;
 late bool variety;
 late bool showEvenFurther;
 late bool fullCompletion;
-late bool music;
-late bool sounds;
+late bool enableMusic;
 
 Future<void> saveData(String key, bool value) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -53,8 +52,7 @@ Future<void> loadData() async {
   variety = prefs.getBool('variety') ?? false;
   showEvenFurther = prefs.getBool('showEvenFurther') ?? false;
   fullCompletion = prefs.getBool('fullCompletion') ?? false;
-  music = prefs.getBool('music') ?? true;
-  sounds = prefs.getBool('sounds') ?? true;
+  enableMusic = prefs.getBool('music') ?? true;
 
   Score.init(prefs);
   Tutorial.init(prefs);
@@ -131,8 +129,7 @@ enum Tutorial {
       casualMode = true;
       hueRuler = true;
       inverted = false;
-      music = true;
-      sounds = true;
+      enableMusic = true;
 
       // for (final score in Score.values) {
       //   Score.highScores[score] = null;

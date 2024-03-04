@@ -255,12 +255,12 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
   bool flickerValue = false;
 
   Future<void> perfectScore() async {
-    playSound('div_0');
+    sfx.play('div_0');
     await sleepState(2 + androidLatency, () => showFlicker = true);
     ticker!.start();
     await sleep(1.5);
     ticker!.stop();
-    musicPlayer.stop();
+    music.stop();
     context.noTransition(const _ErrorScreen());
   }
 

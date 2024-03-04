@@ -261,7 +261,7 @@ class _TriviaModeState extends State<TriviaMode> {
     inverted = true;
     resetButtons();
     triviaQuestions.shuffle();
-    playMusic(loop: 'color_trivia');
+    music.play(loop: 'color_trivia');
     if (!Tutorial.trivial()) {
       Tutorial.trivial.complete();
       sleep(

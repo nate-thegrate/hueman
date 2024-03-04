@@ -45,7 +45,7 @@ class _SandboxTutorialState extends SuperState<SandboxTutorial> {
 
   @override
   void animate() {
-    musicPlayer.stop();
+    music.stop();
     sleepState(1, () => visible = true);
   }
 

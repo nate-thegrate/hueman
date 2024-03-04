@@ -42,7 +42,7 @@ class _MasterTutorialState extends SuperState<MasterTutorial> {
 
   @override
   void animate() {
-    musicPlayer.stop();
+    music.stop();
     sleepState(1, () => visible = true);
   }
 
@@ -181,7 +181,7 @@ class _Page2State extends SuperState<_Page2> {
       blue = const SuperColor(0x8080FF);
     });
     await sleepState(5, () => showK = true);
-    if (mounted) playSound('k_color');
+    if (mounted) sfx.play('k_color');
   }
 
   SuperColor yellow = SuperColors.yellow;
@@ -261,7 +261,7 @@ class _Page3State extends EpicState<_Page3> {
     await sleepState(8, () => fadeAway = true);
     await Tutorial.master.complete();
     await sleep(1.5);
-    if (casualMode) playMusic(once: 'verity_1', loop: 'verity_2');
+    if (casualMode) music.play(once: 'verity_1', loop: 'verity_2');
     context.goto(Pages.master);
   }
 

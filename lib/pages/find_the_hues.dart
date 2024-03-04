@@ -314,7 +314,7 @@ class _HueDialogState extends State<HueDialog> {
 
   bool _listenForEnter(KeyEvent value) {
     if (value.logicalKey.keyLabel.contains('Enter')) {
-      yeetListener(_listenForEnter);
+      keyboard.removeHandler(_listenForEnter);
       Navigator.pop(context);
       return true;
     }
@@ -328,7 +328,7 @@ class _HueDialogState extends State<HueDialog> {
     sleep(
       widget.isSuper ? 1.5 : 0.2,
       then: () {
-        addListener(_listenForEnter);
+        keyboard.addHandler(_listenForEnter);
         setState(() => unclickable = false);
       },
     );
@@ -336,7 +336,7 @@ class _HueDialogState extends State<HueDialog> {
 
   @override
   void dispose() {
-    yeetListener(_listenForEnter);
+    keyboard.removeHandler(_listenForEnter);
     epicHues?.dispose();
     super.dispose();
   }

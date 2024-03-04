@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hueman/data/big_balls.dart';
@@ -37,7 +36,7 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
     super.initState();
     showK = theEndApproaches;
     if (showK) {
-      musicPlayer.play(AssetSource('audio/the_end_approaches.mp3'));
+      music.play(once: 'the_end_approaches');
     } else if (!Tutorial.worldEnd()) {
       theEndApproaches = true;
     }
@@ -267,7 +266,7 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
       void select() {
         if (showK && i == 5) {
           if (selected()) return;
-          playMusic(once: 'the_end_arrives');
+          music.play(once: 'the_end_arrives');
         }
         setState(selected() ? deselect : () => selectedTopic = i);
       }
@@ -1050,7 +1049,7 @@ class _DawnOfSummerState extends SuperState<_DawnOfSummer> {
 
   @override
   void animate() async {
-    musicPlayer.stop();
+    music.stop();
     for (final (_, sleepyTime) in text) {
       await sleepState(sleepyTime, () => textProgress++);
     }

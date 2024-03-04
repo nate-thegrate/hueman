@@ -48,7 +48,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
       showCredits = false;
       colorChange = true;
     });
-    if (!music) {
+    if (!enableMusic) {
       await sleepState(1.5, () {
         text = _MusicSwitch(next);
         showText = true;
@@ -58,7 +58,7 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
     await sleepState(3, () => showSuperHue = true);
     await sleepState(0.1, () => hideSuperHue = false);
     await sleep(1);
-    playSound('game_end'); // using playSound so it doesn't auto-pause when not focused
+    sfx.play('game_end'); // using playSound so it doesn't auto-pause when not focused
     await textCycle(4 + androidLatency, 'Remember this?');
     await textCycle(4, 'This was the first time you chose correctly\nout of 360 options.');
     await sleepState(1, () {
@@ -1007,7 +1007,7 @@ class _MusicSwitch extends StatefulWidget {
 
 class _MusicSwitchState extends SuperState<_MusicSwitch> {
   /// doesn't save, so music will be off on next boot
-  void musicOn() => music = true;
+  void musicOn() => enableMusic = true;
 
   @override
   void animate() => sleepState(2, musicOn);
@@ -1025,11 +1025,11 @@ class _MusicSwitchState extends SuperState<_MusicSwitch> {
             children: [
               const Icon(Icons.headphones_outlined, size: 50),
               const FixedSpacer.horizontal(10),
-              Switch.adaptive(value: music, onChanged: (_) => setState(musicOn)),
+              Switch.adaptive(value: enableMusic, onChanged: (_) => setState(musicOn)),
             ],
           ),
         ),
-        if (music) FadeIn(child: ContinueButton(onPressed: widget.onPressed)),
+        if (enableMusic) FadeIn(child: ContinueButton(onPressed: widget.onPressed)),
       ],
     );
   }
