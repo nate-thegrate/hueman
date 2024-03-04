@@ -246,7 +246,9 @@ class _IntenseModeState extends State<IntenseMode> {
   bool get masterMode => widget.master == 'master';
   bool get showPics => masterMode && casualMode;
 
-  final List<(Widget, SuperColor)> pics = [];
+  late final PhotoColors pics;
+  late Photo pic;
+  late SuperColor picColor;
 
   late final FocusNode? hueFocusNode;
   late final TextEditingController? hueController;
@@ -280,7 +282,7 @@ class _IntenseModeState extends State<IntenseMode> {
   int get accuracy => (pow(1 - offBy / 180, 2) * 100).round();
 
   void generatePic() {
-    if (pics.length == 1) {
+    if (pics.isEmpty) {
       showDialog(
         context: context,
         builder: (context) => const _SawEveryPic(),
@@ -288,27 +290,25 @@ class _IntenseModeState extends State<IntenseMode> {
       );
       return;
     }
-    pics.removeAt(0);
-    setState(() => hue = HSVColor.fromColor(pics.first.$2).hue.round());
+    final (pic, color) = pics.pop();
+    this.pic = pic;
+    picColor = color;
+    setState(() => hue = color.hue.round());
     if (numPadController != null) setState(numPadController!.clear);
   }
 
   /// new random hue will be at least 30° away from previous.
   void generateHue() {
-    if (!Score.superHue() && offBy == 0) {
-      Score.superHue.set(hue);
-    }
+    if (!Score.superHue() && offBy == 0) Score.superHue.set(hue);
     if (numPadController != null) setState(numPadController!.clear);
     int newHue = rng.nextInt(300);
-    if (newHue + 30 >= hue) newHue += 60;
+    if (newHue + 30 > hue) newHue += 60;
 
-    setState(() {
-      hue = newHue;
-      masterRNG = rng.nextDouble();
-    });
+    setState(() => hue = newHue);
+    if (masterMode) setState(() => masterRNG = rng.nextDouble());
   }
 
-  SuperColor get color => showPics ? pics.first.$2 : c = SuperColor.hsv(hue, saturation, value);
+  SuperColor get color => showPics ? picColor : c = SuperColor.hsv(hue, saturation, value);
 
   String get text => switch (offBy) {
         0 when isOrange => 'Nice work!',
@@ -323,10 +323,10 @@ class _IntenseModeState extends State<IntenseMode> {
 
   Widget? image(BoxConstraints constraints) {
     if (!casualMode || !masterMode) return null;
+    if (!hueTyping) return pic;
+
     final height = constraints.calcSize((w, h) => min(h - (externalKeyboard ? 333 : 466), w * 2));
     final pad = ((constraints.maxWidth - height) / 2 + 50).clamp(0.0, 50.0);
-    final pic = pics.first.$1;
-    if (!hueTyping) return pic;
     return SuperContainer(
       width: double.infinity,
       height: height,
@@ -390,41 +390,26 @@ class _IntenseModeState extends State<IntenseMode> {
       numPadController = NumPadController(setState);
     }
     if (showPics) {
-      final ogPics = allImages.toList()..shuffle();
-      for (final ogPic in ogPics) {
-        final randomColors = ogPic.randomColors;
-        pics
-          ..add((ogPic, randomColors.$1))
-          ..add((ogPic, randomColors.$2));
-      }
-      hue = HSVColor.fromColor(pics.first.$2).hue.round();
+      pics = PhotoColors.fromPhotoList(allImages.toList()..shuffle());
+      generatePic();
     }
   }
 
-  static const List<Color> oranges = [
-    SuperColor(0xB78049),
-    SuperColor(0x96612B),
-    SuperColor(0xB57C43),
-  ];
-  bool get isOrange => showPics && oranges.contains(pics.first.$2);
+  bool get isOrange => showPics && pic.filename == 'orange';
 
   Widget hueDialogBuilder(BuildContext context) {
-    return HueDialog(
-      text,
-      guess,
-      hue,
-      switch ((isOrange, offBy)) {
-        (true, _) => IntroGraphic(hue: hue, guess: guess),
-        (_, 0) => const HundredPercentGrade(),
-        _ => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PercentGrade(accuracy: accuracy, color: color),
-              if (!masterMode) IntroGraphic(hue: hue, guess: guess),
-            ],
-          ),
-      },
-    );
+    final Widget graphic;
+    final intro = IntroGraphic(hue: hue, guess: guess);
+    if (isOrange) {
+      graphic = intro;
+    } else if (offBy == 0) {
+      graphic = const HundredPercentGrade();
+    } else {
+      final grade = PercentGrade(accuracy: accuracy, color: color);
+      graphic =
+          masterMode ? grade : Column(mainAxisSize: MainAxisSize.min, children: [grade, intro]);
+    }
+    return HueDialog(text, guess, hue, graphic);
   }
 
   @override
