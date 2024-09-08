@@ -10,7 +10,6 @@ import 'package:hueman/data/save_data.dart';
 import 'package:hueman/inverse_pages/menu.dart';
 import 'package:hueman/pages/menu.dart';
 import 'package:meta/meta.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// ```dart
 ///
@@ -123,8 +122,6 @@ extension CalcSize on BoxConstraints {
   double calcSize(double Function(double w, double h) widthHeight) =>
       widthHeight(maxWidth, maxHeight);
 }
-
-void gotoWebsite(String url) => launchUrl(Uri.parse(url));
 
 class HueQueue {
   HueQueue(this.numColors) {

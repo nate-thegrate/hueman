@@ -9,6 +9,7 @@ import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 int get superHue => Score.superHue.value!;
 
@@ -392,12 +393,12 @@ class _CreditsState extends SuperState<_Credits> {
               actionsAlignment: MainAxisAlignment.spaceEvenly,
               actions: [
                 const WarnButton(),
-                WarnButton(action: () => gotoWebsite('https://youtu.be/NVhA18_dmg0')),
+                WarnButton(action: () => launchUrlString('https://youtu.be/NVhA18_dmg0')),
               ],
             ),
           );
         } else {
-          gotoWebsite(website);
+          launchUrlString(website);
         }
       };
 
@@ -1132,7 +1133,7 @@ class _TheEndState extends EpicState<_TheEnd> with SinglePress {
                 showQuit,
                 child: switch (Theme.of(context).platform) {
                   TargetPlatform.android => OutlinedButton(
-                      onPressed: () => gotoWebsite(
+                      onPressed: () => launchUrlString(
                         'https://play.google.com/store/apps/details?id=com.natethegrate.hueman',
                       ),
                       style: OutlinedButton.styleFrom(
@@ -1153,7 +1154,7 @@ class _TheEndState extends EpicState<_TheEnd> with SinglePress {
                       ),
                     ),
                   TargetPlatform.iOS || TargetPlatform.macOS => OutlinedButton(
-                      onPressed: () => gotoWebsite(
+                      onPressed: () => launchUrlString(
                         'https://apps.apple.com/us/app/hueman-a-game-about-colors/id6471395924',
                       ),
                       style: OutlinedButton.styleFrom(
@@ -1174,7 +1175,7 @@ class _TheEndState extends EpicState<_TheEnd> with SinglePress {
                       ),
                     ),
                   TargetPlatform.windows => OutlinedButton(
-                      onPressed: () => gotoWebsite(
+                      onPressed: () => launchUrlString(
                         'https://www.microsoft.com/store/productId/9NNNTH9JV380',
                       ),
                       style: OutlinedButton.styleFrom(

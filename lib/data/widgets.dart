@@ -12,6 +12,7 @@ import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:rive/rive.dart' as rive;
+import 'package:url_launcher/url_launcher_string.dart';
 
 const Widget empty = SizedBox.shrink();
 const Widget flat = SizedBox(width: double.infinity);
@@ -82,23 +83,17 @@ class FadeIn extends StatefulWidget {
   State<FadeIn> createState() => _FadeInState();
 }
 
-class _FadeInState extends State<FadeIn> {
-  bool visible = false;
+class _FadeInState extends State<FadeIn> with SingleTickerProviderStateMixin {
+  late final controller = AnimationController(
+    vsync: this,
+    duration: widget.duration,
+  )..forward();
 
-  @override
-  void initState() {
-    super.initState();
-    quickly(() => setState(() => visible = true));
-  }
+  late final animation = CurvedAnimation(parent: controller, curve: widget.curve);
 
   @override
   Widget build(BuildContext context) {
-    return Fader(
-      visible,
-      duration: widget.duration,
-      curve: widget.curve,
-      child: widget.child,
-    );
+    return FadeTransition(opacity: animation, child: widget.child);
   }
 }
 
@@ -359,12 +354,13 @@ class MenuCheckbox extends StatelessWidget {
 
 class DismissibleDialog extends StatelessWidget {
   /// lets you tap either inside or outside the dialog to dismiss it.
-  const DismissibleDialog(
-      {super.key,
-      required this.title,
-      required this.content,
-      this.backgroundColor,
-      this.surfaceTintColor});
+  const DismissibleDialog({
+    super.key,
+    required this.title,
+    required this.content,
+    this.backgroundColor,
+    this.surfaceTintColor,
+  });
   final Widget title, content;
   final Color? backgroundColor, surfaceTintColor;
 
@@ -396,7 +392,7 @@ class FeedbackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: () => gotoWebsite('https://forms.gle/G2yTa9xMygg913ZU8'),
+      onPressed: () => launchUrlString('https://forms.gle/G2yTa9xMygg913ZU8'),
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: color, width: 2),
         foregroundColor: color,
@@ -478,6 +474,7 @@ class JustKidding extends StatelessWidget {
     required this.color,
     required this.onPressed,
   });
+
   final bool buttonVisible;
   final SuperColor color;
   final VoidCallback onPressed;
@@ -561,11 +558,15 @@ class ColorLabel extends StatelessWidget {
       : colorCode = false,
         update = null;
 
-  const ColorLabel.colorCode(this.property, this.value, ValueChanged<SuperColor> updateColorCode,
-      {super.key})
-      : style = null,
+  const ColorLabel.colorCode(
+    this.property,
+    this.value,
+    ValueChanged<SuperColor> updateColorCode, {
+    super.key,
+  })  : style = null,
         colorCode = true,
         update = updateColorCode;
+
   final String property, value;
   final SuperStyle? style;
   final ValueChanged<SuperColor>? update;
@@ -626,7 +627,9 @@ class ManualColorCode extends StatefulWidget {
       ).then(verifyHexCode(context, updateColor));
 
   static void Function(dynamic) verifyHexCode(
-          BuildContext context, void Function(SuperColor) updateColor) =>
+    BuildContext context,
+    void Function(SuperColor) updateColor,
+  ) =>
       (value) {
         if (value is! String) return;
         if (value.length == 6) {
@@ -685,8 +688,6 @@ class _ManualColorCodeState extends State<ManualColorCode> {
           onSecondary: widget.color,
           error: widget.color,
           onError: widget.color,
-          background: inverted ? SuperColors.lightBackground : SuperColors.darkBackground,
-          onBackground: inverted ? SuperColors.lightBackground : SuperColors.darkBackground,
           surface: inverted ? Colors.black : Colors.white,
           onSurface: inverted ? Colors.black : Colors.white,
         ),
@@ -929,12 +930,13 @@ class MeasuringOrb extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: Transform.translate(
-                      offset: const Offset(0, -37),
-                      child: Icon(
-                        Icons.arrow_drop_down,
-                        size: 50,
-                        color: SuperColor.hue(guess),
-                      )),
+                    offset: const Offset(0, -37),
+                    child: Icon(
+                      Icons.arrow_drop_down,
+                      size: 50,
+                      color: SuperColor.hue(guess),
+                    ),
+                  ),
                 ),
               ),
             ),

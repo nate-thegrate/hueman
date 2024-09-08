@@ -12,6 +12,7 @@ import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 import 'package:hueman/pages/intro.dart';
 import 'package:rive/rive.dart' as rive;
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Intro6Tutorial extends StatefulWidget {
   const Intro6Tutorial({super.key});
@@ -117,7 +118,7 @@ class _Page1State extends SuperState<_Page1> {
                   child: SizedBox(
                     height: 25,
                     child: TextButton(
-                      onPressed: () => gotoWebsite(
+                      onPressed: () => launchUrlString(
                         'https://freesound.org/people/Timbre/sounds/140038/',
                       ),
                       style: TextButton.styleFrom(padding: EdgeInsets.zero),

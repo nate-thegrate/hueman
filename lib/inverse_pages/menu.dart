@@ -559,7 +559,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
         useMaterial3: true,
         fontFamily: 'nunito sans',
         checkboxTheme: CheckboxThemeData(
-          fillColor: MaterialStatePropertyAll(color),
+          fillColor: WidgetStatePropertyAll(color),
           side: BorderSide.none,
         ),
       ),

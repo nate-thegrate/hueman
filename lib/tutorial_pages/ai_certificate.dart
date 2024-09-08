@@ -36,7 +36,7 @@ class _AiCertificateState extends State<AiCertificate> {
                   useMaterial3: true,
                   fontFamily: 'Nunito Sans',
                   scrollbarTheme: const ScrollbarThemeData(
-                    thumbColor: MaterialStatePropertyAll(Colors.black54),
+                    thumbColor: WidgetStatePropertyAll(Colors.black54),
                   ),
                 ),
                 child: SingleChildScrollView(

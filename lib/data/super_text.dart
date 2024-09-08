@@ -7,6 +7,7 @@ import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
 import 'package:hueman/data/super_state.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 enum FontFamily { sans, mono, gaegu }
 
@@ -58,6 +59,7 @@ class SuperStyle extends TextStyle {
           fontFamily: 'nunito sans',
           fontWeight: extraBold ? FontWeight.bold : FontWeight.normal,
         );
+
   const SuperStyle.mono({
     double? size,
     bool italic = false,
@@ -92,6 +94,7 @@ class SuperStyle extends TextStyle {
           fontFamily: 'sometype mono',
           fontWeight: extraBold ? FontWeight.bold : FontWeight.normal,
         );
+
   const SuperStyle.gaegu({
     double size = 24,
     bool italic = false,
@@ -225,7 +228,8 @@ class SuperRichText extends StatelessWidget {
   }
 }
 
-GestureRecognizer hyperlink(String url) => TapGestureRecognizer()..onTap = () => gotoWebsite(url);
+GestureRecognizer hyperlink(String url) =>
+    TapGestureRecognizer()..onTap = () => launchUrlString(url);
 const linkStyle = SuperStyle.sans(
   extraBold: true,
   color: SuperColors.azure,

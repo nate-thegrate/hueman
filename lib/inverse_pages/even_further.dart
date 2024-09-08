@@ -10,6 +10,7 @@ import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class EvenFurther extends StatefulWidget {
   const EvenFurther({super.key});
@@ -950,7 +951,7 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                 ),
-                onPressed: () => gotoWebsite(
+                onPressed: () => launchUrlString(
                   'https://en.wikipedia.org/wiki/File:CIE1931xy_gamut_comparison_of_sRGB_P3_Rec2020.svg',
                 ),
                 child: SuperText(
@@ -1003,7 +1004,7 @@ class _GameDevButtons extends StatelessWidget {
                     foregroundColor: const SuperColor(0x20FFF0),
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                   ),
-                  onPressed: () => gotoWebsite(url),
+                  onPressed: () => launchUrlString(url),
                   child: name == 'hueman'
                       ? const Text.rich(TextSpan(children: [
                           TextSpan(

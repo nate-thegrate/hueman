@@ -12,6 +12,7 @@ import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 import 'package:hueman/pages/intro.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class IntroCTutorial extends StatefulWidget {
   /// intro `0xC`
@@ -625,7 +626,7 @@ class _Page3State extends SuperState<_Page3> {
                             foregroundColor: SuperColors.azure,
                             padding: const EdgeInsets.symmetric(horizontal: 6),
                           ),
-                          onPressed: () => gotoWebsite(
+                          onPressed: () => launchUrlString(
                             'https://en.wikipedia.org/wiki/Tertiary_color#RGB_or_CMYK_primary,_secondary,_and_tertiary_colors',
                           ),
                           child: const Text(

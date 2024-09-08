@@ -214,7 +214,7 @@ class _TheGoodStuffState extends State<_TheGoodStuff> with SinglePress {
       data: ThemeData(
         useMaterial3: true,
         checkboxTheme: const CheckboxThemeData(
-          fillColor: MaterialStatePropertyAll(SuperColors.bsBrown),
+          fillColor: WidgetStatePropertyAll(SuperColors.bsBrown),
           side: BorderSide.none,
         ),
       ),
