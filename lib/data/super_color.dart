@@ -32,7 +32,7 @@ class SuperColor extends Color {
         (_, 0, 0.5) => SuperColors.gray,
         (_, 1, 1) when h % (Tutorial.mastered() ? 15 : 30) == 0 =>
           SuperColors.hueList[(h * SuperColors.hueList.length) ~/ 360],
-        _ => SuperColor(HSVColor.fromAHSV(0, h.toDouble(), s, v).toColor().value),
+        _ => SuperColor(HSVColor.fromAHSV(0, h.toDouble(), s, v).toColor().toARGB32()),
       };
 
   factory SuperColor.hsl(num h, double s, double l) => switch ((h, s, l)) {
@@ -41,7 +41,7 @@ class SuperColor extends Color {
         (_, 0, 0.5) => SuperColors.gray,
         (_, 1, 0.5) when h % (Tutorial.mastered() ? 15 : 30) == 0 =>
           SuperColors.hueList[(h * SuperColors.hueList.length) ~/ 360],
-        _ => SuperColor(HSLColor.fromAHSL(0, h.toDouble(), s, l).toColor().value),
+        _ => SuperColor(HSLColor.fromAHSL(0, h.toDouble(), s, l).toColor().toARGB32()),
       };
 
   /// Creates a color with the given hue.
@@ -109,7 +109,9 @@ class SuperColor extends Color {
         _ => 'SuperColors.$name ($hexCode)',
       };
 
-  SuperColor get complement => SuperColor.rgb(0xFF - red, 0xFF - green, 0xFF - blue).rounded;
+  SuperColor get complement =>
+      SuperColor.rgb(0xFF * (1 - r).round(), 0xFF * (1 - g).round(), 0xFF * (1 - b).round())
+          .rounded;
 
   /// shows the color name in "sandbox" mode, even if the color code is slightly off
   SuperColor get rounded {
@@ -126,7 +128,8 @@ class SuperColor extends Color {
       return rgbVal;
     }
 
-    return SuperColor.rgb(snapToVals(red), snapToVals(green), snapToVals(blue));
+    return SuperColor.rgb(snapToVals((r * 0xFF).round()), snapToVals((g * 0xFF).round()),
+        snapToVals((b * 0xFF).round()));
   }
 }
 

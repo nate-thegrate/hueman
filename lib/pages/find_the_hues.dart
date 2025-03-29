@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -53,15 +52,17 @@ class _NumberButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperContainer(
+    return SizedBox(
       width: min((context.screenWidth - 55) / 3, 125),
       height: 75,
-      padding: const EdgeInsets.all(2),
-      child: TextButton(
-        style: style,
-        onPressed: onPressed,
-        onLongPress: onLongPress,
-        child: child,
+      child: Padding(
+        padding: const EdgeInsets.all(2),
+        child: TextButton(
+          style: style,
+          onPressed: onPressed,
+          onLongPress: onLongPress,
+          child: child,
+        ),
       ),
     );
   }
@@ -166,7 +167,7 @@ class _AnswerFeedback extends StatelessWidget {
       children: [
         const Spacer(),
         SizedBox(width: 130, child: Text(text, textAlign: TextAlign.end, style: style)),
-        const FixedSpacer.horizontal(10),
+        const FixedSpacer(10),
         Text(val.toString(), style: style),
         const Spacer(flex: 3),
       ],
@@ -220,25 +221,27 @@ class PercentGrade extends StatelessWidget {
       size: 18,
       shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
     );
-    return SuperContainer(
-      margin: const EdgeInsets.all(10),
-      width: _gradeWidth,
-      height: 50,
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          fullLine,
-          ColoredBox(
-            color: color.withAlpha(0xff * accuracy ~/ 200),
-            child: SuperContainer(
-              constraints: const BoxConstraints.expand(height: 30),
-              alignment: Alignment.center,
-              child: Text('$accuracy%', style: style),
-            ),
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: SizedBox(
+        width: _gradeWidth,
+        height: 50,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              fullLine,
+              ColoredBox(
+                color: color.withAlpha(0xff * accuracy ~/ 200),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints.expand(height: 30),
+                  child: Center(child: Text('$accuracy%', style: style)),
+                ),
+              ),
+              fullLine,
+            ],
           ),
-          fullLine,
-        ],
+        ),
       ),
     );
   }
@@ -274,24 +277,26 @@ class _HundredPercentGradeState extends State<HundredPercentGrade> {
     const fullLine = Row(children: [line, Spacer(), line]);
     const style = SuperStyle.sans(weight: 800, size: 30, color: Colors.black);
 
-    return SuperContainer(
-      margin: const EdgeInsets.symmetric(vertical: 20),
-      width: _gradeWidth,
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          fullLine,
-          ColoredBox(
-            color: color,
-            child: const SuperContainer(
-              constraints: BoxConstraints.expand(height: 60),
-              alignment: Alignment.center,
-              child: Text('100', style: style),
-            ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: SizedBox(
+        width: _gradeWidth,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              fullLine,
+              ColoredBox(
+                color: color,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints.expand(height: 60),
+                  child: const Center(child: Text('100', style: style)),
+                ),
+              ),
+              fullLine,
+            ],
           ),
-          fullLine,
-        ],
+        ),
       ),
     );
   }
@@ -346,53 +351,51 @@ class _HueDialogState extends State<HueDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        GestureDetector(
-          onTap: unclickable ? null : () => Navigator.of(context).pop(),
-          child: AlertDialog(
-            title: Text(
-              widget.text,
-              textAlign: TextAlign.center,
-              style: isSuper
-                  ? SuperStyle.sans(
-                      shadows: const [Shadow(blurRadius: 8)],
-                      size: 42,
-                      italic: true,
-                      weight: 800,
-                      color: epicColor,
-                    )
-                  : const SuperStyle.sans(weight: 200, extraBold: true, letterSpacing: 0.5),
-            ),
-            elevation: isSuper ? epicSine * 10 : null,
-            shadowColor: isSuper ? epicColor : null,
-            surfaceTintColor: isSuper ? epicColor : null,
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                widget.graphic,
+    return IgnorePointer(
+      ignoring: unclickable,
+      child: GestureDetector(
+        onTap: Navigator.of(context).pop,
+        child: AlertDialog(
+          title: Text(
+            widget.text,
+            textAlign: TextAlign.center,
+            style: isSuper
+                ? SuperStyle.sans(
+                    shadows: const [Shadow(blurRadius: 8)],
+                    size: 42,
+                    italic: true,
+                    weight: 800,
+                    color: epicColor,
+                  )
+                : const SuperStyle.sans(weight: 200, extraBold: true, letterSpacing: 0.5),
+          ),
+          elevation: isSuper ? epicSine * 10 : null,
+          shadowColor: isSuper ? epicColor : null,
+          surfaceTintColor: isSuper ? epicColor : null,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              widget.graphic,
+              const FixedSpacer(20),
+              _AnswerFeedback(widget.guess, text: 'Your answer:'),
+              _AnswerFeedback(widget.hue, text: 'Correct answer:'),
+              if (!Score.superHue() && isSuper) ...[
                 const FixedSpacer(20),
-                _AnswerFeedback(widget.guess, text: 'Your answer:'),
-                _AnswerFeedback(widget.hue, text: 'Correct answer:'),
-                if (!Score.superHue() && isSuper) ...[
-                  const FixedSpacer(20),
-                  Text(
-                    'all game modes\nunlocked!',
-                    textAlign: TextAlign.center,
-                    style: SuperStyle.sans(
-                      color: epicColor,
-                      weight: 800,
-                      size: 24,
-                      shadows: const [Shadow(blurRadius: 5)],
-                    ),
+                Text(
+                  'all game modes\nunlocked!',
+                  textAlign: TextAlign.center,
+                  style: SuperStyle.sans(
+                    color: epicColor,
+                    weight: 800,
+                    size: 24,
+                    shadows: const [Shadow(blurRadius: 5)],
                   ),
-                ],
+                ),
               ],
-            ),
+            ],
           ),
         ),
-        if (unclickable) const SuperContainer(color: Colors.transparent),
-      ],
+      ),
     );
   }
 }
@@ -423,7 +426,7 @@ class _HueTypingScreen extends StatelessWidget {
                   if (sk is! TutorialScoreKeeper) const GoBack(),
                   const Spacer(),
                   if (image(constraints) == null) ...[
-                    SuperContainer(
+                    SizedBox(
                       width: colorBoxWidth,
                       height: min(
                         colorBoxWidth,
@@ -434,7 +437,7 @@ class _HueTypingScreen extends StatelessWidget {
                               false => 500,
                             },
                       ),
-                      color: color,
+                      child: ColoredBox(color: color, child: emptyContainer),
                     )
                   ] else
                     image(constraints)!,
@@ -487,7 +490,7 @@ class KeyboardGame extends StatelessWidget {
       if (scoreKeeper case final IntroScoreKeeper sk) {
         if (sk.round >= sk.rounds - 1) sk.stopwatch.stop();
       }
-      await showDialog(context: context, builder: hueDialogBuilder);
+      await showDialog<void>(context: context, builder: hueDialogBuilder);
       scoreKeeper?.scoreTheRound();
       scoreKeeper?.roundCheck(context);
       generateHue();
@@ -568,7 +571,7 @@ class NumPadGame extends StatelessWidget {
       if (scoreKeeper case final IntroScoreKeeper sk) {
         if (sk.round >= sk.rounds - 1) sk.stopwatch.stop();
       }
-      await showDialog(context: context, builder: hueDialogBuilder);
+      await showDialog<void>(context: context, builder: hueDialogBuilder);
       scoreKeeper?.scoreTheRound();
       scoreKeeper?.roundCheck(context);
       generateHue();
@@ -677,7 +680,7 @@ class _CircleGameState extends State<CircleGame> {
     if (widget.scoreKeeper case final IntroScoreKeeper sk) {
       if (sk.round >= sk.rounds - 1) sk.stopwatch.stop();
     }
-    await showDialog(
+    await showDialog<void>(
       context: context,
       builder: widget.hueDialogBuilder,
     );
@@ -694,7 +697,10 @@ class _CircleGameState extends State<CircleGame> {
           (w, h) => min(w - 66, (widget.image(constraints) == null ? h : h / 2) - 200),
         );
         final margin = circleSize / 32;
-        void touchRecognition(details) {
+
+        // ignore: avoid_annotating_with_dynamic, would be fixed by https://github.com/flutter/flutter/pull/160714
+        void touchRecognition(dynamic details) {
+          // ignore: avoid_dynamic_calls, same here
           final Offset offset = details.localPosition;
           final int angle = computeAngle(
             offset.dx - circleSize / 2,
@@ -720,78 +726,80 @@ class _CircleGameState extends State<CircleGame> {
                 onPanStart: touchRecognition,
                 onPanUpdate: touchRecognition,
                 onPanEnd: submit,
-                child: SuperContainer(
+                child: SizedBox(
                   width: circleSize,
                   height: circleSize,
-                  padding: EdgeInsets.all(margin),
-                  child: SuperContainer(
-                    decoration: BoxDecoration(
-                      color: widget.color,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Transform.rotate(
-                          angle: -lastGuess * pi / 180,
-                          child: Row(
-                            children: [
-                              const Spacer(),
-                              Transform.rotate(
-                                angle: lastGuess * pi / 180,
-                                child: SuperContainer(
-                                  width: circleSize / 2,
-                                  height: circleSize / 2,
-                                  alignment: Alignment.center,
-                                  child: Fader(
-                                    hueRuler && guess != null,
-                                    duration: Durations.short2,
-                                    child: SuperText(
-                                      '$lastGuess°',
-                                      style: SuperStyle.sans(
-                                        size: circleSize / 6,
-                                        weight: 600,
-                                        color: widget.color.computeLuminance() < 0.0722
-                                            ? SuperColors.lightBackground
-                                            : SuperColors.darkBackground,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Fader(
-                                  guess != null,
-                                  duration: Durations.short2,
-                                  child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Transform.translate(
-                                      offset: Offset(circleSize * 0.13, 0),
-                                      child: RotatedBox(
-                                        quarterTurns: 1,
-                                        child: Icon(
-                                          Icons.arrow_drop_down,
-                                          size: circleSize / 6,
-                                          color: widget.color,
+                  child: Padding(
+                    padding: EdgeInsets.all(margin),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: widget.color,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Transform.rotate(
+                            angle: -lastGuess * pi / 180,
+                            child: Row(
+                              children: [
+                                const Spacer(),
+                                Transform.rotate(
+                                  angle: lastGuess * pi / 180,
+                                  child: SizedBox.square(
+                                    dimension: circleSize / 2,
+                                    child: Center(
+                                      child: Fader(
+                                        hueRuler && guess != null,
+                                        duration: Durations.short2,
+                                        child: SuperText(
+                                          '$lastGuess°',
+                                          style: SuperStyle.sans(
+                                            size: circleSize / 6,
+                                            weight: 600,
+                                            color: widget.color.computeLuminance() < 0.0722
+                                                ? SuperColors.lightBackground
+                                                : SuperColors.darkBackground,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                Expanded(
+                                  child: Fader(
+                                    guess != null,
+                                    duration: Durations.short2,
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Transform.translate(
+                                        offset: Offset(circleSize * 0.13, 0),
+                                        child: RotatedBox(
+                                          quarterTurns: 1,
+                                          child: Icon(
+                                            Icons.arrow_drop_down,
+                                            size: circleSize / 6,
+                                            color: widget.color,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        if (hueRuler)
-                          for (int i = 0;
-                              i < 360;
-                              i += switch (widget.numColors) {
-                            3 || 6 || 12 || 24 => 360 ~/ widget.numColors,
-                            _ when Tutorial.mastered() => 15,
-                            _ => 30,
-                          })
-                            _TickMark(i, circleSize),
-                      ],
+                          if (hueRuler)
+                            for (int i = 0;
+                                i < 360;
+                                i += switch (widget.numColors) {
+                              3 || 6 || 12 || 24 => 360 ~/ widget.numColors,
+                              _ when Tutorial.mastered() => 15,
+                              _ => 30,
+                            })
+                              _TickMark(i, circleSize),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -826,15 +834,18 @@ class _TickMark extends StatelessWidget {
         alignment: Alignment.centerRight,
         child: Transform.translate(
           offset: const Offset(1, 0),
-          child: SuperContainer(
+          child: SizedBox(
             width: circleSize / width,
             height: circleSize / height,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(100),
-                bottomLeft: Radius.circular(100),
+            child: const DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(100),
+                  bottomLeft: Radius.circular(100),
+                ),
+                color: SuperColors.darkBackground,
               ),
-              color: SuperColors.darkBackground,
+              child: emptyContainer,
             ),
           ),
         ),

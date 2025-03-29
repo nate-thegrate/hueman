@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -183,8 +182,14 @@ class _Page1State extends SuperState<_Page1> with SinglePress {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SuperContainer(width: boxWidth, color: funRed),
-                    SuperContainer(width: boxWidth, color: funBlue),
+                    SizedBox(
+                      width: boxWidth,
+                      child: ColoredBox(color: funRed, child: emptyContainer),
+                    ),
+                    SizedBox(
+                      width: boxWidth,
+                      child: ColoredBox(color: funBlue, child: emptyContainer),
+                    ),
                   ],
                 ),
               ),
@@ -232,30 +237,31 @@ class _SecondTry extends StatelessWidget {
     return FadeIn(
       child: Fader(
         progress < 13,
-        child: SuperContainer(
+        child: ColoredBox(
           color: SuperColors.darkBackground,
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              const Spacer(flex: 4),
-              Fader(
-                progress > 9 && progress < 12,
-                child: const SuperRichText([
-                  TextSpan(text: 'The '),
-                  ColorTextSpan.red,
-                  TextSpan(text: ' was just getting lighter and darker,\nbut the '),
-                  ColorTextSpan.visibleBlue,
-                  TextSpan(text: ' was changing hue.'),
-                ]),
-              ),
-              const Spacer(),
-              Fader(
-                progress > 10 && progress < 12,
-                child: const SuperText(
-                    "Let's try it again:\nthis time, both colors are gonna act the same way."),
-              ),
-              const Spacer(flex: 4),
-            ],
+          child: Center(
+            child: Column(
+              children: [
+                const Spacer(flex: 4),
+                Fader(
+                  progress > 9 && progress < 12,
+                  child: const SuperRichText([
+                    TextSpan(text: 'The '),
+                    ColorTextSpan.red,
+                    TextSpan(text: ' was just getting lighter and darker,\nbut the '),
+                    ColorTextSpan.visibleBlue,
+                    TextSpan(text: ' was changing hue.'),
+                  ]),
+                ),
+                const Spacer(),
+                Fader(
+                  progress > 10 && progress < 12,
+                  child: const SuperText(
+                      "Let's try it again:\nthis time, both colors are gonna act the same way."),
+                ),
+                const Spacer(flex: 4),
+              ],
+            ),
           ),
         ),
       ),
@@ -282,44 +288,45 @@ class _TrickButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperContainer(
+    return SizedBox(
       width: context.screenWidth / 2,
-      alignment: Alignment.center,
-      child: lookatRGB
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ConstrainedBox(
-                  constraints: BoxConstraints.loose(const Size.fromWidth(300)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      children: [
-                        _Slider(_RGB.r, constraints: constraints, funColor.red),
-                        _Slider(_RGB.g, constraints: constraints, funColor.green),
-                        _Slider(_RGB.b, constraints: constraints, blue ? 0xFF : 0),
-                      ],
+      child: Center(
+        child: lookatRGB
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ConstrainedBox(
+                    constraints: BoxConstraints.loose(const Size.fromWidth(300)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          _Slider(_RGB.r, constraints: constraints, blue ? 0 : 0xFF),
+                          _Slider(_RGB.g, constraints: constraints, (funColor.g * 0xFF).round()),
+                          _Slider(_RGB.b, constraints: constraints, blue ? 0xFF : 0),
+                        ],
+                      ),
                     ),
                   ),
+                  const FixedSpacer(5),
+                  SuperText('hue: ${funColor.hue.round()}°'),
+                ],
+              )
+            : OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: SuperColors.darkBackground,
+                  shadowColor: Colors.white,
                 ),
-                const FixedSpacer(5),
-                SuperText('hue: ${funColor.hue.round()}°'),
-              ],
-            )
-          : OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                backgroundColor: SuperColors.darkBackground,
-                shadowColor: Colors.white,
-              ),
-              onPressed: onPressed,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 6, bottom: 9),
-                child: Text(
-                  label,
-                  style: const SuperStyle.sans(size: 20, weight: 100),
+                onPressed: onPressed,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 6, bottom: 9),
+                  child: Text(
+                    label,
+                    style: const SuperStyle.sans(size: 20, weight: 100),
+                  ),
                 ),
               ),
-            ),
+      ),
     );
   }
 }
@@ -348,7 +355,7 @@ class _Slider extends StatelessWidget {
   Widget build(BuildContext context) {
     final double height = constraints.maxHeight * 2 / 3 - 50;
     return Expanded(
-      child: SuperContainer(
+      child: Container(
         height: height,
         decoration: BoxDecoration(
           color: bgColor,
@@ -357,7 +364,10 @@ class _Slider extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         margin: EdgeInsets.symmetric(horizontal: min(context.screenWidth / 2, 300) * .06),
         alignment: Alignment.bottomCenter,
-        child: SuperContainer(color: color, height: height * val / 0xFF),
+        child: SizedBox(
+          height: height * val / 0xFF,
+          child: ColoredBox(color: color, child: emptyContainer),
+        ),
       ),
     );
   }
@@ -669,14 +679,16 @@ class _Page3State extends SuperState<_Page3> {
                       ],
                     ),
                   ),
-                  const SuperContainer(
+                  const SizedBox(
                     height: double.infinity,
                     width: 40,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: _VocabLine.gradient,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: _VocabLine.gradient,
+                        ),
                       ),
                     ),
                   ),
@@ -736,15 +748,20 @@ class _VocabLine extends StatelessWidget {
         ),
       ),
     );
-    final Widget line = SuperContainer(
-      width: 8,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(0xFF),
+    final Widget line = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: SizedBox(
+        width: 8,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(0xFF),
+          ),
+          child: SexyBox(
+            child: expanded ? const SizedBox.expand() : const SizedBox(width: double.infinity),
+          ),
+        ),
       ),
-      child: SexyBox(
-          child: expanded ? const SizedBox.expand() : const SizedBox(width: double.infinity)),
     );
     final List<Widget> children = onLeftSide ? [line, name] : [const Spacer(), name, line];
 

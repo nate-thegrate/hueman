@@ -3,7 +3,6 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -195,14 +194,14 @@ class _ColorDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = constraints.ballSpacing * 3 / 4;
     return Center(
-      child: SuperContainer(
-        width: width,
-        height: width,
-        decoration: BoxDecoration(
-          color: SuperColor.hue(hue),
-          shape: BoxShape.circle,
+      child: SizedBox.square(
+        dimension: constraints.ballSpacing * 3 / 4,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: SuperColor.hue(hue),
+            shape: BoxShape.circle,
+          ),
         ),
       ),
     );
@@ -235,7 +234,7 @@ class _ColorWaveState extends SuperState<_ColorWave> {
     ];
 
     for (final action in actions) {
-      await Future.delayed(quarterSec);
+      await Future<void>.delayed(quarterSec);
       setState(action);
     }
   }

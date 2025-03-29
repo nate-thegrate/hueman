@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -281,10 +280,10 @@ class _PrinterAnimation extends StatelessWidget {
         Center(
           child: SexyBox(
             child: showcase
-                ? const SuperContainer(
+                ? const SizedBox(
                     width: 400,
                     height: 333,
-                    color: Colors.black,
+                    child: ColoredBox(color: Colors.black),
                   )
                 : empty,
           ),
@@ -388,7 +387,7 @@ class _Page4State extends SuperState<_Page4> {
                               ? const BoxConstraints.expand()
                               : BoxConstraints.loose(const Size(double.infinity, 0)),
                           child: ClipRect(
-                            child: SuperContainer(
+                            child: ColoredBox(
                               color: lightBars ? Colors.black : Colors.white,
                               child: Row(children: children),
                             ),
@@ -396,13 +395,14 @@ class _Page4State extends SuperState<_Page4> {
                         ),
                       ),
                     ),
-                    SuperContainer(
+                    DecoratedBox(
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: SuperColors.darkBackground,
                           width: 3,
                         ),
                       ),
+                      child: emptyContainer,
                     ),
                   ],
                 )),
@@ -411,32 +411,33 @@ class _Page4State extends SuperState<_Page4> {
         ),
         Fader(
           showThanks,
-          child: SuperContainer(
+          child: ColoredBox(
             color: SuperColors.darkBackground,
-            alignment: Alignment.center,
-            child: Column(
-              children: [
-                const Spacer(flex: 2),
-                const SuperText('Thanks!'),
-                const FixedSpacer(30),
-                const SuperText("Here's the answer…"),
-                const Spacer(),
-                Fader(
-                  showAnswer,
-                  child: const SuperRichText([
-                    TextSpan(text: 'Printers make '),
-                    ColorTextSpan.red,
-                    TextSpan(text: '\nby mixing '),
-                    ColorTextSpan.magenta,
-                    TextSpan(text: ' and '),
-                    ColorTextSpan.yellow,
-                    TextSpan(text: '!'),
-                  ]),
-                ),
-                const Spacer(),
-                Fader(showAnswer, child: ContinueButton(onPressed: screenAndPaper)),
-                const Spacer(flex: 2),
-              ],
+            child: Center(
+              child: Column(
+                children: [
+                  const Spacer(flex: 2),
+                  const SuperText('Thanks!'),
+                  const FixedSpacer(30),
+                  const SuperText("Here's the answer…"),
+                  const Spacer(),
+                  Fader(
+                    showAnswer,
+                    child: const SuperRichText([
+                      TextSpan(text: 'Printers make '),
+                      ColorTextSpan.red,
+                      TextSpan(text: '\nby mixing '),
+                      ColorTextSpan.magenta,
+                      TextSpan(text: ' and '),
+                      ColorTextSpan.yellow,
+                      TextSpan(text: '!'),
+                    ]),
+                  ),
+                  const Spacer(),
+                  Fader(showAnswer, child: ContinueButton(onPressed: screenAndPaper)),
+                  const Spacer(flex: 2),
+                ],
+              ),
             ),
           ),
         ),
@@ -498,21 +499,25 @@ class _NeonRGBState extends State<_NeonRGB> {
               duration: twoSecs,
               scale: scale,
               curve: Curves.easeInQuart,
-              child: SuperContainer(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [...buildup, ...windDown],
                   ),
                   backgroundBlendMode: BlendMode.screen,
                 ),
+                child: emptyContainer,
               ),
             ),
             Center(
-              child: SuperContainer(
+              child: SizedBox(
                 width: context.screenWidth / 16,
-                decoration: BoxDecoration(
-                  color: widget.color,
-                  backgroundBlendMode: BlendMode.screen,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: widget.color,
+                    backgroundBlendMode: BlendMode.screen,
+                  ),
+                  child: emptyContainer,
                 ),
               ),
             ),
@@ -615,11 +620,12 @@ class _Page5State extends SuperState<_Page5> {
             offset: inPlace ?? const Offset(0, -1),
             duration: halfSec,
             curve: Curves.easeInQuad,
-            child: SuperContainer(
-              color: Colors.black,
+            child: SizedBox(
               height: context.screenHeight * .48,
-              alignment: Alignment.center,
-              child: _ColorBubbles.additive(counter, showArrows),
+              child: ColoredBox(
+                color: Colors.black,
+                child: Center(child: _ColorBubbles.additive(counter, showArrows)),
+              ),
             ),
           ),
         ),
@@ -640,17 +646,20 @@ class _Page5State extends SuperState<_Page5> {
             offset: inPlace ?? const Offset(0, 1),
             duration: halfSec,
             curve: Curves.easeInQuad,
-            child: SuperContainer(
-              color: Colors.white,
+            child: SizedBox(
               height: context.screenHeight * .52,
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Fader(
-                  showText,
-                  child: const Text(
-                    "There's two!",
-                    style: SuperStyle.sans(size: 24, color: Colors.black),
+              child: ColoredBox(
+                color: Colors.white,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Fader(
+                      showText,
+                      child: const Text(
+                        "There's two!",
+                        style: SuperStyle.sans(size: 24, color: Colors.black),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -719,13 +728,15 @@ class _ColorBubbleState extends State<_ColorBubble> {
             duration: halfSec,
             scale: counter > 15 ? 1 : 0,
             curve: curve,
-            child: SuperContainer(
-              width: bubbleSize,
-              height: bubbleSize,
-              decoration: BoxDecoration(
-                color: widget.color,
-                shape: BoxShape.circle,
-                backgroundBlendMode: blendMode,
+            child: SizedBox.square(
+              dimension: bubbleSize,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: widget.color,
+                  shape: BoxShape.circle,
+                  backgroundBlendMode: blendMode,
+                ),
+                child: emptyContainer,
               ),
             ),
           ),
@@ -808,16 +819,18 @@ class _ColorArrows extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SuperContainer(
-            decoration: BoxDecoration(
-              border: Border.all(color: contrastColor, width: 3),
-            ),
-            width: 100,
-            height: 100,
-            alignment: Alignment.center,
-            child: Text(
-              subtract ? 'white' : 'black',
-              style: SuperStyle.sans(color: contrastColor, size: 18, weight: 800),
+          SizedBox.square(
+            dimension: 100,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(color: contrastColor, width: 3),
+              ),
+              child: Center(
+                child: Text(
+                  subtract ? 'white' : 'black',
+                  style: SuperStyle.sans(color: contrastColor, size: 18, weight: 800),
+                ),
+              ),
             ),
           ),
           Stack(
@@ -849,13 +862,14 @@ class _ColorArrows extends StatelessWidget {
               ),
             ],
           ),
-          SuperContainer(
-            decoration: BoxDecoration(
-              border: Border.all(color: contrastColor, width: 3),
-              color: color,
+          SizedBox.square(
+            dimension: 100,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(color: contrastColor, width: 3),
+                color: color,
+              ),
             ),
-            width: 100,
-            height: 100,
           ),
         ],
       ),

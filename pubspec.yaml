@@ -5,7 +5,7 @@ publish_to: "none"
 version: 2.3.1+16
 
 environment:
-  sdk: ">=3.3.0"
+  sdk: ^3.7.0-0
 
 dependencies:
   flutter:
@@ -21,7 +21,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   rename: ">=3.0.2"
-  flutter_lints: ">=4.0.0"
+  flutter_lints: ^5.0.0
   msix: ">=3.16.8" # https://pub.dev/packages/msix
 
 flutter_launcher_icons:

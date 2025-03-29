@@ -6,7 +6,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 
@@ -55,13 +54,17 @@ class _RGBSlider extends StatelessWidget {
             ),
           ),
         ),
-        SuperContainer(
-          width: 50,
-          margin: const EdgeInsets.only(right: 15),
-          alignment: Alignment.centerRight,
-          child: Text(
-            value.hexByte,
-            style: const SuperStyle.mono(size: 18, weight: 500),
+        Padding(
+          padding: const EdgeInsets.only(right: 15),
+          child: SizedBox(
+            width: 50,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                value.hexByte,
+                style: const SuperStyle.mono(size: 18, weight: 500),
+              ),
+            ),
           ),
         ),
       ],
@@ -150,50 +153,56 @@ class _ColorSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperContainer(
-      decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
-      padding: const EdgeInsets.symmetric(vertical: 25),
+    return ConstrainedBox(
       constraints: BoxConstraints.loose(Size.fromHeight(constraints.maxHeight - 300)),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final color in SuperColors.fullList)
-              SizedBox(
-                width: 500,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    shape: const BeveledRectangleBorder(),
-                    foregroundColor: color,
-                    backgroundColor: _color == color ? Colors.black45 : null,
-                  ),
-                  onPressed: () => updateColor(color, HSVColor.fromColor(color)),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints.loose(const Size.fromWidth(400)),
-                    child: Row(
-                      children: [
-                        const FixedSpacer.horizontal(12),
-                        Text(
-                          color.name,
-                          style: const SuperStyle.sans(
-                            weight: 100,
-                            size: 24,
-                            color: Colors.white,
-                          ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(border: Border.all(color: _color, width: 2)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 25),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final color in SuperColors.fullList)
+                  SizedBox(
+                    width: 500,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        shape: const BeveledRectangleBorder(),
+                        foregroundColor: color,
+                        backgroundColor: _color == color ? Colors.black45 : null,
+                      ),
+                      onPressed: () => updateColor(color, HSVColor.fromColor(color)),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints.loose(const Size.fromWidth(400)),
+                        child: Row(
+                          children: [
+                            const FixedSpacer(12),
+                            Text(
+                              color.name,
+                              style: const SuperStyle.sans(
+                                weight: 100,
+                                size: 24,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const Spacer(),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 8, 20, 8),
+                              child: SizedBox(
+                                width: 150,
+                                height: 40,
+                                child: ColoredBox(color: color, child: emptyContainer),
+                              ),
+                            ),
+                          ],
                         ),
-                        const Spacer(),
-                        SuperContainer(
-                          width: 150,
-                          height: 40,
-                          margin: const EdgeInsets.fromLTRB(0, 8, 20, 8),
-                          color: color,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -215,9 +224,9 @@ void updateHSV() {
 }
 
 void updateColor(SuperColor color) {
-  _r = color.red;
-  _g = color.green;
-  _b = color.blue;
+  _r = (color.r * 0xFF).round();
+  _g = (color.g * 0xFF).round();
+  _b = (color.b * 0xFF).round();
 
   final hsv = HSVColor.fromColor(color);
   _h = hsv.hue;
@@ -245,7 +254,7 @@ class _SandboxState extends State<Sandbox> {
             updateHSV();
           case _ColorPicker.hsv:
             updateColor(_color);
-          default:
+          case _ColorPicker.select:
             break;
         }
         _colorPicker = _ColorPicker.values[index];
@@ -268,7 +277,10 @@ class _SandboxState extends State<Sandbox> {
         final double colorBarHeight = constraints.maxHeight < 800 ? 0 : 100;
         final double planeSize =
             constraints.calcSize((w, h) => min(w - 50, h - 420 - colorBarHeight));
-        void touchRecognition(details) {
+
+        // ignore: avoid_annotating_with_dynamic, would be fixed by https://github.com/flutter/flutter/pull/160714
+        void touchRecognition(dynamic details) {
+          // ignore: avoid_dynamic_calls, same here
           final Offset offset = details.localPosition;
           double val(double position) => (position / (planeSize - 40)).clamp(0.0, 1.0);
           setState(() => _s = val(offset.dx));
@@ -281,12 +293,13 @@ class _SandboxState extends State<Sandbox> {
           _ColorPicker.rgb => Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SuperContainer(
+                SizedBox(
                   width: width,
                   height: height,
-                  color: _color,
-                  alignment: Alignment.center,
-                  child: isK ? const K_glitch() : null,
+                  child: ColoredBox(
+                    color: _color,
+                    child: Center(child: isK ? const K_glitch() : null),
+                  ),
                 ),
                 const FixedSpacer(30),
                 Flex(
@@ -312,18 +325,21 @@ class _SandboxState extends State<Sandbox> {
                         padding: const EdgeInsets.all(20),
                         child: Stack(
                           children: [
-                            SuperContainer(
-                              margin: const EdgeInsets.all(0.5),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [Colors.white, SuperColor.hue(_h)],
+                            Padding(
+                              padding: const EdgeInsets.all(0.5),
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [Colors.white, SuperColor.hue(_h)],
+                                  ),
                                 ),
+                                child: emptyContainer,
                               ),
                             ),
                             GestureDetector(
                               onPanStart: touchRecognition,
                               onPanUpdate: touchRecognition,
-                              child: const SuperContainer(
+                              child: const DecoratedBox(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     begin: Alignment.topCenter,
@@ -331,18 +347,21 @@ class _SandboxState extends State<Sandbox> {
                                     colors: [Colors.transparent, Colors.black],
                                   ),
                                 ),
+                                child: emptyContainer,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      SuperContainer(
-                        margin: const EdgeInsets.fromLTRB(1, 0, 0, 1),
-                        alignment: Alignment(2 * _s - 1, 1 - 2 * _v),
-                        child: Icon(
-                          Icons.add,
-                          color: contrastWith(_color),
-                          size: 40,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(1, 0, 0, 1),
+                        child: Align(
+                          alignment: Alignment(2 * _s - 1, 1 - 2 * _v),
+                          child: Icon(
+                            Icons.add,
+                            color: contrastWith(_color),
+                            size: 40,
+                          ),
                         ),
                       ),
                     ],
@@ -351,15 +370,20 @@ class _SandboxState extends State<Sandbox> {
                 _HSVSlider(_HSV.hue, (value) => setState(() => _h = value)),
                 _HSVSlider(_HSV.saturation, (value) => setState(() => _s = value)),
                 _HSVSlider(_HSV.value, (value) => setState(() => _v = value)),
-                if (colorBarHeight > 0) SuperContainer(width: 500, height: 100, color: _color),
+                if (colorBarHeight > 0)
+                  SizedBox(
+                    width: 500,
+                    height: 100,
+                    child: ColoredBox(color: _color),
+                  ),
               ],
             ),
           _ColorPicker.select => _ColorSelection(
               constraints: constraints,
               updateColor: (rgb, hsv) => setState(() {
-                _r = rgb.red;
-                _g = rgb.green;
-                _b = rgb.blue;
+                _r = (rgb.r * 0xFF).round();
+                _g = (rgb.g * 0xFF).round();
+                _b = (rgb.b * 0xFF).round();
 
                 _h = hsv.hue;
                 _s = hsv.saturation;

@@ -15,6 +15,7 @@ class Photo extends StatelessWidget {
 extension type RandomColors(List<SuperColor> colors) implements List<SuperColor> {
   RandomColors.fromShuffledList(List<int> list)
       : this([SuperColor(list[0]), SuperColor(list[1])]);
+
   RandomColors.fromIntList(List<int> list) : this.fromShuffledList(list.toList()..shuffle());
 }
 

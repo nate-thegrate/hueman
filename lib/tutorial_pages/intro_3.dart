@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -39,14 +38,14 @@ class _Intro3TutorialState extends State<Intro3Tutorial> {
       if (page == 6) backgroundColor = Colors.black;
     });
     if (page != 2) {
-      await quickly(() => setState(() => visible = false));
+      quickly(() => setState(() => visible = false));
       await sleep(1);
     }
     setState(() {
       page++;
       if (page < 7) duration = oneSec;
     });
-    await quickly(() => setState(() => visible = true));
+    quickly(() => setState(() => visible = true));
   }
 
   @override
@@ -163,7 +162,7 @@ class _Page2State extends SuperState<_Page2> {
     await sleepState(secs, () => expanded = true);
     await sleepState(secs, () => squeezed = true);
 
-    await Future.delayed(squeezeDuration);
+    await Future<void>.delayed(squeezeDuration);
     widget.nextPage();
   }
 
@@ -435,10 +434,9 @@ class _ColorOrbState extends State<_ColorOrb> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              SuperContainer(
-                decoration: rainbow,
-                width: width,
-                height: width,
+              SizedBox.square(
+                dimension: width,
+                child: const DecoratedBox(decoration: rainbow),
               ),
               _OrbCenter(epic, width: width),
               _OrbCenter(epic, width: width, opaque: true),
@@ -459,18 +457,19 @@ class _OrbCenter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperContainer(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [
-            if (opaque) epicColor else epicColor.withAlpha(0x80),
-            epicColor.withAlpha(0),
-          ],
+    return SizedBox.square(
+      dimension: width,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              if (opaque) epicColor else epicColor.withAlpha(0x80),
+              epicColor.withAlpha(0),
+            ],
+          ),
         ),
       ),
-      width: width,
-      height: width,
     );
   }
 }
@@ -587,21 +586,25 @@ class _Page5State extends SuperState<_Page5> {
     ('0', SuperColor(0x000000)),
   ];
 
-  late final colorCodeBox = SuperContainer(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      color: SuperColors.darkBackground.withAlpha(0x60),
-    ),
-    margin: const EdgeInsets.symmetric(horizontal: 45),
-    padding: const EdgeInsets.symmetric(vertical: 10),
-    child: Row(
-      children: [
-        const Spacer(),
-        for (final (desc, color) in colorCode) ...[
-          Text(desc, style: SuperStyle.mono(size: 48, weight: 900, color: color)),
-          const Spacer(),
-        ],
-      ],
+  late final colorCodeBox = Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 45),
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: SuperColors.darkBackground.withAlpha(0x60),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          children: [
+            const Spacer(),
+            for (final (desc, color) in colorCode) ...[
+              Text(desc, style: SuperStyle.mono(size: 48, weight: 900, color: color)),
+              const Spacer(),
+            ],
+          ],
+        ),
+      ),
     ),
   );
 
@@ -649,7 +652,7 @@ class _Page5State extends SuperState<_Page5> {
                 height: 300,
                 child: Stack(
                   children: [
-                    const SuperContainer(color: SuperColors.green),
+                    const ColoredBox(color: SuperColors.green, child: emptyContainer),
                     Fader(
                       textProgress > 0,
                       curve: curve,
@@ -663,9 +666,12 @@ class _Page5State extends SuperState<_Page5> {
                             curve: curve,
                             child: Opacity(
                               opacity: 0.5,
-                              child: SuperContainer(
+                              child: SizedBox(
                                 width: textProgress > 2 ? 500 : 250,
-                                color: SuperColors.yellow,
+                                child: const ColoredBox(
+                                  color: SuperColors.yellow,
+                                  child: emptyContainer,
+                                ),
                               ),
                             ),
                           ),
@@ -819,15 +825,16 @@ class _Page7 extends StatefulWidget {
 }
 
 class _Page7State extends SuperState<_Page7> {
-  Widget overlay = const SuperContainer(
+  Widget overlay = const ColoredBox(
     color: Colors.black,
-    alignment: Alignment.center,
-    child: SuperText(
-      'finding a hue\ncan be done in two steps.',
-      style: SuperStyle.sans(size: 24),
+    child: Center(
+      child: SuperText(
+        'finding a hue\ncan be done in two steps.',
+        style: SuperStyle.sans(size: 24),
+      ),
     ),
   );
-  static const overlay2 = SuperContainer(color: Colors.black);
+  static const overlay2 = ColoredBox(color: Colors.black, child: emptyContainer);
   bool showOverlay2 = false;
 
   late final Ticker animateHue;
@@ -912,52 +919,58 @@ class _HueBox extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = SuperColor.hue(hue);
 
-    return SuperContainer(
+    return SizedBox(
       height: width / 4,
-      alignment: Alignment.center,
-      child: Fader(
-        step >= 2,
-        duration: Durations.medium4,
-        child: SexyBox(
-          child: SuperContainer(
-            width: step < 2 ? 20 : width,
-            color: color,
-            padding: EdgeInsets.all(width / 48),
-            child: SexyBox(
-              child: step < 3
-                  ? empty
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SexyBox(
-                          child: step < 6
-                              ? const SizedBox(height: 75)
-                              : SizedBox(
-                                  width: width / 2,
+      child: Center(
+        child: Fader(
+          step >= 2,
+          duration: Durations.medium4,
+          child: SexyBox(
+            child: SizedBox(
+              width: step < 2 ? 20 : width,
+              child: ColoredBox(
+                color: color,
+                child: Padding(
+                  padding: EdgeInsets.all(width / 48),
+                  child: SexyBox(
+                    child: step < 3
+                        ? empty
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SexyBox(
+                                child: step < 6
+                                    ? const SizedBox(height: 75)
+                                    : SizedBox(
+                                        width: width / 2,
+                                        child: Center(
+                                          child: Text(
+                                            '"chartreuse"',
+                                            style: SuperStyle.sans(
+                                              color: Colors.black,
+                                              size: width * 0.0667,
+                                              weight: 800,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                              ),
+                              Expanded(
+                                child: ColoredBox(
+                                  color: SuperColors.darkBackground,
                                   child: Center(
                                     child: Text(
-                                      '"chartreuse"',
-                                      style: SuperStyle.sans(
-                                        color: Colors.black,
-                                        size: width * 0.0667,
-                                        weight: 800,
-                                      ),
+                                      'hue = $hue',
+                                      style: SuperStyle.sans(color: color, size: width * 0.06),
                                     ),
                                   ),
                                 ),
-                        ),
-                        Expanded(
-                          child: SuperContainer(
-                            color: SuperColors.darkBackground,
-                            alignment: Alignment.center,
-                            child: Text(
-                              'hue = $hue',
-                              style: SuperStyle.sans(color: color, size: width * 0.06),
-                            ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -999,32 +1012,33 @@ class _FinalPageState extends EpicState<_FinalPage> with SinglePress {
   @override
   Widget build(BuildContext context) {
     final color = epicColor;
-    return SuperContainer(
+    return ColoredBox(
       color: SuperColors.darkBackground,
-      alignment: Alignment.center,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        _AreYouReady(color: color),
-        const FixedSpacer(50),
-        Fader(
-          visible,
-          child: DecoratedBox(
-            decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
-            child: SexyBox(
-              child: expanded
-                  ? SizedBox(
-                      width: width,
-                      height: 250,
-                      child: _PlayButton(
-                        visible: buttonVisible,
-                        color: color,
-                        onPressed: onPressed,
-                      ),
-                    )
-                  : SizedBox(width: width),
+      child: Center(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          _AreYouReady(color: color),
+          const FixedSpacer(50),
+          Fader(
+            visible,
+            child: DecoratedBox(
+              decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
+              child: SexyBox(
+                child: expanded
+                    ? SizedBox(
+                        width: width,
+                        height: 250,
+                        child: _PlayButton(
+                          visible: buttonVisible,
+                          color: color,
+                          onPressed: onPressed,
+                        ),
+                      )
+                    : SizedBox(width: width),
+              ),
             ),
           ),
-        ),
-      ]),
+        ]),
+      ),
     );
   }
 }

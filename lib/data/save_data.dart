@@ -1,5 +1,3 @@
-// ignore_for_file: dead_code
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -119,22 +117,18 @@ enum Tutorial {
 
   /// Everything in [data] starts out `false` and then updates based on game progress.
   ///
-  /// Values can be tweaked manually by setting `localStorage = false`
-  /// (helps with testing/debugging).
+  /// Values can be tweaked manually for testing/debugging.
   static void init(SharedPreferences prefs) {
-    const bool localStorage = true;
-    if (localStorage) {
-      data = {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false};
-    } else {
-      casualMode = true;
-      hueRuler = true;
-      inverted = false;
-      enableMusic = true;
+    data = {for (final tutorial in values) tutorial: prefs.getBool(tutorial.name) ?? false};
 
-      // for (final score in Score.values) {
-      //   Score.highScores[score] = null;
-      // }
-    }
+    // casualMode = true;
+    // hueRuler = true;
+    // inverted = false;
+    // enableMusic = true;
+
+    // for (final score in Score.values) {
+    //   Score.highScores[score] = null;
+    // }
   }
 }
 

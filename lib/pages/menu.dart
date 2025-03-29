@@ -3,7 +3,6 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -84,7 +83,7 @@ class _MainMenuState extends EpicState<MainMenu>
               context.goto(Pages.aiCertificate);
               return;
             }
-            showDialog(
+            showDialog<void>(
               context: context,
               builder: (context) => AlertDialog(
                 title: const Text(
@@ -167,18 +166,20 @@ class _MainMenuState extends EpicState<MainMenu>
       AnimatedSize(
         duration: quarterSec,
         curve: curve,
-        child: SuperContainer(
-          padding: const EdgeInsets.only(top: 2),
+        child: SizedBox(
           width: double.infinity,
-          child: showMasteryText
-              ? Text(
-                  Tutorial.intense()
-                      ? 'to unlock more options,\nfind a hue in "intense" mode!'
-                      : 'unlock more options\nby playing "intense" mode!',
-                  textAlign: TextAlign.center,
-                  style: const SuperStyle.sans(color: Colors.white70),
-                )
-              : null,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: showMasteryText
+                ? Text(
+                    Tutorial.intense()
+                        ? 'to unlock more options,\nfind a hue in "intense" mode!'
+                        : 'unlock more options\nby playing "intense" mode!',
+                    textAlign: TextAlign.center,
+                    style: const SuperStyle.sans(color: Colors.white70),
+                  )
+                : null,
+          ),
         ),
       ),
     ];
@@ -249,7 +250,7 @@ class _MainMenuState extends EpicState<MainMenu>
                             Padding(
                               padding: const EdgeInsets.only(top: 33),
                               child: ElevatedButton(
-                                onPressed: () => showDialog(
+                                onPressed: () => showDialog<void>(
                                   context: context,
                                   builder: (context) => const DismissibleDialog(
                                     title: Text(
@@ -438,37 +439,45 @@ class _MainMenuState extends EpicState<MainMenu>
               children: [
                 Fader(showButtons, child: settingsButton),
                 const FixedSpacer(30),
-                SuperContainer(
-                  decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
+                SizedBox(
                   width: 300,
-                  padding: menuPage == MenuPage.settings
-                      ? const EdgeInsets.symmetric(horizontal: 50, vertical: 33)
-                      : const EdgeInsets.all(50),
-                  child: AnimatedSize(
-                    duration: quarterSec,
-                    curve: curve,
-                    child: Column(mainAxisSize: MainAxisSize.min, children: children),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
+                    child: Padding(
+                      padding: menuPage == MenuPage.settings
+                          ? const EdgeInsets.symmetric(horizontal: 50, vertical: 33)
+                          : const EdgeInsets.all(50),
+                      child: AnimatedSize(
+                        duration: quarterSec,
+                        curve: curve,
+                        child: Column(mainAxisSize: MainAxisSize.min, children: children),
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           if (inverting) ...[
-            const SuperContainer(
+            const DecoratedBox(
               decoration: BoxDecoration(
                 backgroundBlendMode: BlendMode.difference,
                 color: SuperColors.inverting,
               ),
+              child: emptyContainer,
             ),
             Center(
               child: ScaleTransition(
                 scale: Tween<double>(begin: 12, end: 0).animate(controller),
-                child: SuperContainer(
+                child: SizedBox(
                   height: context.screenWidth / 4,
-                  decoration: const BoxDecoration(
-                    backgroundBlendMode: BlendMode.difference,
-                    color: SuperColors.inverting,
-                    shape: BoxShape.circle,
+                  child: const DecoratedBox(
+                    decoration: BoxDecoration(
+                      backgroundBlendMode: BlendMode.difference,
+                      color: SuperColors.inverting,
+                      shape: BoxShape.circle,
+                    ),
+                    child: emptyContainer,
                   ),
                 ),
               ),
@@ -479,8 +488,9 @@ class _MainMenuState extends EpicState<MainMenu>
               visible,
               duration: halfSec,
               curve: Curves.easeInOutQuad,
-              child: SuperContainer(
+              child: ColoredBox(
                 color: darkBackground! ? SuperColors.darkBackground : SuperColors.lightBackground,
+                child: emptyContainer,
               ),
             ),
         ],

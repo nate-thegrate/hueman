@@ -2,19 +2,24 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:rive/rive.dart' as rive;
 import 'package:url_launcher/url_launcher_string.dart';
 
 const Widget empty = SizedBox.shrink();
+const Widget emptyContainer = LimitedBox(
+  maxWidth: 0,
+  maxHeight: 0,
+  child: SizedBox.expand(),
+);
 const Widget flat = SizedBox(width: double.infinity);
 
 /// It's extremely useful knowing the maximum width/height inside a [SafeArea],
@@ -38,16 +43,40 @@ class SafeLayout extends StatelessWidget {
 
 /// Used in [Row]s and [Column]s that are set to [MainAxisSize.min]
 /// to add spacing between elements.
-class FixedSpacer extends StatelessWidget {
-  const FixedSpacer(this.size, {super.key}) : horizontal = false;
-  const FixedSpacer.horizontal(this.size, {super.key}) : horizontal = true;
+class FixedSpacer extends SingleChildRenderObjectWidget {
+  const FixedSpacer(this.size, {super.key});
+
+  /// A non-`const` constructor, for use in situations where the flex direction
+  /// switches back & forth.
+  @factory
+  static Widget dynamic(double size) => FixedSpacer(size, key: UniqueKey());
+
   final double size;
-  final bool horizontal;
+
+  BoxConstraints _constraints(BuildContext context) {
+    Axis axis = Axis.vertical;
+    context.visitAncestorElements((element) {
+      if (element.widget case Flex(:final direction)) {
+        axis = direction;
+        return false;
+      }
+      return true;
+    });
+
+    return switch (axis) {
+      Axis.horizontal => BoxConstraints.tightFor(width: size),
+      Axis.vertical => BoxConstraints.tightFor(height: size),
+    };
+  }
 
   @override
-  Widget build(BuildContext context) {
-    if (horizontal) return SizedBox(width: size);
-    return SizedBox(height: size);
+  RenderConstrainedBox createRenderObject(BuildContext context) {
+    return RenderConstrainedBox(additionalConstraints: _constraints(context));
+  }
+
+  @override
+  void updateRenderObject(BuildContext context, RenderConstrainedBox renderObject) {
+    renderObject.additionalConstraints = _constraints(context);
   }
 }
 
@@ -84,12 +113,9 @@ class FadeIn extends StatefulWidget {
 }
 
 class _FadeInState extends State<FadeIn> with SingleTickerProviderStateMixin {
-  late final controller = AnimationController(
+  late final animation = AnimationController(
     vsync: this,
-    duration: widget.duration,
-  )..forward();
-
-  late final animation = CurvedAnimation(parent: controller, curve: widget.curve);
+  )..animateTo(1.0, duration: widget.duration, curve: widget.curve);
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +177,7 @@ class ContinueButton extends StatefulWidget {
   ///
   /// It's used a whole lot throughout the tutorials.
   const ContinueButton({required this.onPressed, super.key});
+
   final void Function()? onPressed;
 
   @override
@@ -186,6 +213,7 @@ class _ContinueButtonState extends State<ContinueButton> with SinglePress {
 class BrandNew extends StatelessWidget {
   /// Gives a fun little "new!" tag next to things you haven't seen yet.
   const BrandNew({super.key, required this.child, required this.color, this.text = 'new!'});
+
   final SuperColor color;
   final Widget child;
   final String text;
@@ -230,6 +258,7 @@ class SuperButton extends StatefulWidget {
     this.noDelay = false,
     this.further = false,
   });
+
   final String label;
   final void Function() onPressed;
   final SuperColor color;
@@ -282,6 +311,7 @@ class NavigateButton extends StatelessWidget {
     this.noDelay = false,
     this.further = false,
   });
+
   final Pages page;
   final SuperColor color;
   final EdgeInsets? padding;
@@ -309,6 +339,7 @@ class MenuCheckbox extends StatelessWidget {
     required this.toggle,
     super.key,
   });
+
   final ValueChanged<bool> toggle;
   final bool value;
   final String label;
@@ -334,7 +365,7 @@ class MenuCheckbox extends StatelessWidget {
                     onChanged: (_) => toggle(!value),
                   ),
                 ),
-                const FixedSpacer.horizontal(10),
+                const FixedSpacer(10),
                 Text(
                   label,
                   style: const SuperStyle.sans(size: 17),
@@ -361,6 +392,7 @@ class DismissibleDialog extends StatelessWidget {
     this.backgroundColor,
     this.surfaceTintColor,
   });
+
   final Widget title, content;
   final Color? backgroundColor, surfaceTintColor;
 
@@ -371,7 +403,7 @@ class DismissibleDialog extends StatelessWidget {
         useMaterial3: true,
         colorScheme: inverted ? null : const ColorScheme.dark(primary: Colors.white),
         brightness: inverted ? Brightness.light : Brightness.dark,
-        dialogBackgroundColor: backgroundColor,
+        dialogTheme: DialogThemeData(backgroundColor: backgroundColor),
       ),
       child: GestureDetector(
         onTap: () => Navigator.pop(context),
@@ -407,6 +439,7 @@ class FeedbackButton extends StatelessWidget {
 
 class WarnButton extends StatelessWidget {
   const WarnButton({this.action, super.key});
+
   final VoidCallback? action;
 
   @override
@@ -437,6 +470,7 @@ class WarnButton extends StatelessWidget {
 class GoBack extends StatelessWidget {
   /// takes you back to the menu.
   const GoBack({super.key, this.text = 'back'});
+
   final String text;
 
   @override
@@ -532,22 +566,26 @@ class JustKidding extends StatelessWidget {
 
 class ColorNameBox extends StatelessWidget {
   const ColorNameBox(this.color, {super.key}) : backgroundColor = Colors.black38;
+
   const ColorNameBox.trivial(this.color, {super.key})
       : backgroundColor = SuperColors.darkBackground;
+
   final SuperColor color;
   final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
-    return SuperContainer(
+    return DecoratedBox(
       decoration: BoxDecoration(
         border: Border.all(color: color, width: 4),
         color: backgroundColor,
       ),
-      padding: const EdgeInsets.fromLTRB(10, 5, 10, 9),
-      child: Text(
-        color.name,
-        style: SuperStyle.sans(color: color, weight: 800, size: 16),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 5, 10, 9),
+        child: Text(
+          color.name,
+          style: SuperStyle.sans(color: color, weight: 800, size: 16),
+        ),
       ),
     );
   }
@@ -602,7 +640,7 @@ class ColorLabel extends StatelessWidget {
               ),
             )
           else ...[
-            const FixedSpacer.horizontal(15),
+            const FixedSpacer(15),
             Text(value, style: style ?? defaultStyle),
           ],
         ],
@@ -614,34 +652,29 @@ class ColorLabel extends StatelessWidget {
 /// Used in "sandbox" and "true mastery" so you can type in a color code.
 class ManualColorCode extends StatefulWidget {
   const ManualColorCode(this.color, {super.key});
+
   final SuperColor color;
 
   static Future<void> run(
     BuildContext context, {
     required SuperColor color,
     required void Function(SuperColor) updateColor,
-  }) =>
-      showDialog(
-        context: context,
-        builder: (context) => ManualColorCode(color),
-      ).then(verifyHexCode(context, updateColor));
-
-  static void Function(dynamic) verifyHexCode(
-    BuildContext context,
-    void Function(SuperColor) updateColor,
-  ) =>
-      (value) {
-        if (value is! String) return;
-        if (value.length == 6) {
-          final int colorCode = int.parse(value, radix: 16);
-          updateColor(SuperColor(colorCode));
-          if (colorCode == 0x8080FF) sfx.play('k_color');
-        } else if (value.isNotEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('invalid hex code: $value')),
-          );
-        }
-      };
+  }) async {
+    final value = await showDialog<String>(
+      context: context,
+      builder: (context) => ManualColorCode(color),
+    );
+    if (value == null) return;
+    if (value.length == 6) {
+      final int colorCode = int.parse(value, radix: 16);
+      updateColor(SuperColor(colorCode));
+      if (colorCode == 0x8080FF) sfx.play('k_color');
+    } else if (value.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('invalid hex code: $value')),
+      );
+    }
+  }
 
   @override
   State<ManualColorCode> createState() => _ManualColorCodeState();
@@ -701,20 +734,22 @@ class _ManualColorCodeState extends State<ManualColorCode> {
         content: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SuperContainer(
+            ColoredBox(
               color: inverted ? const Color(0x08000000) : const Color(0x08FFFFFF),
-              width: 167,
-              child: TextField(
-                focusNode: focusNode,
-                style: const SuperStyle.mono(),
-                textAlign: TextAlign.center,
-                cursorColor: inverted ? Colors.black : Colors.white,
-                controller: controller,
-                onSubmitted: (_) => popText(),
-                inputFormatters: [onlyHexChars, maxLength6],
+              child: SizedBox(
+                width: 167,
+                child: TextField(
+                  focusNode: focusNode,
+                  style: const SuperStyle.mono(),
+                  textAlign: TextAlign.center,
+                  cursorColor: inverted ? Colors.black : Colors.white,
+                  controller: controller,
+                  onSubmitted: (_) => popText(),
+                  inputFormatters: [onlyHexChars, maxLength6],
+                ),
               ),
             ),
-            const FixedSpacer.horizontal(10),
+            const FixedSpacer(10),
             IconButton(
               onPressed: popText,
               icon: const Icon(Icons.check),
@@ -757,6 +792,7 @@ class ColorTextSpan extends TextSpan {
 
 class Rive extends StatelessWidget {
   const Rive({super.key, required this.name, required this.controllers, this.artboard});
+
   final String name;
   final String? artboard;
   final List<rive.RiveAnimationController<dynamic>> controllers;
@@ -764,7 +800,7 @@ class Rive extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: SuperContainer(
+      child: ConstrainedBox(
         constraints: BoxConstraints.loose(Size.fromWidth(context.screenHeight * 2 / 3)),
         child: rive.RiveAnimation.asset(
           'assets/animations/$name.riv',
@@ -777,11 +813,12 @@ class Rive extends StatelessWidget {
   }
 }
 
-// ignore: camel_case_types
+// ignore: camel_case_types, stylistic choice :)
 class K_glitch extends StatefulWidget {
   /// K
   const K_glitch({super.key}) : theEnd = false;
   const K_glitch.destroyer({super.key}) : theEnd = true;
+
   final bool theEnd;
 
   @override
@@ -866,6 +903,7 @@ class MeasuringOrb extends StatelessWidget {
     int? guess,
     super.key,
   }) : guess = guess ?? hue;
+
   final int step;
   final double width;
   final Duration duration;
@@ -880,82 +918,85 @@ class MeasuringOrb extends StatelessWidget {
     rotating = step >= 4;
     showRightAngle = step >= 5;
 
-    final Widget line = SuperContainer(
+    final Widget line = SizedBox(
       width: double.infinity,
       height: 4,
-      color: lineColor,
+      child: ColoredBox(color: lineColor),
     );
 
     return Fader(
       visible,
-      child: SuperContainer(
-        margin: const EdgeInsets.symmetric(vertical: 20),
-        width: width + 2,
-        height: width,
-        child: Stack(
-          children: [
-            const SuperContainer(decoration: SuperColors.colorWheel),
-            Fader(
-              linesVisible,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(width / 2, width / 2 + 2, 0, 0),
-                child: Stack(
-                  children: [
-                    Transform.translate(
-                      offset: const Offset(0, -2),
-                      child: line,
-                    ),
-                    Transform.translate(
-                      offset: const Offset(0, -2),
-                      child: AnimatedRotation(
-                        turns: rotating ? -hue / 360 : 0,
-                        curve: curve,
-                        duration: duration,
-                        alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: SizedBox(
+          width: width + 2,
+          height: width,
+          child: Stack(
+            children: [
+              const Positioned.fill(child: DecoratedBox(decoration: SuperColors.colorWheel)),
+              Fader(
+                linesVisible,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(width / 2, width / 2 + 2, 0, 0),
+                  child: Stack(
+                    children: [
+                      Transform.translate(
+                        offset: const Offset(0, -2),
                         child: line,
                       ),
-                    ),
-                    Fader(
-                      showRightAngle,
-                      child: const _RightAngleBox(size: 25, thiccness: 4),
-                    ),
-                  ],
+                      Transform.translate(
+                        offset: const Offset(0, -2),
+                        child: AnimatedRotation(
+                          turns: rotating ? -hue / 360 : 0,
+                          curve: curve,
+                          duration: duration,
+                          alignment: Alignment.centerLeft,
+                          child: line,
+                        ),
+                      ),
+                      Fader(
+                        showRightAngle,
+                        child: const _RightAngleBox(size: 25, thiccness: 4),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Fader(
-              linesVisible,
-              child: Transform.rotate(
-                angle: -2 * pi * (guess - 90) / 360,
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Transform.translate(
-                    offset: const Offset(0, -37),
-                    child: Icon(
-                      Icons.arrow_drop_down,
-                      size: 50,
-                      color: SuperColor.hue(guess),
+              Fader(
+                linesVisible,
+                child: Transform.rotate(
+                  angle: -2 * pi * (guess - 90) / 360,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Transform.translate(
+                      offset: const Offset(0, -37),
+                      child: Icon(
+                        Icons.arrow_drop_down,
+                        size: 50,
+                        color: SuperColor.hue(guess),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            Fader(
-              showRightAngle,
-              child: SuperContainer(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.only(bottom: 60, left: 80),
-                child: Text(
-                  '$hue°',
-                  style: const SuperStyle.sans(
-                    size: 24,
-                    color: Colors.black,
-                    weight: 800,
+              Fader(
+                showRightAngle,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 60, left: 80),
+                    child: Text(
+                      '$hue°',
+                      style: const SuperStyle.sans(
+                        size: 24,
+                        color: Colors.black,
+                        weight: 800,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -965,16 +1006,16 @@ class MeasuringOrb extends StatelessWidget {
 /// Used when measuring "chartreuse" for the first time.
 class _RightAngleBox extends StatelessWidget {
   const _RightAngleBox({required this.size, required this.thiccness});
+
   final double size, thiccness;
 
   @override
   Widget build(BuildContext context) {
     return Transform.translate(
       offset: Offset(-thiccness / 2, -(size - thiccness / 2)),
-      child: SuperContainer(
+      child: DecoratedBox(
         decoration: BoxDecoration(border: Border.all(width: thiccness)),
-        width: size,
-        height: size,
+        child: SizedBox.square(dimension: size),
       ),
     );
   }
@@ -982,6 +1023,7 @@ class _RightAngleBox extends StatelessWidget {
 
 class Flicker extends StatelessWidget {
   const Flicker(this.flickerValue, this.color, {super.key});
+
   final bool flickerValue;
   final SuperColor color;
 
@@ -994,42 +1036,50 @@ class Flicker extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           const Spacer(flex: 2),
-          SuperContainer(width: context.screenWidth, height: 1, color: color),
-          SuperContainer(width: context.screenWidth * .75, height: 2, color: color),
+          SizedBox(
+            width: context.screenWidth,
+            height: 1,
+            child: ColoredBox(color: color),
+          ),
+          SizedBox(
+            width: context.screenWidth * .75,
+            height: 2,
+            child: ColoredBox(color: color),
+          ),
           const FixedSpacer(4),
-          SuperContainer(
+          SizedBox(
             width: double.infinity,
             height: 25,
-            color: flickerValue ? color : null,
+            child: flickerValue ? ColoredBox(color: color) : null,
           ),
           const FixedSpacer(3),
-          SuperContainer(width: context.screenWidth / 2, height: 2, color: color),
+          SizedBox(
+            width: context.screenWidth / 2,
+            height: 2,
+            child: ColoredBox(color: color),
+          ),
           const FixedSpacer(10),
-          SuperContainer(
-            height: 5,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+          DecoratedBox(
             decoration: BoxDecoration(
               border: Border.symmetric(
                 vertical: BorderSide(color: color2, width: 300),
               ),
             ),
-            child: empty,
+            child: const SizedBox(width: 40, height: 5),
           ),
-          SuperContainer(
+          SizedBox(
             width: context.screenWidth / 2,
             height: 3,
-            color: color2,
+            child: ColoredBox(color: color2),
           ),
           const FixedSpacer(10),
-          SuperContainer(
-            height: 3,
-            padding: const EdgeInsets.symmetric(horizontal: 40),
+          DecoratedBox(
             decoration: BoxDecoration(
               border: Border.symmetric(
                 vertical: BorderSide(color: color2, width: 250),
               ),
             ),
-            child: empty,
+            child: const SizedBox(width: 80, height: 3),
           ),
           Expanded(
             flex: 3,
@@ -1044,17 +1094,19 @@ class Flicker extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         for (int i = 0; i < 33; i++)
-                          SuperContainer(
+                          SizedBox(
                             width: 10,
                             height: 10,
-                            color: switch ((i + row) % 2) {
-                              _ when i < row - 5 => null,
-                              0 when rng.nextBool() && rng.nextBool() =>
-                                SuperColors.darkBackground,
-                              1 when rng.nextBool() && rng.nextBool() => color2,
-                              0 => color,
-                              _ => null,
-                            },
+                            child: ColoredBox(
+                              color: switch ((i + row) % 2) {
+                                _ when i < row - 5 => Colors.transparent,
+                                0 when rng.nextBool() && rng.nextBool() =>
+                                  SuperColors.darkBackground,
+                                1 when rng.nextBool() && rng.nextBool() => color2,
+                                0 => color,
+                                _ => Colors.transparent,
+                              },
+                            ),
                           ),
                       ],
                     ),

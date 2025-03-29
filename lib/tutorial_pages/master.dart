@@ -5,7 +5,6 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -124,32 +123,35 @@ class _Page1State extends EpicState<_Page1> {
               alignment: Alignment.topCenter,
               child: Padding(
                 padding: const EdgeInsets.all(20),
-                child: SuperContainer(
+                child: SizedBox(
                   width: 250,
                   height: 75,
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                    child: Center(
+                      child: showTheBestOne
+                          ? Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SuperText(
+                                  'vision',
+                                  style: SuperStyle.sans(size: 32, color: epicColor),
+                                ),
+                                Fader(
+                                  buttonVisible,
+                                  child: const SuperText(
+                                    '(I might be a little biased)',
+                                    style: SuperStyle.sans(size: 8, color: Colors.white54),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : SuperText(skills[skill]),
+                    ),
                   ),
-                  alignment: Alignment.center,
-                  child: showTheBestOne
-                      ? Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SuperText(
-                              'vision',
-                              style: SuperStyle.sans(size: 32, color: epicColor),
-                            ),
-                            Fader(
-                              buttonVisible,
-                              child: const SuperText(
-                                '(I might be a little biased)',
-                                style: SuperStyle.sans(size: 8, color: Colors.white54),
-                              ),
-                            ),
-                          ],
-                        )
-                      : SuperText(skills[skill]),
                 ),
               ),
             ),

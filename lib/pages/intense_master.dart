@@ -6,7 +6,6 @@ import 'package:hueman/data/photo_colors.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/pages/find_the_hues.dart';
@@ -17,7 +16,7 @@ SuperColor c = SuperColors.darkBackground;
 
 class IntenseScoreKeeper implements ScoreKeeper {
   IntenseScoreKeeper({required this.scoring});
-  final Function scoring;
+  final VoidCallback scoring;
   int round = 0, superCount = 0;
   final List<int> scores = [];
 
@@ -41,21 +40,25 @@ class IntenseScoreKeeper implements ScoreKeeper {
         Text('accuracy: ${scores.average.toStringAsFixed(1)}%', style: style);
     if (superCount == 0) return Column(children: [roundLabel, accuracyDesc]);
 
-    final Widget superDesc = SuperContainer(
-      margin: const EdgeInsets.only(top: 25),
-      padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
-      decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.circular(10)),
-      child: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-                text: 'SUPER',
-                style: SuperStyle.sans(color: SuperColors.epic[hue], weight: 600, size: 18)),
-            const TextSpan(text: 'score ', style: style),
-            TextSpan(
-                text: 'count:   $superCount',
-                style: style.copyWith(fontWeight: FontWeight.w100, fontSize: 22)),
-          ],
+    final Widget superDesc = Padding(
+      padding: const EdgeInsets.only(top: 25),
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                    text: 'SUPER',
+                    style: SuperStyle.sans(color: SuperColors.epic[hue], weight: 600, size: 18)),
+                const TextSpan(text: 'score ', style: style),
+                TextSpan(
+                    text: 'count:   $superCount',
+                    style: style.copyWith(fontWeight: FontWeight.w100, fontSize: 22)),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -87,7 +90,7 @@ class MasterScoreKeeper implements IntenseScoreKeeper {
   final List<int> scores = [];
 
   @override
-  final Function scoring;
+  final VoidCallback scoring;
 
   @override
   void scoreTheRound() => scoring();
@@ -283,7 +286,7 @@ class _IntenseModeState extends State<IntenseMode> {
 
   void generatePic() {
     if (pics.isEmpty) {
-      showDialog(
+      showDialog<void>(
         context: context,
         builder: (context) => const _SawEveryPic(),
         barrierDismissible: false,
@@ -327,7 +330,7 @@ class _IntenseModeState extends State<IntenseMode> {
 
     final height = constraints.calcSize((w, h) => min(h - (externalKeyboard ? 333 : 466), w * 2));
     final pad = ((constraints.maxWidth - height) / 2 + 50).clamp(0.0, 50.0);
-    return SuperContainer(
+    return Container(
       width: double.infinity,
       height: height,
       padding: EdgeInsets.symmetric(horizontal: pad),

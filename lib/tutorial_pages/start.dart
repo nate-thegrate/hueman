@@ -9,7 +9,6 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -159,25 +158,26 @@ class _StartScreenState extends SuperState<StartScreen> {
             const _Logo(),
             if (glitchy) Flicker(flicker, SuperColors.bsBackground),
             if (speedrun)
-              SuperContainer(
+              ColoredBox(
                 color: Colors.black45,
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    for (final (i, text) in ['b', 'a', 'start'].indexed)
-                      SizedBox(
-                        height: 40,
-                        child: ElevatedButton(
-                          onPressed: i + 8 == konamiSwipes ? konamiButton : null,
-                          style: ElevatedButton.styleFrom(backgroundColor: SuperColors.bsBrown),
-                          child: Text(
-                            text,
-                            style: const SuperStyle.sans(size: 24),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      for (final (i, text) in ['b', 'a', 'start'].indexed)
+                        SizedBox(
+                          height: 40,
+                          child: ElevatedButton(
+                            onPressed: i + 8 == konamiSwipes ? konamiButton : null,
+                            style: ElevatedButton.styleFrom(backgroundColor: SuperColors.bsBrown),
+                            child: Text(
+                              text,
+                              style: const SuperStyle.sans(size: 24),
+                            ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
           ],
@@ -249,7 +249,7 @@ class _TheGoodStuffState extends State<_TheGoodStuff> with SinglePress {
                             onChanged: (_) => setState(() => numToSkip = i),
                           ),
                         ),
-                        const FixedSpacer.horizontal(10),
+                        const FixedSpacer(10),
                         SizedBox(
                           width: 200,
                           child: Text(
@@ -329,19 +329,20 @@ class _LogoState extends SuperState<_Logo> {
     final size = context.screenWidth / 4;
     return Fader(
       visible,
-      child: SuperContainer(
+      child: ColoredBox(
         color: SuperColors.lightBackground,
-        alignment: Alignment.center,
-        child: SuperRichText([
-          for (int i = 0; i < 4; i++)
-            TextSpan(
-              text: letterData[i].$1,
-              style: SuperStyle.gaegu(
-                size: size,
-                color: lettersVisible > i ? letterData[i].$2 : Colors.transparent,
+        child: Center(
+          child: SuperRichText([
+            for (int i = 0; i < 4; i++)
+              TextSpan(
+                text: letterData[i].$1,
+                style: SuperStyle.gaegu(
+                  size: size,
+                  color: lettersVisible > i ? letterData[i].$2 : Colors.transparent,
+                ),
               ),
-            ),
-        ]),
+          ]),
+        ),
       ),
     );
   }
@@ -496,10 +497,13 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
   }
 
   static const buffer = Expanded(
-    child: SuperContainer(color: SuperColors.darkBackground),
+    child: ColoredBox(color: SuperColors.darkBackground, child: emptyContainer),
   );
   static const buffer2 = Expanded(
-    child: SuperContainer(color: SuperColors.darkBackground, height: 39),
+    child: SizedBox(
+      height: 39,
+      child: ColoredBox(color: SuperColors.darkBackground, child: emptyContainer),
+    ),
   );
 
   @override
@@ -548,14 +552,14 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
       body: SafeLayout((context, constraints) {
         if (progress < 0) {
           final double x = progress * -2.5;
-          final double size = constraints.calcSize((w, h) => min(w, h) * x);
           return Center(
-            child: SuperContainer(
-              width: size,
-              height: size,
-              decoration: BoxDecoration(
-                border: Border.all(color: color, width: 2),
-                color: x > .5 ? null : color.withOpacity((1 - 2 * x).squared),
+            child: SizedBox.square(
+              dimension: constraints.calcSize((w, h) => min(w, h) * x),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  border: Border.all(color: color, width: 2),
+                  color: x > .5 ? null : color.withValues(alpha: (1 - 2 * x).squared),
+                ),
               ),
             ),
           );
@@ -566,12 +570,15 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
               x < peak ? x.squared / peak : (x - peak) * peak / (peak - 360) + peak;
           final girth = val * min(constraints.maxWidth, constraints.maxHeight) / 350;
           return Center(
-            child: SuperContainer(
-              margin: const EdgeInsets.only(top: 39),
-              width: girth,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: color),
-              alignment: Alignment.center,
-              child: _Squares(girth * 16 / (16 * root2over2 - 1) * root2over2),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 39),
+              child: SizedBox(
+                width: girth,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+                  child: Center(child: _Squares(girth * 16 / (16 * sqrt1_2 - 1) * sqrt1_2)),
+                ),
+              ),
             ),
           );
         }
@@ -602,13 +609,13 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
                               child: SizedBox(width: showAll ? 200 : 0),
                             ),
                             buffer2,
-                            const FixedSpacer.horizontal(20),
+                            const FixedSpacer(20),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  SuperContainer(
+                  DecoratedBox(
                     decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
                     child: SexyBox(
                       child: SizedBox(
@@ -644,8 +651,6 @@ class _FirstLaunchMenuState extends EpicState<_FirstLaunchMenu> {
   }
 }
 
-const root2over2 = 0.7071067811865476;
-
 class _Squares extends StatelessWidget {
   const _Squares(this.width);
   final double width;
@@ -653,17 +658,17 @@ class _Squares extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderWidth = width / 32;
-    final double size = max(width * root2over2 - 2 * borderWidth, 1);
+    final double size = max(width * sqrt1_2 - 2 * borderWidth, 1);
     return Transform.rotate(
       angle: 64 / size + pi / 6,
-      child: SuperContainer(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          border: Border.all(color: SuperColors.darkBackground, width: borderWidth),
+      child: SizedBox.square(
+        dimension: size,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border.all(color: SuperColors.darkBackground, width: borderWidth),
+          ),
+          child: size * sqrt1_2 < 2 ? emptyContainer : Center(child: _Squares(size)),
         ),
-        alignment: Alignment.center,
-        child: size * root2over2 < 2 ? null : _Squares(size),
       ),
     );
   }

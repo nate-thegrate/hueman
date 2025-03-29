@@ -5,7 +5,6 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -138,8 +137,8 @@ class _Page2State extends SuperState<_Page2> {
           height: 60,
           child: switch (progress) {
             0 => empty,
-            1 => const _NumberRow(ObjectKey(10)),
-            _ => const _NumberRow(ObjectKey(2)),
+            1 => const _NumberRow(ValueKey(10)),
+            _ => const _NumberRow(ValueKey(2)),
           },
         ),
         SizedBox(height: 25, child: progress > 2 ? _BinaryCaption(progress) : empty),
@@ -183,14 +182,14 @@ class _BinaryCaption extends StatelessWidget {
 
 class _NumberRow extends StatefulWidget {
   const _NumberRow(this.base) : super(key: base);
-  final ObjectKey base;
+  final ValueKey<int> base;
 
   @override
   State<_NumberRow> createState() => _NumberRowState();
 }
 
 class _NumberRowState extends SuperState<_NumberRow> {
-  int get base => widget.base.value as int;
+  int get base => widget.base.value;
   int visibleNumbers = 0;
 
   @override
@@ -301,38 +300,41 @@ class _Page3State extends SuperState<_Page3> {
         const Spacer(),
         SexyBox(
           child: showCounter
-              ? SuperContainer(
-                  decoration: BoxDecoration(
-                    color: inverted ? Colors.white : Colors.black38,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
+              ? SizedBox(
                   width: 300,
                   height: 100,
-                  alignment: Alignment.center,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Align(
-                          alignment: const Alignment(0.75, 0),
-                          child: Text(
-                            counter.toString(),
-                            style: const SuperStyle.mono(size: 24),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: inverted ? Colors.white : Colors.black38,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Center(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Align(
+                              alignment: const Alignment(0.75, 0),
+                              child: Text(
+                                counter.toString(),
+                                style: const SuperStyle.mono(size: 24),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Center(
-                          child: Text(
-                            counter
-                                .toRadixString(2)
-                                .padLeft(counter > 15 ? 8 : 4, '0')
-                                .padLeft(8),
-                            style: const SuperStyle.mono(size: 24),
+                          Expanded(
+                            flex: 2,
+                            child: Center(
+                              child: Text(
+                                counter
+                                    .toRadixString(2)
+                                    .padLeft(counter > 15 ? 8 : 4, '0')
+                                    .padLeft(8),
+                                style: const SuperStyle.mono(size: 24),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 )
               : empty,
@@ -498,7 +500,11 @@ class _BTS extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final binary = [
-      for (final code in [color.red, color.green, color.blue])
+      for (final code in [
+        (color.r * 0xFF).round(),
+        (color.g * 0xFF).round(),
+        (color.b * 0xFF).round(),
+      ])
         showHex
             ? code.toRadixString(16).padLeft(2, '0').toUpperCase()
             : code.toRadixString(2).padLeft(8, '0')
@@ -526,25 +532,29 @@ class _BTS extends StatelessWidget {
             style: const SuperStyle.mono(size: 16),
           );
 
-    return SuperContainer(
-      decoration: BoxDecoration(
-        color: inverted ? SuperColors.white80 : SuperColors.black80,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      padding: const EdgeInsets.all(25),
-      margin: const EdgeInsets.fromLTRB(25, 0, 25, 25),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            btsDesc,
-            style: const SuperStyle.mono(size: 16),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(25, 0, 25, 25),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: inverted ? SuperColors.white80 : SuperColors.black80,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(25),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                btsDesc,
+                style: const SuperStyle.mono(size: 16),
+              ),
+              SexyBox(
+                child: showBinary ? colorCode : const SizedBox(width: 200),
+              ),
+            ],
           ),
-          SexyBox(
-            child: showBinary ? colorCode : const SizedBox(width: 200),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -653,12 +663,13 @@ class _Page5State extends SuperState<_Page5> {
         SexyBox(
           child: hexRows == -3
               ? flat
-              : SuperContainer(
+              : SizedBox(
                   width: double.infinity,
                   height: 460,
-                  color: inverted ? Colors.white : Colors.black38,
-                  alignment: Alignment.center,
-                  child: _HexRows(hexRows),
+                  child: ColoredBox(
+                    color: inverted ? Colors.white : Colors.black38,
+                    child: Center(child: _HexRows(hexRows)),
+                  ),
                 ),
         ),
         const Spacer(flex: 2),

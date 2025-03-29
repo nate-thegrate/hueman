@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 
@@ -54,7 +53,7 @@ class _AiCertificateState extends State<AiCertificate> {
             if (!showBack)
               Fader(
                 !showScreenshot,
-                child: SuperContainer(
+                child: ColoredBox(
                   color: SuperColors.darkBackground,
                   child: Center(
                     child: Column(

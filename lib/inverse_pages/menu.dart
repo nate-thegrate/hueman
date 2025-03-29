@@ -5,7 +5,6 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -141,23 +140,25 @@ class _InverseMenuState extends InverseState<InverseMenu>
               foregroundColor: Colors.white,
             ),
         },
-        child: SuperContainer(
-          margin: const EdgeInsets.fromLTRB(0, 8, 0, 13),
-          width: fullCompletion ? null : 85,
-          child: Text(
-            fullCompletion
-                ? 'full\ncompletion'
-                : showEvenFurther
-                    ? 'even\nfurther'
-                    : 'true\nmastery',
-            textAlign: TextAlign.center,
-            style: SuperStyle.sans(
-              size: 24,
-              width: 87.5,
-              weight: showEvenFurther ? 450 : 350,
-              extraBold: true,
-              letterSpacing: 2 / 3,
-              height: 0.95,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 8, 0, 13),
+          child: SizedBox(
+            width: fullCompletion ? null : 85,
+            child: Text(
+              fullCompletion
+                  ? 'full\ncompletion'
+                  : showEvenFurther
+                      ? 'even\nfurther'
+                      : 'true\nmastery',
+              textAlign: TextAlign.center,
+              style: SuperStyle.sans(
+                size: 24,
+                width: 87.5,
+                weight: showEvenFurther ? 450 : 350,
+                extraBold: true,
+                letterSpacing: 2 / 3,
+                height: 0.95,
+              ),
             ),
           ),
         ),
@@ -306,10 +307,12 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 side: BorderSide(color: color, width: 2),
                 foregroundColor: color,
               ),
-              child: const SuperContainer(
-                padding: EdgeInsets.only(top: 10, bottom: 14),
+              child: const SizedBox(
                 width: 75,
-                child: SuperText('revert', style: SuperStyle.sans(size: 24), pad: false),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10, bottom: 14),
+                  child: SuperText('revert', style: SuperStyle.sans(size: 24), pad: false),
+                ),
               ),
             ),
           ),
@@ -326,10 +329,12 @@ class _InverseMenuState extends InverseState<InverseMenu>
                   side: BorderSide(color: color, width: 2),
                   foregroundColor: color,
                 ),
-                child: const SuperContainer(
-                  padding: EdgeInsets.only(top: 10, bottom: 14),
+                child: const SizedBox(
                   width: 75,
-                  child: SuperText('reset', style: SuperStyle.sans(size: 24), pad: false),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 14),
+                    child: SuperText('reset', style: SuperStyle.sans(size: 24), pad: false),
+                  ),
                 ),
               ),
             ),
@@ -437,7 +442,7 @@ class _InverseMenuState extends InverseState<InverseMenu>
                         child: Checkbox(value: done, onChanged: null),
                       ),
                     ),
-                    const FixedSpacer.horizontal(10),
+                    const FixedSpacer(10),
                     Text(completionDesc[i], style: const SuperStyle.sans()),
                   ],
                 ),
@@ -572,20 +577,24 @@ class _InverseMenuState extends InverseState<InverseMenu>
                 children: [
                   Fader(showButtons, child: settingsButton),
                   const FixedSpacer(30),
-                  SuperContainer(
-                    decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
+                  SizedBox(
                     width: 300,
-                    padding: menuPage.padding,
-                    child: AnimatedSize(
-                      duration: quarterSec,
-                      curve: curve,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: menuPage == MenuPage.settings
-                            ? CrossAxisAlignment.start
-                            : CrossAxisAlignment.center,
-                        children: children,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
+                      child: Padding(
+                        padding: menuPage.padding,
+                        child: AnimatedSize(
+                          duration: quarterSec,
+                          curve: curve,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: menuPage == MenuPage.settings
+                                ? CrossAxisAlignment.start
+                                : CrossAxisAlignment.center,
+                            children: children,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -597,19 +606,24 @@ class _InverseMenuState extends InverseState<InverseMenu>
           Center(
             child: ScaleTransition(
               scale: Tween<double>(begin: 0, end: 12).animate(controller),
-              child: SuperContainer(
-                width: context.screenWidth / 4,
-                height: context.screenWidth / 4,
-                decoration: const BoxDecoration(
-                  color: SuperColors.inverting,
-                  backgroundBlendMode: BlendMode.difference,
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Fader(
-                  inverting,
-                  duration: Durations.medium2,
-                  child: const SuperContainer(color: SuperColors.darkBackground),
+              child: SizedBox.square(
+                dimension: context.screenWidth / 4,
+                child: DecoratedBox(
+                  decoration: const BoxDecoration(
+                    color: SuperColors.inverting,
+                    backgroundBlendMode: BlendMode.difference,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Fader(
+                      inverting,
+                      duration: Durations.medium2,
+                      child: const ColoredBox(
+                        color: SuperColors.darkBackground,
+                        child: emptyContainer,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -620,7 +634,10 @@ class _InverseMenuState extends InverseState<InverseMenu>
               visible,
               duration: Durations.long4,
               curve: Curves.easeInOutQuad,
-              child: const SuperContainer(color: SuperColors.lightBackground),
+              child: const ColoredBox(
+                color: SuperColors.lightBackground,
+                child: emptyContainer,
+              ),
             ),
         ],
       ),
@@ -690,9 +707,11 @@ class _TrueMasteryAnimationState extends SuperState<_TrueMasteryAnimation> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        FadeIn(
-          curve: Curves.easeOutCubic,
-          child: SuperContainer(color: widget.color),
+        Positioned.fill(
+          child: FadeIn(
+            curve: Curves.easeOutCubic,
+            child: ColoredBox(color: widget.color),
+          ),
         ),
         Fader(
           fadeToWhite,
@@ -712,10 +731,12 @@ class _TrueMasteryAnimationState extends SuperState<_TrueMasteryAnimation> {
             ),
           ),
         ),
-        Fader(
-          fadeToWhite,
-          duration: const Duration(seconds: 6),
-          child: const SuperContainer(color: Colors.white),
+        Positioned.fill(
+          child: Fader(
+            fadeToWhite,
+            duration: const Duration(seconds: 6),
+            child: const ColoredBox(color: Colors.white),
+          ),
         ),
       ],
     );

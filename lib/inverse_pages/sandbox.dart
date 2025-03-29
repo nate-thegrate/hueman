@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 
@@ -66,7 +65,7 @@ SuperColor get _color => switch (_colorPicker) {
 
 class _CMYKScreen extends StatelessWidget {
   const _CMYKScreen(this.update, this.constraints);
-  final dynamic update;
+  final StateSetter update;
   final BoxConstraints constraints;
 
   @override
@@ -77,12 +76,13 @@ class _CMYKScreen extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SuperContainer(
-          width: width,
-          height: height,
+        ColoredBox(
           color: _color,
-          alignment: Alignment.center,
-          child: isK ? const K_glitch() : null,
+          child: SizedBox(
+            width: width,
+            height: height,
+            child: Center(child: isK ? const K_glitch() : null),
+          ),
         ),
         const FixedSpacer(30),
         Column(
@@ -158,12 +158,13 @@ class _CMYKSlider extends StatelessWidget {
             ),
           ),
         ),
-        SuperContainer(
+        SizedBox(
           width: 50,
-          alignment: Alignment.center,
-          child: Text(
-            '${(value * 100).toStringAsFixed(0).padLeft(3)}%',
-            style: const SuperStyle.mono(size: 16),
+          child: Center(
+            child: Text(
+              '${(value * 100).toStringAsFixed(0).padLeft(3)}%',
+              style: const SuperStyle.mono(size: 16),
+            ),
           ),
         ),
       ],
@@ -187,7 +188,10 @@ class _HSLScreenState extends State<_HSLScreen> {
     final double colorBarHeight = constraints.maxHeight < 800 ? 0 : 100;
     final double planeSize =
         constraints.calcSize((w, h) => min(w - 50, h - 420 - colorBarHeight));
-    void touchRecognition(details) {
+
+    // ignore: avoid_annotating_with_dynamic, would be fixed by https://github.com/flutter/flutter/pull/160714
+    void touchRecognition(dynamic details) {
+      // ignore: avoid_dynamic_calls, same here
       final Offset offset = details.localPosition;
       double val(double position) => (position / (planeSize - 40)).clamp(0.0, 1.0);
       widget.onChanged(1)(val(offset.dx));
@@ -197,55 +201,59 @@ class _HSLScreenState extends State<_HSLScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SuperContainer(
-          width: planeSize,
-          height: planeSize,
-          alignment: Alignment.center,
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Stack(
-                  children: [
-                    SuperContainer(
-                      margin: const EdgeInsets.all(0.5),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [SuperColors.gray, SuperColor.hue(_h)],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onPanStart: touchRecognition,
-                      onPanUpdate: touchRecognition,
-                      child: const SuperContainer(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.white,
-                              Color(0x00FFFFFF),
-                              Colors.transparent,
-                              Colors.black,
-                            ],
-                            stops: [0, 0.5, 0.5, 1],
+        SizedBox.square(
+          dimension: planeSize,
+          child: Center(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(0.5),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [SuperColors.gray, SuperColor.hue(_h)],
+                            ),
                           ),
+                          child: emptyContainer,
                         ),
                       ),
-                    ),
-                  ],
+                      GestureDetector(
+                        onPanStart: touchRecognition,
+                        onPanUpdate: touchRecognition,
+                        child: const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.white,
+                                Color(0x00FFFFFF),
+                                Colors.transparent,
+                                Colors.black,
+                              ],
+                              stops: [0, 0.5, 0.5, 1],
+                            ),
+                          ),
+                          child: emptyContainer,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Align(
-                alignment: Alignment(2 * _s - 1, 1 - 2 * _l),
-                child: Icon(
-                  Icons.add,
-                  color: contrastWith(_color),
-                  size: 40,
+                Align(
+                  alignment: Alignment(2 * _s - 1, 1 - 2 * _l),
+                  child: Icon(
+                    Icons.add,
+                    color: contrastWith(_color),
+                    size: 40,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         _HSLSlider(
@@ -267,7 +275,12 @@ class _HSLScreenState extends State<_HSLScreen> {
           onChanged: widget.onChanged(2),
         ),
         const FixedSpacer(25),
-        if (colorBarHeight > 0) SuperContainer(width: 500, height: colorBarHeight, color: _color),
+        if (colorBarHeight > 0)
+          SizedBox(
+            width: 500,
+            height: colorBarHeight,
+            child: ColoredBox(color: _color),
+          ),
       ],
     );
   }
@@ -353,58 +366,69 @@ class _ColorWheelState extends State<_ColorWheel> {
     final double width = widget.constraints.calcSize((w, h) => min(w - 50, h - 333));
     return Column(
       children: [
-        SuperContainer(
+        DecoratedBox(
           decoration: BoxDecoration(
             border: Border.all(color: _color, width: 5),
             shape: BoxShape.circle,
           ),
-          padding: const EdgeInsets.all(10),
-          child: SuperContainer(
-            width: width,
-            height: width,
-            padding: EdgeInsets.all(width / 32),
-            decoration: SuperColors.colorWheel,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                if (centerColor != SuperColors.lightBackground)
-                  SuperContainer(
-                    margin: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(colors: [centerColor, centerColor.withAlpha(0)]),
-                    ),
-                    child: Center(
-                      child: IconButton(
-                        icon: Icon(
-                          _color.rounded == centerColor
-                              ? Icons.radio_button_checked
-                              : Icons.radio_button_off,
-                          color: centerColor == SuperColors.black ? Colors.white70 : Colors.black,
-                          size: 32,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: SizedBox(
+              width: width,
+              height: width,
+              child: DecoratedBox(
+                decoration: SuperColors.colorWheel,
+                child: Padding(
+                  padding: EdgeInsets.all(width / 32),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (centerColor != SuperColors.lightBackground)
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient:
+                                  RadialGradient(colors: [centerColor, centerColor.withAlpha(0)]),
+                            ),
+                            child: Center(
+                              child: IconButton(
+                                icon: Icon(
+                                  _color.rounded == centerColor
+                                      ? Icons.radio_button_checked
+                                      : Icons.radio_button_off,
+                                  color: centerColor == SuperColors.black
+                                      ? Colors.white70
+                                      : Colors.black,
+                                  size: 32,
+                                ),
+                                onPressed: () => widget.updateColor(centerColor),
+                              ),
+                            ),
+                          ),
                         ),
-                        onPressed: () => widget.updateColor(centerColor),
-                      ),
-                    ),
-                  ),
-                for (int hue = 0; hue < 360; hue += 30)
-                  RotationTransition(
-                    turns: AlwaysStoppedAnimation(-hue / 360),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        icon: Icon(
-                          _color.rounded == SuperColor.hue(hue)
-                              ? Icons.radio_button_checked
-                              : Icons.radio_button_off,
-                          color: Colors.black,
-                          size: 32,
+                      for (int hue = 0; hue < 360; hue += 30)
+                        RotationTransition(
+                          turns: AlwaysStoppedAnimation(-hue / 360),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              icon: Icon(
+                                _color.rounded == SuperColor.hue(hue)
+                                    ? Icons.radio_button_checked
+                                    : Icons.radio_button_off,
+                                color: Colors.black,
+                                size: 32,
+                              ),
+                              onPressed: () => widget.updateColor(SuperColor.hue(hue)),
+                            ),
+                          ),
                         ),
-                        onPressed: () => widget.updateColor(SuperColor.hue(hue)),
-                      ),
-                    ),
+                    ],
                   ),
-              ],
+                ),
+              ),
             ),
           ),
         ),
@@ -491,11 +515,11 @@ class _InverseSandboxState extends State<InverseSandbox> {
           case _ColorPicker.cmyk:
             updateHSL();
           case _ColorPicker.hsl:
-            _r = _color.red;
-            _g = _color.green;
-            _b = _color.blue;
+            _r = (_color.r * 0xFF).round();
+            _g = (_color.g * 0xFF).round();
+            _b = (_color.b * 0xFF).round();
             updateCMYK();
-          default:
+          case _ColorPicker.select:
             updateHSL();
             updateCMYK();
         }
@@ -503,9 +527,9 @@ class _InverseSandboxState extends State<InverseSandbox> {
       });
 
   void updateColorCode(SuperColor color) => setState(() {
-        _r = color.red;
-        _g = color.green;
-        _b = color.blue;
+        _r = (_color.r * 0xFF).round();
+        _g = (_color.g * 0xFF).round();
+        _b = (_color.b * 0xFF).round();
         updateCMYK();
         updateHSL();
       });
@@ -527,9 +551,9 @@ class _InverseSandboxState extends State<InverseSandbox> {
       });
 
   void updateFromWheel(Color rgb) => setState(() {
-        _r = rgb.red;
-        _g = rgb.green;
-        _b = rgb.blue;
+        _r = (_color.r * 0xFF).round();
+        _g = (_color.g * 0xFF).round();
+        _b = (_color.b * 0xFF).round();
 
         final hsl = HSLColor.fromColor(rgb);
         _h = hsl.hue;
@@ -537,7 +561,7 @@ class _InverseSandboxState extends State<InverseSandbox> {
         _l = hsl.lightness;
       });
 
-  final hslUpdateFuncs = [
+  final hslUpdateFuncs = <ValueChanged<double>>[
     (value) => _h = value,
     (value) => _s = value,
     (value) => _l = value,
@@ -546,9 +570,9 @@ class _InverseSandboxState extends State<InverseSandbox> {
   void Function(double) onChangedHSL(int updateFunc) => (value) => setState(() {
         hslUpdateFuncs[updateFunc](value);
         final c = _color;
-        _r = c.red;
-        _g = c.green;
-        _b = c.blue;
+        _r = (c.r * 0xFF).round();
+        _g = (c.g * 0xFF).round();
+        _b = (c.b * 0xFF).round();
       });
 
   @override

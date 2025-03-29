@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/widgets.dart';
 
@@ -430,19 +429,19 @@ class _ColorBall extends StatefulWidget {
 }
 
 extension _RandAlign on Random {
-  Alignment get randAlign => Alignment(nextDouble() * 2 - 1, nextDouble() * 2 - 1);
+  Alignment get align => Alignment(nextDouble() * 2 - 1, nextDouble() * 2 - 1);
 }
 
 class _ColorBallState extends SuperState<_ColorBall> {
   bool visible = false;
-  Alignment alignment = rng.randAlign;
+  Alignment alignment = rng.align;
 
   @override
   void animate() async {
     while (mounted) {
       const startupTime = 2.0;
       quickly(() => setState(() {
-            alignment = rng.randAlign;
+            alignment = rng.align;
             visible = true;
           }));
       await sleepState(widget.cycleSeconds - startupTime, () => visible = false);
@@ -452,14 +451,15 @@ class _ColorBallState extends SuperState<_ColorBall> {
 
   late final blob = Transform.scale(
     scale: widget.scale,
-    child: SuperContainer(
-      width: 1,
-      height: 1,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(colors: [widget.color, widget.color.withAlpha(0)]),
-      ),
-    ),
+    child: SizedBox(
+        width: 1,
+        height: 1,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(colors: [widget.color, widget.color.withAlpha(0)]),
+          ),
+        )),
   );
   late final child = Stack(children: [blob, blob]);
 

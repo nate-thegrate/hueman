@@ -17,10 +17,11 @@ import 'package:meta/meta.dart';
 /// sleep(3, then: do_something()); // anywhere
 /// ```
 /// Just like `time.sleep(3)` in Python.
-Future<void> sleep(double seconds, {Function()? then}) =>
+Future<void> sleep(double seconds, {VoidCallback? then}) =>
     Future.delayed(Duration(milliseconds: (seconds * 1000).toInt()), then);
 
-Future<void> quickly(Function() function) => sleep(0.001, then: function);
+void quickly(VoidCallback function) =>
+    WidgetsBinding.instance.addPostFrameCallback((_) => function());
 
 const oneSec = Duration(seconds: 1);
 const twoSecs = Duration(seconds: 2);

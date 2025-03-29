@@ -6,7 +6,6 @@ import 'package:hueman/data/big_balls.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -53,65 +52,67 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
         accentColor: SuperColors.violet,
         details: FittedBox(
           fit: BoxFit.scaleDown,
-          child: SuperContainer(
-            margin: EdgeInsets.symmetric(horizontal: 33),
-            width: 1080,
-            height: 1500,
-            child: Stack(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 100),
-                  child: Image(image: AssetImage('assets/black_light.jpg')),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    empty,
-                    empty,
-                    empty,
-                    Text(
-                      '"Black lights" mostly give off ultraviolet radiation, '
-                      'which is outside the visible spectrum.',
-                      style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
-                    ),
-                    Text(
-                      'So if a material is glowing under a black light, '
-                      "that means it's somehow able to collect the energy from ultraviolet radiation "
-                      'and then re-emit it as light we can see.',
-                      style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
-                    ),
-                    Text(
-                      'I have no idea how any of that works, '
-                      "but someone who's into chemical engineering might understand what's going on.",
-                      style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
-                    ),
-                    Text.rich(
-                      style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "Maybe one day, we'll have a ",
-                          ),
-                          ColorTextSpan.red,
-                          TextSpan(
-                            text: " pigment that doesn't absorb/reflect different frequencies, "
-                                'but instead captures the energy from all electro-magnetic radiation '
-                                'and releases it as red light: ',
-                          ),
-                          TextSpan(
-                            text: 'the brightest red imaginable!',
-                            style: SuperStyle.sans(
-                              size: 50,
-                              weight: 800,
-                              color: SuperColor(0xFF2020),
-                            ),
-                          ),
-                        ],
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 33),
+            child: SizedBox(
+              width: 1080,
+              height: 1500,
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 100),
+                    child: Image(image: AssetImage('assets/black_light.jpg')),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      empty,
+                      empty,
+                      empty,
+                      Text(
+                        '"Black lights" mostly give off ultraviolet radiation, '
+                        'which is outside the visible spectrum.',
+                        style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      Text(
+                        'So if a material is glowing under a black light, '
+                        "that means it's somehow able to collect the energy from ultraviolet radiation "
+                        'and then re-emit it as light we can see.',
+                        style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
+                      ),
+                      Text(
+                        'I have no idea how any of that works, '
+                        "but someone who's into chemical engineering might understand what's going on.",
+                        style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
+                      ),
+                      Text.rich(
+                        style: SuperStyle.sans(color: SuperColor(0xA080C0), size: 50),
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "Maybe one day, we'll have a ",
+                            ),
+                            ColorTextSpan.red,
+                            TextSpan(
+                              text: " pigment that doesn't absorb/reflect different frequencies, "
+                                  'but instead captures the energy from all electro-magnetic radiation '
+                                  'and releases it as red light: ',
+                            ),
+                            TextSpan(
+                              text: 'the brightest red imaginable!',
+                              style: SuperStyle.sans(
+                                size: 50,
+                                weight: 800,
+                                color: SuperColor(0xFF2020),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -144,48 +145,50 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
             Expanded(
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-                child: SuperContainer(
-                  margin: EdgeInsets.symmetric(horizontal: 33),
-                  width: 1060,
-                  height: 975,
-                  child: Text.rich(
-                    style: SuperStyle.sans(size: 36, color: Colors.black),
-                    TextSpan(children: [
-                      TextSpan(
-                        text: 'Flutter is an open-source app framework made by Google.\n\n',
-                      ),
-                      TextSpan(
-                        text: "I really like Flutter's flexibility—it lets you make a game "
-                            '(or any other type of application) and then publish it to any platform.\n'
-                            "And it's open-source, so you never have to pay for it!\n\n",
-                      ),
-                      TextSpan(
-                        text: 'I animated this game using Rive '
-                            "(plus Flutter's built-in animated widgets). "
-                            'If you want to focus on making games, '
-                            'Rive works with lots of great open-source options, including '
-                            "Defold, Bevy, and Flutter's Flame engine.\n\n",
-                      ),
-                      TextSpan(
-                        text: "I'm excited to see all the cool stuff people make in the future "
-                            '(even if this game ends up feeling not-so-cool by comparison).\n\n',
-                      ),
-                      TextSpan(text: 'Oh, and '),
-                      TextSpan(
-                        text: 'HUEman',
-                        style: SuperStyle.gaegu(
-                          size: 48,
-                          weight: FontWeight.bold,
-                          letterSpacing: -1 / 3,
-                          height: 0,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 33),
+                  child: SizedBox(
+                    width: 1060,
+                    height: 975,
+                    child: Text.rich(
+                      style: SuperStyle.sans(size: 36, color: Colors.black),
+                      TextSpan(children: [
+                        TextSpan(
+                          text: 'Flutter is an open-source app framework made by Google.\n\n',
                         ),
-                      ),
-                      TextSpan(
-                        text: " is open-source too! This game's source code "
-                            'is linked below, along with some other resources '
-                            'for getting started as a cross-platform game dev.',
-                      ),
-                    ]),
+                        TextSpan(
+                          text: "I really like Flutter's flexibility—it lets you make a game "
+                              '(or any other type of application) and then publish it to any platform.\n'
+                              "And it's open-source, so you never have to pay for it!\n\n",
+                        ),
+                        TextSpan(
+                          text: 'I animated this game using Rive '
+                              "(plus Flutter's built-in animated widgets). "
+                              'If you want to focus on making games, '
+                              'Rive works with lots of great open-source options, including '
+                              "Defold, Bevy, and Flutter's Flame engine.\n\n",
+                        ),
+                        TextSpan(
+                          text: "I'm excited to see all the cool stuff people make in the future "
+                              '(even if this game ends up feeling not-so-cool by comparison).\n\n',
+                        ),
+                        TextSpan(text: 'Oh, and '),
+                        TextSpan(
+                          text: 'HUEman',
+                          style: SuperStyle.gaegu(
+                            size: 48,
+                            weight: FontWeight.bold,
+                            letterSpacing: -1 / 3,
+                            height: 0,
+                          ),
+                        ),
+                        TextSpan(
+                          text: " is open-source too! This game's source code "
+                              'is linked below, along with some other resources '
+                              'for getting started as a cross-platform game dev.',
+                        ),
+                      ]),
+                    ),
                   ),
                 ),
               ),
@@ -359,7 +362,7 @@ class _EvenFurtherState extends SuperState<EvenFurther> {
                           foregroundColor: Colors.black,
                           elevation: 0,
                         ),
-                        onPressed: () => showDialog(
+                        onPressed: () => showDialog<void>(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: const Text('no more "chartreuse".'),
@@ -535,182 +538,188 @@ class _ChartreuseSucksState extends State<_ChartreuseSucks> {
         if (tellMeMore)
           const Expanded(
               child: FittedBox(
-            child: SuperContainer(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              width: 475,
-              height: 550,
-              child: SuperRichText(align: TextAlign.left, [
-                TextSpan(
-                  text: 'A color really should just have a single color code\nthat we ',
-                ),
-                TextSpan(
-                  text: 'chart',
-                  style: SuperStyle.sans(size: 11, width: 87.5, weight: 500, extraBold: true),
-                ),
-                TextSpan(text: 'reuse everywhere.\n\n'),
-                TextSpan(
-                  text: 'And terrible puns aside, '
-                      "there's still more I don't like about chartreuse:\n\n",
-                ),
-                TextSpan(text: 'When I add a bit of '),
-                ColorTextSpan.blue,
-                TextSpan(text: ' to '),
-                TextSpan(
-                  text: 'green',
-                  style: SuperStyle.sans(color: SuperColors.green, weight: 600, shadows: [
-                    Shadow(blurRadius: 1),
-                    Shadow(blurRadius: 1),
-                    Shadow(blurRadius: 2),
-                  ]),
-                ),
-                TextSpan(text: ", it's easy for me\nto tell that it's "),
-                TextSpan(
-                  text: 'spring',
-                  style: SuperStyle.sans(color: SuperColors.spring, weight: 600, shadows: [
-                    Shadow(blurRadius: 1),
-                    Shadow(blurRadius: 1),
-                    Shadow(blurRadius: 2),
-                  ]),
-                ),
-                TextSpan(text: '.\nAnd '),
-                ColorTextSpan.red,
-                TextSpan(text: " is brighter than blue, so you'd think I'd be\nable to tell "),
-                TextSpan(
-                  text: 'chartreuse',
-                  style: SuperStyle.sans(color: SuperColors.chartreuse, weight: 600, shadows: [
-                    Shadow(blurRadius: 1),
-                    Shadow(blurRadius: 1),
-                    Shadow(blurRadius: 2),
-                  ]),
-                ),
-                TextSpan(text: ' apart from '),
-                TextSpan(
-                  text: 'green',
-                  style: SuperStyle.sans(color: SuperColors.green, weight: 600, shadows: [
-                    Shadow(blurRadius: 1),
-                    Shadow(blurRadius: 1),
-                    Shadow(blurRadius: 2),
-                  ]),
-                ),
-                TextSpan(text: ' just as easily, if not even more so.\n\n'),
-                TextSpan(
-                  text: 'But no.\n'
-                      "I've had so much difficulty with chartreuse, and I\nhave no idea why.\n\n",
-                ),
-                TextSpan(
-                  text: 'If you know why this is, '
-                      "or if you're able to easily differentiate these colors, "
-                      "that's very impressive.",
-                ),
-              ]),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: SizedBox(
+                width: 475,
+                height: 550,
+                child: SuperRichText(align: TextAlign.left, [
+                  TextSpan(
+                    text: 'A color really should just have a single color code\nthat we ',
+                  ),
+                  TextSpan(
+                    text: 'chart',
+                    style: SuperStyle.sans(size: 11, width: 87.5, weight: 500, extraBold: true),
+                  ),
+                  TextSpan(text: 'reuse everywhere.\n\n'),
+                  TextSpan(
+                    text: 'And terrible puns aside, '
+                        "there's still more I don't like about chartreuse:\n\n",
+                  ),
+                  TextSpan(text: 'When I add a bit of '),
+                  ColorTextSpan.blue,
+                  TextSpan(text: ' to '),
+                  TextSpan(
+                    text: 'green',
+                    style: SuperStyle.sans(color: SuperColors.green, weight: 600, shadows: [
+                      Shadow(blurRadius: 1),
+                      Shadow(blurRadius: 1),
+                      Shadow(blurRadius: 2),
+                    ]),
+                  ),
+                  TextSpan(text: ", it's easy for me\nto tell that it's "),
+                  TextSpan(
+                    text: 'spring',
+                    style: SuperStyle.sans(color: SuperColors.spring, weight: 600, shadows: [
+                      Shadow(blurRadius: 1),
+                      Shadow(blurRadius: 1),
+                      Shadow(blurRadius: 2),
+                    ]),
+                  ),
+                  TextSpan(text: '.\nAnd '),
+                  ColorTextSpan.red,
+                  TextSpan(text: " is brighter than blue, so you'd think I'd be\nable to tell "),
+                  TextSpan(
+                    text: 'chartreuse',
+                    style: SuperStyle.sans(color: SuperColors.chartreuse, weight: 600, shadows: [
+                      Shadow(blurRadius: 1),
+                      Shadow(blurRadius: 1),
+                      Shadow(blurRadius: 2),
+                    ]),
+                  ),
+                  TextSpan(text: ' apart from '),
+                  TextSpan(
+                    text: 'green',
+                    style: SuperStyle.sans(color: SuperColors.green, weight: 600, shadows: [
+                      Shadow(blurRadius: 1),
+                      Shadow(blurRadius: 1),
+                      Shadow(blurRadius: 2),
+                    ]),
+                  ),
+                  TextSpan(text: ' just as easily, if not even more so.\n\n'),
+                  TextSpan(
+                    text: 'But no.\n'
+                        "I've had so much difficulty with chartreuse, and I\nhave no idea why.\n\n",
+                  ),
+                  TextSpan(
+                    text: 'If you know why this is, '
+                        "or if you're able to easily differentiate these colors, "
+                        "that's very impressive.",
+                  ),
+                ]),
+              ),
             ),
           ))
         else if (goodQuestion)
           Expanded(
             child: FittedBox(
-              child: SuperContainer(
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                width: 600,
-                height: 640,
-                child: SuperRichText(align: TextAlign.left, [
-                  const TextSpan(text: 'Thanks! I wish I had a good answer.\n\n\n'),
-                  const TextSpan(
-                    text: 'While I was doing color theory research,\t'
-                        "I realized there isn't even a clear consensus "
-                        'regarding what "chartreuse" is, at least not on Wikipedia.\n\n',
-                  ),
-                  const TextSpan(text: 'This game sets "chartreuse" as '),
-                  const TextSpan(
-                    text: '#80FF00',
-                    style: SuperStyle.mono(weight: 550, size: 18),
-                  ),
-                  const TextSpan(text: ', which comes from the Wikipedia articles for '),
-                  TextSpan(
-                    text: 'shades of chartreuse',
-                    style: linkStyle,
-                    recognizer: hyperlink(
-                      'https://en.wikipedia.org/w/index.php?title=Shades_of_chartreuse&oldid=1184863956',
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: SizedBox(
+                  width: 600,
+                  height: 640,
+                  child: SuperRichText(align: TextAlign.left, [
+                    const TextSpan(text: 'Thanks! I wish I had a good answer.\n\n\n'),
+                    const TextSpan(
+                      text: 'While I was doing color theory research,\t'
+                          "I realized there isn't even a clear consensus "
+                          'regarding what "chartreuse" is, at least not on Wikipedia.\n\n',
                     ),
-                  ),
-                  const TextSpan(text: ' and '),
-                  TextSpan(
-                    text: 'tertiary color',
-                    style: linkStyle,
-                    recognizer: hyperlink(
-                      'https://en.wikipedia.org/w/index.php?title=Tertiary_color&oldid=1182085196#RGB_or_CMYK_primary,_secondary,_and_tertiary_colors',
+                    const TextSpan(text: 'This game sets "chartreuse" as '),
+                    const TextSpan(
+                      text: '#80FF00',
+                      style: SuperStyle.mono(weight: 550, size: 18),
                     ),
-                  ),
-                  const TextSpan(text: '.\n\n'),
-                  const TextSpan(text: 'But the main '),
-                  TextSpan(
-                    text: 'chartreuse',
-                    style: linkStyle,
-                    recognizer: hyperlink(
-                      'https://en.wikipedia.org/w/index.php?title=Chartreuse_(color)&oldid=1184724573',
+                    const TextSpan(text: ', which comes from the Wikipedia articles for '),
+                    TextSpan(
+                      text: 'shades of chartreuse',
+                      style: linkStyle,
+                      recognizer: hyperlink(
+                        'https://en.wikipedia.org/w/index.php?title=Shades_of_chartreuse&oldid=1184863956',
+                      ),
                     ),
-                  ),
-                  const TextSpan(text: ' page defines it as '),
-                  const TextSpan(text: '#B2D63F', style: SuperStyle.mono(weight: 550, size: 18)),
-                  const TextSpan(text: ', which looks '),
-                  const TextSpan(
-                    text: 'really dull and gross',
-                    style: SuperStyle.sans(
-                      weight: 800,
-                      color: SuperColor(0xB2D63F),
-                      shadows: [Shadow(color: Colors.white54, blurRadius: 2)],
+                    const TextSpan(text: ' and '),
+                    TextSpan(
+                      text: 'tertiary color',
+                      style: linkStyle,
+                      recognizer: hyperlink(
+                        'https://en.wikipedia.org/w/index.php?title=Tertiary_color&oldid=1182085196#RGB_or_CMYK_primary,_secondary,_and_tertiary_colors',
+                      ),
                     ),
-                  ),
-                  const TextSpan(text: " (but apparently it's based on the color of a "),
-                  TextSpan(
-                    text: 'liqueur',
-                    style: linkStyle,
-                    recognizer: hyperlink(
-                      'https://en.wikipedia.org/wiki/Chartreuse_(liqueur)',
+                    const TextSpan(text: '.\n\n'),
+                    const TextSpan(text: 'But the main '),
+                    TextSpan(
+                      text: 'chartreuse',
+                      style: linkStyle,
+                      recognizer: hyperlink(
+                        'https://en.wikipedia.org/w/index.php?title=Chartreuse_(color)&oldid=1184724573',
+                      ),
                     ),
-                  ),
-                  const TextSpan(text: ' with the same name).\n\n'),
-                  const TextSpan(text: 'And on the '),
-                  TextSpan(
-                    text: 'color term',
-                    style: linkStyle,
-                    recognizer: hyperlink(
-                      'https://en.wikipedia.org/w/index.php?title=Color_term&oldid=1182771422',
+                    const TextSpan(text: ' page defines it as '),
+                    const TextSpan(
+                        text: '#B2D63F', style: SuperStyle.mono(weight: 550, size: 18)),
+                    const TextSpan(text: ', which looks '),
+                    const TextSpan(
+                      text: 'really dull and gross',
+                      style: SuperStyle.sans(
+                        weight: 800,
+                        color: SuperColor(0xB2D63F),
+                        shadows: [Shadow(color: Colors.white54, blurRadius: 2)],
+                      ),
                     ),
-                  ),
-                  const TextSpan(text: " page, it's shown as "),
-                  const TextSpan(
-                    text: 'another gross color',
-                    style: SuperStyle.sans(
-                      weight: 800,
-                      width: 96,
-                      color: SuperColor(0xD0EA2B),
-                      shadows: [Shadow(color: SuperColor(0x9080FF), blurRadius: 1)],
+                    const TextSpan(text: " (but apparently it's based on the color of a "),
+                    TextSpan(
+                      text: 'liqueur',
+                      style: linkStyle,
+                      recognizer: hyperlink(
+                        'https://en.wikipedia.org/wiki/Chartreuse_(liqueur)',
+                      ),
                     ),
-                  ),
-                  const TextSpan(
-                    text: ', and they put it inside the red/yellow/blue color wheel. '
-                        'The more vibrant chartreuse is shown in the ',
-                  ),
-                  TextSpan(
-                    text: 'RGB color wheel',
-                    style: linkStyle,
-                    recognizer:
-                        hyperlink('https://en.wikipedia.org/wiki/File:RGB_color_wheel.svg'),
-                  ),
-                  const TextSpan(text: ' on that page, but its name is "chartreuse green".\n\n'),
-                  const TextSpan(text: 'That color wheel is also shown on the '),
-                  TextSpan(
-                    text: 'tertiary color',
-                    style: linkStyle,
-                    recognizer: hyperlink(
-                      'https://en.wikipedia.org/w/index.php?title=Tertiary_color&oldid=1182085196#RGB_or_CMYK_primary,_secondary,_and_tertiary_colors',
+                    const TextSpan(text: ' with the same name).\n\n'),
+                    const TextSpan(text: 'And on the '),
+                    TextSpan(
+                      text: 'color term',
+                      style: linkStyle,
+                      recognizer: hyperlink(
+                        'https://en.wikipedia.org/w/index.php?title=Color_term&oldid=1182771422',
+                      ),
                     ),
-                  ),
-                  const TextSpan(
-                    text: ' page, which means that the exact same color is being called '
-                        'both "chartreuse" and "chartreuse green" in the same article!',
-                  ),
-                ]),
+                    const TextSpan(text: " page, it's shown as "),
+                    const TextSpan(
+                      text: 'another gross color',
+                      style: SuperStyle.sans(
+                        weight: 800,
+                        width: 96,
+                        color: SuperColor(0xD0EA2B),
+                        shadows: [Shadow(color: SuperColor(0x9080FF), blurRadius: 1)],
+                      ),
+                    ),
+                    const TextSpan(
+                      text: ', and they put it inside the red/yellow/blue color wheel. '
+                          'The more vibrant chartreuse is shown in the ',
+                    ),
+                    TextSpan(
+                      text: 'RGB color wheel',
+                      style: linkStyle,
+                      recognizer:
+                          hyperlink('https://en.wikipedia.org/wiki/File:RGB_color_wheel.svg'),
+                    ),
+                    const TextSpan(
+                        text: ' on that page, but its name is "chartreuse green".\n\n'),
+                    const TextSpan(text: 'That color wheel is also shown on the '),
+                    TextSpan(
+                      text: 'tertiary color',
+                      style: linkStyle,
+                      recognizer: hyperlink(
+                        'https://en.wikipedia.org/w/index.php?title=Tertiary_color&oldid=1182085196#RGB_or_CMYK_primary,_secondary,_and_tertiary_colors',
+                      ),
+                    ),
+                    const TextSpan(
+                      text: ' page, which means that the exact same color is being called '
+                          'both "chartreuse" and "chartreuse green" in the same article!',
+                    ),
+                  ]),
+                ),
               ),
             ),
           )
@@ -898,7 +907,7 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
             child: Row(
               children: [
                 Expanded(
-                  child: SuperContainer(
+                  child: DecoratedBox(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [...SuperColors.allPrimaries, SuperColors.red],
@@ -906,15 +915,16 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
                         end: Alignment.bottomCenter,
                       ),
                     ),
-                    alignment: Alignment.center,
-                    child: SuperText(
-                      'RGB',
-                      style: SuperStyle.sans(weight: 800, size: context.screenWidth / 10),
+                    child: Center(
+                      child: SuperText(
+                        'RGB',
+                        style: SuperStyle.sans(weight: 800, size: context.screenWidth / 10),
+                      ),
                     ),
                   ),
                 ),
                 Expanded(
-                  child: SuperContainer(
+                  child: DecoratedBox(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -930,10 +940,11 @@ class _ColorSpaceInfoState extends State<_ColorSpaceInfo> {
                         end: Alignment.bottomCenter,
                       ),
                     ),
-                    alignment: Alignment.center,
-                    child: SuperText(
-                      'CMYK',
-                      style: SuperStyle.sans(weight: 800, size: context.screenWidth / 10),
+                    child: Center(
+                      child: SuperText(
+                        'CMYK',
+                        style: SuperStyle.sans(weight: 800, size: context.screenWidth / 10),
+                      ),
                     ),
                   ),
                 ),
@@ -995,30 +1006,32 @@ class _GameDevButtons extends StatelessWidget {
         child: Row(
           children: [
             for (final MapEntry(key: name, value: url) in links.entries)
-              SuperContainer(
+              SizedBox(
                 height: 30,
-                padding: const EdgeInsets.symmetric(horizontal: 3),
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: const SuperColor(0x20FFF0),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                  ),
-                  onPressed: () => launchUrlString(url),
-                  child: name == 'hueman'
-                      ? const Text.rich(TextSpan(children: [
-                          TextSpan(
-                            text: 'HUE',
-                            style: SuperStyle.sans(
-                              size: 10,
-                              weight: 800,
-                              extraBold: true,
-                              height: 2,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: const SuperColor(0x20FFF0),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                    ),
+                    onPressed: () => launchUrlString(url),
+                    child: name == 'hueman'
+                        ? const Text.rich(TextSpan(children: [
+                            TextSpan(
+                              text: 'HUE',
+                              style: SuperStyle.sans(
+                                size: 10,
+                                weight: 800,
+                                extraBold: true,
+                                height: 2,
+                              ),
                             ),
-                          ),
-                          TextSpan(text: 'man', style: SuperStyle.sans(size: 14)),
-                        ]))
-                      : Text(name, style: const SuperStyle.sans(height: 2)),
+                            TextSpan(text: 'man', style: SuperStyle.sans(size: 14)),
+                          ]))
+                        : Text(name, style: const SuperStyle.sans(height: 2)),
+                  ),
                 ),
               ),
           ],
@@ -1119,7 +1132,7 @@ class _DawnOfSummerState extends SuperState<_DawnOfSummer> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          const SuperContainer(color: SuperColors.green),
+                          const ColoredBox(color: SuperColors.green, child: emptyContainer),
                           Fader(
                             textProgress > 0,
                             curve: curve,
@@ -1133,9 +1146,9 @@ class _DawnOfSummerState extends SuperState<_DawnOfSummer> {
                                   curve: curve,
                                   child: Opacity(
                                     opacity: 0.5,
-                                    child: SuperContainer(
+                                    child: SizedBox(
                                       width: textProgress > 2 ? 500 : 250,
-                                      color: SuperColors.yellow,
+                                      child: const ColoredBox(color: SuperColors.yellow),
                                     ),
                                   ),
                                 ),
@@ -1324,52 +1337,54 @@ class _HueBox extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = SuperColor.hue(hue);
 
-    return SuperContainer(
+    return SizedBox(
       height: width / 4,
-      alignment: Alignment.center,
-      child: Fader(
-        step >= 2,
-        duration: Durations.medium4,
-        child: SexyBox(
-          child: SuperContainer(
-            width: step < 2 ? 20 : width,
-            color: color,
-            padding: EdgeInsets.all(width / 48),
-            child: SexyBox(
-              child: step < 3
-                  ? empty
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SexyBox(
-                          child: step < 6
-                              ? const SizedBox(height: 75)
-                              : SizedBox(
-                                  width: width / 2,
-                                  child: Center(
-                                    child: Text(
-                                      'summer',
-                                      style: SuperStyle.sans(
-                                        color: Colors.black,
-                                        size: width * 0.0667,
-                                        weight: 800,
+      child: Center(
+        child: Fader(
+          step >= 2,
+          duration: Durations.medium4,
+          child: SexyBox(
+            child: Container(
+              width: step < 2 ? 20 : width,
+              color: color,
+              padding: EdgeInsets.all(width / 48),
+              child: SexyBox(
+                child: step < 3
+                    ? empty
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SexyBox(
+                            child: step < 6
+                                ? const SizedBox(height: 75)
+                                : SizedBox(
+                                    width: width / 2,
+                                    child: Center(
+                                      child: Text(
+                                        'summer',
+                                        style: SuperStyle.sans(
+                                          color: Colors.black,
+                                          size: width * 0.0667,
+                                          weight: 800,
+                                        ),
                                       ),
                                     ),
                                   ),
+                          ),
+                          Expanded(
+                            child: ColoredBox(
+                              color: SuperColors.darkBackground,
+                              child: Center(
+                                child: Text(
+                                  'hue = $hue',
+                                  style: SuperStyle.sans(color: color, size: width * 0.06),
                                 ),
-                        ),
-                        Expanded(
-                          child: SuperContainer(
-                            color: SuperColors.darkBackground,
-                            alignment: Alignment.center,
-                            child: Text(
-                              'hue = $hue',
-                              style: SuperStyle.sans(color: color, size: width * 0.06),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+              ),
             ),
           ),
         ),

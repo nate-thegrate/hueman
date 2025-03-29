@@ -3,7 +3,6 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -45,7 +44,7 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
       switch (sk.numColors) {
         case 6:
           await sleep(0.5);
-          final bool lovinTheCircle = await showDialog(
+          final bool? lovinTheCircle = await showDialog(
             context: context,
             barrierDismissible: false,
             builder: (context) {
@@ -60,12 +59,12 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
               );
             },
           );
-          hueTyping = !lovinTheCircle;
+          hueTyping = !(lovinTheCircle ?? true);
           saveData('hueTyping', hueTyping);
 
           final soundsGood =
               hueTyping ? 'You can type out the hues' : "We'll keep the circle going";
-          showDialog(
+          showDialog<void>(
             context: context,
             builder: (context) => DismissibleDialog(
               title: const Text('Sounds good!', style: SuperStyle.sans()),
@@ -78,7 +77,7 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
           );
         case 12:
           await sleep(0.5);
-          final bool lovinTheLoop = await showDialog(
+          final bool? lovinTheLoop = await showDialog(
             context: context,
             barrierDismissible: false,
             builder: (context) {
@@ -94,11 +93,11 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
             },
           );
 
-          showDialog(
+          showDialog<void>(
             context: context,
             builder: (context) => DismissibleDialog(
               title: Text(
-                lovinTheLoop ? 'Cool, me too!' : "yeah, that's fair.",
+                (lovinTheLoop ?? true) ? 'Cool, me too!' : "yeah, that's fair.",
                 style: const SuperStyle.sans(),
               ),
               content: const Text(
@@ -131,16 +130,19 @@ class _ScoreScreenState extends DynamicState<ScoreScreen> {
             child: Column(
               children: [
                 const Expanded(flex: 4, child: empty),
-                SuperContainer(
-                  margin: const EdgeInsets.symmetric(horizontal: 33),
-                  decoration: BoxDecoration(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 33),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
                       border: Border.all(color: color, width: 2),
-                      borderRadius: BorderRadius.circular(25)),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 36),
-                      child: Text('Finished!', style: SuperStyle.sans(size: 54, color: color)),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 36),
+                        child: Text('Finished!', style: SuperStyle.sans(size: 54, color: color)),
+                      ),
                     ),
                   ),
                 ),

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -150,23 +149,25 @@ class _ThanksForPlayingState extends SuperState<ThanksForPlaying> {
                 const Spacer(),
                 Fader(
                   !hideSuperHue,
-                  child: SuperContainer(
-                    width: 400,
-                    height: 400,
-                    color: superColor,
-                    alignment: Alignment.center,
-                    child: showHueVal
-                        ? FadeIn(
-                            child: Text(
-                              '$superHue°',
-                              style: const SuperStyle.sans(
-                                color: Colors.black,
-                                size: 100,
-                                weight: 800,
+                  child: SizedBox.square(
+                    dimension: 400,
+                    child: ColoredBox(
+                      color: superColor,
+                      child: showHueVal
+                          ? Center(
+                              child: FadeIn(
+                                child: Text(
+                                  '$superHue°',
+                                  style: const SuperStyle.sans(
+                                    color: Colors.black,
+                                    size: 100,
+                                    weight: 800,
+                                  ),
+                                ),
                               ),
-                            ),
-                          )
-                        : null,
+                            )
+                          : emptyContainer,
+                    ),
                   ),
                 ),
               ],
@@ -293,8 +294,8 @@ class _CreditsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final logo = label ?? name.trim().toLowerCase();
-    return SuperContainer(
-      margin: const EdgeInsets.all(5),
+    return Padding(
+      padding: const EdgeInsets.all(5),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
@@ -312,11 +313,10 @@ class _CreditsButton extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const FixedSpacer.horizontal(16),
-              SuperContainer(
+              const FixedSpacer(16),
+              SizedBox(
                 width: 32,
-                alignment: Alignment.center,
-                child: Image.asset('assets/end_credits_icons/$logo.png'),
+                child: Center(child: Image.asset('assets/end_credits_icons/$logo.png')),
               ),
               SizedBox(
                 width: 125,
@@ -372,7 +372,7 @@ class _CreditsState extends SuperState<_Credits> {
         await sleepState(0.2, () => lineData[label] = (color, Offset.zero, true));
         sleep(0.4);
         if (website == verifyAge) {
-          showDialog(
+          showDialog<void>(
             context: context,
             builder: (context) => AlertDialog(
               title: Row(
@@ -423,7 +423,7 @@ class _CreditsState extends SuperState<_Credits> {
         ),
         const Spacer(),
         for (final MapEntry(key: label, value: buttons) in _credits.entries) ...[
-          SuperContainer(
+          SizedBox(
             height: buttons.length * 60,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -431,19 +431,23 @@ class _CreditsState extends SuperState<_Credits> {
                 Fader(
                   lineData[label]!.$3,
                   child: SizedBox(
-                    child: SuperContainer(
-                      width: 100,
-                      margin: const EdgeInsets.only(right: 14),
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        label,
-                        textAlign: TextAlign.right,
-                        style: const SuperStyle.sans(
-                          size: 16,
-                          width: 75,
-                          weight: 500,
-                          color: Colors.black54,
-                          extraBold: true,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 14),
+                      child: SizedBox(
+                        width: 100,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            label,
+                            textAlign: TextAlign.right,
+                            style: const SuperStyle.sans(
+                              size: 16,
+                              width: 75,
+                              weight: 500,
+                              color: Colors.black54,
+                              extraBold: true,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -1025,7 +1029,7 @@ class _MusicSwitchState extends SuperState<_MusicSwitch> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.headphones_outlined, size: 50),
-              const FixedSpacer.horizontal(10),
+              const FixedSpacer(10),
               Switch.adaptive(value: enableMusic, onChanged: (_) => setState(musicOn)),
             ],
           ),
@@ -1102,20 +1106,23 @@ class _TheEndState extends EpicState<_TheEnd> with SinglePress {
           child: Column(
             children: [
               const Spacer(flex: 4),
-              SuperContainer(
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(10),
-                ),
+              SizedBox(
                 width: 250,
                 height: 100,
-                alignment: Alignment.center,
-                child: const Text(
-                  'The End',
-                  style: SuperStyle.sans(
-                    color: Colors.black,
-                    size: 50,
-                    weight: 800,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'The End',
+                      style: SuperStyle.sans(
+                        color: Colors.black,
+                        size: 50,
+                        weight: 800,
+                      ),
+                    ),
                   ),
                 ),
               ),

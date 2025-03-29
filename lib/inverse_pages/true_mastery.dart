@@ -6,7 +6,6 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -50,11 +49,13 @@ class TrueMasteryScoreKeeper implements ScoreKeeper {
     String text = 'round ${round + 1}/$_maxRounds\nscore: ${score.toStringAsFixed(1)}';
     if (superCount > 0) text += ', $superCount superscore${superCount > 1 ? 's' : ''}!';
 
-    return SuperContainer(
+    return SizedBox(
       width: 150,
       height: 75,
-      alignment: Alignment.bottomCenter,
-      child: SuperText(text, pad: false, style: const SuperStyle.sans()),
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: SuperText(text, pad: false, style: const SuperStyle.sans()),
+      ),
     );
   }
 
@@ -78,9 +79,9 @@ class _TrueMasteryState extends State<TrueMastery> {
   SuperColor get color => SuperColor(colorCode);
 
   void updateUserColor(SuperColor colorFromHex) => setState(() {
-        r = colorFromHex.red;
-        g = colorFromHex.green;
-        b = colorFromHex.blue;
+        r = (colorFromHex.r * 0xFF).round();
+        g = (colorFromHex.g * 0xFF).round();
+        b = (colorFromHex.b * 0xFF).round();
       });
   void nextColor() {
     setState(() => colorCode = rng.nextInt(0xFFFFFF + 1));
@@ -105,9 +106,6 @@ class _TrueMasteryState extends State<TrueMastery> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: avoid_print
-    if (casualMode) print(color);
-
     return Theme(
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
@@ -120,98 +118,100 @@ class _TrueMasteryState extends State<TrueMastery> {
                   const Spacer(),
                   const GoBack(),
                   const Spacer(),
-                  SuperContainer(
+                  DecoratedBox(
                     decoration: const BoxDecoration(
                         color: SuperColors.lightBackground,
                         borderRadius: BorderRadiusDirectional.only(
                             topStart: Radius.circular(64), topEnd: Radius.circular(64))),
-                    padding: const EdgeInsets.fromLTRB(30, 45, 30, 40),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _RGBSlider(
-                              'red',
-                              r,
-                              constraints: constraints,
-                              giveHint ? '${color.red}' : r.hexByte,
-                              onChanged: (value) => setState(() => r = value.toInt()),
-                            ),
-                            _RGBSlider(
-                              'green',
-                              g,
-                              constraints: constraints,
-                              giveHint ? '${color.green}' : g.hexByte,
-                              onChanged: (value) => setState(() => g = value.toInt()),
-                            ),
-                            _RGBSlider(
-                              'blue',
-                              b,
-                              constraints: constraints,
-                              giveHint ? '${color.blue}' : b.hexByte,
-                              onChanged: (value) => setState(() => b = value.toInt()),
-                            ),
-                          ],
-                        ),
-                        const FixedSpacer(50),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              'color code:',
-                              style: SuperStyle.mono(size: 20),
-                            ),
-                            SizedBox(
-                              height: 33,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.black,
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                ),
-                                onPressed: () {
-                                  if (casualMode) setState(() => giveHint = true);
-                                  ManualColorCode.run(
-                                    context,
-                                    color: color,
-                                    updateColor: updateUserColor,
-                                  ).then((_) {
-                                    if (casualMode) setState(() => giveHint = false);
-                                  });
-                                },
-                                child: Text(
-                                  userColorCode,
-                                  style: const SuperStyle.mono(size: 20),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 45, 30, 40),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _RGBSlider(
+                                'red',
+                                r,
+                                constraints: constraints,
+                                giveHint ? '${(color.r * 0xFF).round()}' : r.hexByte,
+                                onChanged: (value) => setState(() => r = value.toInt()),
+                              ),
+                              _RGBSlider(
+                                'green',
+                                g,
+                                constraints: constraints,
+                                giveHint ? '${(color.g * 0xFF).round()}' : g.hexByte,
+                                onChanged: (value) => setState(() => g = value.toInt()),
+                              ),
+                              _RGBSlider(
+                                'blue',
+                                b,
+                                constraints: constraints,
+                                giveHint ? '${(color.b * 0xFF).round()}' : b.hexByte,
+                                onChanged: (value) => setState(() => b = value.toInt()),
+                              ),
+                            ],
+                          ),
+                          const FixedSpacer(50),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                'color code:',
+                                style: SuperStyle.mono(size: 20),
+                              ),
+                              SizedBox(
+                                height: 33,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.black,
+                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  ),
+                                  onPressed: () {
+                                    if (casualMode) setState(() => giveHint = true);
+                                    ManualColorCode.run(
+                                      context,
+                                      color: color,
+                                      updateColor: updateUserColor,
+                                    ).then((_) {
+                                      if (casualMode) setState(() => giveHint = false);
+                                    });
+                                  },
+                                  child: Text(
+                                    userColorCode,
+                                    style: const SuperStyle.mono(size: 20),
+                                  ),
                                 ),
                               ),
+                            ],
+                          ),
+                          const FixedSpacer(30),
+                          ElevatedButton(
+                            onPressed: () => showDialog<void>(
+                              context: context,
+                              builder: (context) =>
+                                  TrueMasteryScore(guess: userColor, actual: color),
+                              barrierDismissible: userColor.colorCode != color.colorCode,
+                            ).then((_) {
+                              scoreKeeper?.scoreTheRound();
+                              scoreKeeper?.roundCheck(context);
+                              setState(nextColor);
+                            }),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: color,
+                              foregroundColor: contrastWith(color),
                             ),
-                          ],
-                        ),
-                        const FixedSpacer(30),
-                        ElevatedButton(
-                          onPressed: () => showDialog(
-                            context: context,
-                            builder: (context) =>
-                                TrueMasteryScore(guess: userColor, actual: color),
-                            barrierDismissible: userColor.colorCode != color.colorCode,
-                          ).then((_) {
-                            scoreKeeper?.scoreTheRound();
-                            scoreKeeper?.roundCheck(context);
-                            setState(nextColor);
-                          }),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: color,
-                            foregroundColor: contrastWith(color),
+                            child: const Padding(
+                              padding: EdgeInsets.only(bottom: 1),
+                              child: Text('submit', style: SuperStyle.sans(size: 24)),
+                            ),
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.only(bottom: 1),
-                            child: Text('submit', style: SuperStyle.sans(size: 24)),
-                          ),
-                        ),
-                        if (scoreKeeper case final ScoreKeeper sk) sk.midRoundDisplay,
-                      ],
+                          if (scoreKeeper case final ScoreKeeper sk) sk.midRoundDisplay,
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -240,9 +240,9 @@ class TrueMasteryScore extends StatefulWidget {
 class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
   late final guess = widget.guess, actual = widget.actual;
 
-  late final redOffBy = diff(guess.red, actual.red);
-  late final greenOffBy = diff(guess.green, actual.green);
-  late final blueOffBy = diff(guess.blue, actual.blue);
+  late final redOffBy = diff((guess.r * 0xFF).round(), (actual.r * 0xFF).round());
+  late final greenOffBy = diff((guess.g * 0xFF).round(), (actual.g * 0xFF).round());
+  late final blueOffBy = diff((guess.b * 0xFF).round(), (actual.b * 0xFF).round());
   late final offBy = redOffBy + greenOffBy + blueOffBy;
 
   late final Ticker? ticker;
@@ -271,9 +271,9 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
     thisRoundScore = 765 / offBy;
     thisRoundSuperCount = 0;
     for (final perfecto in [
-      guess.red == actual.red,
-      guess.green == actual.green,
-      guess.blue == actual.blue,
+      guess.r == actual.r,
+      guess.g == actual.g,
+      guess.b == actual.b,
     ]) {
       if (perfecto) thisRoundSuperCount++;
     }
@@ -282,7 +282,7 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
       ticker = Ticker((_) => setState(() => flickerValue = !flickerValue));
       perfectScore();
     } else {
-      ticker = guess.red == actual.red || guess.green == actual.green || guess.blue == actual.blue
+      ticker = guess.r == actual.r || guess.g == actual.g || guess.b == actual.b
           ? inverseSetup(setState)
           : null;
     }
@@ -338,9 +338,9 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
             ),
           ),
         ),
-        DataCell(_HexText(guess.red)),
-        DataCell(_HexText(guess.green)),
-        DataCell(_HexText(guess.blue)),
+        DataCell(_HexText((guess.r * 0xFF).round())),
+        DataCell(_HexText((guess.g * 0xFF).round())),
+        DataCell(_HexText((guess.b * 0xFF).round())),
       ]),
       DataRow(cells: [
         DataCell(
@@ -351,9 +351,9 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
             ),
           ),
         ),
-        DataCell(_HexText(actual.red)),
-        DataCell(_HexText(actual.green)),
-        DataCell(_HexText(actual.blue)),
+        DataCell(_HexText((actual.r * 0xFF).round())),
+        DataCell(_HexText((actual.g * 0xFF).round())),
+        DataCell(_HexText((actual.b * 0xFF).round())),
       ]),
       DataRow(cells: [
         DataCell(
@@ -417,20 +417,24 @@ class _TrueMasteryScoreState extends SuperState<TrueMasteryScore> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text('score:', style: SuperStyle.sans(size: 16, width: 87.5)),
-                    const FixedSpacer.horizontal(10),
+                    const FixedSpacer(10),
                     Column(
                       children: [
                         const Text(
                           '0xFF \u00d7 3',
                           style: SuperStyle.mono(size: 16, weight: 600),
                         ),
-                        SuperContainer(
-                          decoration: const BoxDecoration(border: Border(top: BorderSide())),
-                          padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
-                          margin: const EdgeInsets.only(top: 3),
-                          child: Text(
-                            '$redOffBy + $greenOffBy + $blueOffBy',
-                            style: const SuperStyle.sans(),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: DecoratedBox(
+                            decoration: const BoxDecoration(border: Border(top: BorderSide())),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(5, 3, 5, 0),
+                              child: Text(
+                                '$redOffBy + $greenOffBy + $blueOffBy',
+                                style: const SuperStyle.sans(),
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -511,16 +515,18 @@ class _ScoreTitleState extends State<_ScoreTitle> {
     );
 
     final width = 308 * context.scale;
-    return SuperContainer(
+    return SizedBox(
       width: width,
-      alignment: widget.isGuess ? Alignment.centerLeft : Alignment.centerRight,
-      child: AnimatedContainer(
-        duration: Durations.long4,
-        curve: curve,
-        width: expanded ? min(width, 271.5) : 0,
-        height: 50,
-        decoration: decoration,
-        child: text,
+      child: Align(
+        alignment: widget.isGuess ? Alignment.centerLeft : Alignment.centerRight,
+        child: AnimatedContainer(
+          duration: Durations.long4,
+          curve: curve,
+          width: expanded ? min(width, 271.5) : 0,
+          height: 50,
+          decoration: decoration,
+          child: text,
+        ),
       ),
     );
   }
@@ -579,14 +585,16 @@ rebuilding window
         child: SizedBox.expand(
           child: FittedBox(
             alignment: Alignment.topCenter,
-            child: SuperContainer(
-              margin: const EdgeInsets.all(50),
-              width: 500,
-              height: 260,
-              child: Text(
-                text,
-                softWrap: false,
-                style: const SuperStyle.sans(color: Colors.white, size: 16),
+            child: Padding(
+              padding: const EdgeInsets.all(50),
+              child: SizedBox(
+                width: 500,
+                height: 260,
+                child: Text(
+                  text,
+                  softWrap: false,
+                  style: const SuperStyle.sans(color: Colors.white, size: 16),
+                ),
               ),
             ),
           ),
@@ -656,13 +664,14 @@ class _RGBSlider extends StatelessWidget {
             ),
           ),
         ),
-        SuperContainer(
+        SizedBox(
           width: 80,
-          alignment: Alignment.center,
-          child: Text(
-            displayValue,
-            textAlign: TextAlign.center,
-            style: const SuperStyle.mono(size: 16, weight: 600),
+          child: Center(
+            child: Text(
+              displayValue,
+              textAlign: TextAlign.center,
+              style: const SuperStyle.mono(size: 16, weight: 600),
+            ),
           ),
         ),
       ],

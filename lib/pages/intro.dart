@@ -184,7 +184,7 @@ class _IntroModeState extends State<IntroMode> {
 
     void firstHues() => sleep(
           1,
-          then: () => showDialog(
+          then: () => showDialog<void>(
             context: context,
             builder: (context) => DismissibleDialog(
               title: const Text(
@@ -235,7 +235,7 @@ class _IntroModeState extends State<IntroMode> {
     if (scoreKeeper == null && !Tutorial.casual()) {
       sleep(
         1,
-        then: () => showDialog(
+        then: () => showDialog<void>(
           context: context,
           builder: (context) => const DismissibleDialog(
             title: Text(

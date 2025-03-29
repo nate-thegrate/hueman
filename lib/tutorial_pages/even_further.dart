@@ -3,7 +3,6 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -44,125 +43,126 @@ class _EvenFurtherTutorialState extends EpicState<EvenFurtherTutorial> {
         body: Fader(
           visible,
           duration: twoSecs,
-          child: SuperContainer(
+          child: ColoredBox(
             color: SuperColors.bsBackground,
-            alignment: Alignment.center,
-            child: Column(
-              children: [
-                const Spacer(flex: 4),
-                Fader(
-                  showTop,
-                  duration: twoSecs,
-                  child: const SuperRichText(
-                    style: SuperStyle.gaegu(),
-                    [
-                      TextSpan(text: "I hope you've had a great time with "),
-                      TextSpan(
-                        text: 'H',
-                        style: SuperStyle.gaegu(
-                          size: 32,
-                          weight: FontWeight.bold,
-                          color: SuperColors.red,
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'U',
-                        style: SuperStyle.gaegu(
-                          size: 32,
-                          weight: FontWeight.bold,
-                          color: SuperColors.yellow,
-                          shadows: [Shadow(color: SuperColor(0x4040FF), blurRadius: 1)],
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'E',
-                        style: SuperStyle.gaegu(
-                          size: 32,
-                          weight: FontWeight.bold,
-                          color: SuperColor(0x0060FF),
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'man',
-                        style: SuperStyle.gaegu(
-                          size: 32,
-                          color: SuperColors.bsBrown,
-                          letterSpacing: -1.5,
-                        ),
-                      ),
-                      TextSpan(
-                        text: '!',
-                        style: SuperStyle.gaegu(size: 32, weight: FontWeight.w300),
-                      ),
-                    ],
-                  ),
-                ),
-                const Spacer(),
-                Fader(
-                  showBottom,
-                  child: SuperRichText(
-                    style: const SuperStyle.gaegu(),
-                    [
-                      const TextSpan(text: 'You probably thought '),
-                      TextSpan(
-                        text: 'true mastery',
-                        style: SuperStyle.sans(
-                          size: 20,
-                          width: 87.5,
-                          letterSpacing: 0,
-                          weight: 500,
-                          extraBold: true,
-                          color: color,
-                          shadows: const [Shadow(color: Colors.white, blurRadius: 1)],
-                        ),
-                      ),
-                      const TextSpan(text: ' was the final challenge'),
-                    ],
-                  ),
-                ),
-                Fader(
-                  whatIsaid,
-                  child: const SuperText(
-                    "(since that's what I said earlier).",
-                    style: SuperStyle.gaegu(),
-                  ),
-                ),
-                const FixedSpacer(10),
-                Fader(
-                  whatIshowed,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text.rich(
-                        style: const SuperStyle.gaegu(),
-                        softWrap: false,
+            child: Center(
+              child: Column(
+                children: [
+                  const Spacer(flex: 4),
+                  Fader(
+                    showTop,
+                    duration: twoSecs,
+                    child: const SuperRichText(
+                      style: SuperStyle.gaegu(),
+                      [
+                        TextSpan(text: "I hope you've had a great time with "),
                         TextSpan(
-                          children: [
-                            const TextSpan(text: '(And also since there was a big '),
-                            TextSpan(
-                              text: '  The End  ',
-                              style: SuperStyle.sans(
-                                size: 20,
-                                weight: 700,
-                                extraBold: true,
-                                backgroundColor: epicColor,
+                          text: 'H',
+                          style: SuperStyle.gaegu(
+                            size: 32,
+                            weight: FontWeight.bold,
+                            color: SuperColors.red,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'U',
+                          style: SuperStyle.gaegu(
+                            size: 32,
+                            weight: FontWeight.bold,
+                            color: SuperColors.yellow,
+                            shadows: [Shadow(color: SuperColor(0x4040FF), blurRadius: 1)],
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'E',
+                          style: SuperStyle.gaegu(
+                            size: 32,
+                            weight: FontWeight.bold,
+                            color: SuperColor(0x0060FF),
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'man',
+                          style: SuperStyle.gaegu(
+                            size: 32,
+                            color: SuperColors.bsBrown,
+                            letterSpacing: -1.5,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '!',
+                          style: SuperStyle.gaegu(size: 32, weight: FontWeight.w300),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  Fader(
+                    showBottom,
+                    child: SuperRichText(
+                      style: const SuperStyle.gaegu(),
+                      [
+                        const TextSpan(text: 'You probably thought '),
+                        TextSpan(
+                          text: 'true mastery',
+                          style: SuperStyle.sans(
+                            size: 20,
+                            width: 87.5,
+                            letterSpacing: 0,
+                            weight: 500,
+                            extraBold: true,
+                            color: color,
+                            shadows: const [Shadow(color: Colors.white, blurRadius: 1)],
+                          ),
+                        ),
+                        const TextSpan(text: ' was the final challenge'),
+                      ],
+                    ),
+                  ),
+                  Fader(
+                    whatIsaid,
+                    child: const SuperText(
+                      "(since that's what I said earlier).",
+                      style: SuperStyle.gaegu(),
+                    ),
+                  ),
+                  const FixedSpacer(10),
+                  Fader(
+                    whatIshowed,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Text.rich(
+                          style: const SuperStyle.gaegu(),
+                          softWrap: false,
+                          TextSpan(
+                            children: [
+                              const TextSpan(text: '(And also since there was a big '),
+                              TextSpan(
+                                text: '  The End  ',
+                                style: SuperStyle.sans(
+                                  size: 20,
+                                  weight: 700,
+                                  extraBold: true,
+                                  backgroundColor: epicColor,
+                                ),
                               ),
-                            ),
-                            const TextSpan(text: ' screen.)'),
-                          ],
+                              const TextSpan(text: ' screen.)'),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const Spacer(flex: 2),
-                Fader(
-                  showButton,
-                  child: ContinueButton(onPressed: liar),
-                ),
-                const Spacer(flex: 2),
-              ],
+                  const Spacer(flex: 2),
+                  Fader(
+                    showButton,
+                    child: ContinueButton(onPressed: liar),
+                  ),
+                  const Spacer(flex: 2),
+                ],
+              ),
             ),
           ),
         ),
@@ -323,7 +323,7 @@ class _DaVinci extends StatelessWidget {
             scale: fillWithColor ? 5 : 1,
             duration: threeSecs,
             curve: Curves.easeOutExpo,
-            child: SuperContainer(
+            child: ColoredBox(
               color: color,
               child: Fader(
                 showDaVinci || showQuote,
@@ -379,35 +379,38 @@ class _GoodLuck extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FadeIn(
-      child: SuperContainer(
+      child: ConstrainedBox(
         constraints: const BoxConstraints.expand(),
-        color: SuperColors.darkBackground,
-        alignment: Alignment.center,
-        child: Column(
-          children: [
-            const Spacer(flex: 2),
-            Fader(
-              showTop,
-              child: const SuperText(
-                'I know it might seem unfair\n'
-                'for me to end with such a vague request,\n\n'
-                'but I believe in you!',
-              ),
+        child: ColoredBox(
+          color: SuperColors.darkBackground,
+          child: Center(
+            child: Column(
+              children: [
+                const Spacer(flex: 2),
+                Fader(
+                  showTop,
+                  child: const SuperText(
+                    'I know it might seem unfair\n'
+                    'for me to end with such a vague request,\n\n'
+                    'but I believe in you!',
+                  ),
+                ),
+                const Spacer(),
+                Fader(
+                  showBottom,
+                  child: const SuperText(
+                    "There's nothing left in this game:\n"
+                    "it's time for you to venture beyond what I know "
+                    'and teach yourself more about colors.\n\n'
+                    'Good luck!',
+                  ),
+                ),
+                const Spacer(),
+                Fader(showBottom, child: ContinueButton(onPressed: onPressed)),
+                const Spacer(),
+              ],
             ),
-            const Spacer(),
-            Fader(
-              showBottom,
-              child: const SuperText(
-                "There's nothing left in this game:\n"
-                "it's time for you to venture beyond what I know "
-                'and teach yourself more about colors.\n\n'
-                'Good luck!',
-              ),
-            ),
-            const Spacer(),
-            Fader(showBottom, child: ContinueButton(onPressed: onPressed)),
-            const Spacer(),
-          ],
+          ),
         ),
       ),
     );

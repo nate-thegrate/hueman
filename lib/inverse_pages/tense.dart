@@ -6,7 +6,6 @@ import 'package:hueman/data/page_data.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_state.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
@@ -22,7 +21,7 @@ class TenseScoreKeeper implements ScoreKeeper {
   int round = 1, health = 13, overfills = 0;
   late String rank;
 
-  void updateHealth(bool gotItRight, Function setState) {
+  void updateHealth(bool gotItRight, StateSetter setState) {
     if (gotItRight) {
       if (health == maxHealth) {
         overfills++;
@@ -53,21 +52,27 @@ class TenseScoreKeeper implements ScoreKeeper {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: FittedBox(
           fit: BoxFit.scaleDown,
-          child: SuperContainer(
+          child: SizedBox(
             width: 500,
             height: 60,
-            padding: const EdgeInsets.all(5),
-            alignment: Alignment.centerLeft,
-            decoration: const BoxDecoration(
-              border: Border.fromBorderSide(
-                BorderSide(color: Colors.black12, width: 5),
+            child: DecoratedBox(
+              decoration: const BoxDecoration(
+                border: Border.fromBorderSide(
+                  BorderSide(color: Colors.black12, width: 5),
+                ),
               ),
-            ),
-            child: AnimatedContainer(
-              width: 480 * health / 25,
-              duration: expandDuration,
-              curve: curve,
-              color: healthBarFlash ? Colors.white : Colors.black12,
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: AnimatedContainer(
+                    width: 480 * health / 25,
+                    duration: expandDuration,
+                    curve: curve,
+                    color: healthBarFlash ? Colors.white : Colors.black12,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -96,7 +101,7 @@ class Target extends StatelessWidget {
     return Row(
       children: [
         Expanded(child: Text('$label:', textAlign: TextAlign.right)),
-        const FixedSpacer.horizontal(15),
+        const FixedSpacer(15),
         Expanded(child: Text(value.toString())),
       ],
     );
@@ -222,7 +227,7 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
     generateHue();
     if (!Tutorial.tensed() && double.parse(tensionRank) >= 500) {
       Tutorial.tensed.complete();
-      showDialog(context: context, builder: (context) => const _NoMoreChartreuse());
+      showDialog<void>(context: context, builder: (context) => const _NoMoreChartreuse());
     }
   }
 
@@ -253,12 +258,12 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
       Tutorial.tense.complete();
       sleep(
         0.5,
-        then: () => showDialog(
+        then: () => showDialog<void>(
           context: context,
           builder: (context) => Theme(
             data: ThemeData(
               useMaterial3: true,
-              dialogBackgroundColor: SuperColors.lightBackground,
+              dialogTheme: const DialogThemeData(backgroundColor: SuperColors.lightBackground),
             ),
             child: const DismissibleDialog(
               title: Text(
@@ -327,29 +332,37 @@ class _TenseModeState extends State<TenseMode> with TickerProviderStateMixin {
 
   Widget target(BoxConstraints constraints) => FittedBox(
         fit: BoxFit.scaleDown,
-        child: SuperContainer(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          width: 390,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              color: SuperColors.darkBackground,
-              boxShadow: [
-                BoxShadow(
-                    color: SuperColors.darkBackground.withAlpha(128),
-                    blurRadius: 10,
-                    offset: const Offset(0, 10))
-              ]),
-          padding: const EdgeInsets.symmetric(vertical: 33),
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: Column(children: [
-              Target('hue', '$hue°'),
-              Target(widget.volatile ? 'source_color' : 'color', name),
-              Target('color_code', SuperColor(color.value - SuperColor.opaque).hexCode),
-              Target('tension', tension[name]),
-              if (!casualMode) Target('round', scoreKeeper!.round),
-              tensionDesc(constraints),
-            ]),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SizedBox(
+            width: 390,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: SuperColors.darkBackground,
+                boxShadow: [
+                  BoxShadow(
+                      color: SuperColors.darkBackground.withAlpha(128),
+                      blurRadius: 10,
+                      offset: const Offset(0, 10))
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 33),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Column(children: [
+                    Target('hue', '$hue°'),
+                    Target(widget.volatile ? 'source_color' : 'color', name),
+                    Target(
+                        'color_code', SuperColor(color.toARGB32() - SuperColor.opaque).hexCode),
+                    Target('tension', tension[name]),
+                    if (!casualMode) Target('round', scoreKeeper!.round),
+                    tensionDesc(constraints),
+                  ]),
+                ),
+              ),
+            ),
           ),
         ),
       );
@@ -510,7 +523,7 @@ class _TenseButton extends StatelessWidget {
               height: width,
               child: Stack(
                 children: [
-                  SuperContainer(
+                  DecoratedBox(
                     decoration: BoxDecoration(boxShadow: [
                       BoxShadow(color: color),
                       BoxShadow(
@@ -526,18 +539,23 @@ class _TenseButton extends StatelessWidget {
                         blurRadius: shadowSize,
                       ),
                     ]),
+                    child: emptyContainer,
                   ),
-                  SuperContainer(
-                    color: showReaction && buttonHue != targetHue ? Colors.black45 : null,
-                    alignment: const Alignment(0.08, -0.05),
-                    child: Opacity(
-                      opacity: showReaction ? 1 : 0,
-                      child: Text(
-                        '$buttonHue°',
-                        style: SuperStyle.sans(
-                          size: 40,
-                          extraBold: true,
-                          color: wrongChoice ? Colors.red : Colors.black,
+                  ColoredBox(
+                    color: showReaction && buttonHue != targetHue
+                        ? Colors.black45
+                        : Colors.transparent,
+                    child: Align(
+                      alignment: const Alignment(0.08, -0.05),
+                      child: Opacity(
+                        opacity: showReaction ? 1 : 0,
+                        child: Text(
+                          '$buttonHue°',
+                          style: SuperStyle.sans(
+                            size: 40,
+                            extraBold: true,
+                            color: wrongChoice ? Colors.red : Colors.black,
+                          ),
                         ),
                       ),
                     ),
@@ -566,8 +584,8 @@ class _SplendidState extends InverseState<Splendid> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.onTap,
-      child: SuperContainer(
-        color: Colors.transparent,
+      behavior: HitTestBehavior.opaque,
+      child: Align(
         alignment: const Alignment(0, 0.72),
         child: Stack(
           children: [

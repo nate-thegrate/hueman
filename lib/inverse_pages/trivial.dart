@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:hueman/data/save_data.dart';
 import 'package:hueman/data/structs.dart';
 import 'package:hueman/data/super_color.dart';
-import 'package:hueman/data/super_container.dart';
 import 'package:hueman/data/super_text.dart';
 import 'package:hueman/data/widgets.dart';
 
@@ -20,42 +19,46 @@ class TriviaButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final buttonWidth = constraints.calcSize((w, h) => min(w / 2 - 30, h / 2 - 215));
-    return SuperContainer(
-      width: buttonWidth,
-      height: buttonWidth / 3,
-      margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-      decoration: selected
-          ? BoxDecoration(
-              border: Border.all(color: color, width: buttonWidth / 20),
-              boxShadow: const [BoxShadow(blurRadius: 10)],
-            )
-          : null,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: selected ? SuperColors.darkBackground : color,
-            shape: const BeveledRectangleBorder(),
-            padding: EdgeInsets.zero),
-        child: Text(
-          color.name,
-          style: selected
-              ? SuperStyle.sans(
-                  size: buttonWidth / 8,
-                  weight: 800,
-                  color: color,
-                  height: -0.1,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+      child: SizedBox(
+        width: buttonWidth,
+        height: buttonWidth / 3,
+        child: DecoratedBox(
+          decoration: selected
+              ? BoxDecoration(
+                  border: Border.all(color: color, width: buttonWidth / 20),
+                  boxShadow: const [BoxShadow(blurRadius: 10)],
                 )
-              : SuperStyle.sans(
-                  size: buttonWidth / 8,
-                  weight: 700,
-                  color: Colors.black,
-                  shadows: const [
-                    Shadow(color: Colors.white24, blurRadius: 1),
-                    Shadow(color: Colors.white30, blurRadius: 25),
-                  ],
-                  height: -0.1,
-                ),
+              : const BoxDecoration(),
+          child: ElevatedButton(
+            onPressed: onPressed,
+            style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: selected ? SuperColors.darkBackground : color,
+                shape: const BeveledRectangleBorder(),
+                padding: EdgeInsets.zero),
+            child: Text(
+              color.name,
+              style: selected
+                  ? SuperStyle.sans(
+                      size: buttonWidth / 8,
+                      weight: 800,
+                      color: color,
+                      height: -0.1,
+                    )
+                  : SuperStyle.sans(
+                      size: buttonWidth / 8,
+                      weight: 700,
+                      color: Colors.black,
+                      shadows: const [
+                        Shadow(color: Colors.white24, blurRadius: 1),
+                        Shadow(color: Colors.white30, blurRadius: 25),
+                      ],
+                      height: -0.1,
+                    ),
+            ),
+          ),
         ),
       ),
     );
@@ -157,6 +160,7 @@ const List<TriviaQuestion> _allQuestions = [
   TriviaQuestion(
     'The color "brown" is really just a darker shade of:',
     [SuperColors.orange],
+    // ignore: missing_whitespace_between_adjacent_strings, false positive
     explanation: "This is why there's no such thing as a brown light bulb—"
         'if a brown color is vibrant enough, it becomes orange.',
   ),
@@ -207,7 +211,7 @@ class AnsweredEveryQuestion extends StatelessWidget {
       data: ThemeData(
         useMaterial3: true,
         fontFamily: 'nunito sans',
-        dialogBackgroundColor: SuperColors.lightBackground,
+        dialogTheme: const DialogThemeData(backgroundColor: SuperColors.lightBackground),
       ),
       child: AlertDialog(
         title: const Text(
@@ -266,13 +270,13 @@ class _TriviaModeState extends State<TriviaMode> {
       Tutorial.trivial.complete();
       sleep(
         0.5,
-        then: () => showDialog(
+        then: () => showDialog<void>(
           context: context,
           builder: (context) => Theme(
             data: ThemeData(
               useMaterial3: true,
               fontFamily: 'nunito sans',
-              dialogBackgroundColor: SuperColors.lightBackground,
+              dialogTheme: const DialogThemeData(backgroundColor: SuperColors.lightBackground),
             ),
             child: DismissibleDialog(
               title: const FittedBox(
@@ -305,13 +309,13 @@ class _TriviaModeState extends State<TriviaMode> {
           if (!answers.contains(correctAnswer)) correct = false;
         }
 
-        showDialog(
+        showDialog<void>(
           context: context,
           builder: (context) => Theme(
             data: ThemeData(
               useMaterial3: true,
               fontFamily: 'nunito sans',
-              dialogBackgroundColor: SuperColors.lightBackground,
+              dialogTheme: const DialogThemeData(backgroundColor: SuperColors.lightBackground),
             ),
             child: DismissibleDialog(
               title: Center(
@@ -358,7 +362,7 @@ class _TriviaModeState extends State<TriviaMode> {
                 : '${(totalCorrect / totalAnswers * 100).toStringAsFixed(1)}%';
             final score = '$scorePercent ($totalCorrect / $totalAnswers)';
             if (!casualMode) Score.trivial.set(totalCorrect);
-            showDialog(
+            showDialog<void>(
               context: context,
               builder: (context) => AnsweredEveryQuestion(score),
               barrierDismissible: false,
@@ -388,17 +392,20 @@ class _TriviaModeState extends State<TriviaMode> {
       data: ThemeData(useMaterial3: true, fontFamily: 'nunito sans'),
       child: Scaffold(
         body: SafeLayout((context, constraints) {
-          final Widget questionText = SuperContainer(
+          final Widget questionText = SizedBox(
             height: 200,
-            padding: const EdgeInsets.symmetric(horizontal: 50),
-            alignment: Alignment.center,
-            child: Text(
-              triviaQuestions.first.question,
-              textAlign: TextAlign.center,
-              style: SuperStyle.sans(
-                color: Colors.black,
-                size: constraints.calcSize((w, h) => min(w, h / 2) / 20),
-                weight: 600,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: Center(
+                child: Text(
+                  triviaQuestions.first.question,
+                  textAlign: TextAlign.center,
+                  style: SuperStyle.sans(
+                    color: Colors.black,
+                    size: constraints.calcSize((w, h) => min(w, h / 2) / 20),
+                    weight: 600,
+                  ),
+                ),
               ),
             ),
           );
