@@ -2,7 +2,7 @@ name: hueman
 description: An open-source game about color theory.
 publish_to: "none"
 
-version: 2.3.1+16
+version: 2.4.0+17
 
 environment:
   sdk: ^3.7.0-0
